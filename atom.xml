@@ -1,65 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!doctype html>
-<!-- START OF _layouts/default.html -->
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
-		<meta content="width=device-width,initial-scale=1" name="viewport">
-		<meta content="" name="description">
-		<meta content="JavaScript Without Grammar" name="author">
+	<title><![CDATA[JavaScript Without Grammar]]></title>
+	<link href="http://browniefed.github.io/atom.xml" rel="self"/>
+	<link href="http://browniefed.github.io/"/>
+	<updated>2014-12-24T11:40:58-08:00</updated>
+	<id>http://browniefed.github.io/</id>
+	<author>
+		<name><![CDATA[Jason Brown]]></name>
 		
-		<title>JavaScript Without Grammar</title>
-		
-		<!-- Styles -->
-		<link href="/stylesheets/main.css" rel="stylesheet">
-		
-		<!-- Google webfonts -->
-		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
-		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
-		
-		<!-- jQuery and plugins -->
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-		<script src="/js/jquery.zclip.min.js"></script>
-		
-		<!-- Syntax highlighter -->
-		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
-		<script type="text/javascript" src="/js/prettify.js"></script>
-		
-		<!--<link href="http://feeds.feedburner.com/turkeltaub" rel="alternate" title="JavaScript Without Grammar" type="application/rss+xml" />-->
-		
-	</head>
-	<body onload="prettyPrint()">
-	
-		<div class="wrap">
-	
-			<header>
-				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
-								
-								<div class="navi">
-									<ul>
-										<li><a href="/">Blog</a></li>
-										<li><a href="/blog/archives">Archives</a></li>
-										<li><a href="/about">About</a></li>
-										<li><a href="http://github.com/browniefed">Github</a></li>
-										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
-										<li><a href="http://browniefed.com">Portfolio?</a></li>
-									<ul>
-								</div> <!-- // .navi -->
-			</header>
-		
-				<!-- START OF index.html -->
+	</author>
+	<generator uri="http://octopress.org/">Octopress</generator>
 
 	
+	<entry>
 		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/12/24/webpack-and-compass/">Webpack and Compass</a></h1>
-		<time>24 December 2014</time>
-	</header>
-		<div class="content">
-			<p>Webpack is the greatest and latest in build systems. Every time I encounter an issue or wish Webpack did something a little googling solves the problem.</p>
+			<title type="html"><![CDATA[Webpack and Compass]]></title>
+		
+		<link href="http://browniefed.github.io/blog/2014/12/24/webpack-and-compass/"/>
+		<updated>2014-12-24T10:46:00-08:00</updated>
+		<id>http://browniefed.github.io/blog/2014/12/24/webpack-and-compass</id>
+		<content type="html">
+			<![CDATA[
+				
+					<p></p>
+				
+			]]>
+			<![CDATA[<p>Webpack is the greatest and latest in build systems. Every time I encounter an issue or wish Webpack did something a little googling solves the problem.</p>
 
 <p>One problem that I couldn&rsquo;t google and figure out was getting compass to work with <code>sass-loader</code>. Not just making it work but still allowing regular compass to compile on the command line.</p>
 
@@ -146,52 +113,24 @@ If you are running your build script from a different location you&rsquo;ll have
 </span><span class='line'>    }
 </span></code></pre></td></tr></table></div></figure>
 
-
-		</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/compass/'>compass</a>, <a class='category' href='/blog/categories/sass/'>sass</a>, <a class='category' href='/blog/categories/scss/'>scss</a>, <a class='category' href='/blog/categories/webpack/'>webpack</a>
+]]>
+		</content>
+	</entry>
 	
-
-
-	
-	</div>
-	<footer style="margin-top: 10px;">
-		<div id="post-author">
-	<div class="post-author-image" style="width: 20%; display: inline-block;">
-		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
-	</div>
-	<div class="post-author-content" style="width: 70%; display: inline-block;">
-		<p>
-			My name is Jason Brown, I&#8217;m an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
-		</p>
-	</div>
-</div>
-	</footer>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
+	<entry>
 		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/">PhantomJS Creating &amp; Connecting to Server</a></h1>
-		<time>15 June 2014</time>
-	</header>
-		<div class="content">
-			<p>At my work we are a Java shop. So spinning up a server is quite a process. Additionally our static front end files are spread out across the system and we use RequireJS (ugh) to wrangle everything. Then in order to test we were running a selenium test to hit the test_runner page and wait for mocha to run and the tests. This is so unbelievably slow and quite hectic when it comes to managing relative paths of our config.</p>
+			<title type="html"><![CDATA[PhantomJS Creating &amp; Connecting to Server]]></title>
+		
+		<link href="http://browniefed.github.io/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/"/>
+		<updated>2014-06-15T16:37:00-07:00</updated>
+		<id>http://browniefed.github.io/blog/2014/06/15/phantomjs-creating-and-connecting-to-server</id>
+		<content type="html">
+			<![CDATA[
+				
+					<p></p>
+				
+			]]>
+			<![CDATA[<p>At my work we are a Java shop. So spinning up a server is quite a process. Additionally our static front end files are spread out across the system and we use RequireJS (ugh) to wrangle everything. Then in order to test we were running a selenium test to hit the test_runner page and wait for mocha to run and the tests. This is so unbelievably slow and quite hectic when it comes to managing relative paths of our config.</p>
 
 <p>So to make things simpler I decided it&rsquo;d be in my best interest to use PhatonmJS. I decided to spin up a server using <code>var server = require('webserver').create();</code> and manage the requests and just route and serve up all the correct files. I thought this would work however I ran into a snag. Here is some sample code below</p>
 
@@ -378,52 +317,24 @@ If you are running your build script from a different location you&rsquo;ll have
 
 
 <p>This is very basic and assumes your running in the root of your files you need to server. In my case I wasn&rsquo;t and had to do some additional parsing and mapping of the URL to get the correct filepath but it should be a decent start for you.</p>
-
-		</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/css/'>css</a>, <a class='category' href='/blog/categories/file/'>file</a>, <a class='category' href='/blog/categories/html/'>html</a>, <a class='category' href='/blog/categories/img/'>img</a>, <a class='category' href='/blog/categories/js/'>js</a>, <a class='category' href='/blog/categories/phantomjs/'>phantomjs</a>, <a class='category' href='/blog/categories/server/'>server</a>, <a class='category' href='/blog/categories/server/'>server</a>, <a class='category' href='/blog/categories/static/'>static</a>, <a class='category' href='/blog/categories/testing/'>testing</a>, <a class='category' href='/blog/categories/unit/'>unit</a>
+]]>
+		</content>
+	</entry>
 	
-
-
-	
-	</div>
-	<footer style="margin-top: 10px;">
-		<div id="post-author">
-	<div class="post-author-image" style="width: 20%; display: inline-block;">
-		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
-	</div>
-	<div class="post-author-content" style="width: 70%; display: inline-block;">
-		<p>
-			My name is Jason Brown, I&#8217;m an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
-		</p>
-	</div>
-</div>
-	</footer>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
+	<entry>
 		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/06/07/phonegap-3-dot-4-geolocation/">Phonegap 3.4 GeoLocation</a></h1>
-		<time>07 June 2014</time>
-	</header>
-		<div class="content">
-			<p>It doesn&rsquo;t appear to be just me but PhoneGap can be incredibly difficult to use. Simply because any information pertaining to the most current version of phonegap is so fragmented. A google search will reveal virtually nothing about the error messages you&rsquo;re receiving and how to remedy them for current versions.</p>
+			<title type="html"><![CDATA[Phonegap 3.4 GeoLocation]]></title>
+		
+		<link href="http://browniefed.github.io/blog/2014/06/07/phonegap-3-dot-4-geolocation/"/>
+		<updated>2014-06-07T08:28:00-07:00</updated>
+		<id>http://browniefed.github.io/blog/2014/06/07/phonegap-3-dot-4-geolocation</id>
+		<content type="html">
+			<![CDATA[
+				
+					<p></p>
+				
+			]]>
+			<![CDATA[<p>It doesn&rsquo;t appear to be just me but PhoneGap can be incredibly difficult to use. Simply because any information pertaining to the most current version of phonegap is so fragmented. A google search will reveal virtually nothing about the error messages you&rsquo;re receiving and how to remedy them for current versions.</p>
 
 <p>For example, I was attempting to use the GeoLocation API. Could care less about the extreme accuracy. After attempting to use it I was getting an Error Code 2 , failed to start geolocation service. Well maybe that was my fault for enabling <code>enableHighAccuracy</code> but wait you have to enableHighAccuracy for older versions of android otherwise it won&rsquo;t work. Or was that only for older versions of the geolocation plugin which then got deprecated in some versions of android in favor of the native browser geolocation API because it provides better and faster GPS locations. In the end the fault was all mine, I had simply forgotten to include the plugin in my <code>config.xml</code></p>
 
@@ -436,52 +347,24 @@ If you are running your build script from a different location you&rsquo;ll have
 <p>I&rsquo;ve sort of determined that the only real reliable way to determine anything is just to look at the release notes on <a href="https://github.com/apache/cordova-plugin-geolocation/blob/master/RELEASENOTES.md">github</a> for the best most up to date information.</p>
 
 <p>To end I should say I really love PhoneGap and all of the time and effort people are putting into developing it. The documentation and information about current versions is fragmented, and rather than ranting I should be helping out and contributing to documentation and solving the problems. That should always be the goal if you find a problem in the open source world. Don&rsquo;t rant, help out, and that is what I will do.</p>
-
-		</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/3-dot-4/'>3.4</a>, <a class='category' href='/blog/categories/documentation/'>documentation</a>, <a class='category' href='/blog/categories/geolocation/'>geolocation</a>, <a class='category' href='/blog/categories/gps/'>gps</a>, <a class='category' href='/blog/categories/phonegap/'>phonegap</a>
+]]>
+		</content>
+	</entry>
 	
-
-
-	
-	</div>
-	<footer style="margin-top: 10px;">
-		<div id="post-author">
-	<div class="post-author-image" style="width: 20%; display: inline-block;">
-		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
-	</div>
-	<div class="post-author-content" style="width: 70%; display: inline-block;">
-		<p>
-			My name is Jason Brown, I&#8217;m an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
-		</p>
-	</div>
-</div>
-	</footer>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
+	<entry>
 		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/">Socket.io on Android + Phonegap</a></h1>
-		<time>01 June 2014</time>
-	</header>
-		<div class="content">
-			<p>WebSockets are wonderful, they are one of the cheapest ways to get realtime communications into your web app. They&rsquo;re also a great way to get realtime communications into your mobile application. AJAX is great but wasn&rsquo;t applicable to my needs. Developing PDXLiveBus app required the server to handle all requests to TriMets servers and use AJAX to request the state of particular buses/routes was less realtime than I wanted. I could go more in depth about my usage and experience but the main point of this post is to prevent some table flipping.</p>
+			<title type="html"><![CDATA[Socket.io on Android + Phonegap]]></title>
+		
+		<link href="http://browniefed.github.io/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/"/>
+		<updated>2014-06-01T08:12:00-07:00</updated>
+		<id>http://browniefed.github.io/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap</id>
+		<content type="html">
+			<![CDATA[
+				
+					<p></p>
+				
+			]]>
+			<![CDATA[<p>WebSockets are wonderful, they are one of the cheapest ways to get realtime communications into your web app. They&rsquo;re also a great way to get realtime communications into your mobile application. AJAX is great but wasn&rsquo;t applicable to my needs. Developing PDXLiveBus app required the server to handle all requests to TriMets servers and use AJAX to request the state of particular buses/routes was less realtime than I wanted. I could go more in depth about my usage and experience but the main point of this post is to prevent some table flipping.</p>
 
 <p>I had it all working in browser however it was not working when I did my phonegap serve. It just would not connect, nor even error out ( I don&rsquo;t think I waited long enough). I had been using <a href="https://github.com/mkuklis/phonegap-websocket">https://github.com/mkuklis/phonegap-websocket</a>, which Android WebView (what phonegap utilizes) doesn&rsquo;t support WebSockets until Android KitKat (4.4). I think this is a tremendous oversight, but I digress. I attempted various things to get <code>phonegap-websocket</code> to work but I just couldn&rsquo;t.</p>
 
@@ -494,52 +377,24 @@ If you are running your build script from a different location you&rsquo;ll have
 <p>Yeah not the most secure but then again I don&rsquo;t think I have a choice since everything is being served from phones and not a particular domain. Also I&rsquo;m dealing with public transportation vehicle location which doesn&rsquo;t necessarily needing extreme security.</p>
 
 <p>So if you can&rsquo;t get Socket.IO to work on your Android Phonegap app, add <code>phonegap-websocket</code> and make sure you have allowed CORS on your server.</p>
-
-		</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/android/'>android</a>, <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/mobile/'>mobile</a>, <a class='category' href='/blog/categories/phonegap/'>phonegap</a>, <a class='category' href='/blog/categories/socket-dot-io/'>socket.io</a>, <a class='category' href='/blog/categories/websocket/'>websocket</a>, <a class='category' href='/blog/categories/websockets/'>websockets</a>, <a class='category' href='/blog/categories/webview/'>webview</a>
+]]>
+		</content>
+	</entry>
 	
-
-
-	
-	</div>
-	<footer style="margin-top: 10px;">
-		<div id="post-author">
-	<div class="post-author-image" style="width: 20%; display: inline-block;">
-		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
-	</div>
-	<div class="post-author-content" style="width: 70%; display: inline-block;">
-		<p>
-			My name is Jason Brown, I&#8217;m an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
-		</p>
-	</div>
-</div>
-	</footer>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
+	<entry>
 		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/05/01/nonrte-part-1/">NonRTE - Part 1</a></h1>
-		<time>01 May 2014</time>
-	</header>
-		<div class="content">
-			<p>Once again stealing from antimatter I think writing about what you&rsquo;re currently building or have built is a good way to gain some clarity and also provide some value in explaining the topic. I&rsquo;ll be talking about NonRTE a non-contenteditable rich text editor for developers. One similar and the only one I know of is google docs. There are others that aren&rsquo;t rich text editors and are IDEs like codemirror and a few others that do not use contenteditbale. I personally don&rsquo;t know of any RTEs that are open source that developers can use and build with but I could be wrong so do ping me if that isn&rsquo;t the case.</p>
+			<title type="html"><![CDATA[NonRTE - Part 1]]></title>
+		
+		<link href="http://browniefed.github.io/blog/2014/05/01/nonrte-part-1/"/>
+		<updated>2014-05-01T06:26:00-07:00</updated>
+		<id>http://browniefed.github.io/blog/2014/05/01/nonrte-part-1</id>
+		<content type="html">
+			<![CDATA[
+				
+					<p></p>
+				
+			]]>
+			<![CDATA[<p>Once again stealing from antimatter I think writing about what you&rsquo;re currently building or have built is a good way to gain some clarity and also provide some value in explaining the topic. I&rsquo;ll be talking about NonRTE a non-contenteditable rich text editor for developers. One similar and the only one I know of is google docs. There are others that aren&rsquo;t rich text editors and are IDEs like codemirror and a few others that do not use contenteditbale. I personally don&rsquo;t know of any RTEs that are open source that developers can use and build with but I could be wrong so do ping me if that isn&rsquo;t the case.</p>
 
 <p>Something that has always boggled my mind was how heavily people have relied on contenteditable. Managing the different ways that contenteditbale is implemented on every browser and versions of those browsers is a nightmare. There is a portion of code in most RTE libraries that change how everything works just for one particular browser. This is insane to me due to the world we live in now with NPM, github, and the open source world at our finger tips. We have amazing templating libraries, HTML parsers, two-way data bindings, word to HTML libraries, excel expression parsers and executors, and everything compiles to JavaScript despite this insane amount of open source code we still use contenteditable.</p>
 
@@ -548,52 +403,24 @@ If you are running your build script from a different location you&rsquo;ll have
 <p>I&rsquo;m sure others have embarked on this particular quest only to fail or give up but I&rsquo;ll do my best not to. I see a lot of potential in this idea, many of the concepts are also very similar to Ractive. In fact I could implement this even faster in Ractive but have decided to embark on this from scratch just to learn things. It&rsquo;ll be a fun ride.</p>
 
 <p>At this point I have very basic typing working, the cursor is working and positioned (mostly) correctly, clicking somewhere will move the cursor, arrow keys will move from line to line and character to character correctly and enter to create new lines and split content is also working. Overall it&rsquo;s a little bit of work but nothing quite substantial yet. The repo lives here <a href="https://github.com/browniefed/Nonrte">https://github.com/browniefed/Nonrte</a> so feel free to contribute. I haven&rsquo;t hit many challenges yet but I will and when I do I&rsquo;ll be sure and document them and document the solutions.</p>
-
-		</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/contenteditable/'>contenteditable</a>, <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/nonrte/'>nonrte</a>
+]]>
+		</content>
+	</entry>
 	
-
-
-	
-	</div>
-	<footer style="margin-top: 10px;">
-		<div id="post-author">
-	<div class="post-author-image" style="width: 20%; display: inline-block;">
-		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
-	</div>
-	<div class="post-author-content" style="width: 70%; display: inline-block;">
-		<p>
-			My name is Jason Brown, I&#8217;m an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
-		</p>
-	</div>
-</div>
-	</footer>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
+	<entry>
 		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/">Ractive.JS Components for Speed and Flexibility</a></h1>
-		<time>27 April 2014</time>
-	</header>
-		<div class="content">
-			<p>Components in Ractive are crucial if you want to build a flexible application. Hopefully this changes in the future with partials living on the data object and various init options accepting functions rather than static objects. The main purpose of Components is to have reusable template pieces that you can drop in and work the same all over your application. Some examples might be a grid component that accepts rows and columns as it&rsquo;s data, maybe it&rsquo;s as simple as a checkbox that has some styling a particular way. Components will help you build consistency through out your application however you should know when to use a partial and when to use a component.</p>
+			<title type="html"><![CDATA[Ractive.JS Components for Speed and Flexibility]]></title>
+		
+		<link href="http://browniefed.github.io/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/"/>
+		<updated>2014-04-27T08:35:00-07:00</updated>
+		<id>http://browniefed.github.io/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility</id>
+		<content type="html">
+			<![CDATA[
+				
+					<p></p>
+				
+			]]>
+			<![CDATA[<p>Components in Ractive are crucial if you want to build a flexible application. Hopefully this changes in the future with partials living on the data object and various init options accepting functions rather than static objects. The main purpose of Components is to have reusable template pieces that you can drop in and work the same all over your application. Some examples might be a grid component that accepts rows and columns as it&rsquo;s data, maybe it&rsquo;s as simple as a checkbox that has some styling a particular way. Components will help you build consistency through out your application however you should know when to use a partial and when to use a component.</p>
 
 <p>If you&rsquo;re coming from the Angular world components are much like directives. However since there is no controller concept, or model concept in Ractive there are less headaches in getting components to work with scope and all that jazz.</p>
 
@@ -770,56 +597,28 @@ Further more if you update the title, it&rsquo;ll propagate down to the componen
 <p data-height="268" data-theme-id="0" data-slug-hash="dvqIl" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/dvqIl/'>dvqIl</a> by browniefed (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 
 
-<script async src="//codepen.io/assets/embed/ei.js"></script>
+<script async src="http://browniefed.github.io//codepen.io/assets/embed/ei.js"></script>
 
 
 <p>All it takes is some slightly organized data and you&rsquo;d never have to construct a data table again. More advance component topics are coming in the future this was merely an introduction.</p>
-
-		</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/components/'>Components</a>, <a class='category' href='/blog/categories/javascript/'>JavaScript</a>, <a class='category' href='/blog/categories/ractive/'>Ractive</a>, <a class='category' href='/blog/categories/ractive-dot-js/'>Ractive.js</a>
+]]>
+		</content>
+	</entry>
 	
-
-
-	
-	</div>
-	<footer style="margin-top: 10px;">
-		<div id="post-author">
-	<div class="post-author-image" style="width: 20%; display: inline-block;">
-		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
-	</div>
-	<div class="post-author-content" style="width: 70%; display: inline-block;">
-		<p>
-			My name is Jason Brown, I&#8217;m an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
-		</p>
-	</div>
-</div>
-	</footer>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
+	<entry>
 		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/04/26/progress-report/">Progress reports</a></h1>
-		<time>26 April 2014</time>
-	</header>
-		<div class="content">
-			<p>After stumbling upon <a href="http://antimatter15.com/">http://antimatter15.com/</a> and all the awesome things he was doing I noticed that he would post progress reports each month. I often attempt at keeping a daily/weekly journal of sorts but it never pans out. I&rsquo;ve been trying to get into a decent state of mind to start serious personal development both in my projects and just myself. Reflecting on accomplishments each month is a great way to keep track of that growth. I would always get so in depth and fine-grained with everything that I did that it was pointless. I had some fantasy that if I kept a good enough diary that if I was rich and famous in the future that people would want to read my story. I&rsquo;d have an account of every little thing that I did and people could attempt to replicate it to a T. Typing that out just sounds insane.</p>
+			<title type="html"><![CDATA[Progress reports]]></title>
+		
+		<link href="http://browniefed.github.io/blog/2014/04/26/progress-report/"/>
+		<updated>2014-04-26T08:51:00-07:00</updated>
+		<id>http://browniefed.github.io/blog/2014/04/26/progress-report</id>
+		<content type="html">
+			<![CDATA[
+				
+					<p></p>
+				
+			]]>
+			<![CDATA[<p>After stumbling upon <a href="http://antimatter15.com/">http://antimatter15.com/</a> and all the awesome things he was doing I noticed that he would post progress reports each month. I often attempt at keeping a daily/weekly journal of sorts but it never pans out. I&rsquo;ve been trying to get into a decent state of mind to start serious personal development both in my projects and just myself. Reflecting on accomplishments each month is a great way to keep track of that growth. I would always get so in depth and fine-grained with everything that I did that it was pointless. I had some fantasy that if I kept a good enough diary that if I was rich and famous in the future that people would want to read my story. I&rsquo;d have an account of every little thing that I did and people could attempt to replicate it to a T. Typing that out just sounds insane.</p>
 
 <p>Where I go from here we shall see. I have a few goals I&rsquo;d like to accomplish for 2014 but am going to take it one week at a time. Weeks seem like they are small enough that I can sit down on a Sunday and plan out what I want to accomplish by the next Sunday. With little weekly notes I can compile the monthly progress report. Planning stuff out will  be a new concept for me since I generally shoot from the hip and do what I feel like.</p>
 
@@ -841,84 +640,42 @@ Further more if you update the title, it&rsquo;ll propagate down to the componen
 <p>That&rsquo;s a tall order for 2014 as it&rsquo;s almost half way over but I&rsquo;ll be turning 24. My 15 year old self said I&rsquo;d be rich and retired at 21 so I&rsquo;m already behind.</p>
 
 <p>That&rsquo;s it from me</p>
-
-		</div>
-	<div>
-		
-
-
-		
-
-
-
-
+]]>
+		</content>
+	</entry>
 	
-	</div>
-	<footer style="margin-top: 10px;">
-		<div id="post-author">
-	<div class="post-author-image" style="width: 20%; display: inline-block;">
-		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
-	</div>
-	<div class="post-author-content" style="width: 70%; display: inline-block;">
-		<p>
-			My name is Jason Brown, I&#8217;m an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
-		</p>
-	</div>
-</div>
-	</footer>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
+	<entry>
 		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/">Ractive.JS - Next Generation DOM Manipulation</a></h1>
-		<time>17 February 2014</time>
-	</header>
-		<div class="content">
-			<p>Next generation DOM manipulation is right mainly because you don&rsquo;t have to do any. Ractive uses declarative binding(like Knockout and Angular) but also uses reactive programming methods (like React). The different is that it does do DOM diffing like React or dirty checking like Angular but utilizes dependancy tracking. Meaning it tracks the changes you make and will update the DOM accordingly. Now there are inherint issues in that ou can take performance hits if you have a large data set and call &ldquo;set&rdquo; within a loop. This will hit the DOM very hard since the nature of dependancy tracking says that &ldquo;when X changes update Y&rdquo;.</p>
-
-		</div>
-	<div>
+			<title type="html"><![CDATA[Ractive.JS - Next Generation DOM Manipulation]]></title>
 		
-
-
+		<link href="http://browniefed.github.io/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/"/>
+		<updated>2014-02-17T18:34:00-08:00</updated>
+		<id>http://browniefed.github.io/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation</id>
+		<content type="html">
+			<![CDATA[
+				
+					<p></p>
+				
+			]]>
+			<![CDATA[<p>Next generation DOM manipulation is right mainly because you don&rsquo;t have to do any. Ractive uses declarative binding(like Knockout and Angular) but also uses reactive programming methods (like React). The different is that it does do DOM diffing like React or dirty checking like Angular but utilizes dependancy tracking. Meaning it tracks the changes you make and will update the DOM accordingly. Now there are inherint issues in that ou can take performance hits if you have a large data set and call &ldquo;set&rdquo; within a loop. This will hit the DOM very hard since the nature of dependancy tracking says that &ldquo;when X changes update Y&rdquo;.</p>
+]]>
+		</content>
+	</entry>
+	
+	<entry>
 		
-
-
-
-
-	
-	</div>
-	<footer style="margin-top: 10px;">
-		<div id="post-author">
-	<div class="post-author-image" style="width: 20%; display: inline-block;">
-		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
-	</div>
-	<div class="post-author-content" style="width: 70%; display: inline-block;">
-		<p>
-			My name is Jason Brown, I&#8217;m an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
-		</p>
-	</div>
-</div>
-	</footer>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
+			<title type="html"><![CDATA[Meteor and Realtime Transit Mapping - Part 1]]></title>
 		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/">Meteor and Realtime Transit Mapping - Part 1</a></h1>
-		<time>16 November 2013</time>
-	</header>
-		<div class="content">
-			<h1>Overview</h1>
+		<link href="http://browniefed.github.io/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/"/>
+		<updated>2013-11-16T09:00:00-08:00</updated>
+		<id>http://browniefed.github.io/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1</id>
+		<content type="html">
+			<![CDATA[
+				
+					<p></p>
+				
+			]]>
+			<![CDATA[<h1>Overview</h1>
 
 <p>The point of this series is to help people build out realtime transit maps for other cities.
 This will focus on Portland, OR and their transit system TriMet. They give us access to a wealth of information but all we really need is route numbers that make sense and latitude/longitude to make a map. I have built one for Kansas City, MO but they have their data hidden. Don&rsquo;t be afraid to dig around on your own transit website to find hidden APIs.</p>
@@ -1135,134 +892,31 @@ You should have a map that completely fills your window.</p>
 
 <p>Part 2 getting Trimet data.
 Part 3 adding markers and animating their movements</p>
-
-		</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/maps/'>maps</a>, <a class='category' href='/blog/categories/meteor/'>meteor</a>, <a class='category' href='/blog/categories/meteor-dot-js/'>meteor.js</a>, <a class='category' href='/blog/categories/relatime/'>relatime</a>, <a class='category' href='/blog/categories/transit/'>transit</a>, <a class='category' href='/blog/categories/trimet/'>trimet</a>, <a class='category' href='/blog/categories/websockets/'>websockets</a>
+]]>
+		</content>
+	</entry>
 	
-
-
-	
-	</div>
-	<footer style="margin-top: 10px;">
-		<div id="post-author">
-	<div class="post-author-image" style="width: 20%; display: inline-block;">
-		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
-	</div>
-	<div class="post-author-content" style="width: 70%; display: inline-block;">
-		<p>
-			My name is Jason Brown, I&#8217;m an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
-		</p>
-	</div>
-</div>
-	</footer>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
+	<entry>
 		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2013/11/12/hey-its-a-post/">hey it&#8217;s a post</a></h1>
-		<time>12 November 2013</time>
-	</header>
-		<div class="content">
-			<p>Hey it&rsquo;s a post on my github.io account</p>
+			<title type="html"><![CDATA[hey it's a post]]></title>
+		
+		<link href="http://browniefed.github.io/blog/2013/11/12/hey-its-a-post/"/>
+		<updated>2013-11-12T22:24:00-08:00</updated>
+		<id>http://browniefed.github.io/blog/2013/11/12/hey-its-a-post</id>
+		<content type="html">
+			<![CDATA[
+				
+					<p></p>
+				
+			]]>
+			<![CDATA[<p>Hey it&rsquo;s a post on my github.io account</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">heyoooo</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
-		</div>
-	<div>
-		
-
-
-		
-
-
-
-
+]]>
+		</content>
+	</entry>
 	
-	</div>
-	<footer style="margin-top: 10px;">
-		<div id="post-author">
-	<div class="post-author-image" style="width: 20%; display: inline-block;">
-		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
-	</div>
-	<div class="post-author-content" style="width: 70%; display: inline-block;">
-		<p>
-			My name is Jason Brown, I&#8217;m an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
-		</p>
-	</div>
-</div>
-	</footer>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-	
-<div class="pagination">
-	
-	
-	<span class="total">1 of 1</span>
-	
-	
-</div>
-<!-- END OF index.html -->
-
-		
-			<footer>
-				Copyright &copy; 2014
-
-	Jason Brown
-
-
-			</footer>
-			
-		</div> <!-- // .wrap -->
-	</body>
-	<script>
-		$(document).ready(function() {
-			// Make images center
-			$('p:has(img)').css('text-align', 'center');
-			
-			// Add the image's title attribute as a caption
-			$('p:has(img)').append(function () {
-				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
-			});
-			
-			// Prettify code
-			$('code').addClass('prettyprint');
-			$('pre code').addClass('linenums');
-			
-			// Copy to clipboard with button
-			$('pre:has(code)').prepend(function(){
-				return '<div class="clip-btn">copy to clipboard</div>';
-			});
-			$('.clip-btn').zclip({
-				path:'/js/ZeroClipboard.swf',
-				copy: $(this).next('code').text(),
-				afterCopy: function(){
-					$(this).replaceWith('<div class="clip-btn">copied!');
-					}
-			});
-		});
-	</script>
-</html>
-<!-- END OF _layouts/default.html -->
+</feed>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: trimet | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.github.io/blog/categories/trimet/atom.xml" rel="self"/>
+  <link href="http://browniefed.github.io/"/>
+  <updated>2014-12-24T11:40:58-08:00</updated>
+  <id>http://browniefed.github.io/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Meteor and Realtime Transit Mapping - Part 1]]></title>
+    <link href="http://browniefed.github.io/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/"/>
+    <updated>2013-11-16T09:00:00-08:00</updated>
+    <id>http://browniefed.github.io/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1</id>
+    <content type="html"><![CDATA[<h1>Overview</h1>
+
+<p>The point of this series is to help people build out realtime transit maps for other cities.
+This will focus on Portland, OR and their transit system TriMet. They give us access to a wealth of information but all we really need is route numbers that make sense and latitude/longitude to make a map. I have built one for Kansas City, MO but they have their data hidden. Don&rsquo;t be afraid to dig around on your own transit website to find hidden APIs.</p>
+
+<p>Finally we chose MeteorJS because the whole system is built on realtime applications. Code can be run on both the client/server which is AWESOME! It pretends to be lo-latency, meaning it&rsquo;ll save the data in client side minimongo databases and not wait for the server to return &ldquo;yeah we saved&rdquo;. It also somehow magically invalidates the data correctly. It&rsquo;s just a framework that works and I can&rsquo;t wait for the 1.0 release.</p>
+
+<p>As always all code is open sourced. Check out the final project here
+<a href="https://github.com/browniefed/livemet">https://github.com/browniefed/livemet</a></p>
+
+<h1>Setup</h1>
+
+<h2>APIs</h2>
+
+<p>Go to <a href="http://developer.trimet.org/registration/">http://developer.trimet.org/registration/</a> and get an API key.
+The documentation we care about is here <a href="http://developer.trimet.org/ws_docs/">http://developer.trimet.org/ws_docs/</a></p>
+
+<h2>Meteor</h2>
+
+<p>Currently on Mac/Linux are officially supported and Windows has an unofficial installer. But you can&rsquo;t use Meteorite on Windows which you want meteorite!
+To install simple go here and follow the instrutions(2 steps!) <a href="http://docs.meteor.com/">http://docs.meteor.com/</a>
+Step 2 being creating a meteor project</p>
+
+<p><code>
+meteor create realtimetransit
+cd realtimetransit
+</code>
+Now that you have a meteor app created, change directory into so when you execute commands it actually does stuff to your meteor project.</p>
+
+<h2>Meteorite</h2>
+
+<p>Install meteorite. I&rsquo;m assuming you have node/npm installed. If not go install it so you can actually use modern tooling!
+Simply run (you may not need the sudo -H)</p>
+
+<p><code>
+sudo -H npm install -g meteorite
+</code>
+For more info and all meteor packages visit <a href="https://atmosphere.meteor.com/wtf/app">https://atmosphere.meteor.com/wtf/app</a></p>
+
+<h1>Step 1 &ndash; Create some Boilerplate</h1>
+
+<p>Meteor has a specific folder structure that it uses to load the server/client/public data.
+Delete the stuff they auto-generated for you, we do not care about it.
+Then go ahead and create this folder structure in your meteor app.</p>
+
+<p><code>
+client
+-css
+-helpers
+-js
+-sass(I setup a compass project but you do not have to)
+-views
+-main.html
+-main.js
+collections
+server
+</code>
+Read more about this file structure here <a href="http://docs.meteor.com/#structuringyourapp">http://docs.meteor.com/#structuringyourapp</a></p>
+
+<h1>Step 2 &ndash; Get some templates created</h1>
+
+<p>If you have meteorite installed add the leaflet package. We are going to use leafletjs + Open Stree Maps because they&rsquo;re both AWESOME.
+You could also create your own map tiles using TileMill, or use MapBox for hosted tiles but that is a topic for another time.</p>
+
+<p>Run</p>
+
+<p><code>
+mrt install leaflet
+</code></p>
+
+<p>Meteor is special in that it takes ALL html files in specified directories, bundles them up and turns them into Handlebar templates.
+<code>main.html</code> is going to be our base template, this will load another template called body, which will load other templates.
+This is what we call structure.</p>
+
+<p>```html
+
+<head></p>
+
+<pre><code>&lt;title&gt;PDXLiveBus - Trimet Realtime&lt;/title&gt;
+&lt;meta name="viewport" content="width=device-width,initial-scale=1"&gt;
+</code></pre>
+
+<p></head>
+<body></p>
+
+<pre><code>{{&gt; body}}
+</code></pre>
+
+<p></body>
+
+```</p>
+
+<p>Now lets create the body template in the <code>client/views</code> foler
+Each template is to be wrapped in a template tag and given a name so that meteor can create a reference to it.</p>
+
+<p><code>html
+
+&lt;template name="body"&gt;
+{{&gt; map}}
+&lt;/template&gt;
+
+</code>
+Hey look, now it wants a map template, lets create one.</p>
+
+<p>```html
+
+<template name="map"></p>
+
+<pre><code>{{# constant}}
+&lt;div class="map_container" id="map_container"&gt;
+&lt;/div&gt;
+{{/constant}}
+</code></pre>
+
+<p></template>
+
+<code>``
+The</code> {{#constant}}` tag tells meteor that it should ignore it&rsquo;s auto updating features when data changes and leave this template portion alone.
+If we didn&rsquo;t then our map would be constantly be refreshing if we happened to have a parent template with data that changed. We do not in this case but it&rsquo;s best to add it.
+There are improvements being made to meteor so that you won&rsquo;t have to do this in the future.</p>
+
+<h1>Step 3 &ndash; Get a map rendering</h1>
+
+<p>Now we&rsquo;re going to get into some meteor javascript.</p>
+
+<p><code>javascript
+Template.map.rendered = function() {}
+</code>
+The Template is a global object where all templates get loaded. The map is the name of our map template.
+Because Meteor renders a series of templates we are unsure when the DOM is going to be ready.
+They give us the rendered function which means the DOM for this template is now ready to be worked with.
+What that means for us is that we now have a container to add a map to.</p>
+
+<p>Lets add a basic map to it with Open Street Map tiles</p>
+
+<p>``` javascript
+Template.map.rendered = function() {</p>
+
+<pre><code>    var w = window.innerWidth;
+    var h = window.innerHeight;
+    $('#map_container').css({width: w+'px', height: h+'px'});
+    var map = L.map('map_container', {maxZoom: 19, zoom: 13, zoomControl: false, center: ['45.525292','-122.668197']});
+    map.attributionControl.setPrefix('');
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+    L.Icon.Default.imagePath = 'packages/leaflet/images';
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Because we are unsure of how big the the users window is going to be (destkop/tablet/phone/etc) we will just set the map container to that width.
+Ours just happens to be the full page.</p>
+
+<p>Because the way meteor works L was defined globally on the client side when we included that package with meteorite.
+So we&rsquo;ll create a map by passing in our <code>map_container</code> ID that we know is ready to use, and center it in Portland.
+The other parameters are fairly self explanatory and well documented on Leaflets website.</p>
+
+<p>We remove the attribution from the map but we&rsquo;ll add it back in elsewhere. This just removes the tribute to Leaflet for it&rsquo;s awesome library.</p>
+
+<p>Finally we set a tilelayer. This is a standard tile map link.</p>
+
+<p><code>
+{s} = Subdomains to get tiles from(this parameter is just to get around browser limitations on simultaneous HTTP connections to a single host)
+{z} = Zoom level
+{x} = X Coordinate
+{y} = Y Coordinate
+</code></p>
+
+<p>A deeper exploration into how tile servers work can be found here <a href="http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers">http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers</a></p>
+
+<p>Now we can run meteor and all should be well.
+You should have a map that completely fills your window.</p>
+
+<p>Part 2 getting Trimet data.
+Part 3 adding markers and animating their movements</p>
+]]></content>
+  </entry>
+  
+</feed>
