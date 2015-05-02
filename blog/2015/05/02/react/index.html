@@ -206,7 +206,23 @@ So how would we go about using this higher order component?</p>
 <span class='line-number'>19</span>
 <span class='line-number'>20</span>
 <span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>var ExtEditableTitle = function(Component) {
+</span><span class='line'>    propTypes: {
+</span><span class='line'>        appendTitle: React.PropTypes.func
+</span><span class='line'>    },
+</span><span class='line'>    getDefaultProps: function() {
+</span><span class='line'>        return {
+</span><span class='line'>            appendTitle: function() {} //Noop function
+</span><span class='line'>        }
+</span><span class='line'>    },   
 </span><span class='line'>    componentDidMount: function() {
 </span><span class='line'>        this.handleTitleUpdate();
 </span><span class='line'>    },

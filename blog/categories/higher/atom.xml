@@ -4,7 +4,7 @@
   <title><![CDATA[Category: higher | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/higher/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-05-02T12:49:21-07:00</updated>
+  <updated>2015-05-02T12:54:03-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -117,7 +117,15 @@ var ActiveUserPost = require(&lsquo;ActiveUserPost&rsquo;);</p>
 <p>```
 var ExtEditableTitle = function(Component) {</p>
 
-<pre><code>componentDidMount: function() {
+<pre><code>propTypes: {
+    appendTitle: React.PropTypes.func
+},
+getDefaultProps: function() {
+    return {
+        appendTitle: function() {} //Noop function
+    }
+},   
+componentDidMount: function() {
     this.handleTitleUpdate();
 },
 componentDidUpdate: function() {
