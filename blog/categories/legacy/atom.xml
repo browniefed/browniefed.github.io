@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: legacy | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/legacy/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2015-05-02T12:49:21-07:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React, Higher Order Components, and Legacy Applications]]></title>
+    <link href="http://browniefed.com/blog/2015/05/02/react/"/>
+    <updated>2015-05-02T12:08:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/05/02/react</id>
+    <content type="html"><![CDATA[<p>At work we embarked on an ambitious task of converting our legacy application (ExtJS 3.4) over to React.
+Now obviously rewriting an application that has been built over the course of 7 years could not just be simply re-written. We had to be very strategic about it.</p>
+
+<p>React is one of the perfect rendering libraries for this since re-rendering the same component at the same spot will just cause the React to go through a diff/normal rendering process.</p>
+
+<h3>Higher Order Components</h3>
+
+<p>If you haven&rsquo;t read the post <a href="https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750">Mixins Are Dead. Long Live Composition</a> then I highly recommend you do so. Higher order components are not a bullet proof replacement for mixins but they are an amazing solution for integrating at the seams of where your legacy application meets your new React world.</p>
+
+<p>If you don&rsquo;t understand what a Higher order component is after reading the article above let me quickly explain.
+It&rsquo;s a function that takes a React component of your choosing and then returns a wrapped a different React component that renders the React component that you provided it.</p>
+
+<p>A Quick example
+```</p>
+
+<p>var NameSupplier = function(Component) {</p>
+
+<pre><code>var NameSupplierComponent = React.createClass({
+
+    getUserName: function() {
+        //Somewhere the username is stored but we'll just return a string
+        return "Jason"
+    },
+    render: function() {
+
+        return (
+            &lt;Component username={this.getUserName()} /&gt;
+        )
+    }
+});
+
+return NameSupplierComponent;
+</code></pre>
+
+<p>}</p>
+
+<p>```</p>
+
+<p>This component is slightly contrived and doesn&rsquo;t show this will help us integrate with a legacy app. All this component is doing is passing down a prop to a component you gave it.
+So how would we go about using this higher order component?</p>
+
+<p>```
+var UserPost = React.createClass({</p>
+
+<pre><code>render: function() {
+    return (
+        &lt;div&gt;
+            {this.props.username} created this.
+        &lt;/div&gt;
+    )
+}
+</code></pre>
+
+<p>});</p>
+
+<p>var ActiveUserPost = NameSupplier(UserPost);</p>
+
+<p>module.exports = ActiveUserPost;</p>
+
+<p>```
+Then later</p>
+
+<p>```
+var ActiveUserPost = require(&lsquo;ActiveUserPost&rsquo;);</p>
+
+<p>React.render(<ActiveUserPost />, el);
+```</p>
+
+<h3>Using them with legacy applications</h3>
+
+<p>This strategy really shines when all you need to do is hook into the life cycle events to cause updates in your legacy application.</p>
+
+<p>In our application we are still utilizing ExtJS tabs. When you visit an item say we render an <code>ItemView</code> and say the user starts editing the item. We want to indicate in the title of the Ext tab that it is a dirty form and that is done by marking it with an *. The issue is that as we deprecate Ext and eventually tabs we don&rsquo;t want to mix our Ext updating logic with our new <code>ItemView</code> logic.</p>
+
+<p>This requires that state be at an upper level, which the article above by Dan shows how to use higher order components to fetch data, and essentially bring state up one level.</p>
+
+<p>The structure of our application will look like so</p>
+
+<p>```
+<ExtTab> // Passes down a function called appendTitle</p>
+
+<pre><code>&lt;ItemViewState&gt;
+    &lt;ExtEditableItemView /&gt; &lt;--- This is an ItemView wrapped by an ExtEditable higher order component
+&lt;/ItemViewState&gt;
+</code></pre>
+
+<p></ExtTab></p>
+
+<p>```</p>
+
+<p>With state moved up a level into the <code>ItemViewState</code> component any time data changes our <code>ExtEditableItemView</code> will go re-render and go through it&rsquo;s life cycle methods.</p>
+
+<p>The requirement here is that the <code>ExtTab</code> in our old world passes down a function as a prop which our higher order component will call.</p>
+
+<p>In the end our code looks like this</p>
+
+<p>```
+var ExtEditableTitle = function(Component) {</p>
+
+<pre><code>componentDidMount: function() {
+    this.handleTitleUpdate();
+},
+componentDidUpdate: function() {
+    this.handleTitleUpdate();
+},
+handleTitleUpdate: function() {
+    var appendToTitle = (this.props.editing &amp;&amp; '*' || ''); // If we're editing then append a * to the title
+    this.props.appendTitle(appendToTitle);
+},
+render: function() {
+    return (
+        &lt;Component
+            {...this.props}
+            {//Additionally we should omit the appendTitle function from being passed down to our ItemView}
+        /&gt;
+    )
+}
+</code></pre>
+
+<p>}</p>
+
+<p>```</p>
+
+<p><code>
+var ExtEditableItemView = ExtEditableTitle(ItemView);
+module.exports = ExtEditableItemView;
+</code></p>
+
+<p>So now we have moved our state up a level to <code>ItemViewState</code>, we used a higher order component to make a seam that hooks into the life cycle events of our <code>ItemView</code> component which tells our old world what to do with it&rsquo;s title.</p>
+
+<p>When it comes time to remove Ext tabs, or possibly replace it with adding a * to the browser title we can write a new higher order component that hooks into the same life cycle methods and our <code>ItemView</code> is none the wiser.</p>
+
+<h3>Conclusion</h3>
+
+<p>Higher order components may not solve all of your problems but so far they have helped me in a few different scenarios that would have caused me to mix concerns with our React/ExtJS world. They provide a nice upgrade path for future modifications, and maintain our ability to compose components with ease.</p>
+]]></content>
+  </entry>
+  
+</feed>
