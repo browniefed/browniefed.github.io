@@ -56,10 +56,10 @@
 		<h1><a href="/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/">Ractive.JS - Next Generation DOM Manipulation</a></h1>
 		<time>17 February 2014</time>
 	</header>
-		<div class="content">
-			<p>Next generation DOM manipulation is right mainly because you don&rsquo;t have to do any. Ractive uses declarative binding(like Knockout and Angular) but also uses reactive programming methods (like React). The different is that it does do DOM diffing like React or dirty checking like Angular but utilizes dependancy tracking. Meaning it tracks the changes you make and will update the DOM accordingly. Now there are inherint issues in that ou can take performance hits if you have a large data set and call &ldquo;set&rdquo; within a loop. This will hit the DOM very hard since the nature of dependancy tracking says that &ldquo;when X changes update Y&rdquo;.</p>
+	<div class="content">
+		<p>Next generation DOM manipulation is right mainly because you don&rsquo;t have to do any. Ractive uses declarative binding(like Knockout and Angular) but also uses reactive programming methods (like React). The different is that it does do DOM diffing like React or dirty checking like Angular but utilizes dependancy tracking. Meaning it tracks the changes you make and will update the DOM accordingly. Now there are inherint issues in that ou can take performance hits if you have a large data set and call &ldquo;set&rdquo; within a loop. This will hit the DOM very hard since the nature of dependancy tracking says that &ldquo;when X changes update Y&rdquo;.</p>
 
-		</div>
+	</div>
 	<div>
 		
 
@@ -78,7 +78,7 @@
 	</div>
 	<div class="post-author-content" style="width: 70%; display: inline-block;">
 		<p>
-			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
+			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a> )
 		</p>
 	</div>
 </div>
@@ -87,6 +87,12 @@
 </article>
 <!-- END OF _includes/article.html -->
 
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 <!-- END OF _/layouts/post.html -->
 
@@ -100,32 +106,23 @@
 			</footer>
 			
 		</div> <!-- // .wrap -->
-          <script src="/javascripts/slash.js"></script>
-<script src="/javascripts/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-(function($){
-	$('.fancybox').fancybox();
-})(jQuery);
-</script> <!-- Delete or comment this line to disable Fancybox -->
-
+          
 
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
-    var disqus_shortname = 'browniefedblog'; // Required - Replace example with your forum shortname
-    var disqus_identifier = 'http://browniefed.com/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/';
-    var disqus_title = 'Ractive.JS - Next Generation DOM Manipulation'
-    var disqus_url = 'http://browniefed.com/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/';
+        var disqus_url = 'http://browniefed.com/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
 </script>
-
-
-
 
 
 	</body>
@@ -159,20 +156,20 @@
     
 
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
-    var disqus_shortname = 'browniefedblog'; // Required - Replace example with your forum shortname
-    var disqus_identifier = 'http://browniefed.com/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/';
-    var disqus_title = 'Ractive.JS - Next Generation DOM Manipulation'
-    var disqus_url = 'http://browniefed.com/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/';
+        var disqus_url = 'http://browniefed.com/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
 </script>
-
 
 
 </html>

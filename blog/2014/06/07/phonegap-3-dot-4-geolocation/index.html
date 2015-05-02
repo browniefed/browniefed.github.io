@@ -56,8 +56,8 @@
 		<h1><a href="/blog/2014/06/07/phonegap-3-dot-4-geolocation/">Phonegap 3.4 GeoLocation</a></h1>
 		<time>07 June 2014</time>
 	</header>
-		<div class="content">
-			<p>It doesn&rsquo;t appear to be just me but PhoneGap can be incredibly difficult to use. Simply because any information pertaining to the most current version of phonegap is so fragmented. A google search will reveal virtually nothing about the error messages you&rsquo;re receiving and how to remedy them for current versions.</p>
+	<div class="content">
+		<p>It doesn&rsquo;t appear to be just me but PhoneGap can be incredibly difficult to use. Simply because any information pertaining to the most current version of phonegap is so fragmented. A google search will reveal virtually nothing about the error messages you&rsquo;re receiving and how to remedy them for current versions.</p>
 
 <p>For example, I was attempting to use the GeoLocation API. Could care less about the extreme accuracy. After attempting to use it I was getting an Error Code 2 , failed to start geolocation service. Well maybe that was my fault for enabling <code>enableHighAccuracy</code> but wait you have to enableHighAccuracy for older versions of android otherwise it won&rsquo;t work. Or was that only for older versions of the geolocation plugin which then got deprecated in some versions of android in favor of the native browser geolocation API because it provides better and faster GPS locations. In the end the fault was all mine, I had simply forgotten to include the plugin in my <code>config.xml</code></p>
 
@@ -71,7 +71,7 @@
 
 <p>To end I should say I really love PhoneGap and all of the time and effort people are putting into developing it. The documentation and information about current versions is fragmented, and rather than ranting I should be helping out and contributing to documentation and solving the problems. That should always be the goal if you find a problem in the open source world. Don&rsquo;t rant, help out, and that is what I will do.</p>
 
-		</div>
+	</div>
 	<div>
 		
 
@@ -97,7 +97,7 @@
 	</div>
 	<div class="post-author-content" style="width: 70%; display: inline-block;">
 		<p>
-			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
+			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a> )
 		</p>
 	</div>
 </div>
@@ -106,6 +106,12 @@
 </article>
 <!-- END OF _includes/article.html -->
 
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 <!-- END OF _/layouts/post.html -->
 
@@ -119,32 +125,23 @@
 			</footer>
 			
 		</div> <!-- // .wrap -->
-          <script src="/javascripts/slash.js"></script>
-<script src="/javascripts/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-(function($){
-	$('.fancybox').fancybox();
-})(jQuery);
-</script> <!-- Delete or comment this line to disable Fancybox -->
-
+          
 
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
-    var disqus_shortname = 'browniefedblog'; // Required - Replace example with your forum shortname
-    var disqus_identifier = 'http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation/';
-    var disqus_title = 'Phonegap 3.4 GeoLocation'
-    var disqus_url = 'http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation/';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation/';
+        var disqus_url = 'http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
 </script>
-
-
-
 
 
 	</body>
@@ -178,20 +175,20 @@
     
 
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
-    var disqus_shortname = 'browniefedblog'; // Required - Replace example with your forum shortname
-    var disqus_identifier = 'http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation/';
-    var disqus_title = 'Phonegap 3.4 GeoLocation'
-    var disqus_url = 'http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation/';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation/';
+        var disqus_url = 'http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
 </script>
-
 
 
 </html>

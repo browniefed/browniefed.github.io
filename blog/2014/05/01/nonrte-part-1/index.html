@@ -56,8 +56,8 @@
 		<h1><a href="/blog/2014/05/01/nonrte-part-1/">NonRTE - Part 1</a></h1>
 		<time>01 May 2014</time>
 	</header>
-		<div class="content">
-			<p>Once again stealing from antimatter I think writing about what you&rsquo;re currently building or have built is a good way to gain some clarity and also provide some value in explaining the topic. I&rsquo;ll be talking about NonRTE a non-contenteditable rich text editor for developers. One similar and the only one I know of is google docs. There are others that aren&rsquo;t rich text editors and are IDEs like codemirror and a few others that do not use contenteditbale. I personally don&rsquo;t know of any RTEs that are open source that developers can use and build with but I could be wrong so do ping me if that isn&rsquo;t the case.</p>
+	<div class="content">
+		<p>Once again stealing from antimatter I think writing about what you&rsquo;re currently building or have built is a good way to gain some clarity and also provide some value in explaining the topic. I&rsquo;ll be talking about NonRTE a non-contenteditable rich text editor for developers. One similar and the only one I know of is google docs. There are others that aren&rsquo;t rich text editors and are IDEs like codemirror and a few others that do not use contenteditbale. I personally don&rsquo;t know of any RTEs that are open source that developers can use and build with but I could be wrong so do ping me if that isn&rsquo;t the case.</p>
 
 <p>Something that has always boggled my mind was how heavily people have relied on contenteditable. Managing the different ways that contenteditbale is implemented on every browser and versions of those browsers is a nightmare. There is a portion of code in most RTE libraries that change how everything works just for one particular browser. This is insane to me due to the world we live in now with NPM, github, and the open source world at our finger tips. We have amazing templating libraries, HTML parsers, two-way data bindings, word to HTML libraries, excel expression parsers and executors, and everything compiles to JavaScript despite this insane amount of open source code we still use contenteditable.</p>
 
@@ -67,7 +67,7 @@
 
 <p>At this point I have very basic typing working, the cursor is working and positioned (mostly) correctly, clicking somewhere will move the cursor, arrow keys will move from line to line and character to character correctly and enter to create new lines and split content is also working. Overall it&rsquo;s a little bit of work but nothing quite substantial yet. The repo lives here <a href="https://github.com/browniefed/Nonrte">https://github.com/browniefed/Nonrte</a> so feel free to contribute. I haven&rsquo;t hit many challenges yet but I will and when I do I&rsquo;ll be sure and document them and document the solutions.</p>
 
-		</div>
+	</div>
 	<div>
 		
 
@@ -93,7 +93,7 @@
 	</div>
 	<div class="post-author-content" style="width: 70%; display: inline-block;">
 		<p>
-			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
+			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a> )
 		</p>
 	</div>
 </div>
@@ -102,6 +102,12 @@
 </article>
 <!-- END OF _includes/article.html -->
 
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 <!-- END OF _/layouts/post.html -->
 
@@ -115,32 +121,23 @@
 			</footer>
 			
 		</div> <!-- // .wrap -->
-          <script src="/javascripts/slash.js"></script>
-<script src="/javascripts/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-(function($){
-	$('.fancybox').fancybox();
-})(jQuery);
-</script> <!-- Delete or comment this line to disable Fancybox -->
-
+          
 
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
-    var disqus_shortname = 'browniefedblog'; // Required - Replace example with your forum shortname
-    var disqus_identifier = 'http://browniefed.com/blog/2014/05/01/nonrte-part-1/';
-    var disqus_title = 'NonRTE - Part 1'
-    var disqus_url = 'http://browniefed.com/blog/2014/05/01/nonrte-part-1/';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2014/05/01/nonrte-part-1/';
+        var disqus_url = 'http://browniefed.com/blog/2014/05/01/nonrte-part-1/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
 </script>
-
-
-
 
 
 	</body>
@@ -174,20 +171,20 @@
     
 
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
-    var disqus_shortname = 'browniefedblog'; // Required - Replace example with your forum shortname
-    var disqus_identifier = 'http://browniefed.com/blog/2014/05/01/nonrte-part-1/';
-    var disqus_title = 'NonRTE - Part 1'
-    var disqus_url = 'http://browniefed.com/blog/2014/05/01/nonrte-part-1/';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2014/05/01/nonrte-part-1/';
+        var disqus_url = 'http://browniefed.com/blog/2014/05/01/nonrte-part-1/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
 </script>
-
 
 
 </html>

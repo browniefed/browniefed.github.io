@@ -56,8 +56,8 @@
 		<h1><a href="/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/">Ractive.JS Components for Speed and Flexibility</a></h1>
 		<time>27 April 2014</time>
 	</header>
-		<div class="content">
-			<p>Components in Ractive are crucial if you want to build a flexible application. Hopefully this changes in the future with partials living on the data object and various init options accepting functions rather than static objects. The main purpose of Components is to have reusable template pieces that you can drop in and work the same all over your application. Some examples might be a grid component that accepts rows and columns as it&rsquo;s data, maybe it&rsquo;s as simple as a checkbox that has some styling a particular way. Components will help you build consistency through out your application however you should know when to use a partial and when to use a component.</p>
+	<div class="content">
+		<p>Components in Ractive are crucial if you want to build a flexible application. Hopefully this changes in the future with partials living on the data object and various init options accepting functions rather than static objects. The main purpose of Components is to have reusable template pieces that you can drop in and work the same all over your application. Some examples might be a grid component that accepts rows and columns as it&rsquo;s data, maybe it&rsquo;s as simple as a checkbox that has some styling a particular way. Components will help you build consistency through out your application however you should know when to use a partial and when to use a component.</p>
 
 <p>If you&rsquo;re coming from the Angular world components are much like directives. However since there is no controller concept, or model concept in Ractive there are less headaches in getting components to work with scope and all that jazz.</p>
 
@@ -239,7 +239,7 @@ Further more if you update the title, it&rsquo;ll propagate down to the componen
 
 <p>All it takes is some slightly organized data and you&rsquo;d never have to construct a data table again. More advance component topics are coming in the future this was merely an introduction.</p>
 
-		</div>
+	</div>
 	<div>
 		
 
@@ -265,7 +265,7 @@ Further more if you update the title, it&rsquo;ll propagate down to the componen
 	</div>
 	<div class="post-author-content" style="width: 70%; display: inline-block;">
 		<p>
-			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
+			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a> )
 		</p>
 	</div>
 </div>
@@ -274,6 +274,12 @@ Further more if you update the title, it&rsquo;ll propagate down to the componen
 </article>
 <!-- END OF _includes/article.html -->
 
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 <!-- END OF _/layouts/post.html -->
 
@@ -287,32 +293,23 @@ Further more if you update the title, it&rsquo;ll propagate down to the componen
 			</footer>
 			
 		</div> <!-- // .wrap -->
-          <script src="/javascripts/slash.js"></script>
-<script src="/javascripts/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-(function($){
-	$('.fancybox').fancybox();
-})(jQuery);
-</script> <!-- Delete or comment this line to disable Fancybox -->
-
+          
 
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
-    var disqus_shortname = 'browniefedblog'; // Required - Replace example with your forum shortname
-    var disqus_identifier = 'http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/';
-    var disqus_title = 'Ractive.JS Components for Speed and Flexibility'
-    var disqus_url = 'http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/';
+        var disqus_url = 'http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
 </script>
-
-
-
 
 
 	</body>
@@ -346,20 +343,20 @@ Further more if you update the title, it&rsquo;ll propagate down to the componen
     
 
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
-    var disqus_shortname = 'browniefedblog'; // Required - Replace example with your forum shortname
-    var disqus_identifier = 'http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/';
-    var disqus_title = 'Ractive.JS Components for Speed and Flexibility'
-    var disqus_url = 'http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/';
+        var disqus_url = 'http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
 </script>
-
 
 
 </html>

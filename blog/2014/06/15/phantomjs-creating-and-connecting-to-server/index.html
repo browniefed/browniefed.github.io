@@ -56,8 +56,8 @@
 		<h1><a href="/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/">PhantomJS Creating &amp; Connecting to Server</a></h1>
 		<time>15 June 2014</time>
 	</header>
-		<div class="content">
-			<p>At my work we are a Java shop. So spinning up a server is quite a process. Additionally our static front end files are spread out across the system and we use RequireJS (ugh) to wrangle everything. Then in order to test we were running a selenium test to hit the test_runner page and wait for mocha to run and the tests. This is so unbelievably slow and quite hectic when it comes to managing relative paths of our config.</p>
+	<div class="content">
+		<p>At my work we are a Java shop. So spinning up a server is quite a process. Additionally our static front end files are spread out across the system and we use RequireJS (ugh) to wrangle everything. Then in order to test we were running a selenium test to hit the test_runner page and wait for mocha to run and the tests. This is so unbelievably slow and quite hectic when it comes to managing relative paths of our config.</p>
 
 <p>So to make things simpler I decided it&rsquo;d be in my best interest to use PhatonmJS. I decided to spin up a server using <code>var server = require('webserver').create();</code> and manage the requests and just route and serve up all the correct files. I thought this would work however I ran into a snag. Here is some sample code below</p>
 
@@ -245,7 +245,7 @@
 
 <p>This is very basic and assumes your running in the root of your files you need to server. In my case I wasn&rsquo;t and had to do some additional parsing and mapping of the URL to get the correct filepath but it should be a decent start for you.</p>
 
-		</div>
+	</div>
 	<div>
 		
 
@@ -271,7 +271,7 @@
 	</div>
 	<div class="post-author-content" style="width: 70%; display: inline-block;">
 		<p>
-			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
+			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a> )
 		</p>
 	</div>
 </div>
@@ -280,6 +280,12 @@
 </article>
 <!-- END OF _includes/article.html -->
 
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 <!-- END OF _/layouts/post.html -->
 
@@ -293,32 +299,23 @@
 			</footer>
 			
 		</div> <!-- // .wrap -->
-          <script src="/javascripts/slash.js"></script>
-<script src="/javascripts/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-(function($){
-	$('.fancybox').fancybox();
-})(jQuery);
-</script> <!-- Delete or comment this line to disable Fancybox -->
-
+          
 
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
-    var disqus_shortname = 'browniefedblog'; // Required - Replace example with your forum shortname
-    var disqus_identifier = 'http://browniefed.com/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/';
-    var disqus_title = 'PhantomJS Creating &amp; Connecting to Server'
-    var disqus_url = 'http://browniefed.com/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/';
+        var disqus_url = 'http://browniefed.com/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
 </script>
-
-
-
 
 
 	</body>
@@ -352,20 +349,20 @@
     
 
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
-    var disqus_shortname = 'browniefedblog'; // Required - Replace example with your forum shortname
-    var disqus_identifier = 'http://browniefed.com/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/';
-    var disqus_title = 'PhantomJS Creating &amp; Connecting to Server'
-    var disqus_url = 'http://browniefed.com/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/';
+        var disqus_url = 'http://browniefed.com/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
 </script>
-
 
 
 </html>

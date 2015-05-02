@@ -56,8 +56,8 @@
 		<h1><a href="/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/">Socket.io on Android + Phonegap</a></h1>
 		<time>01 June 2014</time>
 	</header>
-		<div class="content">
-			<p>WebSockets are wonderful, they are one of the cheapest ways to get realtime communications into your web app. They&rsquo;re also a great way to get realtime communications into your mobile application. AJAX is great but wasn&rsquo;t applicable to my needs. Developing PDXLiveBus app required the server to handle all requests to TriMets servers and use AJAX to request the state of particular buses/routes was less realtime than I wanted. I could go more in depth about my usage and experience but the main point of this post is to prevent some table flipping.</p>
+	<div class="content">
+		<p>WebSockets are wonderful, they are one of the cheapest ways to get realtime communications into your web app. They&rsquo;re also a great way to get realtime communications into your mobile application. AJAX is great but wasn&rsquo;t applicable to my needs. Developing PDXLiveBus app required the server to handle all requests to TriMets servers and use AJAX to request the state of particular buses/routes was less realtime than I wanted. I could go more in depth about my usage and experience but the main point of this post is to prevent some table flipping.</p>
 
 <p>I had it all working in browser however it was not working when I did my phonegap serve. It just would not connect, nor even error out ( I don&rsquo;t think I waited long enough). I had been using <a href="https://github.com/mkuklis/phonegap-websocket">https://github.com/mkuklis/phonegap-websocket</a>, which Android WebView (what phonegap utilizes) doesn&rsquo;t support WebSockets until Android KitKat (4.4). I think this is a tremendous oversight, but I digress. I attempted various things to get <code>phonegap-websocket</code> to work but I just couldn&rsquo;t.</p>
 
@@ -71,7 +71,7 @@
 
 <p>So if you can&rsquo;t get Socket.IO to work on your Android Phonegap app, add <code>phonegap-websocket</code> and make sure you have allowed CORS on your server.</p>
 
-		</div>
+	</div>
 	<div>
 		
 
@@ -97,7 +97,7 @@
 	</div>
 	<div class="post-author-content" style="width: 70%; display: inline-block;">
 		<p>
-			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( browniefed@gmail.com )
+			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a> )
 		</p>
 	</div>
 </div>
@@ -106,6 +106,12 @@
 </article>
 <!-- END OF _includes/article.html -->
 
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 <!-- END OF _/layouts/post.html -->
 
@@ -119,32 +125,23 @@
 			</footer>
 			
 		</div> <!-- // .wrap -->
-          <script src="/javascripts/slash.js"></script>
-<script src="/javascripts/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-(function($){
-	$('.fancybox').fancybox();
-})(jQuery);
-</script> <!-- Delete or comment this line to disable Fancybox -->
-
+          
 
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
-    var disqus_shortname = 'browniefedblog'; // Required - Replace example with your forum shortname
-    var disqus_identifier = 'http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/';
-    var disqus_title = 'Socket.io on Android + Phonegap'
-    var disqus_url = 'http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/';
+        var disqus_url = 'http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
 </script>
-
-
-
 
 
 	</body>
@@ -178,20 +175,20 @@
     
 
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: THIS CODE IS ONLY AN EXAMPLE * * */
-    var disqus_shortname = 'browniefedblog'; // Required - Replace example with your forum shortname
-    var disqus_identifier = 'http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/';
-    var disqus_title = 'Socket.io on Android + Phonegap'
-    var disqus_url = 'http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/';
+        var disqus_url = 'http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
 </script>
-
 
 
 </html>
