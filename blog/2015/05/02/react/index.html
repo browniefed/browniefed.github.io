@@ -62,6 +62,8 @@ Now obviously rewriting an application that has been built over the course of 7 
 
 <p>React is one of the perfect rendering libraries for this since re-rendering the same component at the same spot will just cause the React to go through a diff/normal rendering process.</p>
 
+<p>However if you don&rsquo;t maintain separation of concerns you may just get a lot of Ext into your ReactJS components, and you&rsquo;ll be in an even bigger mess. We don&rsquo;t want that, and that is where higher order components come into play.</p>
+
 <h3>Higher Order Components</h3>
 
 <p>If you haven&rsquo;t read the post <a href="https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750">Mixins Are Dead. Long Live Composition</a> then I highly recommend you do so. Higher order components are not a bullet proof replacement for mixins but they are an amazing solution for integrating at the seams of where your legacy application meets your new React world.</p>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: legacy | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/legacy/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-05-02T12:54:03-07:00</updated>
+  <updated>2015-05-02T12:56:39-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -22,6 +22,8 @@
 Now obviously rewriting an application that has been built over the course of 7 years could not just be simply re-written. We had to be very strategic about it.</p>
 
 <p>React is one of the perfect rendering libraries for this since re-rendering the same component at the same spot will just cause the React to go through a diff/normal rendering process.</p>
+
+<p>However if you don&rsquo;t maintain separation of concerns you may just get a lot of Ext into your ReactJS components, and you&rsquo;ll be in an even bigger mess. We don&rsquo;t want that, and that is where higher order components come into play.</p>
 
 <h3>Higher Order Components</h3>
 
