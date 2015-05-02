@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
 	<title><![CDATA[JavaScript Without Grammar]]></title>
-	<link href="http://browniefed.github.io/atom.xml" rel="self"/>
-	<link href="http://browniefed.github.io/"/>
-	<updated>2014-12-24T11:40:58-08:00</updated>
-	<id>http://browniefed.github.io/</id>
+	<link href="http://browniefed.com/atom.xml" rel="self"/>
+	<link href="http://browniefed.com/"/>
+	<updated>2015-05-02T07:47:40-07:00</updated>
+	<id>http://browniefed.com/</id>
 	<author>
 		<name><![CDATA[Jason Brown]]></name>
 		
@@ -17,9 +17,9 @@
 		
 			<title type="html"><![CDATA[Webpack and Compass]]></title>
 		
-		<link href="http://browniefed.github.io/blog/2014/12/24/webpack-and-compass/"/>
+		<link href="http://browniefed.com/blog/2014/12/24/webpack-and-compass/"/>
 		<updated>2014-12-24T10:46:00-08:00</updated>
-		<id>http://browniefed.github.io/blog/2014/12/24/webpack-and-compass</id>
+		<id>http://browniefed.com/blog/2014/12/24/webpack-and-compass</id>
 		<content type="html">
 			<![CDATA[
 				
@@ -121,9 +121,9 @@ If you are running your build script from a different location you&rsquo;ll have
 		
 			<title type="html"><![CDATA[PhantomJS Creating &amp; Connecting to Server]]></title>
 		
-		<link href="http://browniefed.github.io/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/"/>
+		<link href="http://browniefed.com/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/"/>
 		<updated>2014-06-15T16:37:00-07:00</updated>
-		<id>http://browniefed.github.io/blog/2014/06/15/phantomjs-creating-and-connecting-to-server</id>
+		<id>http://browniefed.com/blog/2014/06/15/phantomjs-creating-and-connecting-to-server</id>
 		<content type="html">
 			<![CDATA[
 				
@@ -325,9 +325,9 @@ If you are running your build script from a different location you&rsquo;ll have
 		
 			<title type="html"><![CDATA[Phonegap 3.4 GeoLocation]]></title>
 		
-		<link href="http://browniefed.github.io/blog/2014/06/07/phonegap-3-dot-4-geolocation/"/>
+		<link href="http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation/"/>
 		<updated>2014-06-07T08:28:00-07:00</updated>
-		<id>http://browniefed.github.io/blog/2014/06/07/phonegap-3-dot-4-geolocation</id>
+		<id>http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation</id>
 		<content type="html">
 			<![CDATA[
 				
@@ -355,9 +355,9 @@ If you are running your build script from a different location you&rsquo;ll have
 		
 			<title type="html"><![CDATA[Socket.io on Android + Phonegap]]></title>
 		
-		<link href="http://browniefed.github.io/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/"/>
+		<link href="http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/"/>
 		<updated>2014-06-01T08:12:00-07:00</updated>
-		<id>http://browniefed.github.io/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap</id>
+		<id>http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap</id>
 		<content type="html">
 			<![CDATA[
 				
@@ -385,9 +385,9 @@ If you are running your build script from a different location you&rsquo;ll have
 		
 			<title type="html"><![CDATA[NonRTE - Part 1]]></title>
 		
-		<link href="http://browniefed.github.io/blog/2014/05/01/nonrte-part-1/"/>
+		<link href="http://browniefed.com/blog/2014/05/01/nonrte-part-1/"/>
 		<updated>2014-05-01T06:26:00-07:00</updated>
-		<id>http://browniefed.github.io/blog/2014/05/01/nonrte-part-1</id>
+		<id>http://browniefed.com/blog/2014/05/01/nonrte-part-1</id>
 		<content type="html">
 			<![CDATA[
 				
@@ -411,9 +411,9 @@ If you are running your build script from a different location you&rsquo;ll have
 		
 			<title type="html"><![CDATA[Ractive.JS Components for Speed and Flexibility]]></title>
 		
-		<link href="http://browniefed.github.io/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/"/>
+		<link href="http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/"/>
 		<updated>2014-04-27T08:35:00-07:00</updated>
-		<id>http://browniefed.github.io/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility</id>
+		<id>http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility</id>
 		<content type="html">
 			<![CDATA[
 				
@@ -597,7 +597,7 @@ Further more if you update the title, it&rsquo;ll propagate down to the componen
 <p data-height="268" data-theme-id="0" data-slug-hash="dvqIl" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/dvqIl/'>dvqIl</a> by browniefed (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 
 
-<script async src="http://browniefed.github.io//codepen.io/assets/embed/ei.js"></script>
+<script async src="http://browniefed.com//codepen.io/assets/embed/ei.js"></script>
 
 
 <p>All it takes is some slightly organized data and you&rsquo;d never have to construct a data table again. More advance component topics are coming in the future this was merely an introduction.</p>
@@ -609,9 +609,9 @@ Further more if you update the title, it&rsquo;ll propagate down to the componen
 		
 			<title type="html"><![CDATA[Progress reports]]></title>
 		
-		<link href="http://browniefed.github.io/blog/2014/04/26/progress-report/"/>
+		<link href="http://browniefed.com/blog/2014/04/26/progress-report/"/>
 		<updated>2014-04-26T08:51:00-07:00</updated>
-		<id>http://browniefed.github.io/blog/2014/04/26/progress-report</id>
+		<id>http://browniefed.com/blog/2014/04/26/progress-report</id>
 		<content type="html">
 			<![CDATA[
 				
@@ -648,9 +648,9 @@ Further more if you update the title, it&rsquo;ll propagate down to the componen
 		
 			<title type="html"><![CDATA[Ractive.JS - Next Generation DOM Manipulation]]></title>
 		
-		<link href="http://browniefed.github.io/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/"/>
+		<link href="http://browniefed.com/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/"/>
 		<updated>2014-02-17T18:34:00-08:00</updated>
-		<id>http://browniefed.github.io/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation</id>
+		<id>http://browniefed.com/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation</id>
 		<content type="html">
 			<![CDATA[
 				
@@ -666,9 +666,9 @@ Further more if you update the title, it&rsquo;ll propagate down to the componen
 		
 			<title type="html"><![CDATA[Meteor and Realtime Transit Mapping - Part 1]]></title>
 		
-		<link href="http://browniefed.github.io/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/"/>
+		<link href="http://browniefed.com/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/"/>
 		<updated>2013-11-16T09:00:00-08:00</updated>
-		<id>http://browniefed.github.io/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1</id>
+		<id>http://browniefed.com/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1</id>
 		<content type="html">
 			<![CDATA[
 				
@@ -900,9 +900,9 @@ Part 3 adding markers and animating their movements</p>
 		
 			<title type="html"><![CDATA[hey it's a post]]></title>
 		
-		<link href="http://browniefed.github.io/blog/2013/11/12/hey-its-a-post/"/>
+		<link href="http://browniefed.com/blog/2013/11/12/hey-its-a-post/"/>
 		<updated>2013-11-12T22:24:00-08:00</updated>
-		<id>http://browniefed.github.io/blog/2013/11/12/hey-its-a-post</id>
+		<id>http://browniefed.com/blog/2013/11/12/hey-its-a-post</id>
 		<content type="html">
 			<![CDATA[
 				

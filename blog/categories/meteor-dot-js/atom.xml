@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: meteor.js | JavaScript Without Grammar]]></title>
-  <link href="http://browniefed.github.io/blog/categories/meteor-dot-js/atom.xml" rel="self"/>
-  <link href="http://browniefed.github.io/"/>
-  <updated>2014-12-24T11:40:58-08:00</updated>
-  <id>http://browniefed.github.io/</id>
+  <link href="http://browniefed.com/blog/categories/meteor-dot-js/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2015-05-02T07:47:40-07:00</updated>
+  <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Meteor and Realtime Transit Mapping - Part 1]]></title>
-    <link href="http://browniefed.github.io/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/"/>
+    <link href="http://browniefed.com/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/"/>
     <updated>2013-11-16T09:00:00-08:00</updated>
-    <id>http://browniefed.github.io/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1</id>
+    <id>http://browniefed.com/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1</id>
     <content type="html"><![CDATA[<h1>Overview</h1>
 
 <p>The point of this series is to help people build out realtime transit maps for other cities.

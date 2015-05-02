@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://browniefed.github.io/sitemap.xml 
+Sitemap: http://browniefed.com/sitemap.xml 

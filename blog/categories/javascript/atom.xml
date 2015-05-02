@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: javascript | JavaScript Without Grammar]]></title>
-  <link href="http://browniefed.github.io/blog/categories/javascript/atom.xml" rel="self"/>
-  <link href="http://browniefed.github.io/"/>
-  <updated>2014-12-24T11:40:58-08:00</updated>
-  <id>http://browniefed.github.io/</id>
+  <link href="http://browniefed.com/blog/categories/javascript/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2015-05-02T07:47:40-07:00</updated>
+  <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Socket.io on Android + Phonegap]]></title>
-    <link href="http://browniefed.github.io/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/"/>
+    <link href="http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/"/>
     <updated>2014-06-01T08:12:00-07:00</updated>
-    <id>http://browniefed.github.io/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap</id>
+    <id>http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap</id>
     <content type="html"><![CDATA[<p>WebSockets are wonderful, they are one of the cheapest ways to get realtime communications into your web app. They&rsquo;re also a great way to get realtime communications into your mobile application. AJAX is great but wasn&rsquo;t applicable to my needs. Developing PDXLiveBus app required the server to handle all requests to TriMets servers and use AJAX to request the state of particular buses/routes was less realtime than I wanted. I could go more in depth about my usage and experience but the main point of this post is to prevent some table flipping.</p>
 
 <p>I had it all working in browser however it was not working when I did my phonegap serve. It just would not connect, nor even error out ( I don&rsquo;t think I waited long enough). I had been using <a href="https://github.com/mkuklis/phonegap-websocket">https://github.com/mkuklis/phonegap-websocket</a>, which Android WebView (what phonegap utilizes) doesn&rsquo;t support WebSockets until Android KitKat (4.4). I think this is a tremendous oversight, but I digress. I attempted various things to get <code>phonegap-websocket</code> to work but I just couldn&rsquo;t.</p>
@@ -36,9 +36,9 @@ io.set( 'origins', '*:*' );
   
   <entry>
     <title type="html"><![CDATA[NonRTE - Part 1]]></title>
-    <link href="http://browniefed.github.io/blog/2014/05/01/nonrte-part-1/"/>
+    <link href="http://browniefed.com/blog/2014/05/01/nonrte-part-1/"/>
     <updated>2014-05-01T06:26:00-07:00</updated>
-    <id>http://browniefed.github.io/blog/2014/05/01/nonrte-part-1</id>
+    <id>http://browniefed.com/blog/2014/05/01/nonrte-part-1</id>
     <content type="html"><![CDATA[<p>Once again stealing from antimatter I think writing about what you&rsquo;re currently building or have built is a good way to gain some clarity and also provide some value in explaining the topic. I&rsquo;ll be talking about NonRTE a non-contenteditable rich text editor for developers. One similar and the only one I know of is google docs. There are others that aren&rsquo;t rich text editors and are IDEs like codemirror and a few others that do not use contenteditbale. I personally don&rsquo;t know of any RTEs that are open source that developers can use and build with but I could be wrong so do ping me if that isn&rsquo;t the case.</p>
 
 <p>Something that has always boggled my mind was how heavily people have relied on contenteditable. Managing the different ways that contenteditbale is implemented on every browser and versions of those browsers is a nightmare. There is a portion of code in most RTE libraries that change how everything works just for one particular browser. This is insane to me due to the world we live in now with NPM, github, and the open source world at our finger tips. We have amazing templating libraries, HTML parsers, two-way data bindings, word to HTML libraries, excel expression parsers and executors, and everything compiles to JavaScript despite this insane amount of open source code we still use contenteditable.</p>
