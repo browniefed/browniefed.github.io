@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ext | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/ext/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-05-02T12:56:39-07:00</updated>
+  <updated>2015-05-03T09:51:27-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -21,7 +21,7 @@
     <content type="html"><![CDATA[<p>At work we embarked on an ambitious task of converting our legacy application (ExtJS 3.4) over to React.
 Now obviously rewriting an application that has been built over the course of 7 years could not just be simply re-written. We had to be very strategic about it.</p>
 
-<p>React is one of the perfect rendering libraries for this since re-rendering the same component at the same spot will just cause the React to go through a diff/normal rendering process.</p>
+<p>React is one of the perfect rendering libraries for this since re-rendering the same component at the same spot will just cause the React to go through its diff/normal rendering process.</p>
 
 <p>However if you don&rsquo;t maintain separation of concerns you may just get a lot of Ext into your ReactJS components, and you&rsquo;ll be in an even bigger mess. We don&rsquo;t want that, and that is where higher order components come into play.</p>
 
@@ -30,7 +30,7 @@ Now obviously rewriting an application that has been built over the course of 7 
 <p>If you haven&rsquo;t read the post <a href="https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750">Mixins Are Dead. Long Live Composition</a> then I highly recommend you do so. Higher order components are not a bullet proof replacement for mixins but they are an amazing solution for integrating at the seams of where your legacy application meets your new React world.</p>
 
 <p>If you don&rsquo;t understand what a Higher order component is after reading the article above let me quickly explain.
-It&rsquo;s a function that takes a React component of your choosing and then returns a wrapped a different React component that renders the React component that you provided it.</p>
+It&rsquo;s a function that takes a React component of your choosing and then returns a wrapped React component that renders the React component that you provided it.</p>
 
 <p>A Quick example
 ```</p>
@@ -92,7 +92,7 @@ var ActiveUserPost = require(&lsquo;ActiveUserPost&rsquo;);</p>
 
 <p>This strategy really shines when all you need to do is hook into the life cycle events to cause updates in your legacy application.</p>
 
-<p>In our application we are still utilizing ExtJS tabs. When you visit an item say we render an <code>ItemView</code> and say the user starts editing the item. We want to indicate in the title of the Ext tab that it is a dirty form and that is done by marking it with an *. The issue is that as we deprecate Ext and eventually tabs we don&rsquo;t want to mix our Ext updating logic with our new <code>ItemView</code> logic.</p>
+<p>In our application we are still utilizing ExtJS tabs. When you visit an item say we render an <code>ItemView</code> and say the user starts editing the item. We want to indicate in the title of the Ext tab that it is a dirty form and that is done by marking it with an *. The issue is that as we deprecate Ext (and eventually tabs) we don&rsquo;t want to mix our Ext updating logic with our new <code>ItemView</code> logic.</p>
 
 <p>This requires that state be at an upper level, which the article above by Dan shows how to use higher order components to fetch data, and essentially bring state up one level.</p>
 
@@ -101,7 +101,7 @@ var ActiveUserPost = require(&lsquo;ActiveUserPost&rsquo;);</p>
 <p>```
 <ExtTab> // Passes down a function called appendTitle</p>
 
-<pre><code>&lt;ItemViewState&gt;
+<pre><code>&lt;ItemViewState&gt; &lt;--- Could and should also be a higher order component taht wraps ExtEditableItemView but for visual sake it's a composition component
     &lt;ExtEditableItemView /&gt; &lt;--- This is an ItemView wrapped by an ExtEditable higher order component
 &lt;/ItemViewState&gt;
 </code></pre>
