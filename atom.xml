@@ -4,7 +4,7 @@
 	<title><![CDATA[JavaScript Without Grammar]]></title>
 	<link href="http://browniefed.com/atom.xml" rel="self"/>
 	<link href="http://browniefed.com/"/>
-	<updated>2015-05-03T21:07:09-07:00</updated>
+	<updated>2015-05-03T21:43:42-07:00</updated>
 	<id>http://browniefed.com/</id>
 	<author>
 		<name><![CDATA[Jason Brown]]></name>
@@ -423,6 +423,8 @@ If you get it figured out let me know.</p>
 <h2>Conclusion</h2>
 
 <p>That&rsquo;s it, you can now render your react-art code natively. Enjoy</p>
+
+<p><img src="http://i.imgur.com/AXbsaTB.png" title="Final result" ></p>
 ]]>
 		</content>
 	</entry>
