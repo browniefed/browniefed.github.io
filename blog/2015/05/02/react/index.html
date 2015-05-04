@@ -162,7 +162,7 @@ So how would we go about using this higher order component?</p>
 
 <p>This strategy really shines when all you need to do is hook into the life cycle events to cause updates in your legacy application.</p>
 
-<p>In our application we are still utilizing ExtJS tabs. When you visit an item say we render an <code>ItemView</code> and say the user starts editing the item. We want to indicate in the title of the Ext tab that it is a dirty form and that is done by marking it with an *. The issue is that as we deprecate Ext (and eventually tabs) we don&rsquo;t want to mix our Ext updating logic with our new <code>ItemView</code> logic.</p>
+<p>In our application we are still utilizing ExtJS tabs. When you visit an item say we render an <code>ItemView</code> and say the user starts editing the item. We want to indicate in the title of the Ext tab that it is a dirty form and that is done by marking it with an *. The issue is that as we deprecate Ext we don&rsquo;t want to mix our Ext updating logic with our new <code>ItemView</code> logic.</p>
 
 <p>This requires that state be at an upper level, which the article above by Dan shows how to use higher order components to fetch data, and essentially bring state up one level.</p>
 
