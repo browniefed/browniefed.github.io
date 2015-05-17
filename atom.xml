@@ -4,7 +4,7 @@
 	<title><![CDATA[JavaScript Without Grammar]]></title>
 	<link href="http://browniefed.com/atom.xml" rel="self"/>
 	<link href="http://browniefed.com/"/>
-	<updated>2015-05-04T08:52:53-07:00</updated>
+	<updated>2015-05-16T19:41:21-07:00</updated>
 	<id>http://browniefed.com/</id>
 	<author>
 		<name><![CDATA[Jason Brown]]></name>
@@ -12,6 +12,44 @@
 	</author>
 	<generator uri="http://octopress.org/">Octopress</generator>
 
+	
+	<entry>
+		
+			<title type="html"><![CDATA[React Native and Socket.io]]></title>
+		
+		<link href="http://browniefed.com/blog/2015/05/16/react-native-and-socket-dot-io/"/>
+		<updated>2015-05-16T19:35:00-07:00</updated>
+		<id>http://browniefed.com/blog/2015/05/16/react-native-and-socket-dot-io</id>
+		<content type="html">
+			<![CDATA[
+				
+					<p></p>
+				
+			]]>
+			<![CDATA[<p>React Native finally supports Websockets. Which is awesome, however there is one gotcha with socket.io.</p>
+
+<p>1) <code>npm install socket.io-client</code>. This will just pull down the socket.io javascript client</p>
+
+<p>2) Everything works great but there is one issue that <code>window.navigator.userAgent</code> doesn&rsquo;t exist. Socket.IO checks to deal with some browser incosistencies but we don&rsquo;t care. So all we have to do is create it. However make sure you require <code>react-native</code> first!</p>
+
+<p>Just like so</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>
+</span><span class='line'>window.navigator.userAgent = "react-native";
+</span><span class='line'>
+</span><span class='line'>var io = require('socket.io-client/socket.io');</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you can do as you please with your new glorious websockets.</p>
+]]>
+		</content>
+	</entry>
 	
 	<entry>
 		
