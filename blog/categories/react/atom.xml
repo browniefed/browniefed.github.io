@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/react/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-05-20T16:52:34-07:00</updated>
+  <updated>2015-05-20T16:55:07-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -325,7 +325,7 @@ render: function() {
 
 <p>```</p>
 
-<p>Full working demo</p>
+<p>Full working demo, hold ship and use your mouse wheel/track pad to zoom or just grab and drag around.</p>
 
 <p data-height="624" data-theme-id="0" data-slug-hash="jPMMao" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/jPMMao/'>jPMMao</a> by Patrik Hjelm (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 
