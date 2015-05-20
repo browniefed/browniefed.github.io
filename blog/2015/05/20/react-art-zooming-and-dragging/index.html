@@ -1,0 +1,739 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="" name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+		
+		<title>React Art Zooming and Dragging &mdash; JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script src="/js/jquery.zclip.min.js"></script>
+		
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+		
+		<!--<link href="http://feeds.feedburner.com/turkeltaub" rel="alternate" title="JavaScript Without Grammar" type="application/rss+xml" />-->
+		
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="http://browniefed.com">Portfolio?</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF _layouts/post.html -->
+
+<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/05/20/react-art-zooming-and-dragging/">React Art Zooming and Dragging</a></h1>
+		<time>20 May 2015</time>
+	</header>
+	<div class="content">
+		<p>React-art is awesome, you can easily embody the same concepts in React and your visualizations magically work.</p>
+
+<p>I personally have not done a ton of visualization, and the little I have done is mostly rendering graphs with D3.</p>
+
+<p>I&rsquo;ve been tasked with doing a dive for a difficult visualization. We ran into a scenario where we needed the ability to zoom and drag the canvas. D3 conveniently comes with zoom/drag behaviors. D3 integrates pretty well with react-art for doing a lot of the math/generating paths, however after watching <a href="https://www.youtube.com/watch?v=2ii1lEkIv1s">React.js Conf &ndash; Scalable Data Visualization</a> the things immediatley called out that D3 doesn&rsquo;t integrate with react-art are transitions and behaviors (zoom/drag).</p>
+
+<p>So immediately I&rsquo;m thinking about how to accomplish this. Do I need a global scaler that scales all of my coordinates for zooming? Do I need to manage a coordinate system and adjust all of my coordinates with the dragged X/Y offsets.</p>
+
+<p>I googled around, and a few people recommended using <code>canvasEl.getContext('2d').translate(x,y)</code>. I gave this a try with refs, that didn&rsquo;t work.</p>
+
+<p>It did lead me down the right path though. What if I was able to just utilize one global wrapper, and all of my other code could remain unchanged. The great thing about <code>Group</code> is that the coordinate system of the children gets reset, so <code>0,0</code> is now the <code>x,y</code> of the <code>Group</code></p>
+
+<p>Example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Group x={100} y={100}&gt;
+</span><span class='line'>    &lt;Circle radius={10} stroke="#000" strokeWidth={3} x={20} y={20}/&gt;
+</span><span class='line'>&lt;/Group&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The coordinates of the circle on the whole canvas would actually be <code>120,120</code> but because of the group at <code>x = 100, y = 100</code> we just need to say <code>x = 20, y = 20</code>.</p>
+
+<p>Now that we know that our parent coordinate system effects our child coordinate systems lets prove our final theory that we can have one master parent to control zoom/drag.</p>
+
+<p>Lets start with a base renderer</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>//Assuming React, and react-art are included
+</span><span class='line'>var ZoomDragCircle = React.createClass({
+</span><span class='line'>    
+</span><span class='line'>    render: function() {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;Surface
+</span><span class='line'>                width={viewportWidth}
+</span><span class='line'>                height={viewportHeight}
+</span><span class='line'>            &gt;
+</span><span class='line'>            &lt;/Surface&gt; 
+</span><span class='line'>        );
+</span><span class='line'>    }
+</span><span class='line'>        )
+</span><span class='line'>
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>})
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We have a surface so the next lets get something rendering</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var ZoomDragCircle = React.createClass({
+</span><span class='line'>    
+</span><span class='line'>    render: function() {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;Surface
+</span><span class='line'>                width={viewportWidth}
+</span><span class='line'>                height={viewportHeight}
+</span><span class='line'>            &gt;
+</span><span class='line'>                &lt;Circle x={10} y={10} radius={5} fill="#000" /&gt;
+</span><span class='line'>            &lt;/Surface&gt; 
+</span><span class='line'>        );
+</span><span class='line'>    }
+</span><span class='line'>        )
+</span><span class='line'>
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>})
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Lets add in our drag concept.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var ZoomDragCircle = React.createClass({
+</span><span class='line'>    getInitialState: function() {
+</span><span class='line'>        return {
+</span><span class='line'>            x: 0,
+</span><span class='line'>            y: 0
+</span><span class='line'>        }
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseDown: function() {
+</span><span class='line'>        this.dragging = true;
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseUp: function() {
+</span><span class='line'>        this.dragging = false;
+</span><span class='line'>    },
+</span><span class='line'>    render: function() {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;div 
+</span><span class='line'>                    onMouseDown={this.handleMouseDown}
+</span><span class='line'>                    onMouseUp={this.handleMouseUp}
+</span><span class='line'>            &gt;
+</span><span class='line'>                &lt;Surface
+</span><span class='line'>                    width={viewportWidth}
+</span><span class='line'>                    height={viewportHeight}
+</span><span class='line'>
+</span><span class='line'>                &gt;
+</span><span class='line'>                    &lt;Group x={this.state.x} y={this.state.y}&gt;
+</span><span class='line'>                        &lt;Circle x={10} y={10} radius={5} fill="#000" /&gt;
+</span><span class='line'>                    &lt;/Group&gt;
+</span><span class='line'>                &lt;/Surface&gt; 
+</span><span class='line'>            &lt;/div&gt;
+</span><span class='line'>        );
+</span><span class='line'>    }
+</span><span class='line'>        )
+</span><span class='line'>
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>})
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>One thing you&rsquo;ll notice here is the wrapping div. The <code>react-art</code> <code>Surface</code> element doesn&rsquo;t have the <code>EventMixin</code> so it will not register mouse events. We could wrap our <code>Group</code> with another <code>Group</code> for dragging/zoom however an outer <code>div</code> is much easier for now.</p>
+
+<p>You also may notice that we have a slight issue. <code>onMouseUp</code> should be globally on the <code>document</code> since the <code>mouseup</code> event will only be fired if the <code>mouseup</code> happens on our wrapping div. For simplicity sake we&rsquo;ll keep it on the div.</p>
+
+<p>So we have a way to toggle whether we are dragging or not, and have the ability to adjust the <code>x,y</code> coords of a parent group. Lets actually implement drag.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var ZoomDragCircle = React.createClass({
+</span><span class='line'>    getInitialState: function() {
+</span><span class='line'>        return {
+</span><span class='line'>            x: 0,
+</span><span class='line'>            y: 0
+</span><span class='line'>        }
+</span><span class='line'>    },
+</span><span class='line'>    componentDidMount: function() {
+</span><span class='line'>        document.addEventListener('mousemove', this.handleMouseMove, false);
+</span><span class='line'>    },
+</span><span class='line'>    componentWillUnmount: function() {
+</span><span class='line'>        //Don't forget to unlisten!
+</span><span class='line'>        document.removeEventListener('mousemove', this.handleMouseMove, false);
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseDown: function(e) {
+</span><span class='line'>        this.dragging = true;
+</span><span class='line'>        //Set coords
+</span><span class='line'>          this.coords = {
+</span><span class='line'>            x: e.pageX,
+</span><span class='line'>            y: e.pageY
+</span><span class='line'>          }
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseUp: function() {
+</span><span class='line'>        this.dragging = false;
+</span><span class='line'>        this.coords = {};
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseMove: function(e) {
+</span><span class='line'>    //If we are dragging
+</span><span class='line'>      if (this.dragging) {
+</span><span class='line'>          e.preventDefault();
+</span><span class='line'>
+</span><span class='line'>        //Get mouse change differential
+</span><span class='line'>        var xDiff = this.coords.x - e.pageX,
+</span><span class='line'>            yDiff = this.coords.y - e.pageY;
+</span><span class='line'>
+</span><span class='line'>        //Update to our new coordinates
+</span><span class='line'>            this.coords.x = e.pageX;
+</span><span class='line'>            this.coords.y = e.pageY;
+</span><span class='line'>        //Adjust our x,y based upon the x/y diff from before
+</span><span class='line'>        var x = this.state.x - xDiff,       
+</span><span class='line'>            y = this.state.y - yDiff;
+</span><span class='line'>
+</span><span class='line'>        //Re-render
+</span><span class='line'>        this.setState(this.state);  
+</span><span class='line'>      }
+</span><span class='line'>
+</span><span class='line'>    },
+</span><span class='line'>    render: function() {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;div 
+</span><span class='line'>                    onMouseDown={this.handleMouseDown}
+</span><span class='line'>                    onMouseUp={this.handleMouseUp}
+</span><span class='line'>            &gt;
+</span><span class='line'>                &lt;Surface
+</span><span class='line'>                    width={viewportWidth}
+</span><span class='line'>                    height={viewportHeight}
+</span><span class='line'>
+</span><span class='line'>                &gt;
+</span><span class='line'>                    &lt;Group x={this.state.x} y={this.state.y}&gt;
+</span><span class='line'>                        &lt;Circle x={10} y={10} radius={5} fill="#000" /&gt;
+</span><span class='line'>                    &lt;/Group&gt;
+</span><span class='line'>                &lt;/Surface&gt; 
+</span><span class='line'>            &lt;/div&gt;
+</span><span class='line'>        );
+</span><span class='line'>    }
+</span><span class='line'>        )
+</span><span class='line'>
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>})
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now if you spin this up you&rsquo;ll see we can drag around the canvas and our <code>Circle</code> will stay the same place.
+Lets do zoom now.</p>
+
+<p>To understand what we&rsquo;re about to do the Art library will translate our <code>x,y</code> coords to a <code>matrix</code> that is set on the <code>transform</code> attribute of the svg <code>g</code> element or in the canvas case translated to the appropriate coordinates.</p>
+
+<p>The <code>matrix</code> system can be read about here on <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGMatrix">MDN</a>. Ultimately it allows us to modify the coordinate system (<code>x,y</code>) and additionally the scale.</p>
+
+<p>Think of scale as a default multiplier times the size of stuff.</p>
+
+<p>So a scale of <code>1</code> means if something is a width of <code>10</code> then it would still be 10.
+But If we set our scale to <code>2</code> and the same width of <code>10</code> then <code>10*2 = 20</code>. The item would appear larger at 20 pixels.</p>
+
+<p>This is the rough idea behind scale, however we aren&rsquo;t adjusting widths the scale is actually effecting the <code>x,y</code> coordinates you are setting. You can define <code>scaleX</code> and <code>scaleY</code> to be different numbers causing your visual elements to appear blurred/skewed.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var ZoomDragCircle = React.createClass({
+</span><span class='line'>    getInitialState: function() {
+</span><span class='line'>        return {
+</span><span class='line'>            x: 0,
+</span><span class='line'>            y: 0,
+</span><span class='line'>            scale: 1
+</span><span class='line'>        }
+</span><span class='line'>    },
+</span><span class='line'>    componentDidMount: function() {
+</span><span class='line'>        document.addEventListener('mousemove', this.handleMouseMove, false);
+</span><span class='line'>    },
+</span><span class='line'>    componentWillUnmount: function() {
+</span><span class='line'>        //Don't forget to unlisten!
+</span><span class='line'>        document.removeEventListener('mousemove', this.handleMouseMove, false);
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseDown: function(e) {
+</span><span class='line'>        this.dragging = true;
+</span><span class='line'>        //Set coords
+</span><span class='line'>          this.coords = {
+</span><span class='line'>            x: e.pageX,
+</span><span class='line'>            y: e.pageY
+</span><span class='line'>          }
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseUp: function() {
+</span><span class='line'>        this.dragging = false;
+</span><span class='line'>        this.coords = {};
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseMove: function(e) {
+</span><span class='line'>    //If we are dragging
+</span><span class='line'>      if (!this.dragging) {
+</span><span class='line'>        return;
+</span><span class='line'>      }
+</span><span class='line'>          e.preventDefault();
+</span><span class='line'>
+</span><span class='line'>        //Get mouse change differential
+</span><span class='line'>        var xDiff = this.coords.x - e.pageX,
+</span><span class='line'>            yDiff = this.coords.y - e.pageY;
+</span><span class='line'>
+</span><span class='line'>        //Update to our new coordinates
+</span><span class='line'>            this.coords.x = e.pageX;
+</span><span class='line'>            this.coords.y = e.pageY;
+</span><span class='line'>        //Adjust our x,y based upon the x/y diff from before
+</span><span class='line'>        var x = this.state.x - xDiff,       
+</span><span class='line'>            y = this.state.y - yDiff;
+</span><span class='line'>
+</span><span class='line'>        //Re-render
+</span><span class='line'>        this.setState(this.state);  
+</span><span class='line'>
+</span><span class='line'>    },
+</span><span class='line'>    //So we can handle the mousewheel returning -0 or 0
+</span><span class='line'>    isNegative: function (n) {
+</span><span class='line'>      return ((n = +n) || 1 / n) &lt; 0;
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseWheel: function(e) {
+</span><span class='line'>      var ZOOM_STEP = .03;
+</span><span class='line'>
+</span><span class='line'>        //require the shift key to be pressed to scroll
+</span><span class='line'>        if (!e.shiftKey) {
+</span><span class='line'>            return;
+</span><span class='line'>        }
+</span><span class='line'>      e.preventDefault();
+</span><span class='line'>      var direction = (this.isNegative(e.deltaX) &&  this.isNegative(e.deltaY) ) ? 'down' : 'up';
+</span><span class='line'>
+</span><span class='line'>      if (direction == 'up') {
+</span><span class='line'>        this.state.scale += ZOOM_STEP;
+</span><span class='line'>      } else {
+</span><span class='line'>        this.state.scale -= ZOOM_STEP;
+</span><span class='line'>      }
+</span><span class='line'>
+</span><span class='line'>      this.state.scale = this.state.scale &lt; 0 ? 0 : this.state.scale;
+</span><span class='line'>
+</span><span class='line'>      this.setState(this.state);
+</span><span class='line'>    },
+</span><span class='line'>    render: function() {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;div 
+</span><span class='line'>                onMouseDown={this.handleMouseDown}
+</span><span class='line'>                onMouseUp={this.handleMouseUp}
+</span><span class='line'>                onWheel={this.handleMouseWheel}
+</span><span class='line'>            &gt;
+</span><span class='line'>                &lt;Surface
+</span><span class='line'>                    width={viewportWidth}
+</span><span class='line'>                    height={viewportHeight}
+</span><span class='line'>
+</span><span class='line'>                &gt;
+</span><span class='line'>                    &lt;Group 
+</span><span class='line'>                        x={this.state.x} 
+</span><span class='line'>                        y={this.state.y}
+</span><span class='line'>                        scaleX={this.state.scale}
+</span><span class='line'>                        scaleY={this.state.scale}
+</span><span class='line'>                    &gt;
+</span><span class='line'>                        &lt;Circle x={10} y={10} radius={5} fill="#000" /&gt;
+</span><span class='line'>                    &lt;/Group&gt;
+</span><span class='line'>                &lt;/Surface&gt; 
+</span><span class='line'>            &lt;/div&gt;
+</span><span class='line'>        );
+</span><span class='line'>    }
+</span><span class='line'>        )
+</span><span class='line'>
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>})
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we should be able to zoom in/zoom out while holding shift key + using your scroll wheel.
+If you want a predictable scale you can add some <code>+</code> and <code>-</code> buttons somwhere and just increment <code>this.state.scale</code></p>
+
+<p>I&rsquo;m hoping to do more write ups and examples with react-art. The great thing is that you can render react-art with react-native. With appropriate abstractions you could possibly have the same visualizations on the web as you do on native.</p>
+
+	</div>
+	<div>
+		
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/canvas/'>canvas</a>, <a class='category' href='/blog/categories/d3/'>d3</a>, <a class='category' href='/blog/categories/dragging/'>dragging</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/svg/'>svg</a>, <a class='category' href='/blog/categories/zooming/'>zooming</a>
+	
+
+
+	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+<div class="article-wrap">
+<footer style="margin-top: 10px;">
+    <div id="post-author">
+	<div class="post-author-image" style="width: 20%; display: inline-block;">
+		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
+	</div>
+	<div class="post-author-content" style="width: 70%; display: inline-block;">
+		<p>
+			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a> )
+		</p>
+	</div>
+</div>
+</footer>
+</div>
+<!-- END OF _/layouts/post.html -->
+
+		
+			<footer>
+				Copyright &copy; 2015
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/05/20/react-art-zooming-and-dragging/';
+        var disqus_url = 'http://browniefed.com/blog/2015/05/20/react-art-zooming-and-dragging/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: $(this).next('code').text(),
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+					}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/05/20/react-art-zooming-and-dragging/';
+        var disqus_url = 'http://browniefed.com/blog/2015/05/20/react-art-zooming-and-dragging/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->
