@@ -4,7 +4,7 @@
   <title><![CDATA[Category: dragging | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/dragging/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-05-20T16:32:47-07:00</updated>
+  <updated>2015-05-20T16:51:40-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -339,6 +339,14 @@ render: function() {
 <p>})</p>
 
 <p>```</p>
+
+<p>Full working demo</p>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="jPMMao" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/jPMMao/'>jPMMao</a> by Patrik Hjelm (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
+
 
 <p>Now we should be able to zoom in/zoom out while holding shift key + using your scroll wheel.
 If you want a predictable scale you can add some <code>+</code> and <code>-</code> buttons somwhere and just increment <code>this.state.scale</code></p>
