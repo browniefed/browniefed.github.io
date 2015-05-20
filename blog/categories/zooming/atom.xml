@@ -4,7 +4,7 @@
   <title><![CDATA[Category: zooming | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/zooming/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-05-20T16:51:40-07:00</updated>
+  <updated>2015-05-20T16:52:34-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -59,9 +59,6 @@ var ZoomDragCircle = React.createClass({</p>
         &lt;/Surface&gt; 
     );
 }
-    )
-
-}
 </code></pre>
 
 <p>})</p>
@@ -82,9 +79,6 @@ var ZoomDragCircle = React.createClass({</p>
             &lt;Circle x={10} y={10} radius={5} fill="#000" /&gt;
         &lt;/Surface&gt; 
     );
-}
-    )
-
 }
 </code></pre>
 
@@ -126,9 +120,6 @@ render: function() {
             &lt;/Surface&gt; 
         &lt;/div&gt;
     );
-}
-    )
-
 }
 </code></pre>
 
@@ -208,9 +199,6 @@ render: function() {
             &lt;/Surface&gt; 
         &lt;/div&gt;
     );
-}
-    )
-
 }
 </code></pre>
 
@@ -330,9 +318,6 @@ render: function() {
             &lt;/Surface&gt; 
         &lt;/div&gt;
     );
-}
-    )
-
 }
 </code></pre>
 

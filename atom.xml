@@ -4,7 +4,7 @@
 	<title><![CDATA[JavaScript Without Grammar]]></title>
 	<link href="http://browniefed.com/atom.xml" rel="self"/>
 	<link href="http://browniefed.com/"/>
-	<updated>2015-05-20T16:51:40-07:00</updated>
+	<updated>2015-05-20T16:52:34-07:00</updated>
 	<id>http://browniefed.com/</id>
 	<author>
 		<name><![CDATA[Jason Brown]]></name>
@@ -68,9 +68,6 @@
 <span class='line-number'>12</span>
 <span class='line-number'>13</span>
 <span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>//Assuming React, and react-art are included
 </span><span class='line'>var ZoomDragCircle = React.createClass({
 </span><span class='line'>    
@@ -82,9 +79,6 @@
 </span><span class='line'>            &gt;
 </span><span class='line'>            &lt;/Surface&gt; 
 </span><span class='line'>        );
-</span><span class='line'>    }
-</span><span class='line'>        )
-</span><span class='line'>
 </span><span class='line'>    }
 </span><span class='line'>
 </span><span class='line'>})
@@ -107,9 +101,6 @@
 <span class='line-number'>12</span>
 <span class='line-number'>13</span>
 <span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>var ZoomDragCircle = React.createClass({
 </span><span class='line'>    
 </span><span class='line'>    render: function() {
@@ -121,9 +112,6 @@
 </span><span class='line'>                &lt;Circle x={10} y={10} radius={5} fill="#000" /&gt;
 </span><span class='line'>            &lt;/Surface&gt; 
 </span><span class='line'>        );
-</span><span class='line'>    }
-</span><span class='line'>        )
-</span><span class='line'>
 </span><span class='line'>    }
 </span><span class='line'>
 </span><span class='line'>})
@@ -165,9 +153,6 @@
 <span class='line-number'>31</span>
 <span class='line-number'>32</span>
 <span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>var ZoomDragCircle = React.createClass({
 </span><span class='line'>    getInitialState: function() {
 </span><span class='line'>        return {
@@ -198,9 +183,6 @@
 </span><span class='line'>                &lt;/Surface&gt; 
 </span><span class='line'>            &lt;/div&gt;
 </span><span class='line'>        );
-</span><span class='line'>    }
-</span><span class='line'>        )
-</span><span class='line'>
 </span><span class='line'>    }
 </span><span class='line'>
 </span><span class='line'>})
@@ -279,10 +261,6 @@
 <span class='line-number'>64</span>
 <span class='line-number'>65</span>
 <span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>var ZoomDragCircle = React.createClass({
 </span><span class='line'>    getInitialState: function() {
 </span><span class='line'>        return {
@@ -348,10 +326,6 @@
 </span><span class='line'>            &lt;/div&gt;
 </span><span class='line'>        );
 </span><span class='line'>    }
-</span><span class='line'>        )
-</span><span class='line'>
-</span><span class='line'>    }
-</span><span class='line'>
 </span><span class='line'>})
 </span></code></pre></td></tr></table></div></figure>
 
@@ -469,9 +443,6 @@ But If we set our scale to <code>2</code> and the same width of <code>10</code> 
 <span class='line-number'>97</span>
 <span class='line-number'>98</span>
 <span class='line-number'>99</span>
-<span class='line-number'>100</span>
-<span class='line-number'>101</span>
-<span class='line-number'>102</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>var ZoomDragCircle = React.createClass({
 </span><span class='line'>    getInitialState: function() {
 </span><span class='line'>        return {
@@ -568,9 +539,6 @@ But If we set our scale to <code>2</code> and the same width of <code>10</code> 
 </span><span class='line'>                &lt;/Surface&gt; 
 </span><span class='line'>            &lt;/div&gt;
 </span><span class='line'>        );
-</span><span class='line'>    }
-</span><span class='line'>        )
-</span><span class='line'>
 </span><span class='line'>    }
 </span><span class='line'>
 </span><span class='line'>})
