@@ -1,0 +1,578 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="" name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+		
+		<title>React Art and Paths.js &mdash; JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script src="/js/jquery.zclip.min.js"></script>
+		
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+		
+		<!--<link href="http://feeds.feedburner.com/turkeltaub" rel="alternate" title="JavaScript Without Grammar" type="application/rss+xml" />-->
+		
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="http://browniefed.com">Portfolio?</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF _layouts/post.html -->
+
+<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/05/27/react-art-and-paths-dot-js/">React Art and Paths.js</a></h1>
+		<time>27 May 2015</time>
+	</header>
+	<div class="content">
+		<h3>Intro</h3>
+
+<p><a href="https://github.com/andreaferretti/paths-js">Paths.js</a> is a cool library. It comes with 3 levels of generating paths.</p>
+
+<ul>
+<li>Low level which helps you generate paths/lines.</li>
+<li>Mid level which generates paths for shapes</li>
+<li>High level which takes a set of data and generates graphs</li>
+</ul>
+
+
+<p>All of these are great when working with <code>react-art</code> because it&rsquo;s just returning data. I&rsquo;ll say it once, and a million more but libraries that just generate data make it easy to traverse and render with <code>react-art</code>.</p>
+
+<h3>Paths</h3>
+
+<p>Example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var path = Path()
+</span><span class='line'>  .moveto(10, 20)
+</span><span class='line'>  .lineto(30, 50)
+</span><span class='line'>  .lineto(25, 28)
+</span><span class='line'>  .qcurveto(27, 30, 32, 27)
+</span><span class='line'>  .closepath();</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is can just be plugged right into <code>react-art</code> <code>Shape</code> element.</p>
+
+<p>Like so</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react'),
+</span><span class='line'>  ReactArt = require('react-art'),
+</span><span class='line'>  Surface = ReactArt.Surface,
+</span><span class='line'>  Shape = ReactArt.Shape,
+</span><span class='line'>  Path = require('paths-js/path');
+</span><span class='line'>
+</span><span class='line'>var Demo = React.createClass({
+</span><span class='line'>  getPath: function() {
+</span><span class='line'>      var path = Path()
+</span><span class='line'>                    .moveto(10, 20)
+</span><span class='line'>                    .lineto(30, 50)
+</span><span class='line'>                    .lineto(25, 28)
+</span><span class='line'>                    .qcurveto(27, 30, 32, 27)
+</span><span class='line'>                    .closepath();
+</span><span class='line'>
+</span><span class='line'>      return path.print();
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>      return (
+</span><span class='line'>          &lt;div&gt;
+</span><span class='line'>              &lt;Surface
+</span><span class='line'>                  width={500}
+</span><span class='line'>                  height={500}
+</span><span class='line'>              &gt;
+</span><span class='line'>                  &lt;Shape d={this.getPath()} stroke="#000" strokeWidth={1} /&gt;
+</span><span class='line'>              &lt;/Surface&gt;
+</span><span class='line'>          &lt;/div&gt;
+</span><span class='line'>      )
+</span><span class='line'>  }
+</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p data-height="624" data-theme-id="0" data-slug-hash="VLmOOE" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/VLmOOE/'>VLmOOE</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+<h3>Simple Shapes</h3>
+
+<p>Now <code>react-art</code> already comes with a few different shapes but <code>paths.js</code> have a few built in as well, like <code>Rectangle</code> and <code>Bezier</code> curve.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var rectangle = Rectangle({
+</span><span class='line'>  top: 10,
+</span><span class='line'>  bottom: 3,
+</span><span class='line'>  left: -2,
+</span><span class='line'>  right: 5
+</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And how that looks is very similar to the previous example</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react'),
+</span><span class='line'>  ReactArt = require('react-art'),
+</span><span class='line'>  Surface = ReactArt.Surface,
+</span><span class='line'>  Group = ReactArt.Group,
+</span><span class='line'>  Shape = ReactArt.Shape,
+</span><span class='line'>  Rectangle = require('paths-js/rectangle'),
+</span><span class='line'>  Bezier = require('paths-js/bezier');
+</span><span class='line'>
+</span><span class='line'>var Demo = React.createClass({
+</span><span class='line'>  getPath: function() {
+</span><span class='line'>      var rectangle = Rectangle({
+</span><span class='line'>                    top: 10,
+</span><span class='line'>                    bottom: 3,
+</span><span class='line'>                    left: -2,
+</span><span class='line'>                    right: 5
+</span><span class='line'>                  });
+</span><span class='line'>
+</span><span class='line'>      return rectangle.path.print();
+</span><span class='line'>  },
+</span><span class='line'>  getBez: function() {
+</span><span class='line'>      var points = [[1, 50], [50, 100], [100, 3], [4, 0]];
+</span><span class='line'>      var curve = Bezier({
+</span><span class='line'>        points: points,
+</span><span class='line'>        tension: 0.2
+</span><span class='line'>      });
+</span><span class='line'>
+</span><span class='line'>      return curve.path.print();
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>      return (
+</span><span class='line'>          &lt;div&gt;
+</span><span class='line'>              &lt;Surface
+</span><span class='line'>                  width={500}
+</span><span class='line'>                  height={500}
+</span><span class='line'>              &gt;
+</span><span class='line'>                  &lt;Group x={100} y={100}&gt;
+</span><span class='line'>                      &lt;Shape d={this.getPath()} stroke="#000" strokeWidth={1} /&gt;
+</span><span class='line'>                  &lt;/Group&gt;
+</span><span class='line'>                  &lt;Group x={200} y={200}&gt;
+</span><span class='line'>                      &lt;Shape d={this.getBez()} stroke="#000" strokeWidth={1} /&gt;
+</span><span class='line'>                  &lt;/Group&gt;
+</span><span class='line'>              &lt;/Surface&gt;
+</span><span class='line'>          &lt;/div&gt;
+</span><span class='line'>      )
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>module.exports = Demo;</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p data-height="624" data-theme-id="0" data-slug-hash="xGRNvW" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/xGRNvW/'>xGRNvW</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+<h3>Graphs</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var pie = Pie({
+</span><span class='line'>  data: [
+</span><span class='line'>    { name: 'Italy', population: 59859996 },
+</span><span class='line'>    { name: 'Mexico', population: 118395054 },
+</span><span class='line'>    { name: 'France', population: 65806000 },
+</span><span class='line'>    { name: 'Argentina', population: 40117096 },
+</span><span class='line'>    { name: 'Japan', population: 127290000 }
+</span><span class='line'>  ],
+</span><span class='line'>  accessor: function(x) { return x.population; },
+</span><span class='line'>  compute: {
+</span><span class='line'>    color: function(i) { return somePalette[i]; }
+</span><span class='line'>  },
+</span><span class='line'>  center: [20, 15],
+</span><span class='line'>  r: 30,
+</span><span class='line'>  R: 50
+</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Some code of it in action</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react'),
+</span><span class='line'>  ReactArt = require('react-art'),
+</span><span class='line'>  Surface = ReactArt.Surface,
+</span><span class='line'>  Group = ReactArt.Group,
+</span><span class='line'>  Shape = ReactArt.Shape,
+</span><span class='line'>  Pie = require('paths-js/Pie');
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>var pie = Pie({
+</span><span class='line'>  data: [
+</span><span class='line'>    { name: 'Italy', population: 59859996 },
+</span><span class='line'>    { name: 'Mexico', population: 118395054 },
+</span><span class='line'>    { name: 'France', population: 65806000 },
+</span><span class='line'>    { name: 'Argentina', population: 40117096 },
+</span><span class='line'>    { name: 'Japan', population: 127290000 }
+</span><span class='line'>  ],
+</span><span class='line'>  accessor: function(x) { return x.population; },
+</span><span class='line'>  compute: {
+</span><span class='line'>    color: function(i) { return '#000'; }
+</span><span class='line'>  },
+</span><span class='line'>  center: [20, 15],
+</span><span class='line'>  r: 30,
+</span><span class='line'>  R: 50
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var Demo = React.createClass({
+</span><span class='line'>
+</span><span class='line'>  getPie: function() {
+</span><span class='line'>      return pie.curves.map(function(shape) {
+</span><span class='line'>          return (
+</span><span class='line'>              &lt;Group&gt;
+</span><span class='line'>                  &lt;Text fill="#A6BD8A" font='bold 12px "Arial"' x={shape.sector.centroid[0] - 12} y={shape.sector.centroid[1]}&gt;{shape.item.name}&lt;/Text&gt;
+</span><span class='line'>                  &lt;Shape d={shape.sector.path.print()} stroke={shape.color} strokeWidth={1} /&gt;
+</span><span class='line'>              &lt;/Group&gt;
+</span><span class='line'>          )
+</span><span class='line'>      })
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>      return (
+</span><span class='line'>          &lt;div&gt;
+</span><span class='line'>              &lt;Surface
+</span><span class='line'>                  width={500}
+</span><span class='line'>                  height={500}
+</span><span class='line'>              &gt;
+</span><span class='line'>                  &lt;Group x={50} y={45}&gt;
+</span><span class='line'>                      {this.getPie()}
+</span><span class='line'>                  &lt;/Group&gt;
+</span><span class='line'>              &lt;/Surface&gt;
+</span><span class='line'>          &lt;/div&gt;
+</span><span class='line'>      )
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>module.exports = Demo;</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<p data-height="624" data-theme-id="0" data-slug-hash="waoLvB" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/waoLvB/'>waoLvB</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+<h3>Conclusion</h3>
+
+<p>These examples may look boring but they just show off a bit of the control you can have with <code>react-art</code> and a simple path generator.
+Not only that but because we aren&rsquo;t depending on the DOM in any case these examples should also work on <code>react-native</code>.
+Combined with some tweening you could make some very effective graphs that animate. That is a topic for another time.</p>
+
+	</div>
+	<div>
+		
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/canvas/'>canvas</a>, <a class='category' href='/blog/categories/graphing/'>graphing</a>, <a class='category' href='/blog/categories/paths-dot-js/'>paths.js</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/svg/'>svg</a>
+	
+
+
+	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+<div class="article-wrap">
+<footer style="margin-top: 10px;">
+    <div id="post-author">
+	<div class="post-author-image" style="width: 20%; display: inline-block;">
+		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
+	</div>
+	<div class="post-author-content" style="width: 70%; display: inline-block;">
+		<p>
+			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a> )
+		</p>
+	</div>
+</div>
+</footer>
+</div>
+<!-- END OF _/layouts/post.html -->
+
+		
+			<footer>
+				Copyright &copy; 2015
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/05/27/react-art-and-paths-dot-js/';
+        var disqus_url = 'http://browniefed.com/blog/2015/05/27/react-art-and-paths-dot-js/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: $(this).next('code').text(),
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+					}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/05/27/react-art-and-paths-dot-js/';
+        var disqus_url = 'http://browniefed.com/blog/2015/05/27/react-art-and-paths-dot-js/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->

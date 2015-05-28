@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: paths.js | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/paths-dot-js/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2015-05-27T20:47:09-07:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React Art and Paths.js]]></title>
+    <link href="http://browniefed.com/blog/2015/05/27/react-art-and-paths-dot-js/"/>
+    <updated>2015-05-27T19:32:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/05/27/react-art-and-paths-dot-js</id>
+    <content type="html"><![CDATA[<h3>Intro</h3>
+
+<p><a href="https://github.com/andreaferretti/paths-js">Paths.js</a> is a cool library. It comes with 3 levels of generating paths.</p>
+
+<ul>
+<li>Low level which helps you generate paths/lines.</li>
+<li>Mid level which generates paths for shapes</li>
+<li>High level which takes a set of data and generates graphs</li>
+</ul>
+
+
+<p>All of these are great when working with <code>react-art</code> because it&rsquo;s just returning data. I&rsquo;ll say it once, and a million more but libraries that just generate data make it easy to traverse and render with <code>react-art</code>.</p>
+
+<h3>Paths</h3>
+
+<p>Example:</p>
+
+<p><code>
+var path = Path()
+  .moveto(10, 20)
+  .lineto(30, 50)
+  .lineto(25, 28)
+  .qcurveto(27, 30, 32, 27)
+  .closepath();
+</code></p>
+
+<p>This is can just be plugged right into <code>react-art</code> <code>Shape</code> element.</p>
+
+<p>Like so</p>
+
+<p>```
+var React = require(&lsquo;react&rsquo;),</p>
+
+<pre><code>ReactArt = require('react-art'),
+Surface = ReactArt.Surface,
+Shape = ReactArt.Shape,
+Path = require('paths-js/path');
+</code></pre>
+
+<p>var Demo = React.createClass({</p>
+
+<pre><code>getPath: function() {
+    var path = Path()
+                  .moveto(10, 20)
+                  .lineto(30, 50)
+                  .lineto(25, 28)
+                  .qcurveto(27, 30, 32, 27)
+                  .closepath();
+
+    return path.print();
+},
+render: function() {
+    return (
+        &lt;div&gt;
+            &lt;Surface
+                width={500}
+                height={500}
+            &gt;
+                &lt;Shape d={this.getPath()} stroke="#000" strokeWidth={1} /&gt;
+            &lt;/Surface&gt;
+        &lt;/div&gt;
+    )
+}
+</code></pre>
+
+<p>});
+```</p>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="VLmOOE" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/VLmOOE/'>VLmOOE</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+<h3>Simple Shapes</h3>
+
+<p>Now <code>react-art</code> already comes with a few different shapes but <code>paths.js</code> have a few built in as well, like <code>Rectangle</code> and <code>Bezier</code> curve.</p>
+
+<p><code>
+var rectangle = Rectangle({
+  top: 10,
+  bottom: 3,
+  left: -2,
+  right: 5
+});
+</code></p>
+
+<p>And how that looks is very similar to the previous example</p>
+
+<p>```
+var React = require(&lsquo;react&rsquo;),</p>
+
+<pre><code>ReactArt = require('react-art'),
+Surface = ReactArt.Surface,
+Group = ReactArt.Group,
+Shape = ReactArt.Shape,
+Rectangle = require('paths-js/rectangle'),
+Bezier = require('paths-js/bezier');
+</code></pre>
+
+<p>var Demo = React.createClass({</p>
+
+<pre><code>getPath: function() {
+    var rectangle = Rectangle({
+                  top: 10,
+                  bottom: 3,
+                  left: -2,
+                  right: 5
+                });
+
+    return rectangle.path.print();
+},
+getBez: function() {
+    var points = [[1, 50], [50, 100], [100, 3], [4, 0]];
+    var curve = Bezier({
+      points: points,
+      tension: 0.2
+    });
+
+    return curve.path.print();
+},
+render: function() {
+    return (
+        &lt;div&gt;
+            &lt;Surface
+                width={500}
+                height={500}
+            &gt;
+                &lt;Group x={100} y={100}&gt;
+                    &lt;Shape d={this.getPath()} stroke="#000" strokeWidth={1} /&gt;
+                &lt;/Group&gt;
+                &lt;Group x={200} y={200}&gt;
+                    &lt;Shape d={this.getBez()} stroke="#000" strokeWidth={1} /&gt;
+                &lt;/Group&gt;
+            &lt;/Surface&gt;
+        &lt;/div&gt;
+    )
+}
+</code></pre>
+
+<p>});</p>
+
+<p>module.exports = Demo;
+```</p>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="xGRNvW" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/xGRNvW/'>xGRNvW</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+<h3>Graphs</h3>
+
+<p>```
+var pie = Pie({
+  data: [</p>
+
+<pre><code>{ name: 'Italy', population: 59859996 },
+{ name: 'Mexico', population: 118395054 },
+{ name: 'France', population: 65806000 },
+{ name: 'Argentina', population: 40117096 },
+{ name: 'Japan', population: 127290000 }
+</code></pre>
+
+<p>  ],
+  accessor: function(x) { return x.population; },
+  compute: {</p>
+
+<pre><code>color: function(i) { return somePalette[i]; }
+</code></pre>
+
+<p>  },
+  center: [20, 15],
+  r: 30,
+  R: 50
+});
+```</p>
+
+<p>Some code of it in action</p>
+
+<p>```
+var React = require(&lsquo;react&rsquo;),</p>
+
+<pre><code>ReactArt = require('react-art'),
+Surface = ReactArt.Surface,
+Group = ReactArt.Group,
+Shape = ReactArt.Shape,
+Pie = require('paths-js/Pie');
+</code></pre>
+
+<p>var pie = Pie({
+  data: [</p>
+
+<pre><code>{ name: 'Italy', population: 59859996 },
+{ name: 'Mexico', population: 118395054 },
+{ name: 'France', population: 65806000 },
+{ name: 'Argentina', population: 40117096 },
+{ name: 'Japan', population: 127290000 }
+</code></pre>
+
+<p>  ],
+  accessor: function(x) { return x.population; },
+  compute: {</p>
+
+<pre><code>color: function(i) { return '#000'; }
+</code></pre>
+
+<p>  },
+  center: [20, 15],
+  r: 30,
+  R: 50
+});</p>
+
+<p>var Demo = React.createClass({</p>
+
+<pre><code>getPie: function() {
+    return pie.curves.map(function(shape) {
+        return (
+            &lt;Group&gt;
+                &lt;Text fill="#A6BD8A" font='bold 12px "Arial"' x={shape.sector.centroid[0] - 12} y={shape.sector.centroid[1]}&gt;{shape.item.name}&lt;/Text&gt;
+                &lt;Shape d={shape.sector.path.print()} stroke={shape.color} strokeWidth={1} /&gt;
+            &lt;/Group&gt;
+        )
+    })
+},
+render: function() {
+    return (
+        &lt;div&gt;
+            &lt;Surface
+                width={500}
+                height={500}
+            &gt;
+                &lt;Group x={50} y={45}&gt;
+                    {this.getPie()}
+                &lt;/Group&gt;
+            &lt;/Surface&gt;
+        &lt;/div&gt;
+    )
+}
+</code></pre>
+
+<p>});</p>
+
+<p>module.exports = Demo;
+```</p>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="waoLvB" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/waoLvB/'>waoLvB</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+<h3>Conclusion</h3>
+
+<p>These examples may look boring but they just show off a bit of the control you can have with <code>react-art</code> and a simple path generator.
+Not only that but because we aren&rsquo;t depending on the DOM in any case these examples should also work on <code>react-native</code>.
+Combined with some tweening you could make some very effective graphs that animate. That is a topic for another time.</p>
+]]></content>
+  </entry>
+  
+</feed>
