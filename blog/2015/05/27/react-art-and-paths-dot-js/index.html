@@ -122,6 +122,33 @@
 <span class='line-number'>28</span>
 <span class='line-number'>29</span>
 <span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react'),
 </span><span class='line'>  ReactArt = require('react-art'),
 </span><span class='line'>  Surface = ReactArt.Surface,
@@ -129,15 +156,40 @@
 </span><span class='line'>  Path = require('paths-js/path');
 </span><span class='line'>
 </span><span class='line'>var Demo = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>      return {
+</span><span class='line'>          to: {
+</span><span class='line'>              x: 30,
+</span><span class='line'>              y: 50
+</span><span class='line'>          }
+</span><span class='line'>      }
+</span><span class='line'>  },
 </span><span class='line'>  getPath: function() {
 </span><span class='line'>      var path = Path()
 </span><span class='line'>                    .moveto(10, 20)
-</span><span class='line'>                    .lineto(30, 50)
+</span><span class='line'>                    .lineto(this.state.to.x, this.state.to.y)
 </span><span class='line'>                    .lineto(25, 28)
 </span><span class='line'>                    .qcurveto(27, 30, 32, 27)
 </span><span class='line'>                    .closepath();
 </span><span class='line'>
 </span><span class='line'>      return path.print();
+</span><span class='line'>  },
+</span><span class='line'>  startAnimating: function() {
+</span><span class='line'>
+</span><span class='line'>      if (this.state.to.x === 100) {
+</span><span class='line'>          this.addToPosition = -1;
+</span><span class='line'>      } else if (this.state.to.x === 29) {
+</span><span class='line'>          this.addToPosition = 1;
+</span><span class='line'>      }
+</span><span class='line'>
+</span><span class='line'>      this.state.to.x += this.addToPosition;
+</span><span class='line'>      this.state.to.y += this.addToPosition;
+</span><span class='line'>
+</span><span class='line'>      this.setState(this.state);
+</span><span class='line'>  },
+</span><span class='line'>  componentDidMount: function() {
+</span><span class='line'>      this.addToPosition = 1;
+</span><span class='line'>      setInterval(this.startAnimating, 17)
 </span><span class='line'>  },
 </span><span class='line'>  render: function() {
 </span><span class='line'>      return (
@@ -151,7 +203,9 @@
 </span><span class='line'>          &lt;/div&gt;
 </span><span class='line'>      )
 </span><span class='line'>  }
-</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>module.exports = Demo;</span></code></pre></td></tr></table></div></figure>
 
 
 
