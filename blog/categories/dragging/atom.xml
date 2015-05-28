@@ -4,7 +4,7 @@
   <title><![CDATA[Category: dragging | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/dragging/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-05-20T16:57:43-07:00</updated>
+  <updated>2015-05-27T17:20:40-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -327,7 +327,7 @@ render: function() {
 
 <p>Full working demo, hold shift and use your mouse wheel/track pad to zoom or just grab and drag around.</p>
 
-<p data-height="624" data-theme-id="0" data-slug-hash="jPMMao" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/jPMMao/'>jPMMao</a> by Patrik Hjelm (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+<p data-height="624" data-theme-id="0" data-slug-hash="jPMMao" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/jPMMao/'>jPMMao</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 
 
 <script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
