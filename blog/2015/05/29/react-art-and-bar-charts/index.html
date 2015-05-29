@@ -1,0 +1,1043 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="" name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+		
+		<title>React-Art and Bar Charts &mdash; JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script src="/js/jquery.zclip.min.js"></script>
+		
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+		
+		<!--<link href="http://feeds.feedburner.com/turkeltaub" rel="alternate" title="JavaScript Without Grammar" type="application/rss+xml" />-->
+		
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="http://browniefed.com">Portfolio?</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF _layouts/post.html -->
+
+<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/05/29/react-art-and-bar-charts/">React-Art and Bar Charts</a></h1>
+		<time>29 May 2015</time>
+	</header>
+	<div class="content">
+		<h3>Introduction</h3>
+
+<p>I&rsquo;ve shown in the past how to utilize <code>react-art</code> and other libraries to do animations, and render arbitrary things. So now lets bring it all together, lets render a simple bar chart.</p>
+
+<p>I&rsquo;m going to leverage <a href="https://github.com/andreaferretti/paths-js">Paths.js</a> because it was made for this exact reason. Given data, generate an immutable set of paths. Ultimately that is what visualizations are, a data set converted to a set of paths.</p>
+
+<p>The end result will look something
+<img src="http://i.imgur.com/DpChFtO.png" title="Bar Chart Result w/ Hover" ></p>
+
+<h3>Boilerplate</h3>
+
+<p>I like to setup a boilerplate templat that just renders an arbitrary surface that is the full width of the viewport. Also to make things response we&rsquo;ll hook up some event listeners to the window resize and trigger a re-render.</p>
+
+<p>We will bring in each side <code>100px</code> and add a <code>margin</code> of <code>50px</code> to each side to give us some padding on each side. Also note we should totally debounce the resize event on the window if this was production!</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react'),
+</span><span class='line'>    ReactArt = require('react-art'),
+</span><span class='line'>    Surface = ReactArt.Surface;
+</span><span class='line'>
+</span><span class='line'>var viewportWidth = function() {
+</span><span class='line'>    return  window.innerWidth - 100;
+</span><span class='line'>}
+</span><span class='line'>var viewportHeight = function() {
+</span><span class='line'>    return window.innerHeight - 100;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>var Demo = React.createClass({
+</span><span class='line'>
+</span><span class='line'>    getInitialState: function() {
+</span><span class='line'>        return {
+</span><span class='line'>            width: viewportWidth(),
+</span><span class='line'>            height: viewportHeight()
+</span><span class='line'>        }
+</span><span class='line'>    },
+</span><span class='line'>    componentDidMount: function() {
+</span><span class='line'>        window.addEventListener('resize', this.refresh, false); //This should be debounced
+</span><span class='line'>    },
+</span><span class='line'>    componentWillUnmount: function() {
+</span><span class='line'>        window.removeEventListener('resize', this.refresh, false);
+</span><span class='line'>    },
+</span><span class='line'>    refresh: function() {
+</span><span class='line'>        this.setState({
+</span><span class='line'>            width: viewportWidth(),
+</span><span class='line'>            height: viewportHeight()
+</span><span class='line'>        });
+</span><span class='line'>    },
+</span><span class='line'>
+</span><span class='line'>    render: function() {
+</span><span class='line'>        var bar = this.getBar();
+</span><span class='line'>
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;div style= style=&gt;
+</span><span class='line'>                &lt;Surface
+</span><span class='line'>                    width={this.state.width}
+</span><span class='line'>                    height={this.state.height}
+</span><span class='line'>                &gt;
+</span><span class='line'>
+</span><span class='line'>                &lt;/Surface&gt;
+</span><span class='line'>            &lt;/div&gt;
+</span><span class='line'>        );
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>module.exports = Demo;</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Data and the Chart</h3>
+
+<p>We need some data, so I&rsquo;ll steal some from the <code>Paths.js</code> wiki, and also steal the colors.</p>
+
+<p>We&rsquo;ll add a method that returns a Bar Chart generated by <code>Paths.js</code> that is dervied from width/height we set on state.
+A new Bar Chart will get called every time we call <code>setState</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var data = [
+</span><span class='line'>    [
+</span><span class='line'>      { name: 'Italy', population: 59859996 },
+</span><span class='line'>      { name: 'Spain', population: 46704314 },
+</span><span class='line'>      { name: 'France', population: 65806000 },
+</span><span class='line'>      { name: 'Romania', population: 20121641 },
+</span><span class='line'>      { name: 'Greece', population: 10815197 }
+</span><span class='line'>    ],
+</span><span class='line'>    [
+</span><span class='line'>      { name: 'Zambia', population: 14580290 },
+</span><span class='line'>      { name: 'Cameroon', population: 20386799 },
+</span><span class='line'>      { name: 'Nigeria', population: 173615000 },
+</span><span class='line'>      { name: 'Ethiopia', population: 86613986 },
+</span><span class='line'>      { name: 'Ghana', population: 24658823 }
+</span><span class='line'>    ]
+</span><span class='line'>  ];
+</span><span class='line'>
+</span><span class='line'>var colorPallete = ["#FEE871", "#E5FAAF"];
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>getBar: function() {
+</span><span class='line'>
+</span><span class='line'>    var bar = Bar({
+</span><span class='line'>      data: data,
+</span><span class='line'>      accessor: function(x) { return x.population; }, // Value to use
+</span><span class='line'>      compute: {
+</span><span class='line'>        color: function(i) { return colorPallete[i]; } //Color of the bar
+</span><span class='line'>      },
+</span><span class='line'>      width: this.state.width, //Set it to our surface width so it is responsive when our surface width changes
+</span><span class='line'>      height: this.state.height, //Set it to our surface height so it's repsponsive
+</span><span class='line'>      gutter: 10
+</span><span class='line'>    });
+</span><span class='line'>    
+</span><span class='line'>    return bar;
+</span><span class='line'>}
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Lets create the X/Y axis bars</h3>
+
+<p>The X axis and Y axis can be generated with straight lines by once again <code>Paths.js</code> <code>Path</code> method.</p>
+
+<p>The <code>X</code> axis starts at the bottom left corner, so <code>0,height</code>, and runs to the far right, so <code>width,height</code>.</p>
+
+<p>The <code>Y</code> axis starts at the top right corner, so <code>0,0</code>, and runs along the left side to the bottom so <code>0,height</code></p>
+
+<p>We merely stroke a 1px black line.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>getXAxis: function() {
+</span><span class='line'>    var path = Path().moveto(0, this.state.height).lineto(this.state.width, this.state.height);
+</span><span class='line'>    return (
+</span><span class='line'>        &lt;Shape d={path.print()} strokeWidth={1} stroke="#000" /&gt;
+</span><span class='line'>    );   
+</span><span class='line'>},
+</span><span class='line'>getYAxis: function() {
+</span><span class='line'>    var path = Path().moveto(0,0).lineto(0, this.state.height);
+</span><span class='line'>    return (
+</span><span class='line'>        &lt;Shape d={path.print()} strokeWidth={1} stroke="#000" /&gt;
+</span><span class='line'>    ); 
+</span><span class='line'>},
+</span><span class='line'>render: function() {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;div style= style=&gt;
+</span><span class='line'>                &lt;Surface
+</span><span class='line'>                    width={this.state.width}
+</span><span class='line'>                    height={this.state.height}
+</span><span class='line'>                &gt;
+</span><span class='line'>                    &lt;Group&gt;
+</span><span class='line'>                        {this.getXAxis()}
+</span><span class='line'>                        {this.getYAxis()}
+</span><span class='line'>                    &lt;/Group&gt;
+</span><span class='line'>                &lt;/Surface&gt;
+</span><span class='line'>            &lt;/div&gt;
+</span><span class='line'>        );
+</span><span class='line'>    }</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Render the Bar Graph</h3>
+
+<p>We&rsquo;ll call <code>this.getBar()</code> to just generate one bar graph and then pipe it into each function that needs it.
+To make this more testable we&rsquo;d probably just want to provide each function with absolutely necessary info but just keep that in mind if you implement this for real.</p>
+
+<p>All we do is map over each <code>curve</code> that we have, in our case we have <code>10</code> data points so therefore we have <code>10</code> curves.
+The color comes from the way we grouped our data and the pallette we provided in the first step.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>getBarChart: function(bar) {
+</span><span class='line'>    return bar.curves.map(function(bar) {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;Group&gt;
+</span><span class='line'>              &lt;Shape d={bar.line.path.print()} fill={bar.color}/&gt;
+</span><span class='line'>            &lt;/Group&gt;
+</span><span class='line'>        )
+</span><span class='line'>    }, this)
+</span><span class='line'>},
+</span><span class='line'>render: function() {
+</span><span class='line'>    var bar = this.getBar();
+</span><span class='line'>
+</span><span class='line'>    return (
+</span><span class='line'>        &lt;div style= style=&gt;
+</span><span class='line'>            &lt;Surface
+</span><span class='line'>                width={this.state.width}
+</span><span class='line'>                height={this.state.height}
+</span><span class='line'>            &gt;
+</span><span class='line'>                &lt;Group&gt;
+</span><span class='line'>                    {this.getBarChart(bar)} 
+</span><span class='line'>                &lt;/Group&gt;
+</span><span class='line'>                &lt;Group&gt;
+</span><span class='line'>                    {this.getXAxis(bar)}
+</span><span class='line'>                    {this.getYAxis(bar)}
+</span><span class='line'>                &lt;/Group&gt;
+</span><span class='line'>            &lt;/Surface&gt;
+</span><span class='line'>        &lt;/div&gt;
+</span><span class='line'>    );
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Render the Bar Information</h3>
+
+<p>Lets also display some text about the bars. We&rsquo;ll use <code>Text</code> from <code>react-art</code> to do that.
+We need to calculate a few points, which <code>Paths.js</code> will help us with.</p>
+
+<p>Since each bar is a rectangle it just has 4 points, we can get the <code>points</code> from the path.
+The path will gives us 4 arrays, each with <code>x,y</code> coordinates of each corner point.</p>
+
+<p>We need to do a little subtraction of the <code>x,y</code> coordinates to figure out the width of each bar, and height of each bar so we can place our text.</p>
+
+<p>We&rsquo;ll use the <code>Group</code> element from <code>react-art</code> to adjust our coordinate system to start at the top left of each bar.
+The name and population will be aligned to the center, and at the bottom of the bar. We can use <code>x,y</code> coordinates to derive our width/height.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>getBarChart: function(bar) {
+</span><span class='line'>    return bar.curves.map(function(bar) {
+</span><span class='line'>
+</span><span class='line'>        var points = bar.line.path.points(),
+</span><span class='line'>            right = points[0][0],
+</span><span class='line'>            top = points[0][1],
+</span><span class='line'>            left = points[2][0],
+</span><span class='line'>            bottom = points[2][1],
+</span><span class='line'>            width = right - left,
+</span><span class='line'>            height = bottom - top;
+</span><span class='line'>
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;Group&gt;
+</span><span class='line'>              &lt;Shape d={bar.line.path.print()} fill={bar.color}/&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;Group x={left} y={top}&gt;
+</span><span class='line'>                &lt;Text x={width/2} y={height - 24} alignment="middle" fill="#000" font='bold 10px "Arial"'&gt;{bar.item.name}&lt;/Text&gt;
+</span><span class='line'>                &lt;Text x={width/2} y={height - 12} alignment="middle" fill="#000" font='bold 10px "Arial"'&gt;{bar.item.population +''}&lt;/Text&gt;
+</span><span class='line'>              &lt;/Group&gt;
+</span><span class='line'>            &lt;/Group&gt;
+</span><span class='line'>        )
+</span><span class='line'>    }, this)
+</span><span class='line'>},</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Hover data for fun</h3>
+
+<p>Just to show how to handle mouse events we can have a <code>mouseMove</code> on each bar.
+We&rsquo;ll bind each hover event with the <code>item</code> object which has the name and population.</p>
+
+<p>When a new bar is hovered or the mouse is moved it will set the <code>hoveredItem</code> object and coordinates on our state which will cause a re-render.
+Each movement of the mouse will cause a re-render so be sure and debounce this as well.</p>
+
+<p>The hovered data displayed will actually use HTML not <code>react-art</code> since we wrap the <code>Surface</code> in a <code>div</code> and give it <code>position:relative</code>. This will mean it has the same coordinates as our <code>Surface</code> mouse events which is why we can just use <code>x,y</code> on the event.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>handleMouseMove: function(item, e) {
+</span><span class='line'>    this.setState({
+</span><span class='line'>        hoveredItem: item,
+</span><span class='line'>        hoveredY: e.y,
+</span><span class='line'>        hoveredX: e.x
+</span><span class='line'>    });
+</span><span class='line'>},
+</span><span class='line'>getBarChart: function(bar) {
+</span><span class='line'>    return bar.curves.map(function(bar) {
+</span><span class='line'>
+</span><span class='line'>        var points = bar.line.path.points(),
+</span><span class='line'>            right = points[0][0],
+</span><span class='line'>            top = points[0][1],
+</span><span class='line'>            left = points[2][0],
+</span><span class='line'>            bottom = points[2][1],
+</span><span class='line'>            width = right - left,
+</span><span class='line'>            height = bottom - top;
+</span><span class='line'>            
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;Group 
+</span><span class='line'>              onMouseMove={this.handleMouseMove.bind(this, bar.item)}
+</span><span class='line'>            &gt;
+</span><span class='line'>              &lt;Shape d={bar.line.path.print()} fill={bar.color}/&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;Group x={left} y={top}&gt;
+</span><span class='line'>                &lt;Text x={width/2} y={height - 24} alignment="middle" fill="#000" font='bold 10px "Arial"'&gt;{bar.item.name}&lt;/Text&gt;
+</span><span class='line'>                &lt;Text x={width/2} y={height - 12} alignment="middle" fill="#000" font='bold 10px "Arial"'&gt;{bar.item.population +''}&lt;/Text&gt;
+</span><span class='line'>              &lt;/Group&gt;
+</span><span class='line'>            &lt;/Group&gt;
+</span><span class='line'>        )
+</span><span class='line'>    }, this)
+</span><span class='line'>},
+</span><span class='line'>getHoveredData: function() {
+</span><span class='line'>    if (!this.state.hoveredItem) {
+</span><span class='line'>        return null;
+</span><span class='line'>    }
+</span><span class='line'>    return (
+</span><span class='line'>            &lt;div style=&gt;
+</span><span class='line'>                &lt;h2&gt;{this.state.hoveredItem.name}&lt;/h2&gt;
+</span><span class='line'>                &lt;h5&gt;{this.state.hoveredItem.population}&lt;/h5&gt;
+</span><span class='line'>            &lt;/div&gt;
+</span><span class='line'>        )
+</span><span class='line'>},
+</span><span class='line'>render: function() {
+</span><span class='line'>    var bar = this.getBar();
+</span><span class='line'>
+</span><span class='line'>    return (
+</span><span class='line'>        &lt;div style= style=&gt;
+</span><span class='line'>            &lt;Surface
+</span><span class='line'>                width={this.state.width}
+</span><span class='line'>                height={this.state.height}
+</span><span class='line'>            &gt;
+</span><span class='line'>                &lt;Group&gt;
+</span><span class='line'>                    {this.getBarChart(bar)} 
+</span><span class='line'>                &lt;/Group&gt;
+</span><span class='line'>                &lt;Group&gt;
+</span><span class='line'>                    {this.getXAxis(bar)}
+</span><span class='line'>                    {this.getYAxis(bar)}
+</span><span class='line'>                &lt;/Group&gt;
+</span><span class='line'>            &lt;/Surface&gt;
+</span><span class='line'>            {this.getHoveredData()}
+</span><span class='line'>
+</span><span class='line'>        &lt;/div&gt;
+</span><span class='line'>    );
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Final Code</h3>
+
+<p>Finally all the code combined.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+<span class='line-number'>152</span>
+<span class='line-number'>153</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react'),
+</span><span class='line'>    ReactArt = require('react-art'),
+</span><span class='line'>    Surface = ReactArt.Surface,
+</span><span class='line'>    Group = ReactArt.Group,
+</span><span class='line'>    Text = ReactArt.Text,
+</span><span class='line'>    Shape = ReactArt.Shape,
+</span><span class='line'>    Bar = require('paths-js/bar'),
+</span><span class='line'>    Path = require('paths-js/path');
+</span><span class='line'>
+</span><span class='line'>var viewportWidth = function() {
+</span><span class='line'>    return  window.innerWidth - 100;
+</span><span class='line'>}
+</span><span class='line'>var viewportHeight = function() {
+</span><span class='line'>    return window.innerHeight - 100;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>var data = [
+</span><span class='line'>    [
+</span><span class='line'>      { name: 'Italy', population: 59859996 },
+</span><span class='line'>      { name: 'Spain', population: 46704314 },
+</span><span class='line'>      { name: 'France', population: 65806000 },
+</span><span class='line'>      { name: 'Romania', population: 20121641 },
+</span><span class='line'>      { name: 'Greece', population: 10815197 }
+</span><span class='line'>    ],
+</span><span class='line'>    [
+</span><span class='line'>      { name: 'Zambia', population: 14580290 },
+</span><span class='line'>      { name: 'Cameroon', population: 20386799 },
+</span><span class='line'>      { name: 'Nigeria', population: 173615000 },
+</span><span class='line'>      { name: 'Ethiopia', population: 86613986 },
+</span><span class='line'>      { name: 'Ghana', population: 24658823 }
+</span><span class='line'>    ]
+</span><span class='line'>  ];
+</span><span class='line'>
+</span><span class='line'>var colorPallete = ["#FEE871", "#E5FAAF", "#B7E5F5"];
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>var Demo = React.createClass({
+</span><span class='line'>
+</span><span class='line'>    getInitialState: function() {
+</span><span class='line'>        return {
+</span><span class='line'>            width: viewportWidth(),
+</span><span class='line'>            height: viewportHeight()
+</span><span class='line'>        }
+</span><span class='line'>    },
+</span><span class='line'>    componentDidMount: function() {
+</span><span class='line'>        window.addEventListener('resize', this.refresh, false); //This should be debounced
+</span><span class='line'>    },
+</span><span class='line'>    componentWillUnmount: function() {
+</span><span class='line'>        window.removeEventListener('resize', this.refresh, false);
+</span><span class='line'>    },
+</span><span class='line'>    refresh: function() {
+</span><span class='line'>        this.setState({
+</span><span class='line'>            width: viewportWidth(),
+</span><span class='line'>            height: viewportHeight()
+</span><span class='line'>        });
+</span><span class='line'>    },
+</span><span class='line'>    getBar: function() {
+</span><span class='line'>
+</span><span class='line'>        var bar = Bar({
+</span><span class='line'>          data: data,
+</span><span class='line'>          accessor: function(x) { return x.population; }, // Value to use
+</span><span class='line'>          compute: {
+</span><span class='line'>            color: function(i) { return colorPallete[i]; } //Color of the bar
+</span><span class='line'>          },
+</span><span class='line'>          width: this.state.width, //Set it to our surface width so it is responsive when our surface width changes
+</span><span class='line'>          height: this.state.height, //Set it to our surface height so it's repsponsive
+</span><span class='line'>          gutter: 10
+</span><span class='line'>        });
+</span><span class='line'>        
+</span><span class='line'>        return bar;
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseMove: function(item, e) {
+</span><span class='line'>        this.setState({
+</span><span class='line'>            hoveredItem: item,
+</span><span class='line'>            hoveredY: e.y,
+</span><span class='line'>            hoveredX: e.x
+</span><span class='line'>        });
+</span><span class='line'>    },
+</span><span class='line'>    getBarChart: function(bar) {
+</span><span class='line'>        return bar.curves.map(function(bar) {
+</span><span class='line'>
+</span><span class='line'>            var points = bar.line.path.points(),
+</span><span class='line'>                right = points[0][0],
+</span><span class='line'>                top = points[0][1],
+</span><span class='line'>                left = points[2][0],
+</span><span class='line'>                bottom = points[2][1],
+</span><span class='line'>                width = right - left,
+</span><span class='line'>                height = bottom - top;
+</span><span class='line'>                
+</span><span class='line'>            return (
+</span><span class='line'>                &lt;Group 
+</span><span class='line'>                  onMouseMove={this.handleMouseMove.bind(this, bar.item)}
+</span><span class='line'>                &gt;
+</span><span class='line'>                  &lt;Shape d={bar.line.path.print()} fill={bar.color}/&gt;
+</span><span class='line'>
+</span><span class='line'>                  &lt;Group x={left} y={top}&gt;
+</span><span class='line'>                    &lt;Text x={width/2} y={height - 24} alignment="middle" fill="#000" font='bold 10px "Arial"'&gt;{bar.item.name}&lt;/Text&gt;
+</span><span class='line'>                    &lt;Text x={width/2} y={height - 12} alignment="middle" fill="#000" font='bold 10px "Arial"'&gt;{bar.item.population +''}&lt;/Text&gt;
+</span><span class='line'>                  &lt;/Group&gt;
+</span><span class='line'>                &lt;/Group&gt;
+</span><span class='line'>            )
+</span><span class='line'>        }, this)
+</span><span class='line'>    },
+</span><span class='line'>    getXAxis: function(bar) {
+</span><span class='line'>        var path = Path().moveto(0, this.state.height).lineto(this.state.width, this.state.height);
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;Shape d={path.print()} strokeWidth={1} stroke="#000" /&gt;
+</span><span class='line'>        );   
+</span><span class='line'>    },
+</span><span class='line'>    getYAxis: function(bar) {
+</span><span class='line'>        var path = Path().moveto(0,0).lineto(0, this.state.height);
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;Shape d={path.print()} strokeWidth={1} stroke="#000" /&gt;
+</span><span class='line'>        ); 
+</span><span class='line'>    },
+</span><span class='line'>    getHoveredData: function() {
+</span><span class='line'>        if (!this.state.hoveredItem) {
+</span><span class='line'>            return null;
+</span><span class='line'>        }
+</span><span class='line'>        return (
+</span><span class='line'>                &lt;div style=&gt;
+</span><span class='line'>                    &lt;h2&gt;{this.state.hoveredItem.name}&lt;/h2&gt;
+</span><span class='line'>                    &lt;h5&gt;{this.state.hoveredItem.population}&lt;/h5&gt;
+</span><span class='line'>                &lt;/div&gt;
+</span><span class='line'>            )
+</span><span class='line'>    },
+</span><span class='line'>    render: function() {
+</span><span class='line'>        var bar = this.getBar();
+</span><span class='line'>
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;div style= style=&gt;
+</span><span class='line'>                &lt;Surface
+</span><span class='line'>                    width={this.state.width}
+</span><span class='line'>                    height={this.state.height}
+</span><span class='line'>                &gt;
+</span><span class='line'>                    &lt;Group&gt;
+</span><span class='line'>                        {this.getBarChart(bar)} 
+</span><span class='line'>                    &lt;/Group&gt;
+</span><span class='line'>                    &lt;Group&gt;
+</span><span class='line'>                        {this.getXAxis(bar)}
+</span><span class='line'>                        {this.getYAxis(bar)}
+</span><span class='line'>                    &lt;/Group&gt;
+</span><span class='line'>                &lt;/Surface&gt;
+</span><span class='line'>                {this.getHoveredData()}
+</span><span class='line'>
+</span><span class='line'>            &lt;/div&gt;
+</span><span class='line'>        );
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>module.exports = Demo;</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Results</h3>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="LVxjPw" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/LVxjPw/'>LVxjPw</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+<h3>Conclusion</h3>
+
+<p>Once again <a href="https://github.com/andreaferretti/paths-js">Paths.js</a> comes in handy for generating arbitrary path information, and providing access to a lot of valuable data to making laying out your graphs with <code>react-art</code> a breeze.</p>
+
+<p>Some homework for you is to add some vertical labels at each particular step.</p>
+
+	</div>
+	<div>
+		
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/bar/'>bar</a>, <a class='category' href='/blog/categories/chart/'>chart</a>, <a class='category' href='/blog/categories/graphs/'>graphs</a>, <a class='category' href='/blog/categories/pathsjs/'>pathsjs</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>
+	
+
+
+	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+<div class="article-wrap">
+<footer style="margin-top: 10px;">
+    <div id="post-author">
+	<div class="post-author-image" style="width: 20%; display: inline-block;">
+		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
+	</div>
+	<div class="post-author-content" style="width: 70%; display: inline-block;">
+		<p>
+			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a> )
+		</p>
+	</div>
+</div>
+</footer>
+</div>
+<!-- END OF _/layouts/post.html -->
+
+		
+			<footer>
+				Copyright &copy; 2015
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/05/29/react-art-and-bar-charts/';
+        var disqus_url = 'http://browniefed.com/blog/2015/05/29/react-art-and-bar-charts/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: $(this).next('code').text(),
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+					}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/05/29/react-art-and-bar-charts/';
+        var disqus_url = 'http://browniefed.com/blog/2015/05/29/react-art-and-bar-charts/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->
