@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/react/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-05-29T14:12:48-07:00</updated>
+  <updated>2015-05-30T18:38:39-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -12,6 +12,171 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Create a map with React-Art]]></title>
+    <link href="http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art/"/>
+    <updated>2015-05-30T10:15:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art</id>
+    <content type="html"><![CDATA[<h3>Intro</h3>
+
+<p>Just Like the title states, we&rsquo;re going to make a map with <code>react-art</code>. When you think of maps many people jump straight to <code>leaflet</code>, <code>google maps</code>, or <code>mapbox</code>. Well one of the key things they are doing is just plotting map tiles.</p>
+
+<p>Map tiles are just images that can be stitched together and form a map. That is why whenever you drag on a map portions of it pop in in squares.</p>
+
+<p>Don&rsquo;t worry, I won&rsquo;t get deep into mapping terminology because I don&rsquo;t know it. If you want to learn checkout this post <a href="http://www.macwright.org/2012/05/15/how-web-maps-work.html">http://www.macwright.org/2012/05/15/how-web-maps-work.html</a></p>
+
+<p>All you&rsquo;ll need to know is <code>Latitude</code>, <code>Longitude</code>, and <code>Tile</code> aka (an image of a piece of a map).</p>
+
+<p>Our tilemap source will be the fabulous <a href="https://www.openstreetmap.org/">OpenStreetMap</a>. It&rsquo;s a community driven mapping solution. Check it out and contribute if you can!</p>
+
+<p>This was going to be a blog post about creating a map but I ended up turning it into a library.</p>
+
+<h3>What I Built</h3>
+
+<p>I ended up writing up a library to show it off.</p>
+
+<p>Checkout <a href="https://github.com/browniefed/react-art-map">https://github.com/browniefed/react-art-map</a> for the library and examples.</p>
+
+<p>We use <a href="https://github.com/zacbarton/node-googlemaps-utils">https://github.com/zacbarton/node-googlemaps-utils</a> and
+<a href="https://github.com/gagan-bansal/map-the-tiles">https://github.com/gagan-bansal/map-the-tiles</a>.</p>
+
+<p>These 2 libraries are helper libraries.</p>
+
+<p><code>googlemaps-utils</code> takes a <code>width/height</code> and a central <code>lat/long</code> and gives us a bounding box which is just the <code>top/left</code> coordinate and the <code>bottom/right</code> coordinate.</p>
+
+<p>We then take that bounding box and convert it to meter points so we can generate a <a href="http://en.wikipedia.org/wiki/Mercator_projection">mercator projection</a>.</p>
+
+<p>The <code>map-the-tiles</code> takes those meter points and returns <code>x,y,z</code> points;</p>
+
+<p>Those <code>x,y,z</code> points get fed into the OSM url <code>http://{s}.tile.osm.org/{z}/{x}/{y}.png</code> and we get our tile images.</p>
+
+<p>We can then render them at their given <code>top/left</code> points w/ <code>react-art</code>.</p>
+
+<p>Ultimately this library was built with A LOT of googling and assembling some tools people already constructed.</p>
+
+<h3>The Code</h3>
+
+<p>```
+var React = require(&lsquo;react&rsquo;);
+var ReactMap = require(&lsquo;react-art-map&rsquo;);
+var ReactArt = require(&lsquo;react-art&rsquo;),</p>
+
+<pre><code>Circle = require('react-art/shapes/circle');
+</code></pre>
+
+<p>var Map = ReactMap.Map;</p>
+
+<p>var viewportWidth = function() {</p>
+
+<pre><code>return  window.innerWidth - 100;
+</code></pre>
+
+<p>}
+var viewportHeight = function() {</p>
+
+<pre><code>return window.innerHeight - 100;
+</code></pre>
+
+<p>}</p>
+
+<p>var center = [</p>
+
+<pre><code>-122.668197,45.525292
+</code></pre>
+
+<p>],
+offset = 3;</p>
+
+<p>var Demo = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  center: center,
+  zoom: 15,
+  x: 100
+}
+</code></pre>
+
+<p>  },
+  componentDidMount: function() {</p>
+
+<pre><code>requestAnimationFrame(this.updateCircle);
+</code></pre>
+
+<p>  },
+  updateCircle: function() {</p>
+
+<pre><code>if (this.state.x &gt;= viewportWidth()) {
+    offset = -3;
+} else if ( this.state.x &lt;= 99) {
+    offset = 3;
+}
+
+this.state.x += offset;
+this.setState(this.state, function() {
+    requestAnimationFrame(this.updateCircle);
+});
+</code></pre>
+
+<p>  },
+  handleDrag: function(newCenter) {</p>
+
+<pre><code>this.setState({
+  center: newCenter
+});
+</code></pre>
+
+<p>  },
+  render: function () {</p>
+
+<pre><code>return (
+  &lt;div&gt;
+    &lt;Map
+        width={viewportWidth()}
+        height={viewportHeight()}
+        center={this.state.center}
+        zoom={this.state.zoom}
+        tileSource="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+        onDrag={this.handleDrag}
+    &gt;
+        &lt;Circle 
+            x={this.state.x}
+            y={100}
+            radius={30}
+            stroke="#000"
+            strokeWidth={5}
+        /&gt;
+    &lt;/Map&gt;
+  &lt;/div&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>module.exports = Demo;
+```</p>
+
+<h3>React Native?!?!?!</h3>
+
+<p>React Native has a map implementation but it doesn&rsquo;t allow for much flexibility. You can render pins but that is about it.</p>
+
+<p>With this library once the Pattern fill gets implemented you can render any map tile based service + any cool visualiztions on the map that you want.</p>
+
+<p>I&rsquo;ve logged an issue here <a href="https://github.com/facebook/react-native/issues/1462">https://github.com/facebook/react-native/issues/1462</a> so follow along for when it gets implemented.</p>
+
+<h3>Results</h3>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="PqWRvz" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/PqWRvz/'>PqWRvz</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[React-Art and Bar Charts]]></title>
@@ -1216,31 +1381,6 @@ render: function() {
 If you want a predictable scale you can add some <code>+</code> and <code>-</code> buttons somwhere and just increment <code>this.state.scale</code></p>
 
 <p>I&rsquo;m hoping to do more write ups and examples with react-art. The great thing is that you can render react-art with react-native. With appropriate abstractions you could possibly have the same visualizations on the web as you do on native.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[React Native and Socket.io]]></title>
-    <link href="http://browniefed.com/blog/2015/05/16/react-native-and-socket-dot-io/"/>
-    <updated>2015-05-16T19:35:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/05/16/react-native-and-socket-dot-io</id>
-    <content type="html"><![CDATA[<p>React Native finally supports Websockets. Which is awesome, however there is one gotcha with socket.io.</p>
-
-<p>1) <code>npm install socket.io-client</code>. This will just pull down the socket.io javascript client</p>
-
-<p>2) Everything works great but there is one issue that <code>window.navigator.userAgent</code> doesn&rsquo;t exist. Socket.IO checks to deal with some browser incosistencies but we don&rsquo;t care. So all we have to do is create it. However make sure you require <code>react-native</code> first!</p>
-
-<p>Just like so</p>
-
-<p>```
-var React = require(&lsquo;react-native&rsquo;);</p>
-
-<p>window.navigator.userAgent = &ldquo;react-native&rdquo;;</p>
-
-<p>var io = require(&lsquo;socket.io-client/socket.io&rsquo;);
-```</p>
-
-<p>Now you can do as you please with your new glorious websockets.</p>
 ]]></content>
   </entry>
   

@@ -55,6 +55,241 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
+		<h1><a href="/blog/2015/05/30/create-a-map-with-react-art/">Create a map with React-Art</a></h1>
+		<time>30 May 2015</time>
+	</header>
+	<div class="content">
+		<h3>Intro</h3>
+
+<p>Just Like the title states, we&rsquo;re going to make a map with <code>react-art</code>. When you think of maps many people jump straight to <code>leaflet</code>, <code>google maps</code>, or <code>mapbox</code>. Well one of the key things they are doing is just plotting map tiles.</p>
+
+<p>Map tiles are just images that can be stitched together and form a map. That is why whenever you drag on a map portions of it pop in in squares.</p>
+
+<p>Don&rsquo;t worry, I won&rsquo;t get deep into mapping terminology because I don&rsquo;t know it. If you want to learn checkout this post <a href="http://www.macwright.org/2012/05/15/how-web-maps-work.html">http://www.macwright.org/2012/05/15/how-web-maps-work.html</a></p>
+
+<p>All you&rsquo;ll need to know is <code>Latitude</code>, <code>Longitude</code>, and <code>Tile</code> aka (an image of a piece of a map).</p>
+
+<p>Our tilemap source will be the fabulous <a href="https://www.openstreetmap.org/">OpenStreetMap</a>. It&rsquo;s a community driven mapping solution. Check it out and contribute if you can!</p>
+
+<p>This was going to be a blog post about creating a map but I ended up turning it into a library.</p>
+
+<h3>What I Built</h3>
+
+<p>I ended up writing up a library to show it off.</p>
+
+<p>Checkout <a href="https://github.com/browniefed/react-art-map">https://github.com/browniefed/react-art-map</a> for the library and examples.</p>
+
+<p>We use <a href="https://github.com/zacbarton/node-googlemaps-utils">https://github.com/zacbarton/node-googlemaps-utils</a> and
+<a href="https://github.com/gagan-bansal/map-the-tiles">https://github.com/gagan-bansal/map-the-tiles</a>.</p>
+
+<p>These 2 libraries are helper libraries.</p>
+
+<p><code>googlemaps-utils</code> takes a <code>width/height</code> and a central <code>lat/long</code> and gives us a bounding box which is just the <code>top/left</code> coordinate and the <code>bottom/right</code> coordinate.</p>
+
+<p>We then take that bounding box and convert it to meter points so we can generate a <a href="http://en.wikipedia.org/wiki/Mercator_projection">mercator projection</a>.</p>
+
+<p>The <code>map-the-tiles</code> takes those meter points and returns <code>x,y,z</code> points;</p>
+
+<p>Those <code>x,y,z</code> points get fed into the OSM url <code>http://{s}.tile.osm.org/{z}/{x}/{y}.png</code> and we get our tile images.</p>
+
+<p>We can then render them at their given <code>top/left</code> points w/ <code>react-art</code>.</p>
+
+<p>Ultimately this library was built with A LOT of googling and assembling some tools people already constructed.</p>
+
+<h3>The Code</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react');
+</span><span class='line'>var ReactMap = require('react-art-map');
+</span><span class='line'>var ReactArt = require('react-art'),
+</span><span class='line'>    Circle = require('react-art/shapes/circle');
+</span><span class='line'>
+</span><span class='line'>var Map = ReactMap.Map;
+</span><span class='line'>
+</span><span class='line'>var viewportWidth = function() {
+</span><span class='line'>    return  window.innerWidth - 100;
+</span><span class='line'>}
+</span><span class='line'>var viewportHeight = function() {
+</span><span class='line'>    return window.innerHeight - 100;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>var center = [
+</span><span class='line'>    -122.668197,45.525292
+</span><span class='line'>],
+</span><span class='line'>offset = 3;
+</span><span class='line'>
+</span><span class='line'>var Demo = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>      center: center,
+</span><span class='line'>      zoom: 15,
+</span><span class='line'>      x: 100
+</span><span class='line'>    }
+</span><span class='line'>  },
+</span><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    requestAnimationFrame(this.updateCircle);
+</span><span class='line'>  },
+</span><span class='line'>  updateCircle: function() {
+</span><span class='line'>    if (this.state.x &gt;= viewportWidth()) {
+</span><span class='line'>        offset = -3;
+</span><span class='line'>    } else if ( this.state.x &lt;= 99) {
+</span><span class='line'>        offset = 3;
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    this.state.x += offset;
+</span><span class='line'>    this.setState(this.state, function() {
+</span><span class='line'>        requestAnimationFrame(this.updateCircle);
+</span><span class='line'>    });
+</span><span class='line'>  },
+</span><span class='line'>  handleDrag: function(newCenter) {
+</span><span class='line'>    this.setState({
+</span><span class='line'>      center: newCenter
+</span><span class='line'>    });
+</span><span class='line'>  }, 
+</span><span class='line'>  render: function () {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;div&gt;
+</span><span class='line'>        &lt;Map
+</span><span class='line'>            width={viewportWidth()}
+</span><span class='line'>            height={viewportHeight()}
+</span><span class='line'>            center={this.state.center}
+</span><span class='line'>            zoom={this.state.zoom}
+</span><span class='line'>            tileSource="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+</span><span class='line'>            onDrag={this.handleDrag}
+</span><span class='line'>        &gt;
+</span><span class='line'>            &lt;Circle 
+</span><span class='line'>                x={this.state.x}
+</span><span class='line'>                y={100}
+</span><span class='line'>                radius={30}
+</span><span class='line'>                stroke="#000"
+</span><span class='line'>                strokeWidth={5}
+</span><span class='line'>            /&gt;
+</span><span class='line'>        &lt;/Map&gt;
+</span><span class='line'>      &lt;/div&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>module.exports = Demo;</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>React Native?!?!?!</h3>
+
+<p>React Native has a map implementation but it doesn&rsquo;t allow for much flexibility. You can render pins but that is about it.</p>
+
+<p>With this library once the Pattern fill gets implemented you can render any map tile based service + any cool visualiztions on the map that you want.</p>
+
+<p>I&rsquo;ve logged an issue here <a href="https://github.com/facebook/react-native/issues/1462">https://github.com/facebook/react-native/issues/1462</a> so follow along for when it gets implemented.</p>
+
+<h3>Results</h3>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="PqWRvz" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/PqWRvz/'>PqWRvz</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+
+
+	</div>
+	<div>
+		
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/mapping/'>mapping</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>, <a class='category' href='/blog/categories/tiles/'>tiles</a>
+	
+
+
+	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
 		<h1><a href="/blog/2015/05/29/react-art-and-bar-charts/">React-Art and Bar Charts</a></h1>
 		<time>29 May 2015</time>
 	</header>
@@ -3133,52 +3368,6 @@ If you are running your build script from a different location you&rsquo;ll have
 			Tagged under
 		
     <a class='category' href='/blog/categories/css/'>css</a>, <a class='category' href='/blog/categories/file/'>file</a>, <a class='category' href='/blog/categories/html/'>html</a>, <a class='category' href='/blog/categories/img/'>img</a>, <a class='category' href='/blog/categories/js/'>js</a>, <a class='category' href='/blog/categories/phantomjs/'>phantomjs</a>, <a class='category' href='/blog/categories/server/'>server</a>, <a class='category' href='/blog/categories/server/'>server</a>, <a class='category' href='/blog/categories/static/'>static</a>, <a class='category' href='/blog/categories/testing/'>testing</a>, <a class='category' href='/blog/categories/unit/'>unit</a>
-	
-
-
-	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/06/07/phonegap-3-dot-4-geolocation/">Phonegap 3.4 GeoLocation</a></h1>
-		<time>07 June 2014</time>
-	</header>
-	<div class="content">
-		<p>It doesn&rsquo;t appear to be just me but PhoneGap can be incredibly difficult to use. Simply because any information pertaining to the most current version of phonegap is so fragmented. A google search will reveal virtually nothing about the error messages you&rsquo;re receiving and how to remedy them for current versions.</p>
-
-<p>For example, I was attempting to use the GeoLocation API. Could care less about the extreme accuracy. After attempting to use it I was getting an Error Code 2 , failed to start geolocation service. Well maybe that was my fault for enabling <code>enableHighAccuracy</code> but wait you have to enableHighAccuracy for older versions of android otherwise it won&rsquo;t work. Or was that only for older versions of the geolocation plugin which then got deprecated in some versions of android in favor of the native browser geolocation API because it provides better and faster GPS locations. In the end the fault was all mine, I had simply forgotten to include the plugin in my <code>config.xml</code></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;gap:plugin name="org.apache.cordova.geolocation" version="0.3.8" /&gt;</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Version <code>0.3.8</code> was the current version at the time of this article. Actually released on June 5th, 2014 just before the article written on June 6th, 2014.</p>
-
-<p>I&rsquo;ve sort of determined that the only real reliable way to determine anything is just to look at the release notes on <a href="https://github.com/apache/cordova-plugin-geolocation/blob/master/RELEASENOTES.md">github</a> for the best most up to date information.</p>
-
-<p>To end I should say I really love PhoneGap and all of the time and effort people are putting into developing it. The documentation and information about current versions is fragmented, and rather than ranting I should be helping out and contributing to documentation and solving the problems. That should always be the goal if you find a problem in the open source world. Don&rsquo;t rant, help out, and that is what I will do.</p>
-
-	</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/3-dot-4/'>3.4</a>, <a class='category' href='/blog/categories/documentation/'>documentation</a>, <a class='category' href='/blog/categories/geolocation/'>geolocation</a>, <a class='category' href='/blog/categories/gps/'>gps</a>, <a class='category' href='/blog/categories/phonegap/'>phonegap</a>
 	
 
 
