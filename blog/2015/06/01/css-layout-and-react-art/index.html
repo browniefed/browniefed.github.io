@@ -1,0 +1,808 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="" name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+		
+		<title>CSS-Layout and React-Art &mdash; JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script src="/js/jquery.zclip.min.js"></script>
+		
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+		
+		<!--<link href="http://feeds.feedburner.com/turkeltaub" rel="alternate" title="JavaScript Without Grammar" type="application/rss+xml" />-->
+		
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="http://browniefed.com">Portfolio?</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF _layouts/post.html -->
+
+<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/06/01/css-layout-and-react-art/">CSS-Layout and React-Art</a></h1>
+		<time>01 June 2015</time>
+	</header>
+	<div class="content">
+		<h3>Intro</h3>
+
+<p>If you&rsquo;ve used <code>react-native</code> before then you may know that &ldquo;css&rdquo; you&rsquo;re writing isn&rsquo;t actually CSS. It&rsquo;s a descriptor for a layout engine. That layout engine is <a href="https://github.com/facebook/css-layout">css-layout</a> which was created by <a href="https://twitter.com/Vjeux">@vjeux</a> and compiled to Java/Objective-C.</p>
+
+<p>Layout is difficult. There have been attempts at various constraint based layouts in JavaScript, <a href="http://gridstylesheets.org/">GSS</a> is one of those. Which is a port of Apples <code>Cassowary</code> constraint solver which was also ported to JavaScript <a href="https://github.com/slightlyoff/cassowary.js">https://github.com/slightlyoff/cassowary.js</a>.</p>
+
+<p>Now this is all fine and well but from the bit I&rsquo;ve read constraints fall down sometimes. This usually happens when you don&rsquo;t specify enough constraints based on the current layout.</p>
+
+<h3>Layout is hard!</h3>
+
+<p>Parent layouts get effected by their child layouts. CSS is weird in that you can remove items from layout with <code>position: absolute</code> but ultimately the top parent <code>width/height</code> is directly effected by it&rsquo;s children.</p>
+
+<p>This is an over simplification but many times in <code>React</code> you have to hook into <code>componentDidMount</code> get the child width and take action.</p>
+
+<p>An example would be even width labels in a form. We could measure the text but depending on <code>font</code>, <code>font-size</code> it could measure each value differently. So we hide the form on initial render, get the max label width and set it on state.</p>
+
+<h3>CSS-Layout Basics</h3>
+
+<p>It takes a subset of flexbox and some other styling parameters and returns <code>width</code>, and the <code>left/top</code> offsets for each item and it&rsquo;s children.</p>
+
+<p>This example is taken directly from the <code>css-layout</code> git repo.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>computeLayout(
+</span><span class='line'>  {style: {padding: 50}, children: [
+</span><span class='line'>    {style: {padding: 10, alignSelf: 'stretch'}}
+</span><span class='line'>  ]}
+</span><span class='line'>);
+</span><span class='line'>// =&gt;
+</span><span class='line'>{
+</span><span class='line'>    width: 120,
+</span><span class='line'>    height: 120,
+</span><span class='line'>    top: 0,
+</span><span class='line'>    left: 0,
+</span><span class='line'>    children: [{
+</span><span class='line'>        width: 20,
+</span><span class='line'>        height: 20,
+</span><span class='line'>        top: 50,
+</span><span class='line'>        left: 50
+</span><span class='line'>    }]
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So explaining this. We have an item with a padding of <code>50</code>, so <code>50px</code> around the entire item.</p>
+
+<p>It&rsquo;s child item has a padding of <code>10</code>, so <code>10px</code> all the way around.</p>
+
+<p>Therefore the parent has <code>50*2 = 100</code> initial width/height. Now we take into account the children.</p>
+
+<p>Width/Height:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Parent: `50*2 = 100` +  `10*2 = 20` = `100 + 120`
+</span><span class='line'>Child: `10*2 = 20`</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Position:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Parent: `x = 0, y = 0` since we are starting there.
+</span><span class='line'>Child: Parent padding `50` so our child is inset at `x = 50, y = 50`</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Lets change the child width and see what happens</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>computeLayout(
+</span><span class='line'>    {
+</span><span class='line'>        style: {
+</span><span class='line'>            padding: 50
+</span><span class='line'>        },
+</span><span class='line'>        children: [{
+</span><span class='line'>            style: {
+</span><span class='line'>                padding: 10,
+</span><span class='line'>                width: 1000,
+</span><span class='line'>                alignSelf: 'stretch'
+</span><span class='line'>            }
+</span><span class='line'>        }]
+</span><span class='line'>    }
+</span><span class='line'>);
+</span><span class='line'>// =&gt;
+</span><span class='line'>{
+</span><span class='line'>    "width": 1100,
+</span><span class='line'>    "height": 120,
+</span><span class='line'>    "top": 0,
+</span><span class='line'>    "left": 0,
+</span><span class='line'>    "children": [{
+</span><span class='line'>        "width": 1000,
+</span><span class='line'>        "height": 20,
+</span><span class='line'>        "top": 50,
+</span><span class='line'>        "left": 50
+</span><span class='line'>    }]
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Because our child defined a width of <code>1000</code> we then add on our <code>50*2</code> of padding on both sides and now the parent has a width of <code>1100</code>.</p>
+
+<p>There are some other nuances that you can read about in the <code>css-layout</code> repo.</p>
+
+<h3>Basic Example</h3>
+
+<p>First off we&rsquo;ll need a component tree. Now in React they transpile JSX, and build the component tree for us. However in our case we can just create a JSON tree.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var componentTree = {
+</span><span class='line'>    style: {
+</span><span class='line'>        padding: 10
+</span><span class='line'>    },
+</span><span class='line'>    component: Rectangle,
+</span><span class='line'>    children: [{
+</span><span class='line'>        style: {
+</span><span class='line'>            padding: 10,
+</span><span class='line'>            flexDirection: 'column',
+</span><span class='line'>            alignItems: 'center'
+</span><span class='line'>        },
+</span><span class='line'>        component: Rectangle,
+</span><span class='line'>        children: [
+</span><span class='line'>            {
+</span><span class='line'>                style: {
+</span><span class='line'>                    width: 30,
+</span><span class='line'>                    height: 30
+</span><span class='line'>                },
+</span><span class='line'>                component: Rectangle
+</span><span class='line'>            },
+</span><span class='line'>            {
+</span><span class='line'>                style: {
+</span><span class='line'>                    margin: 10,
+</span><span class='line'>                    width: 50,
+</span><span class='line'>                    height: 50,
+</span><span class='line'>                    alignItems: 'center',
+</span><span class='line'>                    justifyContent: 'center'
+</span><span class='line'>                },
+</span><span class='line'>                component: Circle,
+</span><span class='line'>                children: [
+</span><span class='line'>                    {
+</span><span class='line'>                        style: {
+</span><span class='line'>                            width: 10,
+</span><span class='line'>                            height: 10
+</span><span class='line'>                        },
+</span><span class='line'>                        component: Circle
+</span><span class='line'>                    }
+</span><span class='line'>                ]
+</span><span class='line'>            }
+</span><span class='line'>        ]
+</span><span class='line'>    }]
+</span><span class='line'>};
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We add a <code>component</code> parameter to the tree. This is the thing that will be rendered.
+We could add additional properties here, maybe create custom renderers but we&rsquo;ll keep it simple.</p>
+
+<p>The break down is like so</p>
+
+<ul>
+<li>A surrounding rectangle w/ <code>10px</code> of padding all around</li>
+<li>1 child that is a rectangle with another <code>10px</code> of padding, and it&rsquo;s children in a <code>column</code> based layout.</li>
+<li>We align each of the items in the <code>center</code></li>
+<li>2 children one a Rectangle, one a Cirlce.</li>
+<li>Rectangle = <code>width = 30, height = 30</code></li>
+<li>Circle = <code>width = 50, height = 50</code> and a surrounding <code>10px</code> margin and it&rsquo;s children centered vertically and horizontally</li>
+<li>That cirlce has a circle inside that is <code>width = 10</code> and `height = 10
+We&rsquo;ll have to do some basic math on the Circle to compute the radius, and center it correctly.</li>
+</ul>
+
+
+<p>Now we&rsquo;ll need to traverse the layout.
+We&rsquo;ll do that with a function that calls itself</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>function traverseLayout(componentTree, layout) {
+</span><span class='line'>    var Component = componentTree.component;
+</span><span class='line'>    return (
+</span><span class='line'>        &lt;Group x={layout.left} y={layout.top}&gt;
+</span><span class='line'>            &lt;Component
+</span><span class='line'>                {...getProps(Component, layout)}
+</span><span class='line'>             /&gt;
+</span><span class='line'>             &lt;Group x={0} y={0}&gt;
+</span><span class='line'>                {
+</span><span class='line'>                    !componentTree.children ? null : componentTree.children.map(function(child, index) {
+</span><span class='line'>                        return traverseLayout(child, layout.children[index]);
+</span><span class='line'>                    })
+</span><span class='line'>
+</span><span class='line'>                }
+</span><span class='line'>             &lt;/Group&gt;
+</span><span class='line'>        &lt;/Group&gt;
+</span><span class='line'>    )
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is a super crude layout renderer but it works for our purposes.</p>
+
+<p>It creates a group and we pass in our <code>top/left</code> to <code>x/y</code> of the group. This is necessary to make our children <code>top/left</code> work correctly.
+Then renders the component with selected props. We&rsquo;ll just render <code>stroke="#000"</code> and a stroke={1}.</p>
+
+<p>Then if we have children we will call ourself with the child component and layout.</p>
+
+<p>To process the props we need to render different props for specific components.</p>
+
+<p><code>Rectangle</code> needs <code>width/height</code> which we have.
+<code>Circle</code> needs the radius computed, and to then be ofset by the radius. So we just divide the <code>width/2</code> and for positioning <code>y</code> we divide the <code>height/2</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>function getProps(component, layout) {
+</span><span class='line'>
+</span><span class='line'>    var props = {
+</span><span class='line'>        x: 0,
+</span><span class='line'>        y: 0
+</span><span class='line'>    };
+</span><span class='line'>
+</span><span class='line'>    if (Rectangle === component) {
+</span><span class='line'>        props.width = layout.width;
+</span><span class='line'>        props.height = layout.height;
+</span><span class='line'>
+</span><span class='line'>    } else if (Circle === component) {
+</span><span class='line'>        props.radius = layout.width/2;
+</span><span class='line'>        props.x += (layout.width/2)
+</span><span class='line'>        props.y += (layout.height/2);
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    props.stroke = "#000"; // Just to visualize
+</span><span class='line'>    props.strokeWidth = 1; // Just to visualize
+</span><span class='line'>    return props;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That is it, now we can render a tree of <code>Rectangles</code> and <code>Circles</code>. The complete code is below.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react');
+</span><span class='line'>var ReactArt = require('react-art'),
+</span><span class='line'>    Surface = ReactArt.Surface,
+</span><span class='line'>    Group = ReactArt.Group,
+</span><span class='line'>    computeLayout = require('css-layout'),
+</span><span class='line'>    Circle = require('react-art/shapes/circle'),
+</span><span class='line'>    Rectangle = require('react-art/shapes/rectangle');
+</span><span class='line'>
+</span><span class='line'>var Surface = ReactArt.Surface;
+</span><span class='line'>
+</span><span class='line'>var viewportWidth = function() {
+</span><span class='line'>    return  window.innerWidth - 100;
+</span><span class='line'>}
+</span><span class='line'>var viewportHeight = function() {
+</span><span class='line'>    return window.innerHeight - 100;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>var componentTree = {
+</span><span class='line'>    style: {
+</span><span class='line'>        padding: 10
+</span><span class='line'>    },
+</span><span class='line'>    component: Rectangle,
+</span><span class='line'>    children: [{
+</span><span class='line'>        style: {
+</span><span class='line'>            padding: 10,
+</span><span class='line'>            flexDirection: 'column',
+</span><span class='line'>            alignItems: 'center'
+</span><span class='line'>        },
+</span><span class='line'>        component: Rectangle,
+</span><span class='line'>        children: [
+</span><span class='line'>            {
+</span><span class='line'>                style: {
+</span><span class='line'>                    width: 30,
+</span><span class='line'>                    height: 30
+</span><span class='line'>                },
+</span><span class='line'>                component: Rectangle
+</span><span class='line'>            },
+</span><span class='line'>            {
+</span><span class='line'>                style: {
+</span><span class='line'>                    margin: 10,
+</span><span class='line'>                    width: 50,
+</span><span class='line'>                    height: 50,
+</span><span class='line'>                    alignItems: 'center',
+</span><span class='line'>                    justifyContent: 'center'
+</span><span class='line'>                },
+</span><span class='line'>                component: Circle,
+</span><span class='line'>                children: [
+</span><span class='line'>                    {
+</span><span class='line'>                        style: {
+</span><span class='line'>                            width: 10,
+</span><span class='line'>                            height: 10
+</span><span class='line'>                        },
+</span><span class='line'>                        component: Circle
+</span><span class='line'>                    }
+</span><span class='line'>                ]
+</span><span class='line'>            }
+</span><span class='line'>        ]
+</span><span class='line'>    }]
+</span><span class='line'>};
+</span><span class='line'>
+</span><span class='line'>var layout = computeLayout(componentTree);
+</span><span class='line'>
+</span><span class='line'>function traverseLayout(componentTree, layout) {
+</span><span class='line'>    var Component = componentTree.component;
+</span><span class='line'>    return (
+</span><span class='line'>        &lt;Group x={layout.left} y={layout.top}&gt;
+</span><span class='line'>            &lt;Component
+</span><span class='line'>                {...getProps(Component, layout)}
+</span><span class='line'>             /&gt;
+</span><span class='line'>             &lt;Group x={0} y={0}&gt;
+</span><span class='line'>                {
+</span><span class='line'>                    !componentTree.children ? null : componentTree.children.map(function(child, index) {
+</span><span class='line'>                        return traverseLayout(child, layout.children[index]);
+</span><span class='line'>                    })
+</span><span class='line'>
+</span><span class='line'>                }
+</span><span class='line'>             &lt;/Group&gt;
+</span><span class='line'>        &lt;/Group&gt;
+</span><span class='line'>    )
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>function getProps(component, layout) {
+</span><span class='line'>
+</span><span class='line'>    var props = {
+</span><span class='line'>        x: 0,
+</span><span class='line'>        y: 0
+</span><span class='line'>    };
+</span><span class='line'>
+</span><span class='line'>    if (Rectangle === component) {
+</span><span class='line'>        props.width = layout.width;
+</span><span class='line'>        props.height = layout.height;
+</span><span class='line'>
+</span><span class='line'>    } else if (Circle === component) {
+</span><span class='line'>        props.radius = layout.width/2;
+</span><span class='line'>        props.x += (layout.width/2)
+</span><span class='line'>        props.y += (layout.height/2);
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    props.stroke = "#000";
+</span><span class='line'>    props.strokeWidth = 1;
+</span><span class='line'>    return props;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>var Demo = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>
+</span><span class='line'>    }
+</span><span class='line'>  },
+</span><span class='line'>  getRenderLayout: function() {
+</span><span class='line'>    return traverseLayout(componentTree, layout);
+</span><span class='line'>  },
+</span><span class='line'>  render: function () {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;div&gt;
+</span><span class='line'>        &lt;Surface
+</span><span class='line'>            width={viewportWidth()}
+</span><span class='line'>            height={viewportHeight()}
+</span><span class='line'>        &gt;
+</span><span class='line'>            {this.getRenderLayout()}
+</span><span class='line'>        &lt;/Surface&gt;
+</span><span class='line'>      &lt;/div&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>module.exports = Demo;</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Possibilities</h3>
+
+<p>Tic-tac-toe? Heh.</p>
+
+<p>This could be made to layout components arbitrarily much like we do with <code>react-native</code>. It&rsquo;s not perfect and could only be used in specific scenarios but it&rsquo;s still a fun prototype.</p>
+
+<h3>Demo</h3>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="zGZOMN" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/zGZOMN/'>zGZOMN</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+
+
+	</div>
+	<div>
+		
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/css-layout/'>css-layout</a>, <a class='category' href='/blog/categories/layout/'>layout</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>, <a class='category' href='/blog/categories/visualization/'>visualization</a>
+	
+
+
+	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+<div class="article-wrap">
+<footer style="margin-top: 10px;">
+    <div id="post-author">
+	<div class="post-author-image" style="width: 20%; display: inline-block;">
+		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
+	</div>
+	<div class="post-author-content" style="width: 70%; display: inline-block;">
+		<p>
+			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a> )
+		</p>
+	</div>
+</div>
+</footer>
+</div>
+<!-- END OF _/layouts/post.html -->
+
+		
+			<footer>
+				Copyright &copy; 2015
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/06/01/css-layout-and-react-art/';
+        var disqus_url = 'http://browniefed.com/blog/2015/06/01/css-layout-and-react-art/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: $(this).next('code').text(),
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+					}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/06/01/css-layout-and-react-art/';
+        var disqus_url = 'http://browniefed.com/blog/2015/06/01/css-layout-and-react-art/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->
