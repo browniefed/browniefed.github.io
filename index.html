@@ -2023,6 +2023,13 @@ Each movement of the mouse will cause a re-render so be sure and debounce this a
 
 <h3>Paths</h3>
 
+<h4>UPDATE:</h4>
+
+<p>Sebastian Markbage (the creator of ReactART and ART), informed me that <code>ReactART</code> itself has a <code>Path</code> implementation. I realized this but didn&rsquo;t think much of it.
+However per the discussion here <a href="https://discuss.reactjs.org/t/react-art-with-paths-js/492">https://discuss.reactjs.org/t/react-art-with-paths-js/492</a> the <code>ART</code> path is faster as it takes advantage of the current <code>mode</code> to create the most efficient path instead of taking a string and converting it back into native for instructions for canvas rendering.</p>
+
+<p>The <code>ReactART.Path</code> has similar methods. Check out the discuss thread for a link to the implementation to find out the supported methods. I&rsquo;m currently working on <code>ReactART</code> documentation so expect that soon.</p>
+
 <p>Example:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
