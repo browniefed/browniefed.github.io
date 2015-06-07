@@ -674,18 +674,6 @@ Well we can use those window dimensions and the <code>pageX</code> movement to d
 <span class='line-number'>136</span>
 <span class='line-number'>137</span>
 <span class='line-number'>138</span>
-<span class='line-number'>139</span>
-<span class='line-number'>140</span>
-<span class='line-number'>141</span>
-<span class='line-number'>142</span>
-<span class='line-number'>143</span>
-<span class='line-number'>144</span>
-<span class='line-number'>145</span>
-<span class='line-number'>146</span>
-<span class='line-number'>147</span>
-<span class='line-number'>148</span>
-<span class='line-number'>149</span>
-<span class='line-number'>150</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>'use strict';
 </span><span class='line'>
 </span><span class='line'>var React = require('react-native');
@@ -712,18 +700,6 @@ Well we can use those window dimensions and the <code>pageX</code> movement to d
 </span><span class='line'>      y: 0,
 </span><span class='line'>      lastDragDirectio: 'Drag and Release'
 </span><span class='line'>    }
-</span><span class='line'>  },
-</span><span class='line'>  getRectangle: function() {
-</span><span class='line'>    var rectangle = Rectangle({
-</span><span class='line'>      top: 0,
-</span><span class='line'>      left: 0,
-</span><span class='line'>      bottom: 300,
-</span><span class='line'>      right: 300
-</span><span class='line'>    });
-</span><span class='line'>
-</span><span class='line'>    return (
-</span><span class='line'>      &lt;Shape d={rectangle.path.print()} stroke="000" strokeWidth={1} /&gt;
-</span><span class='line'>    )
 </span><span class='line'>  },
 </span><span class='line'>  setPosition: function(e) {
 </span><span class='line'>    this.setState({

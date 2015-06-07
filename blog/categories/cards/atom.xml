@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cards | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/cards/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-06-07T13:53:44-07:00</updated>
+  <updated>2015-06-07T14:19:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -406,21 +406,6 @@ var windowSize = Dimensions.get(&lsquo;window&rsquo;);</p>
   y: 0,
   lastDragDirectio: 'Drag and Release'
 }
-</code></pre>
-
-<p>  },
-  getRectangle: function() {</p>
-
-<pre><code>var rectangle = Rectangle({
-  top: 0,
-  left: 0,
-  bottom: 300,
-  right: 300
-});
-
-return (
-  &lt;Shape d={rectangle.path.print()} stroke="000" strokeWidth={1} /&gt;
-)
 </code></pre>
 
 <p>  },
