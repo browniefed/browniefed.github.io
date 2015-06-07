@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react-native | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/react-native/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-06-03T15:28:36-07:00</updated>
+  <updated>2015-06-07T13:52:09-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -12,6 +12,584 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[React-Native Tinder like cards with React-Art]]></title>
+    <link href="http://browniefed.com/blog/2015/06/06/react-native-tinder-like-cards-with-react-art/"/>
+    <updated>2015-06-06T19:33:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/06/06/react-native-tinder-like-cards-with-react-art</id>
+    <content type="html"><![CDATA[<h2>Intro</h2>
+
+<p>The test of all good frameworks is how easy it is to implement Tinder right? Well with <code>react-native</code> we do get the benefits of flex box as well as some transforms which we&rsquo;ll take advantage of.</p>
+
+<p>We don&rsquo;t have access to an easy physics, even though they were added in IOS7. If you&rsquo;d like physics you can use some JavaScript libraries like <code>rebound</code> <a href="https://github.com/facebook/rebound-js">https://github.com/facebook/rebound-js</a> from Facebook, or any others that don&rsquo;t require a DOM.</p>
+
+<p>What we&rsquo;ll make</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/tTcT7xJ.png">http://i.imgur.com/tTcT7xJ.png</a>" title="End Result" ></p>
+
+<h2>Concept</h2>
+
+<p>We&rsquo;ll create a card. On touch press/grant we&rsquo;ll figure out the offset of the card to the touch and start generating the transform to move/rotate the card.</p>
+
+<p>Well use the <code>style</code> <code>transform</code> property which we can find documentation here <a href="https://facebook.github.io/react-native/docs/transforms.html#proptypes">https://facebook.github.io/react-native/docs/transforms.html#proptypes</a>. However documentation is a little skimpy.</p>
+
+<p>It&rsquo;s mostly straight forward once you dive in though.</p>
+
+<h2>What we won&rsquo;t do.</h2>
+
+<p>Physics. You can implement a bouncy spring system, but we&rsquo;ll keep it simple with a drag concept.</p>
+
+<h2>Create a basic card</h2>
+
+<p>We&rsquo;ll create a basic wrapper container and then create a card View.
+We&rsquo;ll center everyting inside of our container using <code>alignItems</code> and <code>justifyContent</code> both <code>center</code>
+Our card will just be <code>300</code> by <code>300</code>, with a little padding, and border.</p>
+
+<p>```
+render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+      &lt;View
+        style={styles.card}
+      &gt;
+      &lt;/View&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>}</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+alignItems: 'center',
+justifyContent: 'center'
+</code></pre>
+
+<p>  },
+  card: {</p>
+
+<pre><code>borderWidth: 3,
+borderRadius: 3,
+borderColor: '#000',
+width: 300,
+height: 300,
+padding: 10
+</code></pre>
+
+<p>  }
+  });</p>
+
+<p>```</p>
+
+<p>Now that we have a generic card we can make it look a little nicer with an image, and some text.</p>
+
+<h2>Add an Image/Text to card</h2>
+
+<p>We&rsquo;ll add an image and set to a particular height. There is a current issue in <code>react-native</code> that doesn&rsquo;t maintain aspect ratio but that will be taken care of eventually.</p>
+
+<p>We wrap our <code>Text</code> elements in <code>View</code> and position each <code>Text</code> item on the left and right.
+There is a way to do this with flexbox but positioning like this is a little more explicit.</p>
+
+<p>```
+render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+      &lt;View
+        style={styles.card}
+      &gt;
+        &lt;Image source= style={styles.cardImage} /&gt;
+        &lt;View&gt;
+          &lt;Text style={styles.textLeft}&gt;Rabbit, 10&lt;/Text&gt;
+          &lt;Text style={styles.textRight}&gt;1 Connection&lt;/Text&gt;
+        &lt;/View&gt;
+      &lt;/View&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>}</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+alignItems: 'center',
+justifyContent: 'center'
+</code></pre>
+
+<p>  },
+  card: {</p>
+
+<pre><code>borderWidth: 3,
+borderRadius: 3,
+borderColor: '#000',
+width: 300,
+height: 300,
+padding: 10
+</code></pre>
+
+<p>  },
+  cardImage: {</p>
+
+<pre><code>height: 260,
+</code></pre>
+
+<p>  },
+  textLeft: {</p>
+
+<pre><code>position: 'absolute',
+left:0,
+top:0
+</code></pre>
+
+<p>  },
+  textRight: {</p>
+
+<pre><code>position: 'absolute',
+right: 0,
+top: 0
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>```</p>
+
+<h2>Things to know about style</h2>
+
+<p>Alright so there seems to be a lack of documentation around style in general. But <code>style</code> actually can receive an array.</p>
+
+<p>You are capable of specifying a default layout, however doing overrides. For example take our card layout.</p>
+
+<p>```
+  card: {</p>
+
+<pre><code>borderWidth: 3,
+borderRadius: 3,
+borderColor: '#000',
+width: 300,
+height: 300,
+padding: 10
+</code></pre>
+
+<p>  }</p>
+
+<p>```</p>
+
+<p>This gets applied, but what if at some point in time we wanted to change the <code>borderColor</code> based on <code>state</code>.
+Well we just override it on the style attribute like so</p>
+
+<p>```</p>
+
+<pre><code>&lt;View style={[styles.card, {borderColor: '#CCC'}]} /&gt;
+</code></pre>
+
+<p>```
+So now the borderColor has a default but can be changed by just passing in an object.</p>
+
+<p>This goes for <code>transform</code> as well which will set us up for the next challenge, actually dragging.</p>
+
+<h2>Add in Drag</h2>
+
+<p>We&rsquo;ll use the gesture responder system. The robustness is great, however I was expecting a little more information like deltas over the course of each drag update. We aren&rsquo;t given that to my knowledge so we&rsquo;ll computer it ourselves.</p>
+
+<p>How the gesture system works is it must ask each element that has a gesture responder if it should be allowed to drag or not. In our case we have one element and minimal logic so we&rsquo;ll just return true. However at any point you can cancel a gesture by returning false.</p>
+
+<p>In our case you need to respond <code>true</code> to <code>onStartShouldSetResponder</code> and then each subsequent move <code>onMoveShouldSetResponder</code>. If those return true then it will call <code>onResponderMove</code> each time with the new event.</p>
+
+<p>We&rsquo;ll use <code>_onStartShouldSetResponder</code> function to setup our initial drag. Each subsequent move we subtract and get the delta of the move.</p>
+
+<p>```
+  getInitialState: fucntion() {</p>
+
+<pre><code>return {
+  x: 0,
+  y: 0
+}
+</code></pre>
+
+<p>  },
+  setPosition: function(e) {</p>
+
+<pre><code>//Update our state with the deltaX/deltaY of the movement
+this.setState({
+  x: this.state.x + (e.nativeEvent.pageX - this.drag.x),
+  y: this.state.y + (e.nativeEvent.pageY - this.drag.y)
+});
+//Set our drag to be the new position so our delta can be calculated next time correctly
+this.drag.x = e.nativeEvent.pageX;
+this.drag.y = e.nativeEvent.pageY;
+</code></pre>
+
+<p>  },
+  resetPosition: function(e) {</p>
+
+<pre><code>this.dragging = false;
+//Reset on release
+this.setState({
+  x: 0,
+  y: 0,
+})
+</code></pre>
+
+<p>  },
+  _onStartShouldSetResponder: function(e) {</p>
+
+<pre><code>this.dragging = true;
+//Setup initial drag coordinates
+this.drag = {
+  x: e.nativeEvent.pageX,
+  y: e.nativeEvent.pageY
+}
+return true;
+</code></pre>
+
+<p>  },
+  _onMoveShouldSetResponder: function(e) {</p>
+
+<pre><code>return true;
+</code></pre>
+
+<p>  },
+  getCardStyle: function() {</p>
+
+<pre><code>var transform = [{translateX: this.state.x}, {translateY: this.state.y}];
+return {transform: transform};
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+      &lt;View
+        onResponderMove={this.setPosition}
+        onResponderRelease={this.resetPosition}
+        onStartShouldSetResponder={this._onStartShouldSetResponder}
+        onMoveShouldSetResponder={this._onMoveShouldSetResponder}
+        style={[styles.card, this.getCardStyle()]}
+      &gt;
+        &lt;Image source= style={styles.cardImage} /&gt;
+        &lt;View style={styles.cardTextContainer}&gt;
+          &lt;Text style={styles.textLeft}&gt;Rabbit, 10&lt;/Text&gt;
+          &lt;Text style={styles.textRight}&gt;1 Connection&lt;/Text&gt;
+        &lt;/View&gt;
+      &lt;/View&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>So now when a user press down on our card and starts dragging it&rsquo;ll move around. On release it&rsquo;ll snap back to position <code>0,0</code>.</p>
+
+<p>You can see we use the <code>translateX</code> and <code>translateY</code> transform properties. These will cause the ability for the card to be dragged around but not have to make it position absolute.</p>
+
+<h2>Add in Rotate</h2>
+
+<p>With Tinder and other card style systems as you drag the card left or right it will slightly rotate. It also rotates differently depending on the position you grab the card from (generally top or bottom).</p>
+
+<p>The <code>transform</code> property on style also has a <code>rotate</code> option. This seems weird but it takes a string. That string can be something like <code>30deg</code> or <code>.05rad</code>. So it offers some flexibility. We&rsquo;ll use <code>degrees</code> since it&rsquo;s the easiest to comprehend.</p>
+
+<p>We don&rsquo;t need to add anything to the view, just determine if we grabbed the card on the <code>top</code> or the <code>bottom</code>. Then depending on the offset drag make it rotate more as we move.</p>
+
+<p>```
+//Top of file
+var Dimensions = require(&lsquo;Dimensions&rsquo;);
+var windowSize = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>//&hellip;
+  _onStartShouldSetResponder: function(e) {</p>
+
+<pre><code>this.dragging = true;
+
+this.rotateTop = e.nativeEvent.locationY &lt;= 150;
+
+this.drag = {
+  x: e.nativeEvent.pageX,
+  y: e.nativeEvent.pageY
+}
+
+return true;
+</code></pre>
+
+<p>  },
+  getRotationDegree: function(rotateTop, x) {</p>
+
+<pre><code>var rotation = ( (x/windowSize.width) * 100)/3;
+
+var rotate = rotateTop ? 1 : -1,
+    rotateString = (rotation * rotate) + 'deg';
+
+return rotateString;
+</code></pre>
+
+<p>  },
+  getCardStyle: function() {</p>
+
+<pre><code>var transform = [{translateX: this.state.x}, {translateY: this.state.y}];
+
+if (this.dragging) {
+    transform.push({rotate: this.getRotationDegree(this.rotateTop, this.state.x)})
+}
+
+return {transform: transform};
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>So we modify <code>_onStartShouldSetResponder</code> to determine wheter we grabbed top or bottom. We use the <code>locationY</code> property which is the point on the card that was touched. Since the card dimensions are <code>300x300</code> that means if the card was touched anywhere between <code>0 to 150</code> then it was touched on top.</p>
+
+<p>Our <code>getCardStyle</code> will push a <code>rotate</code> object on if we are dragging.</p>
+
+<p>We need to know how far around the screen you have dragged it from the center point.
+So we get the screen dimensions, divide the width by the <code>pageX</code> coordinate which is just position of the element relative to the entire screen. To convert to degrees we multiply by <code>100</code> and divide by <code>3</code> to reduce the rotation.</p>
+
+<p>If we touched on the bottom then we want to do a reverse rotation so we multiply by <code>-1  and return a string that would return a value like</code>20.123deg<code>or</code>-20.123deg`.</p>
+
+<h2>Add in Release Text</h2>
+
+<p>Great we have dragging, we have rotating. Now how do we know which way they let go?
+Well we can use those window dimensions and the <code>pageX</code> movement to determine if the card was released on the left or right.</p>
+
+<p>```
+  resetPosition: function(e) {</p>
+
+<pre><code>this.dragging = false;
+var left = e.nativeEvent.pageX &lt; (windowSize.width/2),
+    displayText = left ? 'Released left' : 'Released right';
+
+this.setState({
+  x: 0,
+  y: 0,
+  lastDragDirectio: displayText
+})
+</code></pre>
+
+<p>  },
+```</p>
+
+<h2>Final Code</h2>
+
+<p>```
+&lsquo;use strict&rsquo;;</p>
+
+<p>var React = require(&lsquo;react-native&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);
+var windowSize = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var {
+  StyleSheet,
+  AppRegistry,
+  Text,
+  View,
+  ActivityIndicatorIOS,
+  Image,
+  Navigator,
+  TouchableOpacity,
+  Animation
+} = React;</p>
+
+<p>var Application = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  x: 0,
+  y: 0,
+  lastDragDirectio: 'Drag and Release'
+}
+</code></pre>
+
+<p>  },
+  getRectangle: function() {</p>
+
+<pre><code>var rectangle = Rectangle({
+  top: 0,
+  left: 0,
+  bottom: 300,
+  right: 300
+});
+
+return (
+  &lt;Shape d={rectangle.path.print()} stroke="000" strokeWidth={1} /&gt;
+)
+</code></pre>
+
+<p>  },
+  setPosition: function(e) {</p>
+
+<pre><code>this.setState({
+  x: this.state.x + (e.nativeEvent.pageX - this.drag.x),
+  y: this.state.y + (e.nativeEvent.pageY - this.drag.y)
+});
+this.drag.x = e.nativeEvent.pageX;
+this.drag.y = e.nativeEvent.pageY;
+</code></pre>
+
+<p>  },
+  resetPosition: function(e) {</p>
+
+<pre><code>this.dragging = false;
+var left = e.nativeEvent.pageX &lt; (windowSize.width/2),
+    displayText = left ? 'Released left' : 'Released right';
+
+this.setState({
+  x: 0,
+  y: 0,
+  lastDragDirectio: displayText
+})
+</code></pre>
+
+<p>  },
+  getRotationDegree: function(rotateTop, x) {</p>
+
+<pre><code>var rotation = ( (x/windowSize.width) * 100)/3;
+
+var rotate = rotateTop ? 1 : -1,
+    rotateString = (rotation * rotate) + 'deg';
+
+return rotateString;
+</code></pre>
+
+<p>  },
+  getCardStyle: function() {</p>
+
+<pre><code>var transform = [{translateX: this.state.x}, {translateY: this.state.y}];
+
+if (this.dragging) {
+    transform.push({rotate: this.getRotationDegree(this.rotateTop, this.state.x)})
+}
+
+return {transform: transform};
+</code></pre>
+
+<p>  },
+  _onStartShouldSetResponder: function(e) {</p>
+
+<pre><code>this.dragging = true;
+
+this.rotateTop = e.nativeEvent.locationY &lt;= 150;
+
+this.drag = {
+  x: e.nativeEvent.pageX,
+  y: e.nativeEvent.pageY
+}
+
+return true;
+</code></pre>
+
+<p>  },
+  _onMoveShouldSetResponder: function(e) {</p>
+
+<pre><code>return true;
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+      &lt;View
+        onResponderMove={this.setPosition}
+        onResponderRelease={this.resetPosition}
+        onStartShouldSetResponder={this._onStartShouldSetResponder}
+        onMoveShouldSetResponder={this._onMoveShouldSetResponder}
+        style={[styles.card, this.getCardStyle()]}
+      &gt;
+        &lt;Image source= style={styles.cardImage} /&gt;
+        &lt;View style={styles.cardTextContainer}&gt;
+          &lt;Text style={styles.textLeft}&gt;Rabbit, 10&lt;/Text&gt;
+          &lt;Text style={styles.textRight}&gt;1 Connection&lt;/Text&gt;
+        &lt;/View&gt;
+      &lt;/View&gt;
+      &lt;View style={styles.dragText}&gt;
+        &lt;Text&gt;{this.state.lastDragDirectio}&lt;/Text&gt;
+      &lt;/View&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+alignItems: 'center',
+justifyContent: 'center'
+</code></pre>
+
+<p>  },
+  dragText: {</p>
+
+<pre><code>position: 'absolute',
+bottom: 0,
+left: 0
+</code></pre>
+
+<p>  },
+  card: {</p>
+
+<pre><code>borderWidth: 3,
+borderRadius: 3,
+borderColor: '#000',
+width: 300,
+height: 300,
+padding: 10
+</code></pre>
+
+<p>  },
+  cardImage: {</p>
+
+<pre><code>height: 260,
+</code></pre>
+
+<p>  },
+  textLeft: {</p>
+
+<pre><code>position: 'absolute',
+left:0,
+top:0
+</code></pre>
+
+<p>  },
+  textRight: {</p>
+
+<pre><code>position: 'absolute',
+right: 0,
+top: 0
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>module.exports = Application;
+```</p>
+
+<h2>Result</h2>
+
+<p><img class="<a" src="href="http://i.imgur.com/q7siPyO.gif">http://i.imgur.com/q7siPyO.gif</a>" title="End Result" ></p>
+
+<p>You can check out and play with the end result here.</p>
+
+<h2>Preview Online!</h2>
+
+<p>Thanks to React Native Playground you can play with this code live online.</p>
+
+<p><a href="https://rnplay.org/apps/6uPJug">https://rnplay.org/apps/6uPJug</a></p>
+
+<p>Your homework can be to add a bounce when the card is released.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[CSS-Layout and React-Art]]></title>
