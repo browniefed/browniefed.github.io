@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cards | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/cards/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-06-07T13:53:04-07:00</updated>
+  <updated>2015-06-07T13:53:44-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React-Native Tinder like cards]]></title>
-    <link href="http://browniefed.com/blog/2015/06/06/react-native-tinder-like-cards-with-react-art/"/>
+    <link href="http://browniefed.com/blog/2015/06/06/react-native-tinder-like-cards/"/>
     <updated>2015-06-06T19:33:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/06/06/react-native-tinder-like-cards-with-react-art</id>
+    <id>http://browniefed.com/blog/2015/06/06/react-native-tinder-like-cards</id>
     <content type="html"><![CDATA[<h2>Intro</h2>
 
 <p>The test of all good frameworks is how easy it is to implement Tinder right? Well with <code>react-native</code> we do get the benefits of flex box as well as some transforms which we&rsquo;ll take advantage of.</p>
