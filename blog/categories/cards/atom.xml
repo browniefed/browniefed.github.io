@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cards | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/cards/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-06-07T14:19:56-07:00</updated>
+  <updated>2015-06-07T17:32:37-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -205,7 +205,7 @@ So now the borderColor has a default but can be changed by just passing in an ob
 <p>We&rsquo;ll use <code>_onStartShouldSetResponder</code> function to setup our initial drag. Each subsequent move we subtract and get the delta of the move.</p>
 
 <p>```
-  getInitialState: fucntion() {</p>
+  getInitialState: function() {</p>
 
 <pre><code>return {
   x: 0,
