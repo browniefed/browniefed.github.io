@@ -55,6 +55,170 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
+		<h1><a href="/blog/2015/06/07/react-native-layout-examples/">React-Native layout examples</a></h1>
+		<time>07 June 2015</time>
+	</header>
+	<div class="content">
+		<p>Flexbox layout takes a bit getting used to. It&rsquo;s surprisngly simple but after so many years of box model css layout it throws you for a loop.</p>
+
+<p>Some examples</p>
+
+<h2>Percentage height sections</h2>
+
+<p>These are seemingly simple to do in CSS. Specify <code>height: 50%</code> and you get a magical 50% height. Yeah I&rsquo;m over simplifying it but in general that&rsquo;s what you get. In flex it&rsquo;s different.</p>
+
+<p>This percentage based layout question was asked here <a href="https://github.com/facebook/react-native/issues/364">https://github.com/facebook/react-native/issues/364</a>.</p>
+
+<p>Laying out login screens may require significant white space. To accomplish % based layout we can use the <code>flex</code> property along with <code>flexDirection</code>.</p>
+
+<p>Say you want 3 sections. Top <code>50%</code>, then two <code>25%</code> sections.</p>
+
+<p>Our code would look something like this</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var SampleApp = React.createClass({
+</span><span class='line'>  render: function() {
+</span><span class='line'>      return (
+</span><span class='line'>          &lt;View style={styles.container}&gt;
+</span><span class='line'>              &lt;View style={styles.halfHeight} /&gt;
+</span><span class='line'>              &lt;View style={styles.quarterHeight} /&gt;
+</span><span class='line'>              &lt;View style={[styles.quarterHeight, {backgroundColor: '#CCC'}]} /&gt;
+</span><span class='line'>          &lt;/View&gt;
+</span><span class='line'>      )
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>    container: {
+</span><span class='line'>        flex: 1,
+</span><span class='line'>        flexDirection: 'column'
+</span><span class='line'>    },
+</span><span class='line'>    halfHeight: {
+</span><span class='line'>        flex: .5,
+</span><span class='line'>        backgroundColor: '#FF3366'
+</span><span class='line'>    },
+</span><span class='line'>    quarterHeight: {
+</span><span class='line'>        flex: .25,
+</span><span class='line'>        backgroundColor: '#000'
+</span><span class='line'>    }
+</span><span class='line'>});
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This makes it look like percentages, however what actually is happening is just ratios.</p>
+
+<p>The ratios are easier to represent with non-decimals. Equivalent code to the above would look like.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>    container: {
+</span><span class='line'>        flex: 1,
+</span><span class='line'>        flexDirection: 'column'
+</span><span class='line'>    },
+</span><span class='line'>    halfHeight: {
+</span><span class='line'>        flex: 2,
+</span><span class='line'>        backgroundColor: '#FF3366'
+</span><span class='line'>    },
+</span><span class='line'>    quarterHeight: {
+</span><span class='line'>        flex: 1,
+</span><span class='line'>        backgroundColor: '#000'
+</span><span class='line'>    }
+</span><span class='line'>});
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That&rsquo;s saying that the <code>halfHeight</code> container should take up twice as much space, and the <code>quarterHeight</code> should take up one amount of space.
+The actual numbers depend on screen size, and/or also derived from parent containers. So we can&rsquo;t attach specific heights.</p>
+
+<p>It just means &ldquo; <code>halfHeight</code> should take up 2 units of height where <code>quarterHeight</code> takes up 1 unit/half as much height as the <code>halfHeight</code> container&rdquo;.</p>
+
+<p><img src="http://i.imgur.com/k4RI8Og.png" title="Percentage based layout" ></p>
+
+<p>You can check out a live demo here <a href="https://rnplay.org/apps/MbQEbQ">https://rnplay.org/apps/MbQEbQ</a></p>
+
+<h2>React-Native Example Screens</h2>
+
+<p>Not being very good at flexbox I figured what better way than to create a bunch of layout examples to practice.
+That&rsquo;s when I saw <a href="http://www.invisionapp.com/do">http://www.invisionapp.com/do</a>. It has a bunch of beautiful layouts, so I am attempting to recreate some.</p>
+
+<p>You can check out the repo here <a href="https://github.com/browniefed/react-native-screens">https://github.com/browniefed/react-native-screens</a></p>
+
+<p>I&rsquo;ve made them all runnable on <code>rnplay.org</code>.</p>
+
+<h4>Example: Login1</h4>
+
+<p><a href="https://rnplay.org/apps/x7HRCA">https://rnplay.org/apps/x7HRCA</a></p>
+
+<p><img src="https://i.imgur.com/ceB0t2Z.png" title="Login1 Example" ></p>
+
+<p>If you like this, feel free to contribute and download the screens from <a href="http://www.invisionapp.com/do">http://www.invisionapp.com/do</a>. I found the Sketch ones were the easiest to handle and export individual assets from.</p>
+
+	</div>
+	<div>
+		
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/flexbox/'>flexbox</a>, <a class='category' href='/blog/categories/layout/'>layout</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>
+	
+
+
+	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
 		<h1><a href="/blog/2015/06/06/react-native-tinder-like-cards/">React-Native Tinder like cards</a></h1>
 		<time>06 June 2015</time>
 	</header>
@@ -4431,252 +4595,13 @@ If you get it figured out let me know.</p>
 <!-- END OF _includes/article.html -->
 
 	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2015/05/02/react/">React, Higher Order Components, and Legacy Applications</a></h1>
-		<time>02 May 2015</time>
-	</header>
-	<div class="content">
-		<p>At work we embarked on an ambitious task of converting our legacy application (ExtJS 3.4) over to React.
-Now obviously rewriting an application that has been built over the course of 7 years could not just be simply re-written. We had to be very strategic about it.</p>
-
-<p>React is one of the perfect rendering libraries for this since re-rendering the same component at the same spot will just cause the React to go through its diff/normal rendering process.</p>
-
-<p>However if you don&rsquo;t maintain separation of concerns you may just get a lot of Ext into your ReactJS components, and you&rsquo;ll be in an even bigger mess. We don&rsquo;t want that, and that is where higher order components come into play.</p>
-
-<h3>Higher Order Components</h3>
-
-<p>If you haven&rsquo;t read the post <a href="https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750">Mixins Are Dead. Long Live Composition</a> then I highly recommend you do so. Higher order components are not a bullet proof replacement for mixins but they are an amazing solution for integrating at the seams of where your legacy application meets your new React world.</p>
-
-<p>If you don&rsquo;t understand what a Higher order component is after reading the article above let me quickly explain.
-It&rsquo;s a function that takes a React component of your choosing and then returns a wrapped React component that renders the React component that you provided it.</p>
-
-<p>A Quick example</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>
-</span><span class='line'>var NameSupplier = function(Component) {
-</span><span class='line'>    
-</span><span class='line'>    var NameSupplierComponent = React.createClass({
-</span><span class='line'>
-</span><span class='line'>        getUserName: function() {
-</span><span class='line'>            //Somewhere the username is stored but we'll just return a string
-</span><span class='line'>            return "Jason"
-</span><span class='line'>        },
-</span><span class='line'>        render: function() {
-</span><span class='line'>
-</span><span class='line'>            return (
-</span><span class='line'>                &lt;Component username={this.getUserName()} /&gt;
-</span><span class='line'>            )
-</span><span class='line'>        }
-</span><span class='line'>    });
-</span><span class='line'>
-</span><span class='line'>    return NameSupplierComponent;
-</span><span class='line'>}
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This component is slightly contrived and doesn&rsquo;t show this will help us integrate with a legacy app. All this component is doing is passing down a prop to a component you gave it.
-So how would we go about using this higher order component?</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var UserPost = React.createClass({
-</span><span class='line'>    render: function() {
-</span><span class='line'>        return (
-</span><span class='line'>            &lt;div&gt;
-</span><span class='line'>                {this.props.username} created this.
-</span><span class='line'>            &lt;/div&gt;
-</span><span class='line'>        )
-</span><span class='line'>    }
-</span><span class='line'>});
-</span><span class='line'>
-</span><span class='line'>var ActiveUserPost = NameSupplier(UserPost);
-</span><span class='line'>
-</span><span class='line'>module.exports = ActiveUserPost;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Then later</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var ActiveUserPost = require('ActiveUserPost');
-</span><span class='line'>
-</span><span class='line'>React.render(&lt;ActiveUserPost /&gt;, el);</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>Using them with legacy applications</h3>
-
-<p>This strategy really shines when all you need to do is hook into the life cycle events to cause updates in your legacy application.</p>
-
-<p>In our application we are still utilizing ExtJS tabs. When you visit an item say we render an <code>ItemView</code> and say the user starts editing the item. We want to indicate in the title of the Ext tab that it is a dirty form and that is done by marking it with an *. The issue is that as we deprecate Ext we don&rsquo;t want to mix our Ext updating logic with our new <code>ItemView</code> logic.</p>
-
-<p>This requires that state be at an upper level, which the article above by Dan shows how to use higher order components to fetch data, and essentially bring state up one level.</p>
-
-<p>The structure of our application will look like so</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;ExtTab&gt; // Passes down a function called appendTitle
-</span><span class='line'>    &lt;ItemViewState&gt; &lt;--- Could and should also be a higher order component taht wraps ExtEditableItemView but for visual sake it's a composition component
-</span><span class='line'>        &lt;ExtEditableItemView /&gt; &lt;--- This is an ItemView wrapped by an ExtEditable higher order component
-</span><span class='line'>    &lt;/ItemViewState&gt;
-</span><span class='line'>&lt;/ExtTab&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>With state moved up a level into the <code>ItemViewState</code> component any time data changes our <code>ExtEditableItemView</code> will go re-render and go through it&rsquo;s life cycle methods.</p>
-
-<p>The requirement here is that the <code>ExtTab</code> in our old world passes down a function as a prop which our higher order component will call.</p>
-
-<p>In the end our code looks like this</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var ExtEditableTitle = function(Component) {
-</span><span class='line'>    propTypes: {
-</span><span class='line'>        appendTitle: React.PropTypes.func
-</span><span class='line'>    },
-</span><span class='line'>    getDefaultProps: function() {
-</span><span class='line'>        return {
-</span><span class='line'>            appendTitle: function() {} //Noop function
-</span><span class='line'>        }
-</span><span class='line'>    },   
-</span><span class='line'>    componentDidMount: function() {
-</span><span class='line'>        this.handleTitleUpdate();
-</span><span class='line'>    },
-</span><span class='line'>    componentDidUpdate: function() {
-</span><span class='line'>        this.handleTitleUpdate();
-</span><span class='line'>    },
-</span><span class='line'>    handleTitleUpdate: function() {
-</span><span class='line'>        var appendToTitle = (this.props.editing && '*' || ''); // If we're editing then append a * to the title
-</span><span class='line'>        this.props.appendTitle(appendToTitle);
-</span><span class='line'>    },
-</span><span class='line'>    render: function() {
-</span><span class='line'>        return (
-</span><span class='line'>            &lt;Component
-</span><span class='line'>                {...this.props}
-</span><span class='line'>                {//Additionally we should omit the appendTitle function from being passed down to our ItemView}
-</span><span class='line'>            /&gt;
-</span><span class='line'>        )
-</span><span class='line'>    }
-</span><span class='line'>
-</span><span class='line'>}
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var ExtEditableItemView = ExtEditableTitle(ItemView);
-</span><span class='line'>module.exports = ExtEditableItemView;</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So now we have moved our state up a level to <code>ItemViewState</code>, we used a higher order component to make a seam that hooks into the life cycle events of our <code>ItemView</code> component which tells our old world what to do with it&rsquo;s title.</p>
-
-<p>When it comes time to remove Ext tabs, or possibly replace it with adding a * to the browser title we can write a new higher order component that hooks into the same life cycle methods and our <code>ItemView</code> is none the wiser.</p>
-
-<h3>Conclusion</h3>
-
-<p>Higher order components may not solve all of your problems but so far they have helped me in a few different scenarios that would have caused me to mix concerns with our React/ExtJS world. They provide a nice upgrade path for future modifications, and maintain our ability to compose components with ease.</p>
-
-	</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/applications/'>applications</a>, <a class='category' href='/blog/categories/components/'>components</a>, <a class='category' href='/blog/categories/ext/'>ext</a>, <a class='category' href='/blog/categories/higher/'>higher</a>, <a class='category' href='/blog/categories/legacy/'>legacy</a>, <a class='category' href='/blog/categories/order/'>order</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/reactjs/'>reactjs</a>
-	
-
-
-	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
 	
 <div class="pagination">
 	
 		<a class="older" href="/blog/page/2/">Older</a>
 	
 	
-	<span class="total">1 of 2</span>
+	<span class="total">1 of 3</span>
 	
 	
 </div>
