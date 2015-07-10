@@ -4,7 +4,7 @@
 	<title><![CDATA[JavaScript Without Grammar]]></title>
 	<link href="http://browniefed.com/atom.xml" rel="self"/>
 	<link href="http://browniefed.com/"/>
-	<updated>2015-06-17T10:30:17-07:00</updated>
+	<updated>2015-07-10T15:00:25-07:00</updated>
 	<id>http://browniefed.com/</id>
 	<author>
 		<name><![CDATA[Jason Brown]]></name>
@@ -4272,7 +4272,7 @@ There will be a section called &ldquo;Link Binary With Libraries&rdquo;, expand 
 </span><span class='line'>"use strict";
 </span><span class='line'>
 </span><span class='line'>var React = require('react-native');
-</span><span class='line'>var ReactArt = require('./node_modules/react-native/Libraries/ART/ReactIOSART');
+</span><span class='line'>var ReactART = require('ReactNativeART');
 </span><span class='line'>var {
 </span><span class='line'>    Art,
 </span><span class='line'>    TouchableWithoutFeedback

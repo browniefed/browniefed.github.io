@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react-native | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/react-native/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-06-17T10:30:17-07:00</updated>
+  <updated>2015-07-10T15:00:25-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -1511,7 +1511,7 @@ marginTop: 100
 &ldquo;use strict&rdquo;;</p>
 
 <p>var React = require(&lsquo;react-native&rsquo;);
-var ReactArt = require(&lsquo;./node_modules/react-native/Libraries/ART/ReactIOSART&rsquo;);
+var ReactART = require(&lsquo;ReactNativeART&rsquo;);
 var {</p>
 
 <pre><code>Art,
