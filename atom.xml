@@ -4,7 +4,7 @@
 	<title><![CDATA[JavaScript Without Grammar]]></title>
 	<link href="http://browniefed.com/atom.xml" rel="self"/>
 	<link href="http://browniefed.com/"/>
-	<updated>2015-07-17T13:26:18-07:00</updated>
+	<updated>2015-07-21T11:43:16-07:00</updated>
 	<id>http://browniefed.com/</id>
 	<author>
 		<name><![CDATA[Jason Brown]]></name>
@@ -4669,7 +4669,7 @@ If that isn&rsquo;t the case we&rsquo;ll need <code>webpack</code>, <code>raw-lo
 
 <p>This is where you&rsquo;re running into your issue where <code>node-sass</code> can&rsquo;t find the compass import.</p>
 
-<p>Thanks to igosuki, compass mixins has been ported to just a bunch of sass-mixins outside of the ruby gem. <a href="https://github.com/Igosuki/compass-mixins.">https://github.com/Igosuki/compass-mixins.</a></p>
+<p>Thanks to igosuki, compass mixins has been ported to just a bunch of sass-mixins outside of the ruby gem. <a href="https://github.com/Igosuki/compass-mixins">https://github.com/Igosuki/compass-mixins</a></p>
 
 <p>So now do a</p>
 
