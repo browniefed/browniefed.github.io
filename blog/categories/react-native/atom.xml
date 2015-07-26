@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react-native | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/react-native/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-07-21T11:43:16-07:00</updated>
+  <updated>2015-07-26T15:45:39-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -12,6 +12,354 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[React-native Animated API Basic Example]]></title>
+    <link href="http://browniefed.com/blog/2015/07/26/react-native-animated-api-basic-example/"/>
+    <updated>2015-07-26T11:51:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/07/26/react-native-animated-api-basic-example</id>
+    <content type="html"><![CDATA[<h1>Introduction</h1>
+
+<p>Animations are finally solved in React? That&rsquo;s a bold claim, but lets explore the new Animated API in <code>react-native</code>. This won&rsquo;t apply to React for the web, however there is also <a href="https://github.com/chenglou/react-motion">react-motion</a> also released at <code>react-europe</code>.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/JlX4nV0.gif">http://i.imgur.com/JlX4nV0.gif</a>" title="Final Animation Result" ></p>
+
+<h1>Resources</h1>
+
+<ul>
+<li><a href="https://www.youtube.com/watch?v=1tavDv5hXpo">Cheng Lou &ndash; The State of Animation in React at react-europe 2015</a></li>
+<li><a href="https://github.com/chenglou/react-motion">react-motion &ndash; Github</a></li>
+<li><a href="https://facebook.github.io/react-native/docs/animations.html#content">React Native Animation API</a></li>
+<li><a href="https://www.youtube.com/watch?v=xDlfrcM6YBk">Spencer Ahrens &ndash; React Native: Building Fluid User Experiences at react-europe 2015</a></li>
+</ul>
+
+
+<h1>How It Works</h1>
+
+<p>The Animated API does not depend on state. It does, however it is not accomplished by using <code>setState</code>. The Animated API exports a few components <code>Animated.View</code>, <code>Animated.Text</code>, and <code>Animated.Image</code>. The Animated API will adjust the components in the native Objective-C world. This will bypass the diff and reconciliation in the JS world so you get fluent, and performance animatons. Ultimately all you need to know is that it will interpolate numbers and update the native view components.</p>
+
+<h1>Cool Examples</h1>
+
+<ul>
+<li><a href="https://github.com/brentvatne/react-native-animated-demo-tinder">https://github.com/brentvatne/react-native-animated-demo-tinder</a></li>
+<li><a href="https://github.com/facebook/react-native/tree/master/Examples/UIExplorer/AnimationExample">UIExplorer Animated example</a></li>
+</ul>
+
+
+<h1>Simple Move Around the Screen Example</h1>
+
+<p>We are just going to move a square around the edges of the screen.</p>
+
+<p><code>
+&lt;--&lt;           
+|  |          
+V--^         
+</code></p>
+
+<h1>Setup</h1>
+
+<p>Dependencies</p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);</p>
+
+<p>var {
+  width,
+  height
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  View,
+  Animated
+} = React;</p>
+
+<p>var SQUARE_DIMENSIONS = 30;</p>
+
+<p>```</p>
+
+<p>Styles</p>
+
+<p>```
+var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1
+</code></pre>
+
+<p>  },
+  square: {</p>
+
+<pre><code>width: SQUARE_DIMENSIONS,
+height: SQUARE_DIMENSIONS,
+backgroundColor: 'blue'
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Basic Code</p>
+
+<p>```</p>
+
+<p>var AnimatedSquare = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    pan: new Animated.ValueXY()
+};
+</code></pre>
+
+<p>  },
+  getStyle: function() {</p>
+
+<pre><code>return [
+          styles.square, 
+          {
+            transform: this.state.pan.getTranslateTransform()
+          }
+        ];
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Animated.View style={this.getStyle()} /&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Few things to call out here.</p>
+
+<p>Notice our state that is created is an instantiation of <code>Animated.ValueXY</code>. This will save us some code, and let the <code>Animated</code> API take care of interpolating both our X, and Y values.</p>
+
+<p>Our <code>getStyle</code> will return an array, our base <code>square</code> class and a <code>transform</code>. Once again we&rsquo;ll use a the <code>getTranslateTransform</code> helper from the <code>Animated</code> API to return the appropriate structure for the transform style.</p>
+
+<p>It returns <code>[{ translateX: xValue}, {translateY: yValue}]</code>, where <code>xValue</code> and <code>yValue</code> are the interpolated values from the <code>Animated.ValueXY</code> we set on our <code>pan</code> state variable.</p>
+
+<p>Finally we will use the <code>Animated.View</code> which is a convenience element to say &ldquo;Hey React this is going to be an animated thing&rdquo;.</p>
+
+<h1>Move It</h1>
+
+<p>We&rsquo;re now going to move it from the top corner. <code>x = 0, y = 0</code> to the bottom left corner <code>x = 0, y = (phoneHeight - square Height)</code>.</p>
+
+<p>```
+var SPRING_CONFIG = {tension: 2, friction: 3}; //Soft spring</p>
+
+<p>//&hellip;
+  componentDidMount: function() {</p>
+
+<pre><code>Animated.spring(this.state.pan, {
+      ...SPRING_CONFIG,
+      toValue: {x: 0, y: height - SQUARE_DIMENSIONS}                        // return to start
+}).start();
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>So on mount we&rsquo;ll start a spring. This will animate the <code>this.state.pan</code> to the bottom left corner like want it to.</p>
+
+<p>We&rsquo;ll also setup the <code>SPRING_CONFIG</code> with a soft spring, not much tension or friction. So it&rsquo;ll get to the corner and just bounce a little bit and stay there.</p>
+
+<h1>Move It, Move It, and Move It again</h1>
+
+<p>We can queue up sequences of animations. These will happen one after the other.
+The <code>sequence</code> call is one of the means of composing animations. There is also <code>parallel</code> which allows for declaration of animations to happen at the same time.</p>
+
+<p>```
+  componentDidMount: function() {</p>
+
+<pre><code>Animated.sequence([
+  Animated.spring(this.state.pan, {
+        ...SPRING_CONFIG,
+        toValue: {x: 0, y: height - SQUARE_DIMENSIONS} //animate to bottom left
+  }),
+  Animated.spring(this.state.pan, {
+      ...SPRING_CONFIG,
+      toValue: {x: width - SQUARE_DIMENSIONS, y: height - SQUARE_DIMENSIONS} // animated to bottom right
+  }),
+  Animated.spring(this.state.pan, {
+        ...SPRING_CONFIG,
+        toValue: {x: width - SQUARE_DIMENSIONS, y: 0} //animate to top right
+  }),
+  Animated.spring(this.state.pan, {
+      ...SPRING_CONFIG,
+      toValue: {x: 0, y: 0} // return to start
+  })
+]).start();
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>We define 4 spring configrations like discussed before. The comments in the code explain each movement.</p>
+
+<h1>Move and Repeat</h1>
+
+<p>The call to <code>start</code> takes a callback. This callback will be invoked once the animation is completed. In our case the animation is complete once we get back to the start. We can then restart the animation.</p>
+
+<p>```
+  componentDidMount: function() {</p>
+
+<pre><code>this.startAndRepeat();
+</code></pre>
+
+<p>  },
+  startAndRepeat: function() {</p>
+
+<pre><code>this.triggerAnimation(this.startAndRepeat);
+</code></pre>
+
+<p>  },
+  triggerAnimation: function(cb) {</p>
+
+<pre><code>Animated.sequence([
+  Animated.spring(this.state.pan, {
+        ...SPRING_CONFIG,
+        toValue: {x: 0, y: height - SQUARE_DIMENSIONS} //animate to bottom left
+  }),
+  Animated.spring(this.state.pan, {
+      ...SPRING_CONFIG,
+      toValue: {x: width - SQUARE_DIMENSIONS, y: height - SQUARE_DIMENSIONS} // animated to bottom right
+  }),
+  Animated.spring(this.state.pan, {
+        ...SPRING_CONFIG,
+        toValue: {x: width - SQUARE_DIMENSIONS, y: 0} //animate to top right
+  }),
+  Animated.spring(this.state.pan, {
+      ...SPRING_CONFIG,
+      toValue: {x: 0, y: 0} // return to start
+  })
+]).start(cb);
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>We just make a call that triggers the animation and calls itself on complete.</p>
+
+<h1>Full/Live Code</h1>
+
+<h2><a href="https://rnplay.org/apps/QlPJ2Q">https://rnplay.org/apps/QlPJ2Q</a></h2>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);</p>
+
+<p>var {
+  width,
+  height
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  View,
+  Animated
+} = React;</p>
+
+<p>var SQUARE_DIMENSIONS = 30;
+var SPRING_CONFIG = {tension: 2, friction: 3}; //Soft spring</p>
+
+<p>var AnimatedSquare = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    pan: new Animated.ValueXY()
+};
+</code></pre>
+
+<p>  },
+  componentDidMount: function() {</p>
+
+<pre><code>this.startAndRepeat();
+</code></pre>
+
+<p>  },
+  startAndRepeat: function() {</p>
+
+<pre><code>this.triggerAnimation(this.startAndRepeat);
+</code></pre>
+
+<p>  },
+  triggerAnimation: function(cb) {</p>
+
+<pre><code>Animated.sequence([
+  Animated.spring(this.state.pan, {
+        ...SPRING_CONFIG,
+        toValue: {x: 0, y: height - SQUARE_DIMENSIONS} //animate to bottom left
+  }),
+  Animated.spring(this.state.pan, {
+      ...SPRING_CONFIG,
+      toValue: {x: width - SQUARE_DIMENSIONS, y: height - SQUARE_DIMENSIONS} // animated to bottom right
+  }),
+  Animated.spring(this.state.pan, {
+        ...SPRING_CONFIG,
+        toValue: {x: width - SQUARE_DIMENSIONS, y: 0} //animate to top right
+  }),
+  Animated.spring(this.state.pan, {
+      ...SPRING_CONFIG,
+      toValue: {x: 0, y: 0} // return to start
+  })
+]).start(cb);
+</code></pre>
+
+<p>  },
+  getStyle: function() {</p>
+
+<pre><code>return [
+          styles.square, 
+          {
+            transform: this.state.pan.getTranslateTransform()
+          }
+        ];
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Animated.View style={this.getStyle()} /&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1
+</code></pre>
+
+<p>  },
+  square: {</p>
+
+<pre><code>width: SQUARE_DIMENSIONS,
+height: SQUARE_DIMENSIONS,
+backgroundColor: 'blue'
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>AppRegistry.registerComponent(&lsquo;AnimatedSquare&rsquo;, () => AnimatedSquare);</p>
+
+<p>```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[React-Native layout examples]]></title>
@@ -1381,282 +1729,6 @@ this.setState(this.state, function() {
 
 
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Getting react-art running on react-native]]></title>
-    <link href="http://browniefed.com/blog/2015/05/03/getting-react-art-running-on-react-native/"/>
-    <updated>2015-05-03T20:33:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/05/03/getting-react-art-running-on-react-native</id>
-    <content type="html"><![CDATA[<p>I hadn&rsquo;t realized that the react-art native rendering stuff had landed in into the react-native core.
-So I figured I&rsquo;d try and get in running. I am an XCode noob so I&rsquo;ll be sure and be descriptive.</p>
-
-<p>First off lets set up a react-native project. (Assuming you have react-native cli installed);</p>
-
-<p><code>react-native init react_art_demo</code></p>
-
-<p>The current released version of <code>react-native</code> doesn&rsquo;t have the ART libs in it so in our <code>node_modules</code> folder we can delete the <code>react-native</code> in there and do a git clone of master <code>git clone https://github.com/facebook/react-native.git</code></p>
-
-<p>We will also need the <code>art</code> lib itself installed. So <code>cd</code> to the root of <code>react_art_demo</code>.
-Then run <code>npm install art</code></p>
-
-<p>Once we have the master repo of <code>react-native</code>, and <code>art</code> installed we can open up our <code>react_art_demo</code> project in XCode.</p>
-
-<p>We will need to do 2 things.</p>
-
-<ul>
-<li>Add the <code>ART.xcodeproj</code> to XCode</li>
-<li>Link the binary</li>
-</ul>
-
-
-<p>To add ART.xcodeproj find the file located in <code>react-native/Libraries/ART/ART.xcodeproj</code> and just drag it over to the <code>Libraries</code> section in XCode.
-That should look like so</p>
-
-<p><img class="<a" src="href="http://i.imgur.com/TWeDUTa.png">http://i.imgur.com/TWeDUTa.png</a>" title="Add ART.xcodeproj to Libraries" ></p>
-
-<p>Next we&rsquo;ll link the binary.</p>
-
-<p>With the root <code>react_art_demo</code> project selected on the left, select <code>Build Phases</code> from the center view.
-There will be a section called &ldquo;Link Binary With Libraries&rdquo;, expand it, press the + and select <code>libART.a</code></p>
-
-<p>Like so</p>
-
-<p><img class="<a" src="href="http://i.imgur.com/lIMZkfh.png">http://i.imgur.com/lIMZkfh.png</a>" title="Link binary" ></p>
-
-<p>Just as a warning, I didn&rsquo;t link the binary and got a few &ldquo;No manager class found for view with module name&rdquo; errors.</p>
-
-<p>Now go forth and write your <code>react-art</code>. I always like to get the <code>vector-widget</code> example running so to do that here is the code.</p>
-
-<p><code>index.ios.js</code></p>
-
-<p>```
-/<em>*
- * Sample React Native App
- * <a href="https://github.com/facebook/react-native">https://github.com/facebook/react-native</a>
- </em>/
-&lsquo;use strict&rsquo;;</p>
-
-<p>var React = require(&lsquo;react-native&rsquo;);
-var {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-} = React;</p>
-
-<p>var VectorWidget = require(&lsquo;./VectorWidget&rsquo;);</p>
-
-<p>var react_art_demo = React.createClass({</p>
-
-<p>  render: function() {</p>
-
-<pre><code>return (
-  &lt;View style={styles.container}&gt;
-    &lt;VectorWidget style={styles.vector}/&gt;
-  &lt;/View&gt;
-);
-</code></pre>
-
-<p>  }
-});</p>
-
-<p>var styles = StyleSheet.create({
-  container: {</p>
-
-<pre><code>flex: 1,
-alignItems: 'center',
-backgroundColor: '#FFF',
-</code></pre>
-
-<p>  },
-  vector: {</p>
-
-<pre><code>width: 100,
-height: 100
-</code></pre>
-
-<p>  },
-  welcome: {</p>
-
-<pre><code>fontSize: 20,
-textAlign: 'center',
-margin: 10,
-</code></pre>
-
-<p>  },
-  instructions: {</p>
-
-<pre><code>color: '#333333',
-marginBottom: 5,
-marginTop: 100
-</code></pre>
-
-<p>  },
-});</p>
-
-<p>AppRegistry.registerComponent(&lsquo;react_art_demo&rsquo;, () => react_art_demo);
-```</p>
-
-<p>And your <code>VectorWidget.js</code> file</p>
-
-<p>```
-/<em>*
- * Copyright 2013 Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- </em>/
-&ldquo;use strict&rdquo;;</p>
-
-<p>var React = require(&lsquo;react-native&rsquo;);
-var ReactART = require(&lsquo;ReactNativeART&rsquo;);
-var {</p>
-
-<pre><code>Art,
-TouchableWithoutFeedback
-</code></pre>
-
-<p>} = React;</p>
-
-<p>var {</p>
-
-<pre><code>Group,
-Shape,
-Surface,
-Transform
-</code></pre>
-
-<p>} = ReactArt;</p>
-
-<p>var MOUSE_UP_DRAG = 0.978;
-var MOUSE_DOWN_DRAG = 0.9;
-var MAX_VEL = 11;
-var CLICK_ACCEL = 3;
-var BASE_VEL = 0.15;</p>
-
-<p>/<strong>
- * An animated SVG component.
- */
-var VectorWidget = React.createClass({
-  /</strong>
-   * Initialize state members.
-   */
-  getInitialState: function() {</p>
-
-<pre><code>return {degrees: 0, velocity: 0, drag: MOUSE_UP_DRAG};
-</code></pre>
-
-<p>  },</p>
-
-<p>  /<em>*
-   * When the component is mounted into the document &ndash; this is similar to a
-   * constructor, but invoked when the instance is actually mounted into the
-   * document. Here&rsquo;s, we&rsquo;ll just set up an animation loop that invokes our
-   * method. Binding of <code>this.onTick</code> is not needed because all React methods
-   * are automatically bound before being mounted.
-   </em>/
-  componentDidMount: function() {</p>
-
-<pre><code>this._interval = window.setInterval(this.onTick, 20);
-</code></pre>
-
-<p>  },</p>
-
-<p>  componentWillUnmount: function() {</p>
-
-<pre><code>window.clearInterval(this._interval);
-</code></pre>
-
-<p>  },</p>
-
-<p>  onTick: function() {</p>
-
-<pre><code>var nextDegrees = this.state.degrees + BASE_VEL + this.state.velocity;
-var nextVelocity = this.state.velocity * this.state.drag;
-this.setState({degrees: nextDegrees, velocity: nextVelocity});
-</code></pre>
-
-<p>  },</p>
-
-<p>  /<em><em>
-   * This is the &ldquo;main&rdquo; method for any component. The React API allows you to
-   * describe the structure of your UI component at </em>any</em> point in time.
-   */
-  render: function() {</p>
-
-<pre><code>return (
-  &lt;Surface
-    width={700}
-    height={700}
-    {this.renderGraphic(this.state.degrees)}
-  &lt;/Surface&gt;
-);
-</code></pre>
-
-<p>  },</p>
-
-<p>  /<em>*
-   * Better SVG support for React coming soon.
-   </em>/
-  renderGraphic: function(rotation) {</p>
-
-<pre><code>return (
-  &lt;Group
-  &gt;
-    &lt;Group x={210} y={135}&gt;
-      &lt;Shape fill="rgba(0,0,0,0.1)" d={BORDER_PATH} /&gt;
-      &lt;Shape fill="#7BC7BA" d={BG_PATH} /&gt;
-      &lt;Shape fill="#DCDCDC" d={BAR_PATH} /&gt;
-      &lt;Shape fill="#D97B76" d={RED_DOT_PATH} /&gt;
-      &lt;Shape fill="#DBBB79" d={YELLOW_DOT_PATH} /&gt;
-      &lt;Shape fill="#A6BD8A" d={GREEN_DOT_PATH} /&gt;
-      &lt;Group x={55} y={29}&gt;
-        &lt;Group rotation={rotation} originX={84} originY={89}&gt;
-          &lt;Shape fill="#FFFFFF" d={CENTER_DOT_PATH} /&gt;
-          &lt;Group&gt;
-            &lt;Shape d={RING_ONE_PATH} stroke="#FFFFFF" strokeWidth={8} /&gt;
-            &lt;Shape d={RING_TWO_PATH} transform={RING_TWO_ROTATE} stroke="#FFFFFF" strokeWidth={8} /&gt;
-            &lt;Shape d={RING_THREE_PATH} transform={RING_THREE_ROTATE} stroke="#FFFFFF" strokeWidth={8} /&gt;
-          &lt;/Group&gt;
-        &lt;/Group&gt;
-      &lt;/Group&gt;
-    &lt;/Group&gt;
-  &lt;/Group&gt;
-);
-</code></pre>
-
-<p>  }
-});</p>
-
-<p>var BORDER_PATH = &ldquo;M3.00191459,4 C1.34400294,4 0,5.34785514 0,7.00550479 L0,220.994495 C0,222.65439 1.34239483,224 3.00191459,224 L276.998085,224 C278.655997,224 280,222.652145 280,220.994495 L280,7.00550479 C280,5.34561033 278.657605,4 276.998085,4 L3.00191459,4 Z M3.00191459,4&rdquo;;
-var BG_PATH = &ldquo;M3.00191459,1 C1.34400294,1 0,2.34785514 0,4.00550479 L0,217.994495 C0,219.65439 1.34239483,221 3.00191459,221 L276.998085,221 C278.655997,221 280,219.652145 280,217.994495 L280,4.00550479 C280,2.34561033 278.657605,1 276.998085,1 L3.00191459,1 Z M3.00191459,1&rdquo;;
-var BAR_PATH = &ldquo;M3.00191459,0 C1.34400294,0 0,1.34559019 0,3.00878799 L0,21 C0,21 0,21 0,21 L280,21 C280,21 280,21 280,21 L280,3.00878799 C280,1.34708027 278.657605,0 276.998085,0 L3.00191459,0 Z M3.00191459,0&rdquo;;
-var RED_DOT_PATH = &ldquo;M12.5,17 C16.0898511,17 19,14.0898511 19,10.5 C19,6.91014895 16.0898511,4 12.5,4 C8.91014895,4 6,6.91014895 6,10.5 C6,14.0898511 8.91014895,17 12.5,17 Z M12.5,17&rdquo;;
-var YELLOW_DOT_PATH = &ldquo;M31.5,17 C35.0898511,17 38,14.0898511 38,10.5 C38,6.91014895 35.0898511,4 31.5,4 C27.9101489,4 25,6.91014895 25,10.5 C25,14.0898511 27.9101489,17 31.5,17 Z M31.5,17&rdquo;;
-var GREEN_DOT_PATH = &ldquo;M50.5,17 C54.0898511,17 57,14.0898511 57,10.5 C57,6.91014895 54.0898511,4 50.5,4 C46.9101489,4 44,6.91014895 44,10.5 C44,14.0898511 46.9101489,17 50.5,17 Z M50.5,17&rdquo;;
-var CENTER_DOT_PATH = &ldquo;M84,105 C92.8365564,105 100,97.8365564 100,89 C100,80.1634436 92.8365564,73 84,73 C75.1634436,73 68,80.1634436 68,89 C68,97.8365564 75.1634436,105 84,105 Z M84,105&rdquo;;
-var RING_ONE_PATH = &ldquo;M84,121 C130.391921,121 168,106.673113 168,89 C168,71.3268871 130.391921,57 84,57 C37.6080787,57 0,71.3268871 0,89 C0,106.673113 37.6080787,121 84,121 Z M84,121&rdquo;;
-var RING_TWO_PATH = &ldquo;M84,121 C130.391921,121 168,106.673113 168,89 C168,71.3268871 130.391921,57 84,57 C37.6080787,57 0,71.3268871 0,89 C0,106.673113 37.6080787,121 84,121 Z M84,121&rdquo;;
-var RING_THREE_PATH = &ldquo;M84,121 C130.391921,121 168,106.673113 168,89 C168,71.3268871 130.391921,57 84,57 C37.6080787,57 0,71.3268871 0,89 C0,106.673113 37.6080787,121 84,121 Z M84,121&rdquo;;
-var RING_TWO_ROTATE = new Transform().translate(84.000000, 89.000000).rotate(-240.000000).translate(-84.000000, -89.000000);
-var RING_THREE_ROTATE = new Transform().translate(84.000000, 89.000000).rotate(-300.000000).translate(-84.000000, -89.000000);</p>
-
-<p>module.exports = VectorWidget;
-```</p>
-
-<p>You may notice that I removed the <code>mouseDown/mouseUp</code> stuff.
-I tried getting it work very briefly with <code>onPress</code> and <code>TouchableWithoutFeedback</code> but I couldn&rsquo;t get it working.
-If you get it figured out let me know.</p>
-
-<h2>Conclusion</h2>
-
-<p>That&rsquo;s it, you can now render your react-art code natively. Enjoy</p>
-
-<p><img class="<a" src="href="http://i.imgur.com/AXbsaTB.png">http://i.imgur.com/AXbsaTB.png</a>" title="Final result" ></p>
 ]]></content>
   </entry>
   

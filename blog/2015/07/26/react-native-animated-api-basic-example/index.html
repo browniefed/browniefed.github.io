@@ -1,0 +1,648 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="" name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+		
+		<title>React-native Animated API Basic Example &mdash; JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script src="/js/jquery.zclip.min.js"></script>
+		
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+		
+		<!--<link href="http://feeds.feedburner.com/turkeltaub" rel="alternate" title="JavaScript Without Grammar" type="application/rss+xml" />-->
+		
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="http://browniefed.com">Portfolio?</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF _layouts/post.html -->
+
+<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/07/26/react-native-animated-api-basic-example/">React-native Animated API Basic Example</a></h1>
+		<time>26 July 2015</time>
+	</header>
+	<div class="content">
+		<h1>Introduction</h1>
+
+<p>Animations are finally solved in React? That&rsquo;s a bold claim, but lets explore the new Animated API in <code>react-native</code>. This won&rsquo;t apply to React for the web, however there is also <a href="https://github.com/chenglou/react-motion">react-motion</a> also released at <code>react-europe</code>.</p>
+
+<p><img src="http://i.imgur.com/JlX4nV0.gif" title="Final Animation Result" ></p>
+
+<h1>Resources</h1>
+
+<ul>
+<li><a href="https://www.youtube.com/watch?v=1tavDv5hXpo">Cheng Lou &ndash; The State of Animation in React at react-europe 2015</a></li>
+<li><a href="https://github.com/chenglou/react-motion">react-motion &ndash; Github</a></li>
+<li><a href="https://facebook.github.io/react-native/docs/animations.html#content">React Native Animation API</a></li>
+<li><a href="https://www.youtube.com/watch?v=xDlfrcM6YBk">Spencer Ahrens &ndash; React Native: Building Fluid User Experiences at react-europe 2015</a></li>
+</ul>
+
+
+<h1>How It Works</h1>
+
+<p>The Animated API does not depend on state. It does, however it is not accomplished by using <code>setState</code>. The Animated API exports a few components <code>Animated.View</code>, <code>Animated.Text</code>, and <code>Animated.Image</code>. The Animated API will adjust the components in the native Objective-C world. This will bypass the diff and reconciliation in the JS world so you get fluent, and performance animatons. Ultimately all you need to know is that it will interpolate numbers and update the native view components.</p>
+
+<h1>Cool Examples</h1>
+
+<ul>
+<li><a href="https://github.com/brentvatne/react-native-animated-demo-tinder">https://github.com/brentvatne/react-native-animated-demo-tinder</a></li>
+<li><a href="https://github.com/facebook/react-native/tree/master/Examples/UIExplorer/AnimationExample">UIExplorer Animated example</a></li>
+</ul>
+
+
+<h1>Simple Move Around the Screen Example</h1>
+
+<p>We are just going to move a square around the edges of the screen.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;--&lt;           
+</span><span class='line'>|  |          
+</span><span class='line'>V--^         </span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Setup</h1>
+
+<p>Dependencies</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>var Dimensions = require('Dimensions');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  width,
+</span><span class='line'>  height
+</span><span class='line'>} = Dimensions.get('window');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  AppRegistry,
+</span><span class='line'>  StyleSheet,
+</span><span class='line'>  View,
+</span><span class='line'>  Animated
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>var SQUARE_DIMENSIONS = 30;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Styles</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>  container: {
+</span><span class='line'>    flex: 1
+</span><span class='line'>  },
+</span><span class='line'>  square: {
+</span><span class='line'>    width: SQUARE_DIMENSIONS,
+</span><span class='line'>    height: SQUARE_DIMENSIONS,
+</span><span class='line'>    backgroundColor: 'blue'
+</span><span class='line'>  } 
+</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Basic Code</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>var AnimatedSquare = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>        pan: new Animated.ValueXY()
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  getStyle: function() {
+</span><span class='line'>    return [
+</span><span class='line'>              styles.square, 
+</span><span class='line'>              {
+</span><span class='line'>                transform: this.state.pan.getTranslateTransform()
+</span><span class='line'>              }
+</span><span class='line'>            ];
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;Animated.View style={this.getStyle()} /&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Few things to call out here.</p>
+
+<p>Notice our state that is created is an instantiation of <code>Animated.ValueXY</code>. This will save us some code, and let the <code>Animated</code> API take care of interpolating both our X, and Y values.</p>
+
+<p>Our <code>getStyle</code> will return an array, our base <code>square</code> class and a <code>transform</code>. Once again we&rsquo;ll use a the <code>getTranslateTransform</code> helper from the <code>Animated</code> API to return the appropriate structure for the transform style.</p>
+
+<p>It returns <code>[{ translateX: xValue}, {translateY: yValue}]</code>, where <code>xValue</code> and <code>yValue</code> are the interpolated values from the <code>Animated.ValueXY</code> we set on our <code>pan</code> state variable.</p>
+
+<p>Finally we will use the <code>Animated.View</code> which is a convenience element to say &ldquo;Hey React this is going to be an animated thing&rdquo;.</p>
+
+<h1>Move It</h1>
+
+<p>We&rsquo;re now going to move it from the top corner. <code>x = 0, y = 0</code> to the bottom left corner <code>x = 0, y = (phoneHeight - square Height)</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var SPRING_CONFIG = {tension: 2, friction: 3}; //Soft spring
+</span><span class='line'>
+</span><span class='line'>//...
+</span><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    Animated.spring(this.state.pan, {
+</span><span class='line'>          ...SPRING_CONFIG,
+</span><span class='line'>          toValue: {x: 0, y: height - SQUARE_DIMENSIONS}                        // return to start
+</span><span class='line'>    }).start();
+</span><span class='line'>  },</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So on mount we&rsquo;ll start a spring. This will animate the <code>this.state.pan</code> to the bottom left corner like want it to.</p>
+
+<p>We&rsquo;ll also setup the <code>SPRING_CONFIG</code> with a soft spring, not much tension or friction. So it&rsquo;ll get to the corner and just bounce a little bit and stay there.</p>
+
+<h1>Move It, Move It, and Move It again</h1>
+
+<p>We can queue up sequences of animations. These will happen one after the other.
+The <code>sequence</code> call is one of the means of composing animations. There is also <code>parallel</code> which allows for declaration of animations to happen at the same time.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    Animated.sequence([
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>            ...SPRING_CONFIG,
+</span><span class='line'>            toValue: {x: 0, y: height - SQUARE_DIMENSIONS} //animate to bottom left
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>          ...SPRING_CONFIG,
+</span><span class='line'>          toValue: {x: width - SQUARE_DIMENSIONS, y: height - SQUARE_DIMENSIONS} // animated to bottom right
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>            ...SPRING_CONFIG,
+</span><span class='line'>            toValue: {x: width - SQUARE_DIMENSIONS, y: 0} //animate to top right
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>          ...SPRING_CONFIG,
+</span><span class='line'>          toValue: {x: 0, y: 0} // return to start
+</span><span class='line'>      })
+</span><span class='line'>    ]).start();
+</span><span class='line'>  }</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We define 4 spring configrations like discussed before. The comments in the code explain each movement.</p>
+
+<h1>Move and Repeat</h1>
+
+<p>The call to <code>start</code> takes a callback. This callback will be invoked once the animation is completed. In our case the animation is complete once we get back to the start. We can then restart the animation.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    this.startAndRepeat();
+</span><span class='line'>  },
+</span><span class='line'>  startAndRepeat: function() {
+</span><span class='line'>    this.triggerAnimation(this.startAndRepeat);
+</span><span class='line'>  },
+</span><span class='line'>  triggerAnimation: function(cb) {
+</span><span class='line'>    Animated.sequence([
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>            ...SPRING_CONFIG,
+</span><span class='line'>            toValue: {x: 0, y: height - SQUARE_DIMENSIONS} //animate to bottom left
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>          ...SPRING_CONFIG,
+</span><span class='line'>          toValue: {x: width - SQUARE_DIMENSIONS, y: height - SQUARE_DIMENSIONS} // animated to bottom right
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>            ...SPRING_CONFIG,
+</span><span class='line'>            toValue: {x: width - SQUARE_DIMENSIONS, y: 0} //animate to top right
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>          ...SPRING_CONFIG,
+</span><span class='line'>          toValue: {x: 0, y: 0} // return to start
+</span><span class='line'>      })
+</span><span class='line'>    ]).start(cb);
+</span><span class='line'>  }</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We just make a call that triggers the animation and calls itself on complete.</p>
+
+<h1>Full/Live Code</h1>
+
+<h2><a href="https://rnplay.org/apps/QlPJ2Q">https://rnplay.org/apps/QlPJ2Q</a></h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>var Dimensions = require('Dimensions');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  width,
+</span><span class='line'>  height
+</span><span class='line'>} = Dimensions.get('window');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  AppRegistry,
+</span><span class='line'>  StyleSheet,
+</span><span class='line'>  View,
+</span><span class='line'>  Animated
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>var SQUARE_DIMENSIONS = 30;
+</span><span class='line'>var SPRING_CONFIG = {tension: 2, friction: 3}; //Soft spring
+</span><span class='line'>
+</span><span class='line'>var AnimatedSquare = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>        pan: new Animated.ValueXY()
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    this.startAndRepeat();
+</span><span class='line'>  },
+</span><span class='line'>  startAndRepeat: function() {
+</span><span class='line'>    this.triggerAnimation(this.startAndRepeat);
+</span><span class='line'>  },
+</span><span class='line'>  triggerAnimation: function(cb) {
+</span><span class='line'>    Animated.sequence([
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>            ...SPRING_CONFIG,
+</span><span class='line'>            toValue: {x: 0, y: height - SQUARE_DIMENSIONS} //animate to bottom left
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>          ...SPRING_CONFIG,
+</span><span class='line'>          toValue: {x: width - SQUARE_DIMENSIONS, y: height - SQUARE_DIMENSIONS} // animated to bottom right
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>            ...SPRING_CONFIG,
+</span><span class='line'>            toValue: {x: width - SQUARE_DIMENSIONS, y: 0} //animate to top right
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>          ...SPRING_CONFIG,
+</span><span class='line'>          toValue: {x: 0, y: 0} // return to start
+</span><span class='line'>      })
+</span><span class='line'>    ]).start(cb);
+</span><span class='line'>  },
+</span><span class='line'>  getStyle: function() {
+</span><span class='line'>    return [
+</span><span class='line'>              styles.square, 
+</span><span class='line'>              {
+</span><span class='line'>                transform: this.state.pan.getTranslateTransform()
+</span><span class='line'>              }
+</span><span class='line'>            ];
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;Animated.View style={this.getStyle()} /&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>  container: {
+</span><span class='line'>    flex: 1
+</span><span class='line'>  },
+</span><span class='line'>  square: {
+</span><span class='line'>    width: SQUARE_DIMENSIONS,
+</span><span class='line'>    height: SQUARE_DIMENSIONS,
+</span><span class='line'>    backgroundColor: 'blue'
+</span><span class='line'>  } 
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>AppRegistry.registerComponent('AnimatedSquare', () =&gt; AnimatedSquare);
+</span></code></pre></td></tr></table></div></figure>
+
+
+	</div>
+	<div>
+		
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/animated/'>animated</a>, <a class='category' href='/blog/categories/api/'>api</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>
+	
+
+
+	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+<div class="article-wrap">
+<footer style="margin-top: 10px;">
+    <div id="post-author">
+	<div class="post-author-image" style="width: 20%; display: inline-block;">
+		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
+	</div>
+	<div class="post-author-content" style="width: 70%; display: inline-block;">
+		<p>
+			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a> )
+		</p>
+	</div>
+</div>
+</footer>
+</div>
+<!-- END OF _/layouts/post.html -->
+
+		
+			<footer>
+				Copyright &copy; 2015
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/07/26/react-native-animated-api-basic-example/';
+        var disqus_url = 'http://browniefed.com/blog/2015/07/26/react-native-animated-api-basic-example/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: $(this).next('code').text(),
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+					}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/07/26/react-native-animated-api-basic-example/';
+        var disqus_url = 'http://browniefed.com/blog/2015/07/26/react-native-animated-api-basic-example/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/react/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-07-21T11:43:16-07:00</updated>
+  <updated>2015-07-26T15:45:39-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -12,6 +12,354 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[React-native Animated API Basic Example]]></title>
+    <link href="http://browniefed.com/blog/2015/07/26/react-native-animated-api-basic-example/"/>
+    <updated>2015-07-26T11:51:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/07/26/react-native-animated-api-basic-example</id>
+    <content type="html"><![CDATA[<h1>Introduction</h1>
+
+<p>Animations are finally solved in React? That&rsquo;s a bold claim, but lets explore the new Animated API in <code>react-native</code>. This won&rsquo;t apply to React for the web, however there is also <a href="https://github.com/chenglou/react-motion">react-motion</a> also released at <code>react-europe</code>.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/JlX4nV0.gif">http://i.imgur.com/JlX4nV0.gif</a>" title="Final Animation Result" ></p>
+
+<h1>Resources</h1>
+
+<ul>
+<li><a href="https://www.youtube.com/watch?v=1tavDv5hXpo">Cheng Lou &ndash; The State of Animation in React at react-europe 2015</a></li>
+<li><a href="https://github.com/chenglou/react-motion">react-motion &ndash; Github</a></li>
+<li><a href="https://facebook.github.io/react-native/docs/animations.html#content">React Native Animation API</a></li>
+<li><a href="https://www.youtube.com/watch?v=xDlfrcM6YBk">Spencer Ahrens &ndash; React Native: Building Fluid User Experiences at react-europe 2015</a></li>
+</ul>
+
+
+<h1>How It Works</h1>
+
+<p>The Animated API does not depend on state. It does, however it is not accomplished by using <code>setState</code>. The Animated API exports a few components <code>Animated.View</code>, <code>Animated.Text</code>, and <code>Animated.Image</code>. The Animated API will adjust the components in the native Objective-C world. This will bypass the diff and reconciliation in the JS world so you get fluent, and performance animatons. Ultimately all you need to know is that it will interpolate numbers and update the native view components.</p>
+
+<h1>Cool Examples</h1>
+
+<ul>
+<li><a href="https://github.com/brentvatne/react-native-animated-demo-tinder">https://github.com/brentvatne/react-native-animated-demo-tinder</a></li>
+<li><a href="https://github.com/facebook/react-native/tree/master/Examples/UIExplorer/AnimationExample">UIExplorer Animated example</a></li>
+</ul>
+
+
+<h1>Simple Move Around the Screen Example</h1>
+
+<p>We are just going to move a square around the edges of the screen.</p>
+
+<p><code>
+&lt;--&lt;           
+|  |          
+V--^         
+</code></p>
+
+<h1>Setup</h1>
+
+<p>Dependencies</p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);</p>
+
+<p>var {
+  width,
+  height
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  View,
+  Animated
+} = React;</p>
+
+<p>var SQUARE_DIMENSIONS = 30;</p>
+
+<p>```</p>
+
+<p>Styles</p>
+
+<p>```
+var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1
+</code></pre>
+
+<p>  },
+  square: {</p>
+
+<pre><code>width: SQUARE_DIMENSIONS,
+height: SQUARE_DIMENSIONS,
+backgroundColor: 'blue'
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Basic Code</p>
+
+<p>```</p>
+
+<p>var AnimatedSquare = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    pan: new Animated.ValueXY()
+};
+</code></pre>
+
+<p>  },
+  getStyle: function() {</p>
+
+<pre><code>return [
+          styles.square, 
+          {
+            transform: this.state.pan.getTranslateTransform()
+          }
+        ];
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Animated.View style={this.getStyle()} /&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Few things to call out here.</p>
+
+<p>Notice our state that is created is an instantiation of <code>Animated.ValueXY</code>. This will save us some code, and let the <code>Animated</code> API take care of interpolating both our X, and Y values.</p>
+
+<p>Our <code>getStyle</code> will return an array, our base <code>square</code> class and a <code>transform</code>. Once again we&rsquo;ll use a the <code>getTranslateTransform</code> helper from the <code>Animated</code> API to return the appropriate structure for the transform style.</p>
+
+<p>It returns <code>[{ translateX: xValue}, {translateY: yValue}]</code>, where <code>xValue</code> and <code>yValue</code> are the interpolated values from the <code>Animated.ValueXY</code> we set on our <code>pan</code> state variable.</p>
+
+<p>Finally we will use the <code>Animated.View</code> which is a convenience element to say &ldquo;Hey React this is going to be an animated thing&rdquo;.</p>
+
+<h1>Move It</h1>
+
+<p>We&rsquo;re now going to move it from the top corner. <code>x = 0, y = 0</code> to the bottom left corner <code>x = 0, y = (phoneHeight - square Height)</code>.</p>
+
+<p>```
+var SPRING_CONFIG = {tension: 2, friction: 3}; //Soft spring</p>
+
+<p>//&hellip;
+  componentDidMount: function() {</p>
+
+<pre><code>Animated.spring(this.state.pan, {
+      ...SPRING_CONFIG,
+      toValue: {x: 0, y: height - SQUARE_DIMENSIONS}                        // return to start
+}).start();
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>So on mount we&rsquo;ll start a spring. This will animate the <code>this.state.pan</code> to the bottom left corner like want it to.</p>
+
+<p>We&rsquo;ll also setup the <code>SPRING_CONFIG</code> with a soft spring, not much tension or friction. So it&rsquo;ll get to the corner and just bounce a little bit and stay there.</p>
+
+<h1>Move It, Move It, and Move It again</h1>
+
+<p>We can queue up sequences of animations. These will happen one after the other.
+The <code>sequence</code> call is one of the means of composing animations. There is also <code>parallel</code> which allows for declaration of animations to happen at the same time.</p>
+
+<p>```
+  componentDidMount: function() {</p>
+
+<pre><code>Animated.sequence([
+  Animated.spring(this.state.pan, {
+        ...SPRING_CONFIG,
+        toValue: {x: 0, y: height - SQUARE_DIMENSIONS} //animate to bottom left
+  }),
+  Animated.spring(this.state.pan, {
+      ...SPRING_CONFIG,
+      toValue: {x: width - SQUARE_DIMENSIONS, y: height - SQUARE_DIMENSIONS} // animated to bottom right
+  }),
+  Animated.spring(this.state.pan, {
+        ...SPRING_CONFIG,
+        toValue: {x: width - SQUARE_DIMENSIONS, y: 0} //animate to top right
+  }),
+  Animated.spring(this.state.pan, {
+      ...SPRING_CONFIG,
+      toValue: {x: 0, y: 0} // return to start
+  })
+]).start();
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>We define 4 spring configrations like discussed before. The comments in the code explain each movement.</p>
+
+<h1>Move and Repeat</h1>
+
+<p>The call to <code>start</code> takes a callback. This callback will be invoked once the animation is completed. In our case the animation is complete once we get back to the start. We can then restart the animation.</p>
+
+<p>```
+  componentDidMount: function() {</p>
+
+<pre><code>this.startAndRepeat();
+</code></pre>
+
+<p>  },
+  startAndRepeat: function() {</p>
+
+<pre><code>this.triggerAnimation(this.startAndRepeat);
+</code></pre>
+
+<p>  },
+  triggerAnimation: function(cb) {</p>
+
+<pre><code>Animated.sequence([
+  Animated.spring(this.state.pan, {
+        ...SPRING_CONFIG,
+        toValue: {x: 0, y: height - SQUARE_DIMENSIONS} //animate to bottom left
+  }),
+  Animated.spring(this.state.pan, {
+      ...SPRING_CONFIG,
+      toValue: {x: width - SQUARE_DIMENSIONS, y: height - SQUARE_DIMENSIONS} // animated to bottom right
+  }),
+  Animated.spring(this.state.pan, {
+        ...SPRING_CONFIG,
+        toValue: {x: width - SQUARE_DIMENSIONS, y: 0} //animate to top right
+  }),
+  Animated.spring(this.state.pan, {
+      ...SPRING_CONFIG,
+      toValue: {x: 0, y: 0} // return to start
+  })
+]).start(cb);
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>We just make a call that triggers the animation and calls itself on complete.</p>
+
+<h1>Full/Live Code</h1>
+
+<h2><a href="https://rnplay.org/apps/QlPJ2Q">https://rnplay.org/apps/QlPJ2Q</a></h2>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);</p>
+
+<p>var {
+  width,
+  height
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  View,
+  Animated
+} = React;</p>
+
+<p>var SQUARE_DIMENSIONS = 30;
+var SPRING_CONFIG = {tension: 2, friction: 3}; //Soft spring</p>
+
+<p>var AnimatedSquare = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    pan: new Animated.ValueXY()
+};
+</code></pre>
+
+<p>  },
+  componentDidMount: function() {</p>
+
+<pre><code>this.startAndRepeat();
+</code></pre>
+
+<p>  },
+  startAndRepeat: function() {</p>
+
+<pre><code>this.triggerAnimation(this.startAndRepeat);
+</code></pre>
+
+<p>  },
+  triggerAnimation: function(cb) {</p>
+
+<pre><code>Animated.sequence([
+  Animated.spring(this.state.pan, {
+        ...SPRING_CONFIG,
+        toValue: {x: 0, y: height - SQUARE_DIMENSIONS} //animate to bottom left
+  }),
+  Animated.spring(this.state.pan, {
+      ...SPRING_CONFIG,
+      toValue: {x: width - SQUARE_DIMENSIONS, y: height - SQUARE_DIMENSIONS} // animated to bottom right
+  }),
+  Animated.spring(this.state.pan, {
+        ...SPRING_CONFIG,
+        toValue: {x: width - SQUARE_DIMENSIONS, y: 0} //animate to top right
+  }),
+  Animated.spring(this.state.pan, {
+      ...SPRING_CONFIG,
+      toValue: {x: 0, y: 0} // return to start
+  })
+]).start(cb);
+</code></pre>
+
+<p>  },
+  getStyle: function() {</p>
+
+<pre><code>return [
+          styles.square, 
+          {
+            transform: this.state.pan.getTranslateTransform()
+          }
+        ];
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Animated.View style={this.getStyle()} /&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1
+</code></pre>
+
+<p>  },
+  square: {</p>
+
+<pre><code>width: SQUARE_DIMENSIONS,
+height: SQUARE_DIMENSIONS,
+backgroundColor: 'blue'
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>AppRegistry.registerComponent(&lsquo;AnimatedSquare&rsquo;, () => AnimatedSquare);</p>
+
+<p>```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[React-Native Tinder like cards]]></title>
@@ -1804,305 +2152,6 @@ render: function() {
 <p>Once again <a href="https://github.com/andreaferretti/paths-js">Paths.js</a> comes in handy for generating arbitrary path information, and providing access to a lot of valuable data to making laying out your graphs with <code>react-art</code> a breeze.</p>
 
 <p>Some homework for you is to add some vertical labels at each particular step.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[React Art and Paths.js]]></title>
-    <link href="http://browniefed.com/blog/2015/05/27/react-art-and-paths-dot-js/"/>
-    <updated>2015-05-27T19:32:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/05/27/react-art-and-paths-dot-js</id>
-    <content type="html"><![CDATA[<h3>Intro</h3>
-
-<p><a href="https://github.com/andreaferretti/paths-js">Paths.js</a> is a cool library. It comes with 3 levels of generating paths.</p>
-
-<ul>
-<li>Low level which helps you generate paths/lines.</li>
-<li>Mid level which generates paths for shapes</li>
-<li>High level which takes a set of data and generates graphs</li>
-</ul>
-
-
-<p>All of these are great when working with <code>react-art</code> because it&rsquo;s just returning data. I&rsquo;ll say it once, and a million more but libraries that just generate data make it easy to traverse and render with <code>react-art</code>.</p>
-
-<h3>Paths</h3>
-
-<h4>UPDATE:</h4>
-
-<p>Sebastian Markbage (the creator of ReactART and ART), informed me that <code>ReactART</code> itself has a <code>Path</code> implementation. I realized this but didn&rsquo;t think much of it.
-However per the discussion here <a href="https://discuss.reactjs.org/t/react-art-with-paths-js/492">https://discuss.reactjs.org/t/react-art-with-paths-js/492</a> the <code>ART</code> path is faster as it takes advantage of the current <code>mode</code> to create the most efficient path instead of taking a string and converting it back into native for instructions for canvas rendering.</p>
-
-<p>The <code>ReactART.Path</code> has similar methods. Check out the discuss thread for a link to the implementation to find out the supported methods. I&rsquo;m currently working on <code>ReactART</code> documentation so expect that soon.</p>
-
-<p>Example:</p>
-
-<p><code>
-var path = Path()
-  .moveto(10, 20)
-  .lineto(30, 50)
-  .lineto(25, 28)
-  .qcurveto(27, 30, 32, 27)
-  .closepath();
-</code></p>
-
-<p>This is can just be plugged right into <code>react-art</code> <code>Shape</code> element.</p>
-
-<p>Like so</p>
-
-<p>```
-var React = require(&lsquo;react&rsquo;),</p>
-
-<pre><code>ReactArt = require('react-art'),
-Surface = ReactArt.Surface,
-Shape = ReactArt.Shape,
-Path = require('paths-js/path');
-</code></pre>
-
-<p>var Demo = React.createClass({</p>
-
-<pre><code>getInitialState: function() {
-    return {
-        to: {
-            x: 30,
-            y: 50
-        }
-    }
-},
-getPath: function() {
-    var path = Path()
-                  .moveto(10, 20)
-                  .lineto(this.state.to.x, this.state.to.y)
-                  .lineto(25, 28)
-                  .qcurveto(27, 30, 32, 27)
-                  .closepath();
-
-    return path.print();
-},
-startAnimating: function() {
-
-    if (this.state.to.x === 100) {
-        this.addToPosition = -1;
-    } else if (this.state.to.x === 29) {
-        this.addToPosition = 1;
-    }
-
-    this.state.to.x += this.addToPosition;
-    this.state.to.y += this.addToPosition;
-
-    this.setState(this.state);
-},
-componentDidMount: function() {
-    this.addToPosition = 1;
-    setInterval(this.startAnimating, 17)
-},
-render: function() {
-    return (
-        &lt;div&gt;
-            &lt;Surface
-                width={500}
-                height={500}
-            &gt;
-                &lt;Shape d={this.getPath()} stroke="#000" strokeWidth={1} /&gt;
-            &lt;/Surface&gt;
-        &lt;/div&gt;
-    )
-}
-</code></pre>
-
-<p>});</p>
-
-<p>module.exports = Demo;
-```</p>
-
-<p data-height="624" data-theme-id="0" data-slug-hash="VLmOOE" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/VLmOOE/'>VLmOOE</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-
-
-<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
-
-
-<h3>Simple Shapes</h3>
-
-<p>Now <code>react-art</code> already comes with a few different shapes but <code>paths.js</code> have a few built in as well, like <code>Rectangle</code> and <code>Bezier</code> curve.</p>
-
-<p><code>
-var rectangle = Rectangle({
-  top: 10,
-  bottom: 3,
-  left: -2,
-  right: 5
-});
-</code></p>
-
-<p>And how that looks is very similar to the previous example</p>
-
-<p>```
-var React = require(&lsquo;react&rsquo;),</p>
-
-<pre><code>ReactArt = require('react-art'),
-Surface = ReactArt.Surface,
-Group = ReactArt.Group,
-Shape = ReactArt.Shape,
-Rectangle = require('paths-js/rectangle'),
-Bezier = require('paths-js/bezier');
-</code></pre>
-
-<p>var Demo = React.createClass({</p>
-
-<pre><code>getPath: function() {
-    var rectangle = Rectangle({
-                  top: 10,
-                  bottom: 3,
-                  left: -2,
-                  right: 5
-                });
-
-    return rectangle.path.print();
-},
-getBez: function() {
-    var points = [[1, 50], [50, 100], [100, 3], [4, 0]];
-    var curve = Bezier({
-      points: points,
-      tension: 0.2
-    });
-
-    return curve.path.print();
-},
-render: function() {
-    return (
-        &lt;div&gt;
-            &lt;Surface
-                width={500}
-                height={500}
-            &gt;
-                &lt;Group x={100} y={100}&gt;
-                    &lt;Shape d={this.getPath()} stroke="#000" strokeWidth={1} /&gt;
-                &lt;/Group&gt;
-                &lt;Group x={200} y={200}&gt;
-                    &lt;Shape d={this.getBez()} stroke="#000" strokeWidth={1} /&gt;
-                &lt;/Group&gt;
-            &lt;/Surface&gt;
-        &lt;/div&gt;
-    )
-}
-</code></pre>
-
-<p>});</p>
-
-<p>module.exports = Demo;
-```</p>
-
-<p data-height="624" data-theme-id="0" data-slug-hash="xGRNvW" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/xGRNvW/'>xGRNvW</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-
-
-<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
-
-
-<h3>Graphs</h3>
-
-<p>```
-var pie = Pie({
-  data: [</p>
-
-<pre><code>{ name: 'Italy', population: 59859996 },
-{ name: 'Mexico', population: 118395054 },
-{ name: 'France', population: 65806000 },
-{ name: 'Argentina', population: 40117096 },
-{ name: 'Japan', population: 127290000 }
-</code></pre>
-
-<p>  ],
-  accessor: function(x) { return x.population; },
-  compute: {</p>
-
-<pre><code>color: function(i) { return somePalette[i]; }
-</code></pre>
-
-<p>  },
-  center: [20, 15],
-  r: 30,
-  R: 50
-});
-```</p>
-
-<p>Some code of it in action</p>
-
-<p>```
-var React = require(&lsquo;react&rsquo;),</p>
-
-<pre><code>ReactArt = require('react-art'),
-Surface = ReactArt.Surface,
-Group = ReactArt.Group,
-Shape = ReactArt.Shape,
-Pie = require('paths-js/Pie');
-</code></pre>
-
-<p>var pie = Pie({
-  data: [</p>
-
-<pre><code>{ name: 'Italy', population: 59859996 },
-{ name: 'Mexico', population: 118395054 },
-{ name: 'France', population: 65806000 },
-{ name: 'Argentina', population: 40117096 },
-{ name: 'Japan', population: 127290000 }
-</code></pre>
-
-<p>  ],
-  accessor: function(x) { return x.population; },
-  compute: {</p>
-
-<pre><code>color: function(i) { return '#000'; }
-</code></pre>
-
-<p>  },
-  center: [20, 15],
-  r: 30,
-  R: 50
-});</p>
-
-<p>var Demo = React.createClass({</p>
-
-<pre><code>getPie: function() {
-    return pie.curves.map(function(shape) {
-        return (
-            &lt;Group&gt;
-                &lt;Text fill="#A6BD8A" font='bold 12px "Arial"' x={shape.sector.centroid[0] - 12} y={shape.sector.centroid[1]}&gt;{shape.item.name}&lt;/Text&gt;
-                &lt;Shape d={shape.sector.path.print()} stroke={shape.color} strokeWidth={1} /&gt;
-            &lt;/Group&gt;
-        )
-    })
-},
-render: function() {
-    return (
-        &lt;div&gt;
-            &lt;Surface
-                width={500}
-                height={500}
-            &gt;
-                &lt;Group x={50} y={45}&gt;
-                    {this.getPie()}
-                &lt;/Group&gt;
-            &lt;/Surface&gt;
-        &lt;/div&gt;
-    )
-}
-</code></pre>
-
-<p>});</p>
-
-<p>module.exports = Demo;
-```</p>
-
-<p data-height="624" data-theme-id="0" data-slug-hash="waoLvB" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/waoLvB/'>waoLvB</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-
-
-<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
-
-
-<h3>Conclusion</h3>
-
-<p>These examples may look boring but they just show off a bit of the control you can have with <code>react-art</code> and a simple path generator.
-Not only that but because we aren&rsquo;t depending on the DOM in any case these examples should also work on <code>react-native</code>.
-Combined with some tweening you could make some very effective graphs that animate. That is a topic for another time.</p>
 ]]></content>
   </entry>
   
