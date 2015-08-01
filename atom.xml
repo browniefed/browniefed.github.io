@@ -4,7 +4,7 @@
 	<title><![CDATA[JavaScript Without Grammar]]></title>
 	<link href="http://browniefed.com/atom.xml" rel="self"/>
 	<link href="http://browniefed.com/"/>
-	<updated>2015-08-01T16:38:17-07:00</updated>
+	<updated>2015-08-01T16:39:14-07:00</updated>
 	<id>http://browniefed.com/</id>
 	<author>
 		<name><![CDATA[Jason Brown]]></name>
@@ -1311,9 +1311,6 @@ The <code>sequence</code> call is one of the means of composing animations. Ther
 
 <p>Some examples</p>
 
-<!-- more -->
-
-
 <h2>Percentage height sections</h2>
 
 <p>These are seemingly simple to do in CSS. Specify <code>height: 50%</code> and you get a magical 50% height. Yeah I&rsquo;m over simplifying it but in general that&rsquo;s what you get. In flex it&rsquo;s different.</p>
@@ -1379,6 +1376,11 @@ The <code>sequence</code> call is one of the means of composing animations. Ther
 </span><span class='line'>    }
 </span><span class='line'>});
 </span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<!-- more -->
 
 
 <p>This makes it look like percentages, however what actually is happening is just ratios.</p>

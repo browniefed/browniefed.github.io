@@ -159,6 +159,75 @@
 
 <p>Some examples</p>
 
+<h2>Percentage height sections</h2>
+
+<p>These are seemingly simple to do in CSS. Specify <code>height: 50%</code> and you get a magical 50% height. Yeah I&rsquo;m over simplifying it but in general that&rsquo;s what you get. In flex it&rsquo;s different.</p>
+
+<p>This percentage based layout question was asked here <a href="https://github.com/facebook/react-native/issues/364">https://github.com/facebook/react-native/issues/364</a>.</p>
+
+<p>Laying out login screens may require significant white space. To accomplish % based layout we can use the <code>flex</code> property along with <code>flexDirection</code>.</p>
+
+<p>Say you want 3 sections. Top <code>50%</code>, then two <code>25%</code> sections.</p>
+
+<p>Our code would look something like this</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var SampleApp = React.createClass({
+</span><span class='line'>  render: function() {
+</span><span class='line'>      return (
+</span><span class='line'>          &lt;View style={styles.container}&gt;
+</span><span class='line'>              &lt;View style={styles.halfHeight} /&gt;
+</span><span class='line'>              &lt;View style={styles.quarterHeight} /&gt;
+</span><span class='line'>              &lt;View style={[styles.quarterHeight, {backgroundColor: '#CCC'}]} /&gt;
+</span><span class='line'>          &lt;/View&gt;
+</span><span class='line'>      )
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>    container: {
+</span><span class='line'>        flex: 1,
+</span><span class='line'>        flexDirection: 'column'
+</span><span class='line'>    },
+</span><span class='line'>    halfHeight: {
+</span><span class='line'>        flex: .5,
+</span><span class='line'>        backgroundColor: '#FF3366'
+</span><span class='line'>    },
+</span><span class='line'>    quarterHeight: {
+</span><span class='line'>        flex: .25,
+</span><span class='line'>        backgroundColor: '#000'
+</span><span class='line'>    }
+</span><span class='line'>});
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
 </div>
           
           

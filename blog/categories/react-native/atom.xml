@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react-native | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/react-native/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-08-01T16:38:17-07:00</updated>
+  <updated>2015-08-01T16:39:14-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -893,9 +893,6 @@ backgroundColor: 'blue'
 
 <p>Some examples</p>
 
-<!-- more -->
-
-
 <h2>Percentage height sections</h2>
 
 <p>These are seemingly simple to do in CSS. Specify <code>height: 50%</code> and you get a magical 50% height. Yeah I&rsquo;m over simplifying it but in general that&rsquo;s what you get. In flex it&rsquo;s different.</p>
@@ -943,6 +940,9 @@ quarterHeight: {
 <p>});</p>
 
 <p>```</p>
+
+<!-- more -->
+
 
 <p>This makes it look like percentages, however what actually is happening is just ratios.</p>
 
