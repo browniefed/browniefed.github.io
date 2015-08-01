@@ -6,7 +6,7 @@
 		<meta charset="utf-8">
 		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
 		<meta content="width=device-width,initial-scale=1" name="viewport">
-		<meta content="" name="description">
+		<meta content="A blog of JavaScript techniques and tutorials" name="description">
 		<meta content="JavaScript Without Grammar" name="author">
 		
         <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
@@ -26,9 +26,7 @@
 		<!-- Syntax highlighter -->
 		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="/js/prettify.js"></script>
-		
-		<!--<link href="http://feeds.feedburner.com/turkeltaub" rel="alternate" title="JavaScript Without Grammar" type="application/rss+xml" />-->
-		
+				
 	</head>
 	<body onload="prettyPrint()">
 	
@@ -58,7 +56,8 @@
 		<time>07 June 2014</time>
 	</header>
 	<div class="content">
-		<p>It doesn&rsquo;t appear to be just me but PhoneGap can be incredibly difficult to use. Simply because any information pertaining to the most current version of phonegap is so fragmented. A google search will reveal virtually nothing about the error messages you&rsquo;re receiving and how to remedy them for current versions.</p>
+		
+            <div class="entry-content"><p>It doesn&rsquo;t appear to be just me but PhoneGap can be incredibly difficult to use. Simply because any information pertaining to the most current version of phonegap is so fragmented. A google search will reveal virtually nothing about the error messages you&rsquo;re receiving and how to remedy them for current versions.</p>
 
 <p>For example, I was attempting to use the GeoLocation API. Could care less about the extreme accuracy. After attempting to use it I was getting an Error Code 2 , failed to start geolocation service. Well maybe that was my fault for enabling <code>enableHighAccuracy</code> but wait you have to enableHighAccuracy for older versions of android otherwise it won&rsquo;t work. Or was that only for older versions of the geolocation plugin which then got deprecated in some versions of android in favor of the native browser geolocation API because it provides better and faster GPS locations. In the end the fault was all mine, I had simply forgotten to include the plugin in my <code>config.xml</code></p>
 
@@ -71,10 +70,11 @@
 <p>I&rsquo;ve sort of determined that the only real reliable way to determine anything is just to look at the release notes on <a href="https://github.com/apache/cordova-plugin-geolocation/blob/master/RELEASENOTES.md">github</a> for the best most up to date information.</p>
 
 <p>To end I should say I really love PhoneGap and all of the time and effort people are putting into developing it. The documentation and information about current versions is fragmented, and rather than ranting I should be helping out and contributing to documentation and solving the problems. That should always be the goal if you find a problem in the open source world. Don&rsquo;t rant, help out, and that is what I will do.</p>
-
+</div>
+        
 	</div>
 	<div>
-		
+    	
 
 
 		
@@ -89,7 +89,7 @@
 	
 
 
-	
+    	
 	</div>
 	
 </article>

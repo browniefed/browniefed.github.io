@@ -6,7 +6,7 @@
 		<meta charset="utf-8">
 		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
 		<meta content="width=device-width,initial-scale=1" name="viewport">
-		<meta content="" name="description">
+		<meta content="A blog of JavaScript techniques and tutorials" name="description">
 		<meta content="JavaScript Without Grammar" name="author">
 		
         <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
@@ -26,9 +26,7 @@
 		<!-- Syntax highlighter -->
 		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="/js/prettify.js"></script>
-		
-		<!--<link href="http://feeds.feedburner.com/turkeltaub" rel="alternate" title="JavaScript Without Grammar" type="application/rss+xml" />-->
-		
+				
 	</head>
 	<body onload="prettyPrint()">
 	
@@ -56,258 +54,39 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
-		<h1><a href="/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/">Ractive.JS - Next Generation DOM Manipulation</a></h1>
-		<time>17 February 2014</time>
+		<h1><a href="/blog/2015/05/16/react-native-and-socket-dot-io/">React Native and Socket.io</a></h1>
+		<time>16 May 2015</time>
 	</header>
 	<div class="content">
-		<p>Next generation DOM manipulation is right mainly because you don&rsquo;t have to do any. Ractive uses declarative binding(like Knockout and Angular) but also uses reactive programming methods (like React). The different is that it does do DOM diffing like React or dirty checking like Angular but utilizes dependancy tracking. Meaning it tracks the changes you make and will update the DOM accordingly. Now there are inherint issues in that ou can take performance hits if you have a large data set and call &ldquo;set&rdquo; within a loop. This will hit the DOM very hard since the nature of dependancy tracking says that &ldquo;when X changes update Y&rdquo;.</p>
+		
+          <div class="entry-content"><p>React Native finally supports Websockets. Which is awesome, however there is one gotcha with socket.io.</p>
 
+<p>1) <code>npm install socket.io-client</code>. This will just pull down the socket.io javascript client</p>
+
+<p>2) Everything works great but there is one issue that <code>window.navigator.userAgent</code> doesn&rsquo;t exist. Socket.IO checks to deal with some browser incosistencies but we don&rsquo;t care. So all we have to do is create it. However make sure you require <code>react-native</code> first!</p>
+
+<p>Just like so</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>
+</span><span class='line'>window.navigator.userAgent = "react-native";
+</span><span class='line'>
+</span><span class='line'>var io = require('socket.io-client/socket.io');</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you can do as you please with your new glorious websockets.</p>
+</div>
+          
+          
+        
 	</div>
 	<div>
-		
-
-
-		
-
-
-
-
-	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/">Meteor and Realtime Transit Mapping - Part 1</a></h1>
-		<time>16 November 2013</time>
-	</header>
-	<div class="content">
-		<h1>Overview</h1>
-
-<p>The point of this series is to help people build out realtime transit maps for other cities.
-This will focus on Portland, OR and their transit system TriMet. They give us access to a wealth of information but all we really need is route numbers that make sense and latitude/longitude to make a map. I have built one for Kansas City, MO but they have their data hidden. Don&rsquo;t be afraid to dig around on your own transit website to find hidden APIs.</p>
-
-<p>Finally we chose MeteorJS because the whole system is built on realtime applications. Code can be run on both the client/server which is AWESOME! It pretends to be lo-latency, meaning it&rsquo;ll save the data in client side minimongo databases and not wait for the server to return &ldquo;yeah we saved&rdquo;. It also somehow magically invalidates the data correctly. It&rsquo;s just a framework that works and I can&rsquo;t wait for the 1.0 release.</p>
-
-<p>As always all code is open sourced. Check out the final project here
-<a href="https://github.com/browniefed/livemet">https://github.com/browniefed/livemet</a></p>
-
-<h1>Setup</h1>
-
-<h2>APIs</h2>
-
-<p>Go to <a href="http://developer.trimet.org/registration/">http://developer.trimet.org/registration/</a> and get an API key.
-The documentation we care about is here <a href="http://developer.trimet.org/ws_docs/">http://developer.trimet.org/ws_docs/</a></p>
-
-<h2>Meteor</h2>
-
-<p>Currently on Mac/Linux are officially supported and Windows has an unofficial installer. But you can&rsquo;t use Meteorite on Windows which you want meteorite!
-To install simple go here and follow the instrutions(2 steps!) <a href="http://docs.meteor.com/">http://docs.meteor.com/</a>
-Step 2 being creating a meteor project</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>meteor create realtimetransit
-</span><span class='line'>cd realtimetransit</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now that you have a meteor app created, change directory into so when you execute commands it actually does stuff to your meteor project.</p>
-
-<h2>Meteorite</h2>
-
-<p>Install meteorite. I&rsquo;m assuming you have node/npm installed. If not go install it so you can actually use modern tooling!
-Simply run (you may not need the sudo -H)</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>sudo -H npm install -g meteorite</span></code></pre></td></tr></table></div></figure>
-
-
-<p>For more info and all meteor packages visit <a href="https://atmosphere.meteor.com/wtf/app">https://atmosphere.meteor.com/wtf/app</a></p>
-
-<h1>Step 1 &ndash; Create some Boilerplate</h1>
-
-<p>Meteor has a specific folder structure that it uses to load the server/client/public data.
-Delete the stuff they auto-generated for you, we do not care about it.
-Then go ahead and create this folder structure in your meteor app.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>client
-</span><span class='line'>-css
-</span><span class='line'>-helpers
-</span><span class='line'>-js
-</span><span class='line'>-sass(I setup a compass project but you do not have to)
-</span><span class='line'>-views
-</span><span class='line'>-main.html
-</span><span class='line'>-main.js
-</span><span class='line'>collections
-</span><span class='line'>server</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Read more about this file structure here <a href="http://docs.meteor.com/#structuringyourapp">http://docs.meteor.com/#structuringyourapp</a></p>
-
-<h1>Step 2 &ndash; Get some templates created</h1>
-
-<p>If you have meteorite installed add the leaflet package. We are going to use leafletjs + Open Stree Maps because they&rsquo;re both AWESOME.
-You could also create your own map tiles using TileMill, or use MapBox for hosted tiles but that is a topic for another time.</p>
-
-<p>Run</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>mrt install leaflet</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Meteor is special in that it takes ALL html files in specified directories, bundles them up and turns them into Handlebar templates.
-<code>main.html</code> is going to be our base template, this will load another template called body, which will load other templates.
-This is what we call structure.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'>
-</span><span class='line'><span class="nt">&lt;head&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;title&gt;</span>PDXLiveBus - Trimet Realtime<span class="nt">&lt;/title&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content=</span><span class="s">&quot;width=device-width,initial-scale=1&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'><span class="nt">&lt;/head&gt;</span>
-</span><span class='line'><span class="nt">&lt;body&gt;</span>
-</span><span class='line'>  {{&gt; body}}
-</span><span class='line'><span class="nt">&lt;/body&gt;</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now lets create the body template in the <code>client/views</code> foler
-Each template is to be wrapped in a template tag and given a name so that meteor can create a reference to it.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'>
-</span><span class='line'><span class="nt">&lt;template</span> <span class="na">name=</span><span class="s">&quot;body&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>{{&gt; map}}
-</span><span class='line'><span class="nt">&lt;/template&gt;</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Hey look, now it wants a map template, lets create one.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'>
-</span><span class='line'><span class="nt">&lt;template</span> <span class="na">name=</span><span class="s">&quot;map&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  {{# constant}}
-</span><span class='line'>  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;map_container&quot;</span> <span class="na">id=</span><span class="s">&quot;map_container&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;/div&gt;</span>
-</span><span class='line'>  {{/constant}}
-</span><span class='line'><span class="nt">&lt;/template&gt;</span>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The <code>{{#constant}}</code> tag tells meteor that it should ignore it&rsquo;s auto updating features when data changes and leave this template portion alone.
-If we didn&rsquo;t then our map would be constantly be refreshing if we happened to have a parent template with data that changed. We do not in this case but it&rsquo;s best to add it.
-There are improvements being made to meteor so that you won&rsquo;t have to do this in the future.</p>
-
-<h1>Step 3 &ndash; Get a map rendering</h1>
-
-<p>Now we&rsquo;re going to get into some meteor javascript.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">Template</span><span class="p">.</span><span class="nx">map</span><span class="p">.</span><span class="nx">rendered</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The Template is a global object where all templates get loaded. The map is the name of our map template.
-Because Meteor renders a series of templates we are unsure when the DOM is going to be ready.
-They give us the rendered function which means the DOM for this template is now ready to be worked with.
-What that means for us is that we now have a container to add a map to.</p>
-
-<p>Lets add a basic map to it with Open Street Map tiles</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">Template</span><span class="p">.</span><span class="nx">map</span><span class="p">.</span><span class="nx">rendered</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">innerWidth</span><span class="p">;</span>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">h</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">innerHeight</span><span class="p">;</span>
-</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#map_container&#39;</span><span class="p">).</span><span class="nx">css</span><span class="p">({</span><span class="nx">width</span><span class="o">:</span> <span class="nx">w</span><span class="o">+</span><span class="s1">&#39;px&#39;</span><span class="p">,</span> <span class="nx">height</span><span class="o">:</span> <span class="nx">h</span><span class="o">+</span><span class="s1">&#39;px&#39;</span><span class="p">});</span>
-</span><span class='line'>      <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="s1">&#39;map_container&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">maxZoom</span><span class="o">:</span> <span class="mi">19</span><span class="p">,</span> <span class="nx">zoom</span><span class="o">:</span> <span class="mi">13</span><span class="p">,</span> <span class="nx">zoomControl</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">center</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;45.525292&#39;</span><span class="p">,</span><span class="s1">&#39;-122.668197&#39;</span><span class="p">]});</span>
-</span><span class='line'>      <span class="nx">map</span><span class="p">.</span><span class="nx">attributionControl</span><span class="p">.</span><span class="nx">setPrefix</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
-</span><span class='line'>      <span class="nx">L</span><span class="p">.</span><span class="nx">tileLayer</span><span class="p">(</span><span class="s1">&#39;http://{s}.tile.osm.org/{z}/{x}/{y}.png&#39;</span><span class="p">).</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
-</span><span class='line'>      <span class="nx">L</span><span class="p">.</span><span class="nx">Icon</span><span class="p">.</span><span class="nx">Default</span><span class="p">.</span><span class="nx">imagePath</span> <span class="o">=</span> <span class="s1">&#39;packages/leaflet/images&#39;</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Because we are unsure of how big the the users window is going to be (destkop/tablet/phone/etc) we will just set the map container to that width.
-Ours just happens to be the full page.</p>
-
-<p>Because the way meteor works L was defined globally on the client side when we included that package with meteorite.
-So we&rsquo;ll create a map by passing in our <code>map_container</code> ID that we know is ready to use, and center it in Portland.
-The other parameters are fairly self explanatory and well documented on Leaflets website.</p>
-
-<p>We remove the attribution from the map but we&rsquo;ll add it back in elsewhere. This just removes the tribute to Leaflet for it&rsquo;s awesome library.</p>
-
-<p>Finally we set a tilelayer. This is a standard tile map link.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">{</span><span class="nx">s</span><span class="p">}</span> <span class="o">=</span> <span class="nx">Subdomains</span> <span class="nx">to</span> <span class="nx">get</span> <span class="nx">tiles</span> <span class="nx">from</span><span class="p">(</span><span class="k">this</span> <span class="nx">parameter</span> <span class="nx">is</span> <span class="nx">just</span> <span class="nx">to</span> <span class="nx">get</span> <span class="nx">around</span> <span class="nx">browser</span> <span class="nx">limitations</span> <span class="nx">on</span> <span class="nx">simultaneous</span> <span class="nx">HTTP</span> <span class="nx">connections</span> <span class="nx">to</span> <span class="nx">a</span> <span class="nx">single</span> <span class="nx">host</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span><span class="nx">z</span><span class="p">}</span> <span class="o">=</span> <span class="nx">Zoom</span> <span class="nx">level</span>
-</span><span class='line'><span class="p">{</span><span class="nx">x</span><span class="p">}</span> <span class="o">=</span> <span class="nx">X</span> <span class="nx">Coordinate</span>
-</span><span class='line'><span class="p">{</span><span class="nx">y</span><span class="p">}</span> <span class="o">=</span> <span class="nx">Y</span> <span class="nx">Coordinate</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>A deeper exploration into how tile servers work can be found here <a href="http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers">http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Tile_servers</a></p>
-
-<p>Now we can run meteor and all should be well.
-You should have a map that completely fills your window.</p>
-
-<p>Part 2 getting Trimet data.
-Part 3 adding markers and animating their movements</p>
-
-	</div>
-	<div>
-		
+    	
 
 
 		
@@ -318,11 +97,11 @@ Part 3 adding markers and animating their movements</p>
 		
 			Tagged under
 		
-    <a class='category' href='/blog/categories/maps/'>maps</a>, <a class='category' href='/blog/categories/meteor/'>meteor</a>, <a class='category' href='/blog/categories/meteor-dot-js/'>meteor.js</a>, <a class='category' href='/blog/categories/relatime/'>relatime</a>, <a class='category' href='/blog/categories/transit/'>transit</a>, <a class='category' href='/blog/categories/trimet/'>trimet</a>, <a class='category' href='/blog/categories/websockets/'>websockets</a>
+    <a class='category' href='/blog/categories/native/'>native</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/socket-dot-io/'>socket.io</a>, <a class='category' href='/blog/categories/websocket/'>websocket</a>
 	
 
 
-	
+    	
 	</div>
 	
 </article>
@@ -333,28 +112,1023 @@ Part 3 adding markers and animating their movements</p>
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
-		<h1><a href="/blog/2013/11/12/hey-its-a-post/">hey it&#8217;s a post</a></h1>
-		<time>12 November 2013</time>
+		<h1><a href="/blog/2015/05/03/getting-react-art-running-on-react-native/">Getting react-art running on react-native</a></h1>
+		<time>03 May 2015</time>
 	</header>
 	<div class="content">
-		<p>Hey it&rsquo;s a post on my github.io account</p>
+		
+          <div class="entry-content"><p>I hadn&rsquo;t realized that the react-art native rendering stuff had landed in into the react-native core.
+So I figured I&rsquo;d try and get in running. I am an XCode noob so I&rsquo;ll be sure and be descriptive.</p>
+
+<p>First off lets set up a react-native project. (Assuming you have react-native cli installed);</p>
+
+<p><code>react-native init react_art_demo</code></p>
+
+<p>The current released version of <code>react-native</code> doesn&rsquo;t have the ART libs in it so in our <code>node_modules</code> folder we can delete the <code>react-native</code> in there and do a git clone of master <code>git clone https://github.com/facebook/react-native.git</code></p>
+
+<p>We will also need the <code>art</code> lib itself installed. So <code>cd</code> to the root of <code>react_art_demo</code>.
+Then run <code>npm install art</code></p>
+
+<p>Once we have the master repo of <code>react-native</code>, and <code>art</code> installed we can open up our <code>react_art_demo</code> project in XCode.</p>
+
+<p>We will need to do 2 things.</p>
+
+<ul>
+<li>Add the <code>ART.xcodeproj</code> to XCode</li>
+<li>Link the binary</li>
+</ul>
+
+
+<p>To add ART.xcodeproj find the file located in <code>react-native/Libraries/ART/ART.xcodeproj</code> and just drag it over to the <code>Libraries</code> section in XCode.
+That should look like so</p>
+
+<p><img src="http://i.imgur.com/TWeDUTa.png" title="Add ART.xcodeproj to Libraries" ></p>
+
+<p>Next we&rsquo;ll link the binary.</p>
+
+<p>With the root <code>react_art_demo</code> project selected on the left, select <code>Build Phases</code> from the center view.
+There will be a section called &ldquo;Link Binary With Libraries&rdquo;, expand it, press the + and select <code>libART.a</code></p>
+
+<p>Like so</p>
+
+<p><img src="http://i.imgur.com/lIMZkfh.png" title="Link binary" ></p>
+
+<p>Just as a warning, I didn&rsquo;t link the binary and got a few &ldquo;No manager class found for view with module name&rdquo; errors.</p>
+
+<p>Now go forth and write your <code>react-art</code>. I always like to get the <code>vector-widget</code> example running so to do that here is the code.</p>
+
+<p><code>index.ios.js</code></p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">heyoooo</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/**
+</span><span class='line'> * Sample React Native App
+</span><span class='line'> * https://github.com/facebook/react-native
+</span><span class='line'> */
+</span><span class='line'>'use strict';
+</span><span class='line'>
+</span><span class='line'>var React = require('react-native');
+</span><span class='line'>var {
+</span><span class='line'>  AppRegistry,
+</span><span class='line'>  StyleSheet,
+</span><span class='line'>  Text,
+</span><span class='line'>  View,
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>var VectorWidget = require('./VectorWidget');
+</span><span class='line'>
+</span><span class='line'>var react_art_demo = React.createClass({
+</span><span class='line'>
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;VectorWidget style={styles.vector}/&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>  container: {
+</span><span class='line'>    flex: 1,
+</span><span class='line'>    alignItems: 'center',
+</span><span class='line'>    backgroundColor: '#FFF',
+</span><span class='line'>  },
+</span><span class='line'>  vector: {
+</span><span class='line'>    width: 100,
+</span><span class='line'>    height: 100
+</span><span class='line'>  },
+</span><span class='line'>  welcome: {
+</span><span class='line'>    fontSize: 20,
+</span><span class='line'>    textAlign: 'center',
+</span><span class='line'>    margin: 10,
+</span><span class='line'>  },
+</span><span class='line'>  instructions: {
+</span><span class='line'>    color: '#333333',
+</span><span class='line'>    marginBottom: 5,
+</span><span class='line'>    marginTop: 100
+</span><span class='line'>  },
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>AppRegistry.registerComponent('react_art_demo', () =&gt; react_art_demo);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And your <code>VectorWidget.js</code> file</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/**
+</span><span class='line'> * Copyright 2013 Facebook, Inc.
+</span><span class='line'> * All rights reserved.
+</span><span class='line'> *
+</span><span class='line'> * This source code is licensed under the BSD-style license found in the
+</span><span class='line'> * LICENSE file in the root directory of this source tree. An additional grant
+</span><span class='line'> * of patent rights can be found in the PATENTS file in the same directory.
+</span><span class='line'> */
+</span><span class='line'>"use strict";
+</span><span class='line'>
+</span><span class='line'>var React = require('react-native');
+</span><span class='line'>var ReactART = require('ReactNativeART');
+</span><span class='line'>var {
+</span><span class='line'>    Art,
+</span><span class='line'>    TouchableWithoutFeedback
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>    Group,
+</span><span class='line'>    Shape,
+</span><span class='line'>    Surface,
+</span><span class='line'>    Transform
+</span><span class='line'>} = ReactArt;
+</span><span class='line'>
+</span><span class='line'>var MOUSE_UP_DRAG = 0.978;
+</span><span class='line'>var MOUSE_DOWN_DRAG = 0.9;
+</span><span class='line'>var MAX_VEL = 11;
+</span><span class='line'>var CLICK_ACCEL = 3;
+</span><span class='line'>var BASE_VEL = 0.15;
+</span><span class='line'>
+</span><span class='line'>/**
+</span><span class='line'> * An animated SVG component.
+</span><span class='line'> */
+</span><span class='line'>var VectorWidget = React.createClass({
+</span><span class='line'>  /**
+</span><span class='line'>   * Initialize state members.
+</span><span class='line'>   */
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {degrees: 0, velocity: 0, drag: MOUSE_UP_DRAG};
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  /**
+</span><span class='line'>   * When the component is mounted into the document - this is similar to a
+</span><span class='line'>   * constructor, but invoked when the instance is actually mounted into the
+</span><span class='line'>   * document. Here's, we'll just set up an animation loop that invokes our
+</span><span class='line'>   * method. Binding of `this.onTick` is not needed because all React methods
+</span><span class='line'>   * are automatically bound before being mounted.
+</span><span class='line'>   */
+</span><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    this._interval = window.setInterval(this.onTick, 20);
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  componentWillUnmount: function() {
+</span><span class='line'>    window.clearInterval(this._interval);
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  onTick: function() {
+</span><span class='line'>    var nextDegrees = this.state.degrees + BASE_VEL + this.state.velocity;
+</span><span class='line'>    var nextVelocity = this.state.velocity * this.state.drag;
+</span><span class='line'>    this.setState({degrees: nextDegrees, velocity: nextVelocity});
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  /**
+</span><span class='line'>   * This is the "main" method for any component. The React API allows you to
+</span><span class='line'>   * describe the structure of your UI component at *any* point in time.
+</span><span class='line'>   */
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;Surface
+</span><span class='line'>        width={700}
+</span><span class='line'>        height={700}
+</span><span class='line'>        {this.renderGraphic(this.state.degrees)}
+</span><span class='line'>      &lt;/Surface&gt;
+</span><span class='line'>    );
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  /**
+</span><span class='line'>   * Better SVG support for React coming soon.
+</span><span class='line'>   */
+</span><span class='line'>  renderGraphic: function(rotation) {
+</span><span class='line'>
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;Group
+</span><span class='line'>      &gt;
+</span><span class='line'>        &lt;Group x={210} y={135}&gt;
+</span><span class='line'>          &lt;Shape fill="rgba(0,0,0,0.1)" d={BORDER_PATH} /&gt;
+</span><span class='line'>          &lt;Shape fill="#7BC7BA" d={BG_PATH} /&gt;
+</span><span class='line'>          &lt;Shape fill="#DCDCDC" d={BAR_PATH} /&gt;
+</span><span class='line'>          &lt;Shape fill="#D97B76" d={RED_DOT_PATH} /&gt;
+</span><span class='line'>          &lt;Shape fill="#DBBB79" d={YELLOW_DOT_PATH} /&gt;
+</span><span class='line'>          &lt;Shape fill="#A6BD8A" d={GREEN_DOT_PATH} /&gt;
+</span><span class='line'>          &lt;Group x={55} y={29}&gt;
+</span><span class='line'>            &lt;Group rotation={rotation} originX={84} originY={89}&gt;
+</span><span class='line'>              &lt;Shape fill="#FFFFFF" d={CENTER_DOT_PATH} /&gt;
+</span><span class='line'>              &lt;Group&gt;
+</span><span class='line'>                &lt;Shape d={RING_ONE_PATH} stroke="#FFFFFF" strokeWidth={8} /&gt;
+</span><span class='line'>                &lt;Shape d={RING_TWO_PATH} transform={RING_TWO_ROTATE} stroke="#FFFFFF" strokeWidth={8} /&gt;
+</span><span class='line'>                &lt;Shape d={RING_THREE_PATH} transform={RING_THREE_ROTATE} stroke="#FFFFFF" strokeWidth={8} /&gt;
+</span><span class='line'>              &lt;/Group&gt;
+</span><span class='line'>            &lt;/Group&gt;
+</span><span class='line'>          &lt;/Group&gt;
+</span><span class='line'>        &lt;/Group&gt;
+</span><span class='line'>      &lt;/Group&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var BORDER_PATH = "M3.00191459,4 C1.34400294,4 0,5.34785514 0,7.00550479 L0,220.994495 C0,222.65439 1.34239483,224 3.00191459,224 L276.998085,224 C278.655997,224 280,222.652145 280,220.994495 L280,7.00550479 C280,5.34561033 278.657605,4 276.998085,4 L3.00191459,4 Z M3.00191459,4";
+</span><span class='line'>var BG_PATH = "M3.00191459,1 C1.34400294,1 0,2.34785514 0,4.00550479 L0,217.994495 C0,219.65439 1.34239483,221 3.00191459,221 L276.998085,221 C278.655997,221 280,219.652145 280,217.994495 L280,4.00550479 C280,2.34561033 278.657605,1 276.998085,1 L3.00191459,1 Z M3.00191459,1";
+</span><span class='line'>var BAR_PATH = "M3.00191459,0 C1.34400294,0 0,1.34559019 0,3.00878799 L0,21 C0,21 0,21 0,21 L280,21 C280,21 280,21 280,21 L280,3.00878799 C280,1.34708027 278.657605,0 276.998085,0 L3.00191459,0 Z M3.00191459,0";
+</span><span class='line'>var RED_DOT_PATH = "M12.5,17 C16.0898511,17 19,14.0898511 19,10.5 C19,6.91014895 16.0898511,4 12.5,4 C8.91014895,4 6,6.91014895 6,10.5 C6,14.0898511 8.91014895,17 12.5,17 Z M12.5,17";
+</span><span class='line'>var YELLOW_DOT_PATH = "M31.5,17 C35.0898511,17 38,14.0898511 38,10.5 C38,6.91014895 35.0898511,4 31.5,4 C27.9101489,4 25,6.91014895 25,10.5 C25,14.0898511 27.9101489,17 31.5,17 Z M31.5,17";
+</span><span class='line'>var GREEN_DOT_PATH = "M50.5,17 C54.0898511,17 57,14.0898511 57,10.5 C57,6.91014895 54.0898511,4 50.5,4 C46.9101489,4 44,6.91014895 44,10.5 C44,14.0898511 46.9101489,17 50.5,17 Z M50.5,17";
+</span><span class='line'>var CENTER_DOT_PATH = "M84,105 C92.8365564,105 100,97.8365564 100,89 C100,80.1634436 92.8365564,73 84,73 C75.1634436,73 68,80.1634436 68,89 C68,97.8365564 75.1634436,105 84,105 Z M84,105";
+</span><span class='line'>var RING_ONE_PATH = "M84,121 C130.391921,121 168,106.673113 168,89 C168,71.3268871 130.391921,57 84,57 C37.6080787,57 0,71.3268871 0,89 C0,106.673113 37.6080787,121 84,121 Z M84,121";
+</span><span class='line'>var RING_TWO_PATH = "M84,121 C130.391921,121 168,106.673113 168,89 C168,71.3268871 130.391921,57 84,57 C37.6080787,57 0,71.3268871 0,89 C0,106.673113 37.6080787,121 84,121 Z M84,121";
+</span><span class='line'>var RING_THREE_PATH = "M84,121 C130.391921,121 168,106.673113 168,89 C168,71.3268871 130.391921,57 84,57 C37.6080787,57 0,71.3268871 0,89 C0,106.673113 37.6080787,121 84,121 Z M84,121";
+</span><span class='line'>var RING_TWO_ROTATE = new Transform().translate(84.000000, 89.000000).rotate(-240.000000).translate(-84.000000, -89.000000);
+</span><span class='line'>var RING_THREE_ROTATE = new Transform().translate(84.000000, 89.000000).rotate(-300.000000).translate(-84.000000, -89.000000);
+</span><span class='line'>
+</span><span class='line'>module.exports = VectorWidget;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You may notice that I removed the <code>mouseDown/mouseUp</code> stuff.
+I tried getting it work very briefly with <code>onPress</code> and <code>TouchableWithoutFeedback</code> but I couldn&rsquo;t get it working.
+If you get it figured out let me know.</p>
+
+<h2>Conclusion</h2>
+
+<p>That&rsquo;s it, you can now render your react-art code natively. Enjoy</p>
+
+<p><img src="http://i.imgur.com/AXbsaTB.png" title="Final result" ></p>
+</div>
+          
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/05/02/react/">React, Higher Order Components, and Legacy Applications</a></h1>
+		<time>02 May 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>At work we embarked on an ambitious task of converting our legacy application (ExtJS 3.4) over to React.
+Now obviously rewriting an application that has been built over the course of 7 years could not just be simply re-written. We had to be very strategic about it.</p>
+
+<p>React is one of the perfect rendering libraries for this since re-rendering the same component at the same spot will just cause the React to go through its diff/normal rendering process.</p>
+
+<p>However if you don&rsquo;t maintain separation of concerns you may just get a lot of Ext into your ReactJS components, and you&rsquo;ll be in an even bigger mess. We don&rsquo;t want that, and that is where higher order components come into play.</p>
+
+<h3>Higher Order Components</h3>
+
+<p>If you haven&rsquo;t read the post <a href="https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750">Mixins Are Dead. Long Live Composition</a> then I highly recommend you do so. Higher order components are not a bullet proof replacement for mixins but they are an amazing solution for integrating at the seams of where your legacy application meets your new React world.</p>
+
+<p>If you don&rsquo;t understand what a Higher order component is after reading the article above let me quickly explain.
+It&rsquo;s a function that takes a React component of your choosing and then returns a wrapped React component that renders the React component that you provided it.</p>
+
+<p>A Quick example</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>var NameSupplier = function(Component) {
+</span><span class='line'>    
+</span><span class='line'>    var NameSupplierComponent = React.createClass({
+</span><span class='line'>
+</span><span class='line'>        getUserName: function() {
+</span><span class='line'>            //Somewhere the username is stored but we'll just return a string
+</span><span class='line'>            return "Jason"
+</span><span class='line'>        },
+</span><span class='line'>        render: function() {
+</span><span class='line'>
+</span><span class='line'>            return (
+</span><span class='line'>                &lt;Component username={this.getUserName()} /&gt;
+</span><span class='line'>            )
+</span><span class='line'>        }
+</span><span class='line'>    });
+</span><span class='line'>
+</span><span class='line'>    return NameSupplierComponent;
+</span><span class='line'>}
+</span><span class='line'>
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>This component is slightly contrived and doesn&rsquo;t show this will help us integrate with a legacy app. All this component is doing is passing down a prop to a component you gave it.
+So how would we go about using this higher order component?</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var UserPost = React.createClass({
+</span><span class='line'>    render: function() {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;div&gt;
+</span><span class='line'>                {this.props.username} created this.
+</span><span class='line'>            &lt;/div&gt;
+</span><span class='line'>        )
+</span><span class='line'>    }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var ActiveUserPost = NameSupplier(UserPost);
+</span><span class='line'>
+</span><span class='line'>module.exports = ActiveUserPost;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then later</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var ActiveUserPost = require('ActiveUserPost');
+</span><span class='line'>
+</span><span class='line'>React.render(&lt;ActiveUserPost /&gt;, el);</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Using them with legacy applications</h3>
+
+<p>This strategy really shines when all you need to do is hook into the life cycle events to cause updates in your legacy application.</p>
+
+<p>In our application we are still utilizing ExtJS tabs. When you visit an item say we render an <code>ItemView</code> and say the user starts editing the item. We want to indicate in the title of the Ext tab that it is a dirty form and that is done by marking it with an *. The issue is that as we deprecate Ext we don&rsquo;t want to mix our Ext updating logic with our new <code>ItemView</code> logic.</p>
+
+<p>This requires that state be at an upper level, which the article above by Dan shows how to use higher order components to fetch data, and essentially bring state up one level.</p>
+
+<p>The structure of our application will look like so</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;ExtTab&gt; // Passes down a function called appendTitle
+</span><span class='line'>    &lt;ItemViewState&gt; &lt;--- Could and should also be a higher order component taht wraps ExtEditableItemView but for visual sake it's a composition component
+</span><span class='line'>        &lt;ExtEditableItemView /&gt; &lt;--- This is an ItemView wrapped by an ExtEditable higher order component
+</span><span class='line'>    &lt;/ItemViewState&gt;
+</span><span class='line'>&lt;/ExtTab&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With state moved up a level into the <code>ItemViewState</code> component any time data changes our <code>ExtEditableItemView</code> will go re-render and go through it&rsquo;s life cycle methods.</p>
+
+<p>The requirement here is that the <code>ExtTab</code> in our old world passes down a function as a prop which our higher order component will call.</p>
+
+<p>In the end our code looks like this</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var ExtEditableTitle = function(Component) {
+</span><span class='line'>    propTypes: {
+</span><span class='line'>        appendTitle: React.PropTypes.func
+</span><span class='line'>    },
+</span><span class='line'>    getDefaultProps: function() {
+</span><span class='line'>        return {
+</span><span class='line'>            appendTitle: function() {} //Noop function
+</span><span class='line'>        }
+</span><span class='line'>    },   
+</span><span class='line'>    componentDidMount: function() {
+</span><span class='line'>        this.handleTitleUpdate();
+</span><span class='line'>    },
+</span><span class='line'>    componentDidUpdate: function() {
+</span><span class='line'>        this.handleTitleUpdate();
+</span><span class='line'>    },
+</span><span class='line'>    handleTitleUpdate: function() {
+</span><span class='line'>        var appendToTitle = (this.props.editing && '*' || ''); // If we're editing then append a * to the title
+</span><span class='line'>        this.props.appendTitle(appendToTitle);
+</span><span class='line'>    },
+</span><span class='line'>    render: function() {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;Component
+</span><span class='line'>                {...this.props}
+</span><span class='line'>                {//Additionally we should omit the appendTitle function from being passed down to our ItemView}
+</span><span class='line'>            /&gt;
+</span><span class='line'>        )
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>}
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var ExtEditableItemView = ExtEditableTitle(ItemView);
+</span><span class='line'>module.exports = ExtEditableItemView;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So now we have moved our state up a level to <code>ItemViewState</code>, we used a higher order component to make a seam that hooks into the life cycle events of our <code>ItemView</code> component which tells our old world what to do with it&rsquo;s title.</p>
+
+<p>When it comes time to remove Ext tabs, or possibly replace it with adding a * to the browser title we can write a new higher order component that hooks into the same life cycle methods and our <code>ItemView</code> is none the wiser.</p>
+
+<h3>Conclusion</h3>
+
+<p>Higher order components may not solve all of your problems but so far they have helped me in a few different scenarios that would have caused me to mix concerns with our React/ExtJS world. They provide a nice upgrade path for future modifications, and maintain our ability to compose components with ease.</p>
+</div>
+          
+          
+        
 	</div>
 	<div>
-		
+    	
 
 
 		
 
 
 
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/applications/'>applications</a>, <a class='category' href='/blog/categories/components/'>components</a>, <a class='category' href='/blog/categories/ext/'>ext</a>, <a class='category' href='/blog/categories/higher/'>higher</a>, <a class='category' href='/blog/categories/legacy/'>legacy</a>, <a class='category' href='/blog/categories/order/'>order</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/reactjs/'>reactjs</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
 
 	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2014/12/24/webpack-and-compass/">Webpack and Compass</a></h1>
+		<time>24 December 2014</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>Webpack is the greatest and latest in build systems. Every time I encounter an issue or wish Webpack did something a little googling solves the problem.</p>
+
+<p>One problem that I couldn&rsquo;t google and figure out was getting compass to work with <code>sass-loader</code>. Not just making it work but still allowing regular compass to compile on the command line.</p>
+
+<p>Thankfully there is a mostly simple solution. The only thing (to my knowledge) that this won&rsquo;t work with is sprite generation. Sounds like we need another loader.</p>
+
+<p>Lets get to it.</p>
+
+<p>This is all assuming you have webpack installed with a basic config.
+If that isn&rsquo;t the case we&rsquo;ll need <code>webpack</code>, <code>raw-loader</code>, <code>style-loader</code>, and <code>sass-loader</code> npm installed.</p>
+
+<p>Your webpack config may look something along the lines of</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>    module: {
+</span><span class='line'>        loaders: [
+</span><span class='line'>            { 
+</span><span class='line'>                test: /\.scss$/, 
+</span><span class='line'>                loader: "style-loader!raw-loader!sass-loader"
+</span><span class='line'>            }
+</span><span class='line'>        ]
+</span><span class='line'>    }
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is where you&rsquo;re running into your issue where <code>node-sass</code> can&rsquo;t find the compass import.</p>
+
+<p>Thanks to igosuki, compass mixins has been ported to just a bunch of sass-mixins outside of the ruby gem. <a href="https://github.com/Igosuki/compass-mixins">https://github.com/Igosuki/compass-mixins</a></p>
+
+<p>So now do a</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>npm install compass-mixins --save
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we just need to modify our loader config.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>    module: {
+</span><span class='line'>        loaders: [
+</span><span class='line'>            { 
+</span><span class='line'>                test: /\.scss$/, 
+</span><span class='line'>                loader: "style-loader!raw-loader!sass-loader?includePaths[]=" + path.resolve(__dirname, "./node_modules/compass-mixins/lib")
+</span><span class='line'>            }
+</span><span class='line'>        ]
+</span><span class='line'>    }
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now <code>node-sass</code> should be all setup to to look in our <code>compass-mixins/lib</code> to resolve compass mixins.
+If you are running your build script from a different location you&rsquo;ll have to adjust the <code>path.resolve</code> to resolve to wherever your <code>node_modules</code> is at.</p>
+
+<p>Alternatively you can place this outside of <code>node_modules</code> or add additional <code>include_paths</code> for wherever your SASS mixins live.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>    module: {
+</span><span class='line'>        loaders: [
+</span><span class='line'>            { 
+</span><span class='line'>                test: /\.scss$/, 
+</span><span class='line'>                loader: "style-loader!raw-loader!sass-loader?includePaths[]=" + path.resolve(__dirname, "./node_modules/compass-mixins/lib") + "&includePaths[]=" + path.resolve(__dirname, "./mixins/app_mixins")
+</span><span class='line'>            }
+</span><span class='line'>        ]
+</span><span class='line'>    }
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+          
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/compass/'>compass</a>, <a class='category' href='/blog/categories/sass/'>sass</a>, <a class='category' href='/blog/categories/scss/'>scss</a>, <a class='category' href='/blog/categories/webpack/'>webpack</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/">PhantomJS Creating &amp; Connecting to Server</a></h1>
+		<time>15 June 2014</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>At my work we are a Java shop. So spinning up a server is quite a process. Additionally our static front end files are spread out across the system and we use RequireJS (ugh) to wrangle everything. Then in order to test we were running a selenium test to hit the test_runner page and wait for mocha to run and the tests. This is so unbelievably slow and quite hectic when it comes to managing relative paths of our config.</p>
+
+<p>So to make things simpler I decided it&rsquo;d be in my best interest to use PhatonmJS. I decided to spin up a server using <code>var server = require('webserver').create();</code> and manage the requests and just route and serve up all the correct files. I thought this would work however I ran into a snag. Here is some sample code below</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var server = require('webserver').create();
+</span><span class='line'>var url = 'localhost:8000'
+</span><span class='line'>server.listen(url, function(){ 
+</span><span class='line'>  console.log('someone connected');
+</span><span class='line'>})
+</span><span class='line'>
+</span><span class='line'>page.open(url, function(status) {
+</span><span class='line'>  console.log(status);
+</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Well I thought this would work based upon the docs but I was wrong. <code>status</code> would be success but the log on the server would never trigger. So I started mixing it up, here are a few things I tried.</p>
+
+<p><code>var url = '127.0.0.1:8000'</code></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>server.listen(8000);
+</span><span class='line'>
+</span><span class='line'>page.open('127.0.0.1:8000');
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>server.listen(8000, {keepAlive: true});
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After spending an hour debugging and attempting to not flip a table I figured it out. Apparently the solution was to add <code>http</code>. Example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>server.listen(8000, {keepAlive: true}, function() {
+</span><span class='line'>  console.log('sucess');  
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>page.open('http://127.0.0.1:8000');
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So I got it working, I was sending the files down but on larger files I was continually getting PhantomJS throwing <code>Parser errors</code>. I was setting proper content types and with <code>keep alive</code> connections you have to send the content lengths. The solution? Get rid of <code>keepAlive:true</code>. I was under the assumption it was necessary, it was also in my code when I actually got a successful connection so I assumed it was necessary. In the end it was very simple and probably a result of some minor idiocy on my part and slight lack of documentation.</p>
+
+<p>If you ever need to have your unit test server up CSS/JS/HTML, even mock Rest API end points, server up mocked data (there are better ways to do this) then here is your PhantomJS solution.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>var PORT = 8000,
+</span><span class='line'>  url = 'http://127.0.0.1:' + PORT,
+</span><span class='line'>  server = require('webserver').create(),
+</span><span class='line'>  page = require('webpage').create(),
+</span><span class='line'>  fs = require('fs'),
+</span><span class='line'>  system = require('system'); // This was used to take in args to change what PORT to connect to but not necessary for most people
+</span><span class='line'>
+</span><span class='line'>var contentTypes = {
+</span><span class='line'>  
+</span><span class='line'>  'css': 'text/css',
+</span><span class='line'>  'html': 'text/html',
+</span><span class='line'>  'js': 'application/javascript',
+</span><span class='line'>  'png': 'image/png',
+</span><span class='line'>  'gif': 'image/gif',
+</span><span class='line'>  'jpg': 'image/jpeg',
+</span><span class='line'>  'jpeg': 'image/jpeg'
+</span><span class='line'>};
+</span><span class='line'>
+</span><span class='line'>  server.listen(PORT, function(req, res) {
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>      var filePath = fs.workingDirectory + fs.separator + req.url.split('/').join(fs.separator), // make it OS agnostic
+</span><span class='line'>          fileName = req.url.split('/').shift().split('?')[0], //remove any query string
+</span><span class='line'>          ext = fileName.split('.').shift(),
+</span><span class='line'>          fileContent = '';
+</span><span class='line'>
+</span><span class='line'>      res.statusCode = 200;
+</span><span class='line'>        res.headers = {
+</span><span class='line'>          "Cache": "no-cache", 
+</span><span class='line'>          "Content-Type": contentTypes[ext] || 'text/html' //no content type?
+</span><span class='line'>        };
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>      if (fs.isReadable(filePath)) {
+</span><span class='line'>          fileContent = fs.readFile(filePath);
+</span><span class='line'>      } else {
+</span><span class='line'>          res.statusCode = 404;
+</span><span class='line'>          //maybe 501? Your error codes may vary
+</span><span class='line'>      }
+</span><span class='line'>
+</span><span class='line'>      res.write(fileContent);
+</span><span class='line'>      res.close();
+</span><span class='line'>      
+</span><span class='line'>  });
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  page.open(url, function(status) {
+</span><span class='line'>
+</span><span class='line'>      if (status !== 'success') {
+</span><span class='line'>          phantom.exit(1);
+</span><span class='line'>      }
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  })
+</span><span class='line'>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is very basic and assumes your running in the root of your files you need to server. In my case I wasn&rsquo;t and had to do some additional parsing and mapping of the URL to get the correct filepath but it should be a decent start for you.</p>
+</div>
+          
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/css/'>css</a>, <a class='category' href='/blog/categories/file/'>file</a>, <a class='category' href='/blog/categories/html/'>html</a>, <a class='category' href='/blog/categories/img/'>img</a>, <a class='category' href='/blog/categories/js/'>js</a>, <a class='category' href='/blog/categories/phantomjs/'>phantomjs</a>, <a class='category' href='/blog/categories/server/'>server</a>, <a class='category' href='/blog/categories/server/'>server</a>, <a class='category' href='/blog/categories/static/'>static</a>, <a class='category' href='/blog/categories/testing/'>testing</a>, <a class='category' href='/blog/categories/unit/'>unit</a>
+	
+
+
+    	
 	</div>
 	
 </article>
@@ -364,8 +1138,10 @@ Part 3 adding markers and animating their movements</p>
 	
 <div class="pagination">
 	
+		<a class="older" href="/blog/page/4/">Older</a>
 	
-	<span class="total">3 of 3</span>
+	
+	<span class="total">3 of 5</span>
 	
 	
 		<a class="newer" href="/blog/page/2/">Newer</a>

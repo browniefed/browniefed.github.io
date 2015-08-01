@@ -4,7 +4,7 @@
 	<title><![CDATA[JavaScript Without Grammar]]></title>
 	<link href="http://browniefed.com/atom.xml" rel="self"/>
 	<link href="http://browniefed.com/"/>
-	<updated>2015-08-01T09:04:28-07:00</updated>
+	<updated>2015-08-01T16:38:17-07:00</updated>
 	<id>http://browniefed.com/</id>
 	<author>
 		<name><![CDATA[Jason Brown]]></name>
@@ -37,6 +37,9 @@
 <p>This is not an orignal interaction I created, you can follow along with how I stumbled upon it and such here <a href="https://github.com/facebook/react-native/issues/2072">https://github.com/facebook/react-native/issues/2072</a>.</p>
 
 <p>Swiping rows is also just a normal action in iOS. However there is an ongoing debate here about ListView/ScrollView being wrapped in a UITableView which would provide some of this interaction as default. You can read through it here <a href="https://github.com/facebook/react-native/issues/332">https://github.com/facebook/react-native/issues/332</a> but we&rsquo;ll forge ahead and implement it with what we have to work with.</p>
+
+<!-- more -->
+
 
 <h1>The Concept</h1>
 
@@ -826,6 +829,9 @@ Back to point 1, we have to set the height specifically here.</p>
 
 <p><img src="http://i.imgur.com/JlX4nV0.gif" title="Final Animation Result" ></p>
 
+<!-- more -->
+
+
 <h1>Resources</h1>
 
 <ul>
@@ -1305,6 +1311,9 @@ The <code>sequence</code> call is one of the means of composing animations. Ther
 
 <p>Some examples</p>
 
+<!-- more -->
+
+
 <h2>Percentage height sections</h2>
 
 <p>These are seemingly simple to do in CSS. Specify <code>height: 50%</code> and you get a magical 50% height. Yeah I&rsquo;m over simplifying it but in general that&rsquo;s what you get. In flex it&rsquo;s different.</p>
@@ -1460,6 +1469,9 @@ That&rsquo;s when I saw <a href="http://www.invisionapp.com/do">http://www.invis
 <p>What we&rsquo;ll make</p>
 
 <p><img src="http://i.imgur.com/tTcT7xJ.png" title="End Result" ></p>
+
+<!-- more -->
+
 
 <h2>Concept</h2>
 
@@ -2254,6 +2266,9 @@ Well we can use those window dimensions and the <code>pageX</code> movement to d
 
 <p>An example would be even width labels in a form. We could measure the text but depending on <code>font</code>, <code>font-size</code> it could measure each value differently. So we hide the form on initial render, get the max label width and set it on state.</p>
 
+<!-- more -->
+
+
 <h3>CSS-Layout Basics</h3>
 
 <p>It takes a subset of flexbox and some other styling parameters and returns <code>width</code>, and the <code>left/top</code> offsets for each item and it&rsquo;s children.</p>
@@ -2893,6 +2908,9 @@ Then renders the component with selected props. We&rsquo;ll just render <code>st
 
 <p>This was going to be a blog post about creating a map but I ended up turning it into a library.</p>
 
+<!-- more -->
+
+
 <h3>What I Built</h3>
 
 <p>I ended up writing up a library to show it off.</p>
@@ -3271,6 +3289,9 @@ This is so we can support <code>react-native</code> in the future since the shap
 
 <p>The end result will look something
 <img src="http://i.imgur.com/DpChFtO.png" title="Bar Chart Result w/ Hover" ></p>
+
+<!-- more -->
+
 
 <h3>Boilerplate</h3>
 
@@ -4151,6 +4172,9 @@ Each movement of the mouse will cause a re-render so be sure and debounce this a
 
 
 <p>All of these are great when working with <code>react-art</code> because it&rsquo;s just returning data. I&rsquo;ll say it once, and a million more but libraries that just generate data make it easy to traverse and render with <code>react-art</code>.</p>
+
+<!-- more -->
+
 
 <h3>Paths</h3>
 

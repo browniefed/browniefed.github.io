@@ -6,7 +6,7 @@
 		<meta charset="utf-8">
 		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
 		<meta content="width=device-width,initial-scale=1" name="viewport">
-		<meta content="" name="description">
+		<meta content="A blog of JavaScript techniques and tutorials" name="description">
 		<meta content="JavaScript Without Grammar" name="author">
 		
         <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
@@ -26,9 +26,7 @@
 		<!-- Syntax highlighter -->
 		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="/js/prettify.js"></script>
-		
-		<!--<link href="http://feeds.feedburner.com/turkeltaub" rel="alternate" title="JavaScript Without Grammar" type="application/rss+xml" />-->
-		
+				
 	</head>
 	<body onload="prettyPrint()">
 	
@@ -58,7 +56,8 @@
 		<time>29 May 2015</time>
 	</header>
 	<div class="content">
-		<h3>Introduction</h3>
+		
+            <div class="entry-content"><h3>Introduction</h3>
 
 <p>I&rsquo;ve shown in the past how to utilize <code>react-art</code> and other libraries to do animations, and render arbitrary things. So now lets bring it all together, lets render a simple bar chart.</p>
 
@@ -66,6 +65,9 @@
 
 <p>The end result will look something
 <img src="http://i.imgur.com/DpChFtO.png" title="Bar Chart Result w/ Hover" ></p>
+
+<!-- more -->
+
 
 <h3>Boilerplate</h3>
 
@@ -917,10 +919,11 @@ Each movement of the mouse will cause a re-render so be sure and debounce this a
 <p>Once again <a href="https://github.com/andreaferretti/paths-js">Paths.js</a> comes in handy for generating arbitrary path information, and providing access to a lot of valuable data to making laying out your graphs with <code>react-art</code> a breeze.</p>
 
 <p>Some homework for you is to add some vertical labels at each particular step.</p>
-
+</div>
+        
 	</div>
 	<div>
-		
+    	
 
 
 		
@@ -935,7 +938,7 @@ Each movement of the mouse will cause a re-render so be sure and debounce this a
 	
 
 
-	
+    	
 	</div>
 	
 </article>

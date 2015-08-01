@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mapping | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/mapping/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-08-01T09:04:28-07:00</updated>
+  <updated>2015-08-01T16:38:17-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -31,6 +31,9 @@
 <p>Our tilemap source will be the fabulous <a href="https://www.openstreetmap.org/">OpenStreetMap</a>. It&rsquo;s a community driven mapping solution. Check it out and contribute if you can!</p>
 
 <p>This was going to be a blog post about creating a map but I ended up turning it into a library.</p>
+
+<!-- more -->
+
 
 <h3>What I Built</h3>
 

@@ -6,7 +6,7 @@
 		<meta charset="utf-8">
 		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
 		<meta content="width=device-width,initial-scale=1" name="viewport">
-		<meta content="" name="description">
+		<meta content="A blog of JavaScript techniques and tutorials" name="description">
 		<meta content="JavaScript Without Grammar" name="author">
 		
         <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
@@ -26,9 +26,7 @@
 		<!-- Syntax highlighter -->
 		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="/js/prettify.js"></script>
-		
-		<!--<link href="http://feeds.feedburner.com/turkeltaub" rel="alternate" title="JavaScript Without Grammar" type="application/rss+xml" />-->
-		
+				
 	</head>
 	<body onload="prettyPrint()">
 	
@@ -56,35 +54,34 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
-		<h1><a href="/blog/2015/05/16/react-native-and-socket-dot-io/">React Native and Socket.io</a></h1>
-		<time>16 May 2015</time>
+		<h1><a href="/blog/2015/05/30/create-a-map-with-react-art/">Create a map with React-Art</a></h1>
+		<time>30 May 2015</time>
 	</header>
 	<div class="content">
-		<p>React Native finally supports Websockets. Which is awesome, however there is one gotcha with socket.io.</p>
+		
+          <div class="entry-content"><h3>Intro</h3>
 
-<p>1) <code>npm install socket.io-client</code>. This will just pull down the socket.io javascript client</p>
+<p>Just Like the title states, we&rsquo;re going to make a map with <code>react-art</code>. When you think of maps many people jump straight to <code>leaflet</code>, <code>google maps</code>, or <code>mapbox</code>. Well one of the key things they are doing is just plotting map tiles.</p>
 
-<p>2) Everything works great but there is one issue that <code>window.navigator.userAgent</code> doesn&rsquo;t exist. Socket.IO checks to deal with some browser incosistencies but we don&rsquo;t care. So all we have to do is create it. However make sure you require <code>react-native</code> first!</p>
+<p>Map tiles are just images that can be stitched together and form a map. That is why whenever you drag on a map portions of it pop in in squares.</p>
 
-<p>Just like so</p>
+<p>Don&rsquo;t worry, I won&rsquo;t get deep into mapping terminology because I don&rsquo;t know it. If you want to learn checkout this post <a href="http://www.macwright.org/2012/05/15/how-web-maps-work.html">http://www.macwright.org/2012/05/15/how-web-maps-work.html</a></p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
-</span><span class='line'>
-</span><span class='line'>window.navigator.userAgent = "react-native";
-</span><span class='line'>
-</span><span class='line'>var io = require('socket.io-client/socket.io');</span></code></pre></td></tr></table></div></figure>
+<p>All you&rsquo;ll need to know is <code>Latitude</code>, <code>Longitude</code>, and <code>Tile</code> aka (an image of a piece of a map).</p>
 
+<p>Our tilemap source will be the fabulous <a href="https://www.openstreetmap.org/">OpenStreetMap</a>. It&rsquo;s a community driven mapping solution. Check it out and contribute if you can!</p>
 
-<p>Now you can do as you please with your new glorious websockets.</p>
+<p>This was going to be a blog post about creating a map but I ended up turning it into a library.</p>
 
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2015/05/30/create-a-map-with-react-art/">Read on &rarr;</a>
+          
+        
 	</div>
 	<div>
-		
+    	
 
 
 		
@@ -95,11 +92,11 @@
 		
 			Tagged under
 		
-    <a class='category' href='/blog/categories/native/'>native</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/socket-dot-io/'>socket.io</a>, <a class='category' href='/blog/categories/websocket/'>websocket</a>
+    <a class='category' href='/blog/categories/mapping/'>mapping</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>, <a class='category' href='/blog/categories/tiles/'>tiles</a>
 	
 
 
-	
+    	
 	</div>
 	
 </article>
@@ -110,51 +107,373 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
-		<h1><a href="/blog/2015/05/03/getting-react-art-running-on-react-native/">Getting react-art running on react-native</a></h1>
-		<time>03 May 2015</time>
+		<h1><a href="/blog/2015/05/29/react-art-and-bar-charts/">React-Art and Bar Charts</a></h1>
+		<time>29 May 2015</time>
 	</header>
 	<div class="content">
-		<p>I hadn&rsquo;t realized that the react-art native rendering stuff had landed in into the react-native core.
-So I figured I&rsquo;d try and get in running. I am an XCode noob so I&rsquo;ll be sure and be descriptive.</p>
+		
+          <div class="entry-content"><h3>Introduction</h3>
 
-<p>First off lets set up a react-native project. (Assuming you have react-native cli installed);</p>
+<p>I&rsquo;ve shown in the past how to utilize <code>react-art</code> and other libraries to do animations, and render arbitrary things. So now lets bring it all together, lets render a simple bar chart.</p>
 
-<p><code>react-native init react_art_demo</code></p>
+<p>I&rsquo;m going to leverage <a href="https://github.com/andreaferretti/paths-js">Paths.js</a> because it was made for this exact reason. Given data, generate an immutable set of paths. Ultimately that is what visualizations are, a data set converted to a set of paths.</p>
 
-<p>The current released version of <code>react-native</code> doesn&rsquo;t have the ART libs in it so in our <code>node_modules</code> folder we can delete the <code>react-native</code> in there and do a git clone of master <code>git clone https://github.com/facebook/react-native.git</code></p>
+<p>The end result will look something
+<img src="http://i.imgur.com/DpChFtO.png" title="Bar Chart Result w/ Hover" ></p>
 
-<p>We will also need the <code>art</code> lib itself installed. So <code>cd</code> to the root of <code>react_art_demo</code>.
-Then run <code>npm install art</code></p>
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2015/05/29/react-art-and-bar-charts/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
 
-<p>Once we have the master repo of <code>react-native</code>, and <code>art</code> installed we can open up our <code>react_art_demo</code> project in XCode.</p>
 
-<p>We will need to do 2 things.</p>
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/bar/'>bar</a>, <a class='category' href='/blog/categories/chart/'>chart</a>, <a class='category' href='/blog/categories/graphs/'>graphs</a>, <a class='category' href='/blog/categories/pathsjs/'>pathsjs</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/05/27/react-art-and-paths-dot-js/">React Art and Paths.js</a></h1>
+		<time>27 May 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><h3>Intro</h3>
+
+<p><a href="https://github.com/andreaferretti/paths-js">Paths.js</a> is a cool library. It comes with 3 levels of generating paths.</p>
 
 <ul>
-<li>Add the <code>ART.xcodeproj</code> to XCode</li>
-<li>Link the binary</li>
+<li>Low level which helps you generate paths/lines.</li>
+<li>Mid level which generates paths for shapes</li>
+<li>High level which takes a set of data and generates graphs</li>
 </ul>
 
 
-<p>To add ART.xcodeproj find the file located in <code>react-native/Libraries/ART/ART.xcodeproj</code> and just drag it over to the <code>Libraries</code> section in XCode.
-That should look like so</p>
+<p>All of these are great when working with <code>react-art</code> because it&rsquo;s just returning data. I&rsquo;ll say it once, and a million more but libraries that just generate data make it easy to traverse and render with <code>react-art</code>.</p>
 
-<p><img src="http://i.imgur.com/TWeDUTa.png" title="Add ART.xcodeproj to Libraries" ></p>
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2015/05/27/react-art-and-paths-dot-js/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
 
-<p>Next we&rsquo;ll link the binary.</p>
 
-<p>With the root <code>react_art_demo</code> project selected on the left, select <code>Build Phases</code> from the center view.
-There will be a section called &ldquo;Link Binary With Libraries&rdquo;, expand it, press the + and select <code>libART.a</code></p>
+		
 
-<p>Like so</p>
 
-<p><img src="http://i.imgur.com/lIMZkfh.png" title="Link binary" ></p>
 
-<p>Just as a warning, I didn&rsquo;t link the binary and got a few &ldquo;No manager class found for view with module name&rdquo; errors.</p>
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/canvas/'>canvas</a>, <a class='category' href='/blog/categories/graphing/'>graphing</a>, <a class='category' href='/blog/categories/paths-dot-js/'>paths.js</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/svg/'>svg</a>
+	
 
-<p>Now go forth and write your <code>react-art</code>. I always like to get the <code>vector-widget</code> example running so to do that here is the code.</p>
 
-<p><code>index.ios.js</code></p>
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/05/26/animating-with-react-art-and-shifty-dot-js/">Animating with React Art and Shifty.js</a></h1>
+		<time>26 May 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>Having little experience with D3 animations I&rsquo;m not sure if it is easy to do animations with D3.
+However the great thing about <code>react</code> and <code>react-art</code> is that in order to animate you follow the same pattern you do for any other rendering, just <code>setState</code>.</p>
+
+<p>Animations in CSS3 are different in that a particular element has a defined location and you tell the browser the new location. The inbetween animation state from point a => b over a period of time is automatically handled for you.</p>
+
+<p>In our canvas/svg world we need to <code>tween</code> between states. That just means based on a defined time frame (500ms? 1s? 2s?) we need to move an item form <code>x/y</code> to a new <code>x/y</code>.</p>
+
+<p><a href="https://github.com/jeremyckahn/shifty">Shifty.js</a> helps do that in an efficient manner on the web. The reason <code>shifty.js</code> works well with React is that it doesn&rsquo;t mutate DOM but just provides you the ability to modify numbers across a space of time. Additionally it provides out of the box easing effects like <code>elastic</code>, <code>bounce</code>, <code>linear</code>, <code>cubic</code> and other movements.</p>
+
+<p>This article is less about <code>react-art</code> and more about just how to use <code>shifty.js</code> since <code>react-art</code> is just an extension of <code>react</code>, and if you know the fundamental concepts of <code>react</code> then you can do just about anything.</p>
+
+<p>Example of a basic tween movement</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var tweenable = new Shifty();
+</span><span class='line'>        
+</span><span class='line'>        tweenable.tween({
+</span><span class='line'>          from:     { x: 50, y: 50},
+</span><span class='line'>          to:       { x: 200, y: 200 },
+</span><span class='line'>          duration: 1000,
+</span><span class='line'>          step: function (state) {
+</span><span class='line'>            this.setState({
+</span><span class='line'>                x: state.x,
+</span><span class='line'>                y: state.y
+</span><span class='line'>            })
+</span><span class='line'>          }.bind(this)
+</span><span class='line'>        });
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We are saying move from <code>0,0</code> to <code>100,100</code> over <code>1000ms (1 second)</code>.</p>
+
+<p><code>Shifty.js</code> will chunk each step from <code>0</code> to <code>100</code> over <code>1000ms</code> and provide us which each step.</p>
+
+<p>Yes this looks very much like <code>jQuery</code> and it&rsquo;s animate function. They are essentially doing the same thing except <code>jQuery</code> modifies the DOM for you and we are just adjusting a number.</p>
+
+<p>Shifty is just one that I happened to pull up, but there are many other tweening libraries that could be used easily.</p>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="bdByVz" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/bdByVz/'>bdByVz</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+<p>That&rsquo;s the basics, in a later blog post I&rsquo;ll get into some more complex animations. However any tweening library/phsyics engine that is divorced from the DOM will allow you to maniuplate your data and make your <code>react-art</code> very versatile.</p>
+</div>
+          
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/animating/'>animating</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/shifty/'>shifty</a>, <a class='category' href='/blog/categories/tween/'>tween</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/05/20/react-art-zooming-and-dragging/">React Art Zooming and Dragging</a></h1>
+		<time>20 May 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>React-art is awesome, you can easily embody the same concepts in React and your visualizations magically work.</p>
+
+<p>I personally have not done a ton of visualization, and the little I have done is mostly rendering graphs with D3.</p>
+
+<p>I&rsquo;ve been tasked with doing a dive for a difficult visualization. We ran into a scenario where we needed the ability to zoom and drag the canvas. D3 conveniently comes with zoom/drag behaviors. D3 integrates pretty well with react-art for doing a lot of the math/generating paths, however after watching <a href="https://www.youtube.com/watch?v=2ii1lEkIv1s">React.js Conf &ndash; Scalable Data Visualization</a> the things immediatley called out that D3 doesn&rsquo;t integrate with react-art are transitions and behaviors (zoom/drag).</p>
+
+<p>So immediately I&rsquo;m thinking about how to accomplish this. Do I need a global scaler that scales all of my coordinates for zooming? Do I need to manage a coordinate system and adjust all of my coordinates with the dragged X/Y offsets.</p>
+
+<p>I googled around, and a few people recommended using <code>canvasEl.getContext('2d').translate(x,y)</code>. I gave this a try with refs, that didn&rsquo;t work.</p>
+
+<p>It did lead me down the right path though. What if I was able to just utilize one global wrapper, and all of my other code could remain unchanged. The great thing about <code>Group</code> is that the coordinate system of the children gets reset, so <code>0,0</code> is now the <code>x,y</code> of the <code>Group</code></p>
+
+<p>Example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Group x={100} y={100}&gt;
+</span><span class='line'>    &lt;Circle radius={10} stroke="#000" strokeWidth={3} x={20} y={20}/&gt;
+</span><span class='line'>&lt;/Group&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The coordinates of the circle on the whole canvas would actually be <code>120,120</code> but because of the group at <code>x = 100, y = 100</code> we just need to say <code>x = 20, y = 20</code>.</p>
+
+<p>Now that we know that our parent coordinate system effects our child coordinate systems lets prove our final theory that we can have one master parent to control zoom/drag.</p>
+
+<p>Lets start with a base renderer</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>//Assuming React, and react-art are included
+</span><span class='line'>var ZoomDragCircle = React.createClass({
+</span><span class='line'>    
+</span><span class='line'>    render: function() {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;Surface
+</span><span class='line'>                width={viewportWidth}
+</span><span class='line'>                height={viewportHeight}
+</span><span class='line'>            &gt;
+</span><span class='line'>            &lt;/Surface&gt; 
+</span><span class='line'>        );
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>})
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We have a surface so the next lets get something rendering</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var ZoomDragCircle = React.createClass({
+</span><span class='line'>    
+</span><span class='line'>    render: function() {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;Surface
+</span><span class='line'>                width={viewportWidth}
+</span><span class='line'>                height={viewportHeight}
+</span><span class='line'>            &gt;
+</span><span class='line'>                &lt;Circle x={10} y={10} radius={5} fill="#000" /&gt;
+</span><span class='line'>            &lt;/Surface&gt; 
+</span><span class='line'>        );
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>})
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Lets add in our drag concept.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var ZoomDragCircle = React.createClass({
+</span><span class='line'>    getInitialState: function() {
+</span><span class='line'>        return {
+</span><span class='line'>            x: 0,
+</span><span class='line'>            y: 0
+</span><span class='line'>        }
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseDown: function() {
+</span><span class='line'>        this.dragging = true;
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseUp: function() {
+</span><span class='line'>        this.dragging = false;
+</span><span class='line'>    },
+</span><span class='line'>    render: function() {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;div 
+</span><span class='line'>                    onMouseDown={this.handleMouseDown}
+</span><span class='line'>                    onMouseUp={this.handleMouseUp}
+</span><span class='line'>            &gt;
+</span><span class='line'>                &lt;Surface
+</span><span class='line'>                    width={viewportWidth}
+</span><span class='line'>                    height={viewportHeight}
+</span><span class='line'>
+</span><span class='line'>                &gt;
+</span><span class='line'>                    &lt;Group x={this.state.x} y={this.state.y}&gt;
+</span><span class='line'>                        &lt;Circle x={10} y={10} radius={5} fill="#000" /&gt;
+</span><span class='line'>                    &lt;/Group&gt;
+</span><span class='line'>                &lt;/Surface&gt; 
+</span><span class='line'>            &lt;/div&gt;
+</span><span class='line'>        );
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>})
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>One thing you&rsquo;ll notice here is the wrapping div. The <code>react-art</code> <code>Surface</code> element doesn&rsquo;t have the <code>EventMixin</code> so it will not register mouse events. We could wrap our <code>Group</code> with another <code>Group</code> for dragging/zoom however an outer <code>div</code> is much easier for now.</p>
+
+<p>You also may notice that we have a slight issue. <code>onMouseUp</code> should be globally on the <code>document</code> since the <code>mouseup</code> event will only be fired if the <code>mouseup</code> happens on our wrapping div. For simplicity sake we&rsquo;ll keep it on the div.</p>
+
+<p>So we have a way to toggle whether we are dragging or not, and have the ability to adjust the <code>x,y</code> coords of a parent group. Lets actually implement drag.</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -206,59 +525,104 @@ There will be a section called &ldquo;Link Binary With Libraries&rdquo;, expand 
 <span class='line-number'>48</span>
 <span class='line-number'>49</span>
 <span class='line-number'>50</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>/**
-</span><span class='line'> * Sample React Native App
-</span><span class='line'> * https://github.com/facebook/react-native
-</span><span class='line'> */
-</span><span class='line'>'use strict';
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var ZoomDragCircle = React.createClass({
+</span><span class='line'>    getInitialState: function() {
+</span><span class='line'>        return {
+</span><span class='line'>            x: 0,
+</span><span class='line'>            y: 0
+</span><span class='line'>        }
+</span><span class='line'>    },
+</span><span class='line'>    componentDidMount: function() {
+</span><span class='line'>        document.addEventListener('mousemove', this.handleMouseMove, false);
+</span><span class='line'>    },
+</span><span class='line'>    componentWillUnmount: function() {
+</span><span class='line'>        //Don't forget to unlisten!
+</span><span class='line'>        document.removeEventListener('mousemove', this.handleMouseMove, false);
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseDown: function(e) {
+</span><span class='line'>        this.dragging = true;
+</span><span class='line'>        //Set coords
+</span><span class='line'>          this.coords = {
+</span><span class='line'>            x: e.pageX,
+</span><span class='line'>            y: e.pageY
+</span><span class='line'>          }
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseUp: function() {
+</span><span class='line'>        this.dragging = false;
+</span><span class='line'>        this.coords = {};
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseMove: function(e) {
+</span><span class='line'>    //If we are dragging
+</span><span class='line'>      if (this.dragging) {
+</span><span class='line'>          e.preventDefault();
 </span><span class='line'>
-</span><span class='line'>var React = require('react-native');
-</span><span class='line'>var {
-</span><span class='line'>  AppRegistry,
-</span><span class='line'>  StyleSheet,
-</span><span class='line'>  Text,
-</span><span class='line'>  View,
-</span><span class='line'>} = React;
+</span><span class='line'>        //Get mouse change differential
+</span><span class='line'>        var xDiff = this.coords.x - e.pageX,
+</span><span class='line'>            yDiff = this.coords.y - e.pageY;
 </span><span class='line'>
-</span><span class='line'>var VectorWidget = require('./VectorWidget');
+</span><span class='line'>        //Update to our new coordinates
+</span><span class='line'>            this.coords.x = e.pageX;
+</span><span class='line'>            this.coords.y = e.pageY;
+</span><span class='line'>        //Adjust our x,y based upon the x/y diff from before
+</span><span class='line'>        var x = this.state.x - xDiff,       
+</span><span class='line'>            y = this.state.y - yDiff;
 </span><span class='line'>
-</span><span class='line'>var react_art_demo = React.createClass({
+</span><span class='line'>        //Re-render
+</span><span class='line'>        this.setState(this.state);  
+</span><span class='line'>      }
 </span><span class='line'>
-</span><span class='line'>  render: function() {
-</span><span class='line'>    return (
-</span><span class='line'>      &lt;View style={styles.container}&gt;
-</span><span class='line'>        &lt;VectorWidget style={styles.vector}/&gt;
-</span><span class='line'>      &lt;/View&gt;
-</span><span class='line'>    );
-</span><span class='line'>  }
-</span><span class='line'>});
+</span><span class='line'>    },
+</span><span class='line'>    render: function() {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;div 
+</span><span class='line'>                    onMouseDown={this.handleMouseDown}
+</span><span class='line'>                    onMouseUp={this.handleMouseUp}
+</span><span class='line'>            &gt;
+</span><span class='line'>                &lt;Surface
+</span><span class='line'>                    width={viewportWidth}
+</span><span class='line'>                    height={viewportHeight}
 </span><span class='line'>
-</span><span class='line'>var styles = StyleSheet.create({
-</span><span class='line'>  container: {
-</span><span class='line'>    flex: 1,
-</span><span class='line'>    alignItems: 'center',
-</span><span class='line'>    backgroundColor: '#FFF',
-</span><span class='line'>  },
-</span><span class='line'>  vector: {
-</span><span class='line'>    width: 100,
-</span><span class='line'>    height: 100
-</span><span class='line'>  },
-</span><span class='line'>  welcome: {
-</span><span class='line'>    fontSize: 20,
-</span><span class='line'>    textAlign: 'center',
-</span><span class='line'>    margin: 10,
-</span><span class='line'>  },
-</span><span class='line'>  instructions: {
-</span><span class='line'>    color: '#333333',
-</span><span class='line'>    marginBottom: 5,
-</span><span class='line'>    marginTop: 100
-</span><span class='line'>  },
-</span><span class='line'>});
-</span><span class='line'>
-</span><span class='line'>AppRegistry.registerComponent('react_art_demo', () =&gt; react_art_demo);</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>                &gt;
+</span><span class='line'>                    &lt;Group x={this.state.x} y={this.state.y}&gt;
+</span><span class='line'>                        &lt;Circle x={10} y={10} radius={5} fill="#000" /&gt;
+</span><span class='line'>                    &lt;/Group&gt;
+</span><span class='line'>                &lt;/Surface&gt; 
+</span><span class='line'>            &lt;/div&gt;
+</span><span class='line'>        );
+</span><span class='line'>    }
+</span><span class='line'>})
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p>And your <code>VectorWidget.js</code> file</p>
+<p>Now if you spin this up you&rsquo;ll see we can drag around the canvas and our <code>Circle</code> will stay the same place.
+Lets do zoom now.</p>
+
+<p>To understand what we&rsquo;re about to do the Art library will translate our <code>x,y</code> coords to a <code>matrix</code> that is set on the <code>transform</code> attribute of the svg <code>g</code> element or in the canvas case translated to the appropriate coordinates.</p>
+
+<p>The <code>matrix</code> system can be read about here on <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGMatrix">MDN</a>. Ultimately it allows us to modify the coordinate system (<code>x,y</code>) and additionally the scale.</p>
+
+<p>Think of scale as a default multiplier times the size of stuff.</p>
+
+<p>So a scale of <code>1</code> means if something is a width of <code>10</code> then it would still be 10.
+But If we set our scale to <code>2</code> and the same width of <code>10</code> then <code>10*2 = 20</code>. The item would appear larger at 20 pixels.</p>
+
+<p>This is the rough idea behind scale, however we aren&rsquo;t adjusting widths the scale is actually effecting the <code>x,y</code> coordinates you are setting. You can define <code>scaleX</code> and <code>scaleY</code> to be different numbers causing your visual elements to appear blurred/skewed.</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -359,743 +723,127 @@ There will be a section called &ldquo;Link Binary With Libraries&rdquo;, expand 
 <span class='line-number'>97</span>
 <span class='line-number'>98</span>
 <span class='line-number'>99</span>
-<span class='line-number'>100</span>
-<span class='line-number'>101</span>
-<span class='line-number'>102</span>
-<span class='line-number'>103</span>
-<span class='line-number'>104</span>
-<span class='line-number'>105</span>
-<span class='line-number'>106</span>
-<span class='line-number'>107</span>
-<span class='line-number'>108</span>
-<span class='line-number'>109</span>
-<span class='line-number'>110</span>
-<span class='line-number'>111</span>
-<span class='line-number'>112</span>
-<span class='line-number'>113</span>
-<span class='line-number'>114</span>
-<span class='line-number'>115</span>
-<span class='line-number'>116</span>
-<span class='line-number'>117</span>
-<span class='line-number'>118</span>
-<span class='line-number'>119</span>
-<span class='line-number'>120</span>
-<span class='line-number'>121</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>/**
-</span><span class='line'> * Copyright 2013 Facebook, Inc.
-</span><span class='line'> * All rights reserved.
-</span><span class='line'> *
-</span><span class='line'> * This source code is licensed under the BSD-style license found in the
-</span><span class='line'> * LICENSE file in the root directory of this source tree. An additional grant
-</span><span class='line'> * of patent rights can be found in the PATENTS file in the same directory.
-</span><span class='line'> */
-</span><span class='line'>"use strict";
-</span><span class='line'>
-</span><span class='line'>var React = require('react-native');
-</span><span class='line'>var ReactART = require('ReactNativeART');
-</span><span class='line'>var {
-</span><span class='line'>    Art,
-</span><span class='line'>    TouchableWithoutFeedback
-</span><span class='line'>} = React;
-</span><span class='line'>
-</span><span class='line'>var {
-</span><span class='line'>    Group,
-</span><span class='line'>    Shape,
-</span><span class='line'>    Surface,
-</span><span class='line'>    Transform
-</span><span class='line'>} = ReactArt;
-</span><span class='line'>
-</span><span class='line'>var MOUSE_UP_DRAG = 0.978;
-</span><span class='line'>var MOUSE_DOWN_DRAG = 0.9;
-</span><span class='line'>var MAX_VEL = 11;
-</span><span class='line'>var CLICK_ACCEL = 3;
-</span><span class='line'>var BASE_VEL = 0.15;
-</span><span class='line'>
-</span><span class='line'>/**
-</span><span class='line'> * An animated SVG component.
-</span><span class='line'> */
-</span><span class='line'>var VectorWidget = React.createClass({
-</span><span class='line'>  /**
-</span><span class='line'>   * Initialize state members.
-</span><span class='line'>   */
-</span><span class='line'>  getInitialState: function() {
-</span><span class='line'>    return {degrees: 0, velocity: 0, drag: MOUSE_UP_DRAG};
-</span><span class='line'>  },
-</span><span class='line'>
-</span><span class='line'>  /**
-</span><span class='line'>   * When the component is mounted into the document - this is similar to a
-</span><span class='line'>   * constructor, but invoked when the instance is actually mounted into the
-</span><span class='line'>   * document. Here's, we'll just set up an animation loop that invokes our
-</span><span class='line'>   * method. Binding of `this.onTick` is not needed because all React methods
-</span><span class='line'>   * are automatically bound before being mounted.
-</span><span class='line'>   */
-</span><span class='line'>  componentDidMount: function() {
-</span><span class='line'>    this._interval = window.setInterval(this.onTick, 20);
-</span><span class='line'>  },
-</span><span class='line'>
-</span><span class='line'>  componentWillUnmount: function() {
-</span><span class='line'>    window.clearInterval(this._interval);
-</span><span class='line'>  },
-</span><span class='line'>
-</span><span class='line'>  onTick: function() {
-</span><span class='line'>    var nextDegrees = this.state.degrees + BASE_VEL + this.state.velocity;
-</span><span class='line'>    var nextVelocity = this.state.velocity * this.state.drag;
-</span><span class='line'>    this.setState({degrees: nextDegrees, velocity: nextVelocity});
-</span><span class='line'>  },
-</span><span class='line'>
-</span><span class='line'>  /**
-</span><span class='line'>   * This is the "main" method for any component. The React API allows you to
-</span><span class='line'>   * describe the structure of your UI component at *any* point in time.
-</span><span class='line'>   */
-</span><span class='line'>  render: function() {
-</span><span class='line'>    return (
-</span><span class='line'>      &lt;Surface
-</span><span class='line'>        width={700}
-</span><span class='line'>        height={700}
-</span><span class='line'>        {this.renderGraphic(this.state.degrees)}
-</span><span class='line'>      &lt;/Surface&gt;
-</span><span class='line'>    );
-</span><span class='line'>  },
-</span><span class='line'>
-</span><span class='line'>  /**
-</span><span class='line'>   * Better SVG support for React coming soon.
-</span><span class='line'>   */
-</span><span class='line'>  renderGraphic: function(rotation) {
-</span><span class='line'>
-</span><span class='line'>    return (
-</span><span class='line'>      &lt;Group
-</span><span class='line'>      &gt;
-</span><span class='line'>        &lt;Group x={210} y={135}&gt;
-</span><span class='line'>          &lt;Shape fill="rgba(0,0,0,0.1)" d={BORDER_PATH} /&gt;
-</span><span class='line'>          &lt;Shape fill="#7BC7BA" d={BG_PATH} /&gt;
-</span><span class='line'>          &lt;Shape fill="#DCDCDC" d={BAR_PATH} /&gt;
-</span><span class='line'>          &lt;Shape fill="#D97B76" d={RED_DOT_PATH} /&gt;
-</span><span class='line'>          &lt;Shape fill="#DBBB79" d={YELLOW_DOT_PATH} /&gt;
-</span><span class='line'>          &lt;Shape fill="#A6BD8A" d={GREEN_DOT_PATH} /&gt;
-</span><span class='line'>          &lt;Group x={55} y={29}&gt;
-</span><span class='line'>            &lt;Group rotation={rotation} originX={84} originY={89}&gt;
-</span><span class='line'>              &lt;Shape fill="#FFFFFF" d={CENTER_DOT_PATH} /&gt;
-</span><span class='line'>              &lt;Group&gt;
-</span><span class='line'>                &lt;Shape d={RING_ONE_PATH} stroke="#FFFFFF" strokeWidth={8} /&gt;
-</span><span class='line'>                &lt;Shape d={RING_TWO_PATH} transform={RING_TWO_ROTATE} stroke="#FFFFFF" strokeWidth={8} /&gt;
-</span><span class='line'>                &lt;Shape d={RING_THREE_PATH} transform={RING_THREE_ROTATE} stroke="#FFFFFF" strokeWidth={8} /&gt;
-</span><span class='line'>              &lt;/Group&gt;
-</span><span class='line'>            &lt;/Group&gt;
-</span><span class='line'>          &lt;/Group&gt;
-</span><span class='line'>        &lt;/Group&gt;
-</span><span class='line'>      &lt;/Group&gt;
-</span><span class='line'>    );
-</span><span class='line'>  }
-</span><span class='line'>});
-</span><span class='line'>
-</span><span class='line'>var BORDER_PATH = "M3.00191459,4 C1.34400294,4 0,5.34785514 0,7.00550479 L0,220.994495 C0,222.65439 1.34239483,224 3.00191459,224 L276.998085,224 C278.655997,224 280,222.652145 280,220.994495 L280,7.00550479 C280,5.34561033 278.657605,4 276.998085,4 L3.00191459,4 Z M3.00191459,4";
-</span><span class='line'>var BG_PATH = "M3.00191459,1 C1.34400294,1 0,2.34785514 0,4.00550479 L0,217.994495 C0,219.65439 1.34239483,221 3.00191459,221 L276.998085,221 C278.655997,221 280,219.652145 280,217.994495 L280,4.00550479 C280,2.34561033 278.657605,1 276.998085,1 L3.00191459,1 Z M3.00191459,1";
-</span><span class='line'>var BAR_PATH = "M3.00191459,0 C1.34400294,0 0,1.34559019 0,3.00878799 L0,21 C0,21 0,21 0,21 L280,21 C280,21 280,21 280,21 L280,3.00878799 C280,1.34708027 278.657605,0 276.998085,0 L3.00191459,0 Z M3.00191459,0";
-</span><span class='line'>var RED_DOT_PATH = "M12.5,17 C16.0898511,17 19,14.0898511 19,10.5 C19,6.91014895 16.0898511,4 12.5,4 C8.91014895,4 6,6.91014895 6,10.5 C6,14.0898511 8.91014895,17 12.5,17 Z M12.5,17";
-</span><span class='line'>var YELLOW_DOT_PATH = "M31.5,17 C35.0898511,17 38,14.0898511 38,10.5 C38,6.91014895 35.0898511,4 31.5,4 C27.9101489,4 25,6.91014895 25,10.5 C25,14.0898511 27.9101489,17 31.5,17 Z M31.5,17";
-</span><span class='line'>var GREEN_DOT_PATH = "M50.5,17 C54.0898511,17 57,14.0898511 57,10.5 C57,6.91014895 54.0898511,4 50.5,4 C46.9101489,4 44,6.91014895 44,10.5 C44,14.0898511 46.9101489,17 50.5,17 Z M50.5,17";
-</span><span class='line'>var CENTER_DOT_PATH = "M84,105 C92.8365564,105 100,97.8365564 100,89 C100,80.1634436 92.8365564,73 84,73 C75.1634436,73 68,80.1634436 68,89 C68,97.8365564 75.1634436,105 84,105 Z M84,105";
-</span><span class='line'>var RING_ONE_PATH = "M84,121 C130.391921,121 168,106.673113 168,89 C168,71.3268871 130.391921,57 84,57 C37.6080787,57 0,71.3268871 0,89 C0,106.673113 37.6080787,121 84,121 Z M84,121";
-</span><span class='line'>var RING_TWO_PATH = "M84,121 C130.391921,121 168,106.673113 168,89 C168,71.3268871 130.391921,57 84,57 C37.6080787,57 0,71.3268871 0,89 C0,106.673113 37.6080787,121 84,121 Z M84,121";
-</span><span class='line'>var RING_THREE_PATH = "M84,121 C130.391921,121 168,106.673113 168,89 C168,71.3268871 130.391921,57 84,57 C37.6080787,57 0,71.3268871 0,89 C0,106.673113 37.6080787,121 84,121 Z M84,121";
-</span><span class='line'>var RING_TWO_ROTATE = new Transform().translate(84.000000, 89.000000).rotate(-240.000000).translate(-84.000000, -89.000000);
-</span><span class='line'>var RING_THREE_ROTATE = new Transform().translate(84.000000, 89.000000).rotate(-300.000000).translate(-84.000000, -89.000000);
-</span><span class='line'>
-</span><span class='line'>module.exports = VectorWidget;</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You may notice that I removed the <code>mouseDown/mouseUp</code> stuff.
-I tried getting it work very briefly with <code>onPress</code> and <code>TouchableWithoutFeedback</code> but I couldn&rsquo;t get it working.
-If you get it figured out let me know.</p>
-
-<h2>Conclusion</h2>
-
-<p>That&rsquo;s it, you can now render your react-art code natively. Enjoy</p>
-
-<p><img src="http://i.imgur.com/AXbsaTB.png" title="Final result" ></p>
-
-	</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>
-	
-
-
-	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2015/05/02/react/">React, Higher Order Components, and Legacy Applications</a></h1>
-		<time>02 May 2015</time>
-	</header>
-	<div class="content">
-		<p>At work we embarked on an ambitious task of converting our legacy application (ExtJS 3.4) over to React.
-Now obviously rewriting an application that has been built over the course of 7 years could not just be simply re-written. We had to be very strategic about it.</p>
-
-<p>React is one of the perfect rendering libraries for this since re-rendering the same component at the same spot will just cause the React to go through its diff/normal rendering process.</p>
-
-<p>However if you don&rsquo;t maintain separation of concerns you may just get a lot of Ext into your ReactJS components, and you&rsquo;ll be in an even bigger mess. We don&rsquo;t want that, and that is where higher order components come into play.</p>
-
-<h3>Higher Order Components</h3>
-
-<p>If you haven&rsquo;t read the post <a href="https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750">Mixins Are Dead. Long Live Composition</a> then I highly recommend you do so. Higher order components are not a bullet proof replacement for mixins but they are an amazing solution for integrating at the seams of where your legacy application meets your new React world.</p>
-
-<p>If you don&rsquo;t understand what a Higher order component is after reading the article above let me quickly explain.
-It&rsquo;s a function that takes a React component of your choosing and then returns a wrapped React component that renders the React component that you provided it.</p>
-
-<p>A Quick example</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>
-</span><span class='line'>var NameSupplier = function(Component) {
-</span><span class='line'>    
-</span><span class='line'>    var NameSupplierComponent = React.createClass({
-</span><span class='line'>
-</span><span class='line'>        getUserName: function() {
-</span><span class='line'>            //Somewhere the username is stored but we'll just return a string
-</span><span class='line'>            return "Jason"
-</span><span class='line'>        },
-</span><span class='line'>        render: function() {
-</span><span class='line'>
-</span><span class='line'>            return (
-</span><span class='line'>                &lt;Component username={this.getUserName()} /&gt;
-</span><span class='line'>            )
-</span><span class='line'>        }
-</span><span class='line'>    });
-</span><span class='line'>
-</span><span class='line'>    return NameSupplierComponent;
-</span><span class='line'>}
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This component is slightly contrived and doesn&rsquo;t show this will help us integrate with a legacy app. All this component is doing is passing down a prop to a component you gave it.
-So how would we go about using this higher order component?</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var UserPost = React.createClass({
-</span><span class='line'>    render: function() {
-</span><span class='line'>        return (
-</span><span class='line'>            &lt;div&gt;
-</span><span class='line'>                {this.props.username} created this.
-</span><span class='line'>            &lt;/div&gt;
-</span><span class='line'>        )
-</span><span class='line'>    }
-</span><span class='line'>});
-</span><span class='line'>
-</span><span class='line'>var ActiveUserPost = NameSupplier(UserPost);
-</span><span class='line'>
-</span><span class='line'>module.exports = ActiveUserPost;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Then later</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var ActiveUserPost = require('ActiveUserPost');
-</span><span class='line'>
-</span><span class='line'>React.render(&lt;ActiveUserPost /&gt;, el);</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>Using them with legacy applications</h3>
-
-<p>This strategy really shines when all you need to do is hook into the life cycle events to cause updates in your legacy application.</p>
-
-<p>In our application we are still utilizing ExtJS tabs. When you visit an item say we render an <code>ItemView</code> and say the user starts editing the item. We want to indicate in the title of the Ext tab that it is a dirty form and that is done by marking it with an *. The issue is that as we deprecate Ext we don&rsquo;t want to mix our Ext updating logic with our new <code>ItemView</code> logic.</p>
-
-<p>This requires that state be at an upper level, which the article above by Dan shows how to use higher order components to fetch data, and essentially bring state up one level.</p>
-
-<p>The structure of our application will look like so</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;ExtTab&gt; // Passes down a function called appendTitle
-</span><span class='line'>    &lt;ItemViewState&gt; &lt;--- Could and should also be a higher order component taht wraps ExtEditableItemView but for visual sake it's a composition component
-</span><span class='line'>        &lt;ExtEditableItemView /&gt; &lt;--- This is an ItemView wrapped by an ExtEditable higher order component
-</span><span class='line'>    &lt;/ItemViewState&gt;
-</span><span class='line'>&lt;/ExtTab&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>With state moved up a level into the <code>ItemViewState</code> component any time data changes our <code>ExtEditableItemView</code> will go re-render and go through it&rsquo;s life cycle methods.</p>
-
-<p>The requirement here is that the <code>ExtTab</code> in our old world passes down a function as a prop which our higher order component will call.</p>
-
-<p>In the end our code looks like this</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var ExtEditableTitle = function(Component) {
-</span><span class='line'>    propTypes: {
-</span><span class='line'>        appendTitle: React.PropTypes.func
-</span><span class='line'>    },
-</span><span class='line'>    getDefaultProps: function() {
+</pre></td><td class='code'><pre><code class=''><span class='line'>var ZoomDragCircle = React.createClass({
+</span><span class='line'>    getInitialState: function() {
 </span><span class='line'>        return {
-</span><span class='line'>            appendTitle: function() {} //Noop function
+</span><span class='line'>            x: 0,
+</span><span class='line'>            y: 0,
+</span><span class='line'>            scale: 1
 </span><span class='line'>        }
-</span><span class='line'>    },   
+</span><span class='line'>    },
 </span><span class='line'>    componentDidMount: function() {
-</span><span class='line'>        this.handleTitleUpdate();
+</span><span class='line'>        document.addEventListener('mousemove', this.handleMouseMove, false);
 </span><span class='line'>    },
-</span><span class='line'>    componentDidUpdate: function() {
-</span><span class='line'>        this.handleTitleUpdate();
+</span><span class='line'>    componentWillUnmount: function() {
+</span><span class='line'>        //Don't forget to unlisten!
+</span><span class='line'>        document.removeEventListener('mousemove', this.handleMouseMove, false);
 </span><span class='line'>    },
-</span><span class='line'>    handleTitleUpdate: function() {
-</span><span class='line'>        var appendToTitle = (this.props.editing && '*' || ''); // If we're editing then append a * to the title
-</span><span class='line'>        this.props.appendTitle(appendToTitle);
+</span><span class='line'>    handleMouseDown: function(e) {
+</span><span class='line'>        this.dragging = true;
+</span><span class='line'>        //Set coords
+</span><span class='line'>          this.coords = {
+</span><span class='line'>            x: e.pageX,
+</span><span class='line'>            y: e.pageY
+</span><span class='line'>          }
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseUp: function() {
+</span><span class='line'>        this.dragging = false;
+</span><span class='line'>        this.coords = {};
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseMove: function(e) {
+</span><span class='line'>    //If we are dragging
+</span><span class='line'>      if (!this.dragging) {
+</span><span class='line'>        return;
+</span><span class='line'>      }
+</span><span class='line'>          e.preventDefault();
+</span><span class='line'>
+</span><span class='line'>        //Get mouse change differential
+</span><span class='line'>        var xDiff = this.coords.x - e.pageX,
+</span><span class='line'>            yDiff = this.coords.y - e.pageY;
+</span><span class='line'>
+</span><span class='line'>        //Update to our new coordinates
+</span><span class='line'>            this.coords.x = e.pageX;
+</span><span class='line'>            this.coords.y = e.pageY;
+</span><span class='line'>        //Adjust our x,y based upon the x/y diff from before
+</span><span class='line'>        var x = this.state.x - xDiff,       
+</span><span class='line'>            y = this.state.y - yDiff;
+</span><span class='line'>
+</span><span class='line'>        //Re-render
+</span><span class='line'>        this.setState(this.state);  
+</span><span class='line'>
+</span><span class='line'>    },
+</span><span class='line'>    //So we can handle the mousewheel returning -0 or 0
+</span><span class='line'>    isNegative: function (n) {
+</span><span class='line'>      return ((n = +n) || 1 / n) &lt; 0;
+</span><span class='line'>    },
+</span><span class='line'>    handleMouseWheel: function(e) {
+</span><span class='line'>      var ZOOM_STEP = .03;
+</span><span class='line'>
+</span><span class='line'>        //require the shift key to be pressed to scroll
+</span><span class='line'>        if (!e.shiftKey) {
+</span><span class='line'>            return;
+</span><span class='line'>        }
+</span><span class='line'>      e.preventDefault();
+</span><span class='line'>      var direction = (this.isNegative(e.deltaX) &&  this.isNegative(e.deltaY) ) ? 'down' : 'up';
+</span><span class='line'>
+</span><span class='line'>      if (direction == 'up') {
+</span><span class='line'>        this.state.scale += ZOOM_STEP;
+</span><span class='line'>      } else {
+</span><span class='line'>        this.state.scale -= ZOOM_STEP;
+</span><span class='line'>      }
+</span><span class='line'>
+</span><span class='line'>      this.state.scale = this.state.scale &lt; 0 ? 0 : this.state.scale;
+</span><span class='line'>
+</span><span class='line'>      this.setState(this.state);
 </span><span class='line'>    },
 </span><span class='line'>    render: function() {
 </span><span class='line'>        return (
-</span><span class='line'>            &lt;Component
-</span><span class='line'>                {...this.props}
-</span><span class='line'>                {//Additionally we should omit the appendTitle function from being passed down to our ItemView}
-</span><span class='line'>            /&gt;
-</span><span class='line'>        )
+</span><span class='line'>            &lt;div 
+</span><span class='line'>                onMouseDown={this.handleMouseDown}
+</span><span class='line'>                onMouseUp={this.handleMouseUp}
+</span><span class='line'>                onWheel={this.handleMouseWheel}
+</span><span class='line'>            &gt;
+</span><span class='line'>                &lt;Surface
+</span><span class='line'>                    width={viewportWidth}
+</span><span class='line'>                    height={viewportHeight}
+</span><span class='line'>
+</span><span class='line'>                &gt;
+</span><span class='line'>                    &lt;Group 
+</span><span class='line'>                        x={this.state.x} 
+</span><span class='line'>                        y={this.state.y}
+</span><span class='line'>                        scaleX={this.state.scale}
+</span><span class='line'>                        scaleY={this.state.scale}
+</span><span class='line'>                    &gt;
+</span><span class='line'>                        &lt;Circle x={10} y={10} radius={5} fill="#000" /&gt;
+</span><span class='line'>                    &lt;/Group&gt;
+</span><span class='line'>                &lt;/Surface&gt; 
+</span><span class='line'>            &lt;/div&gt;
+</span><span class='line'>        );
 </span><span class='line'>    }
 </span><span class='line'>
-</span><span class='line'>}
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var ExtEditableItemView = ExtEditableTitle(ItemView);
-</span><span class='line'>module.exports = ExtEditableItemView;</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So now we have moved our state up a level to <code>ItemViewState</code>, we used a higher order component to make a seam that hooks into the life cycle events of our <code>ItemView</code> component which tells our old world what to do with it&rsquo;s title.</p>
-
-<p>When it comes time to remove Ext tabs, or possibly replace it with adding a * to the browser title we can write a new higher order component that hooks into the same life cycle methods and our <code>ItemView</code> is none the wiser.</p>
-
-<h3>Conclusion</h3>
-
-<p>Higher order components may not solve all of your problems but so far they have helped me in a few different scenarios that would have caused me to mix concerns with our React/ExtJS world. They provide a nice upgrade path for future modifications, and maintain our ability to compose components with ease.</p>
-
-	</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/applications/'>applications</a>, <a class='category' href='/blog/categories/components/'>components</a>, <a class='category' href='/blog/categories/ext/'>ext</a>, <a class='category' href='/blog/categories/higher/'>higher</a>, <a class='category' href='/blog/categories/legacy/'>legacy</a>, <a class='category' href='/blog/categories/order/'>order</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/reactjs/'>reactjs</a>
-	
-
-
-	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/12/24/webpack-and-compass/">Webpack and Compass</a></h1>
-		<time>24 December 2014</time>
-	</header>
-	<div class="content">
-		<p>Webpack is the greatest and latest in build systems. Every time I encounter an issue or wish Webpack did something a little googling solves the problem.</p>
-
-<p>One problem that I couldn&rsquo;t google and figure out was getting compass to work with <code>sass-loader</code>. Not just making it work but still allowing regular compass to compile on the command line.</p>
-
-<p>Thankfully there is a mostly simple solution. The only thing (to my knowledge) that this won&rsquo;t work with is sprite generation. Sounds like we need another loader.</p>
-
-<p>Lets get to it.</p>
-
-<p>This is all assuming you have webpack installed with a basic config.
-If that isn&rsquo;t the case we&rsquo;ll need <code>webpack</code>, <code>raw-loader</code>, <code>style-loader</code>, and <code>sass-loader</code> npm installed.</p>
-
-<p>Your webpack config may look something along the lines of</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>    module: {
-</span><span class='line'>        loaders: [
-</span><span class='line'>            { 
-</span><span class='line'>                test: /\.scss$/, 
-</span><span class='line'>                loader: "style-loader!raw-loader!sass-loader"
-</span><span class='line'>            }
-</span><span class='line'>        ]
-</span><span class='line'>    }
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This is where you&rsquo;re running into your issue where <code>node-sass</code> can&rsquo;t find the compass import.</p>
-
-<p>Thanks to igosuki, compass mixins has been ported to just a bunch of sass-mixins outside of the ruby gem. <a href="https://github.com/Igosuki/compass-mixins">https://github.com/Igosuki/compass-mixins</a></p>
-
-<p>So now do a</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>npm install compass-mixins --save
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now we just need to modify our loader config.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>    module: {
-</span><span class='line'>        loaders: [
-</span><span class='line'>            { 
-</span><span class='line'>                test: /\.scss$/, 
-</span><span class='line'>                loader: "style-loader!raw-loader!sass-loader?includePaths[]=" + path.resolve(__dirname, "./node_modules/compass-mixins/lib")
-</span><span class='line'>            }
-</span><span class='line'>        ]
-</span><span class='line'>    }
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Now <code>node-sass</code> should be all setup to to look in our <code>compass-mixins/lib</code> to resolve compass mixins.
-If you are running your build script from a different location you&rsquo;ll have to adjust the <code>path.resolve</code> to resolve to wherever your <code>node_modules</code> is at.</p>
-
-<p>Alternatively you can place this outside of <code>node_modules</code> or add additional <code>include_paths</code> for wherever your SASS mixins live.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>    module: {
-</span><span class='line'>        loaders: [
-</span><span class='line'>            { 
-</span><span class='line'>                test: /\.scss$/, 
-</span><span class='line'>                loader: "style-loader!raw-loader!sass-loader?includePaths[]=" + path.resolve(__dirname, "./node_modules/compass-mixins/lib") + "&includePaths[]=" + path.resolve(__dirname, "./mixins/app_mixins")
-</span><span class='line'>            }
-</span><span class='line'>        ]
-</span><span class='line'>    }
-</span></code></pre></td></tr></table></div></figure>
-
-
-	</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/compass/'>compass</a>, <a class='category' href='/blog/categories/sass/'>sass</a>, <a class='category' href='/blog/categories/scss/'>scss</a>, <a class='category' href='/blog/categories/webpack/'>webpack</a>
-	
-
-
-	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/">PhantomJS Creating &amp; Connecting to Server</a></h1>
-		<time>15 June 2014</time>
-	</header>
-	<div class="content">
-		<p>At my work we are a Java shop. So spinning up a server is quite a process. Additionally our static front end files are spread out across the system and we use RequireJS (ugh) to wrangle everything. Then in order to test we were running a selenium test to hit the test_runner page and wait for mocha to run and the tests. This is so unbelievably slow and quite hectic when it comes to managing relative paths of our config.</p>
-
-<p>So to make things simpler I decided it&rsquo;d be in my best interest to use PhatonmJS. I decided to spin up a server using <code>var server = require('webserver').create();</code> and manage the requests and just route and serve up all the correct files. I thought this would work however I ran into a snag. Here is some sample code below</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var server = require('webserver').create();
-</span><span class='line'>var url = 'localhost:8000'
-</span><span class='line'>server.listen(url, function(){ 
-</span><span class='line'>  console.log('someone connected');
 </span><span class='line'>})
-</span><span class='line'>
-</span><span class='line'>page.open(url, function(status) {
-</span><span class='line'>  console.log(status);
-</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Well I thought this would work based upon the docs but I was wrong. <code>status</code> would be success but the log on the server would never trigger. So I started mixing it up, here are a few things I tried.</p>
-
-<p><code>var url = '127.0.0.1:8000'</code></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>
-</span><span class='line'>server.listen(8000);
-</span><span class='line'>
-</span><span class='line'>page.open('127.0.0.1:8000');
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>Full working demo, hold shift and use your mouse wheel/track pad to zoom or just grab and drag around.</p>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="jPMMao" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/jPMMao/'>jPMMao</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>
-</span><span class='line'>server.listen(8000, {keepAlive: true});
-</span></code></pre></td></tr></table></div></figure>
+<script async src="//assets.codepen.io/assets/embed/ei.js"></script>
 
 
-<p>After spending an hour debugging and attempting to not flip a table I figured it out. Apparently the solution was to add <code>http</code>. Example:</p>
+<p>Now we should be able to zoom in/zoom out while holding shift key + using your scroll wheel.
+If you want a predictable scale you can add some <code>+</code> and <code>-</code> buttons somwhere and just increment <code>this.state.scale</code></p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>
-</span><span class='line'>server.listen(8000, {keepAlive: true}, function() {
-</span><span class='line'>  console.log('sucess');  
-</span><span class='line'>});
-</span><span class='line'>
-</span><span class='line'>page.open('http://127.0.0.1:8000');
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So I got it working, I was sending the files down but on larger files I was continually getting PhantomJS throwing <code>Parser errors</code>. I was setting proper content types and with <code>keep alive</code> connections you have to send the content lengths. The solution? Get rid of <code>keepAlive:true</code>. I was under the assumption it was necessary, it was also in my code when I actually got a successful connection so I assumed it was necessary. In the end it was very simple and probably a result of some minor idiocy on my part and slight lack of documentation.</p>
-
-<p>If you ever need to have your unit test server up CSS/JS/HTML, even mock Rest API end points, server up mocked data (there are better ways to do this) then here is your PhantomJS solution.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>
-</span><span class='line'>var PORT = 8000,
-</span><span class='line'>  url = 'http://127.0.0.1:' + PORT,
-</span><span class='line'>  server = require('webserver').create(),
-</span><span class='line'>  page = require('webpage').create(),
-</span><span class='line'>  fs = require('fs'),
-</span><span class='line'>  system = require('system'); // This was used to take in args to change what PORT to connect to but not necessary for most people
-</span><span class='line'>
-</span><span class='line'>var contentTypes = {
-</span><span class='line'>  
-</span><span class='line'>  'css': 'text/css',
-</span><span class='line'>  'html': 'text/html',
-</span><span class='line'>  'js': 'application/javascript',
-</span><span class='line'>  'png': 'image/png',
-</span><span class='line'>  'gif': 'image/gif',
-</span><span class='line'>  'jpg': 'image/jpeg',
-</span><span class='line'>  'jpeg': 'image/jpeg'
-</span><span class='line'>};
-</span><span class='line'>
-</span><span class='line'>  server.listen(PORT, function(req, res) {
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>      var filePath = fs.workingDirectory + fs.separator + req.url.split('/').join(fs.separator), // make it OS agnostic
-</span><span class='line'>          fileName = req.url.split('/').shift().split('?')[0], //remove any query string
-</span><span class='line'>          ext = fileName.split('.').shift(),
-</span><span class='line'>          fileContent = '';
-</span><span class='line'>
-</span><span class='line'>      res.statusCode = 200;
-</span><span class='line'>        res.headers = {
-</span><span class='line'>          "Cache": "no-cache", 
-</span><span class='line'>          "Content-Type": contentTypes[ext] || 'text/html' //no content type?
-</span><span class='line'>        };
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>      if (fs.isReadable(filePath)) {
-</span><span class='line'>          fileContent = fs.readFile(filePath);
-</span><span class='line'>      } else {
-</span><span class='line'>          res.statusCode = 404;
-</span><span class='line'>          //maybe 501? Your error codes may vary
-</span><span class='line'>      }
-</span><span class='line'>
-</span><span class='line'>      res.write(fileContent);
-</span><span class='line'>      res.close();
-</span><span class='line'>      
-</span><span class='line'>  });
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>  page.open(url, function(status) {
-</span><span class='line'>
-</span><span class='line'>      if (status !== 'success') {
-</span><span class='line'>          phantom.exit(1);
-</span><span class='line'>      }
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>  })
-</span><span class='line'>
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This is very basic and assumes your running in the root of your files you need to server. In my case I wasn&rsquo;t and had to do some additional parsing and mapping of the URL to get the correct filepath but it should be a decent start for you.</p>
-
+<p>I&rsquo;m hoping to do more write ups and examples with react-art. The great thing is that you can render react-art with react-native. With appropriate abstractions you could possibly have the same visualizations on the web as you do on native.</p>
+</div>
+          
+          
+        
 	</div>
 	<div>
-		
+    	
 
 
 		
@@ -1106,407 +854,11 @@ If you are running your build script from a different location you&rsquo;ll have
 		
 			Tagged under
 		
-    <a class='category' href='/blog/categories/css/'>css</a>, <a class='category' href='/blog/categories/file/'>file</a>, <a class='category' href='/blog/categories/html/'>html</a>, <a class='category' href='/blog/categories/img/'>img</a>, <a class='category' href='/blog/categories/js/'>js</a>, <a class='category' href='/blog/categories/phantomjs/'>phantomjs</a>, <a class='category' href='/blog/categories/server/'>server</a>, <a class='category' href='/blog/categories/server/'>server</a>, <a class='category' href='/blog/categories/static/'>static</a>, <a class='category' href='/blog/categories/testing/'>testing</a>, <a class='category' href='/blog/categories/unit/'>unit</a>
+    <a class='category' href='/blog/categories/canvas/'>canvas</a>, <a class='category' href='/blog/categories/d3/'>d3</a>, <a class='category' href='/blog/categories/dragging/'>dragging</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/svg/'>svg</a>, <a class='category' href='/blog/categories/zooming/'>zooming</a>
 	
 
 
-	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/06/07/phonegap-3-dot-4-geolocation/">Phonegap 3.4 GeoLocation</a></h1>
-		<time>07 June 2014</time>
-	</header>
-	<div class="content">
-		<p>It doesn&rsquo;t appear to be just me but PhoneGap can be incredibly difficult to use. Simply because any information pertaining to the most current version of phonegap is so fragmented. A google search will reveal virtually nothing about the error messages you&rsquo;re receiving and how to remedy them for current versions.</p>
-
-<p>For example, I was attempting to use the GeoLocation API. Could care less about the extreme accuracy. After attempting to use it I was getting an Error Code 2 , failed to start geolocation service. Well maybe that was my fault for enabling <code>enableHighAccuracy</code> but wait you have to enableHighAccuracy for older versions of android otherwise it won&rsquo;t work. Or was that only for older versions of the geolocation plugin which then got deprecated in some versions of android in favor of the native browser geolocation API because it provides better and faster GPS locations. In the end the fault was all mine, I had simply forgotten to include the plugin in my <code>config.xml</code></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;gap:plugin name="org.apache.cordova.geolocation" version="0.3.8" /&gt;</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Version <code>0.3.8</code> was the current version at the time of this article. Actually released on June 5th, 2014 just before the article written on June 6th, 2014.</p>
-
-<p>I&rsquo;ve sort of determined that the only real reliable way to determine anything is just to look at the release notes on <a href="https://github.com/apache/cordova-plugin-geolocation/blob/master/RELEASENOTES.md">github</a> for the best most up to date information.</p>
-
-<p>To end I should say I really love PhoneGap and all of the time and effort people are putting into developing it. The documentation and information about current versions is fragmented, and rather than ranting I should be helping out and contributing to documentation and solving the problems. That should always be the goal if you find a problem in the open source world. Don&rsquo;t rant, help out, and that is what I will do.</p>
-
-	</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/3-dot-4/'>3.4</a>, <a class='category' href='/blog/categories/documentation/'>documentation</a>, <a class='category' href='/blog/categories/geolocation/'>geolocation</a>, <a class='category' href='/blog/categories/gps/'>gps</a>, <a class='category' href='/blog/categories/phonegap/'>phonegap</a>
-	
-
-
-	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/">Socket.io on Android + Phonegap</a></h1>
-		<time>01 June 2014</time>
-	</header>
-	<div class="content">
-		<p>WebSockets are wonderful, they are one of the cheapest ways to get realtime communications into your web app. They&rsquo;re also a great way to get realtime communications into your mobile application. AJAX is great but wasn&rsquo;t applicable to my needs. Developing PDXLiveBus app required the server to handle all requests to TriMets servers and use AJAX to request the state of particular buses/routes was less realtime than I wanted. I could go more in depth about my usage and experience but the main point of this post is to prevent some table flipping.</p>
-
-<p>I had it all working in browser however it was not working when I did my phonegap serve. It just would not connect, nor even error out ( I don&rsquo;t think I waited long enough). I had been using <a href="https://github.com/mkuklis/phonegap-websocket">https://github.com/mkuklis/phonegap-websocket</a>, which Android WebView (what phonegap utilizes) doesn&rsquo;t support WebSockets until Android KitKat (4.4). I think this is a tremendous oversight, but I digress. I attempted various things to get <code>phonegap-websocket</code> to work but I just couldn&rsquo;t.</p>
-
-<p>The real problem wasn&rsquo;t with <code>phonegap-websocket</code> it was with my own server code. I had allowed CORS for the <code>restify</code> REST API I had setup but had forgotten to allow CORS for Socket.IO. It all came down to this single line of code.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>io.set( 'origins', '*:*' );</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Yeah not the most secure but then again I don&rsquo;t think I have a choice since everything is being served from phones and not a particular domain. Also I&rsquo;m dealing with public transportation vehicle location which doesn&rsquo;t necessarily needing extreme security.</p>
-
-<p>So if you can&rsquo;t get Socket.IO to work on your Android Phonegap app, add <code>phonegap-websocket</code> and make sure you have allowed CORS on your server.</p>
-
-	</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/android/'>android</a>, <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/mobile/'>mobile</a>, <a class='category' href='/blog/categories/phonegap/'>phonegap</a>, <a class='category' href='/blog/categories/socket-dot-io/'>socket.io</a>, <a class='category' href='/blog/categories/websocket/'>websocket</a>, <a class='category' href='/blog/categories/websockets/'>websockets</a>, <a class='category' href='/blog/categories/webview/'>webview</a>
-	
-
-
-	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/05/01/nonrte-part-1/">NonRTE - Part 1</a></h1>
-		<time>01 May 2014</time>
-	</header>
-	<div class="content">
-		<p>Once again stealing from antimatter I think writing about what you&rsquo;re currently building or have built is a good way to gain some clarity and also provide some value in explaining the topic. I&rsquo;ll be talking about NonRTE a non-contenteditable rich text editor for developers. One similar and the only one I know of is google docs. There are others that aren&rsquo;t rich text editors and are IDEs like codemirror and a few others that do not use contenteditbale. I personally don&rsquo;t know of any RTEs that are open source that developers can use and build with but I could be wrong so do ping me if that isn&rsquo;t the case.</p>
-
-<p>Something that has always boggled my mind was how heavily people have relied on contenteditable. Managing the different ways that contenteditbale is implemented on every browser and versions of those browsers is a nightmare. There is a portion of code in most RTE libraries that change how everything works just for one particular browser. This is insane to me due to the world we live in now with NPM, github, and the open source world at our finger tips. We have amazing templating libraries, HTML parsers, two-way data bindings, word to HTML libraries, excel expression parsers and executors, and everything compiles to JavaScript despite this insane amount of open source code we still use contenteditable.</p>
-
-<p>These aren&rsquo;t all the components that necessarily build an RTE you have to think about the cursor and positioning it correctly, selection and how to implement that, styling the complexities of every possible selection, resizing the container and line widths no longer being the same (this is the toughest one I think), copy and pasting, selection then clicking and dragging, and many many more components. These all sound hard but once again, if you look around you&rsquo;ll find varying levels of complete, incomplete, good, bad, popular, and unpopular repos that accomplish much of this. It sounds like I&rsquo;m saying rip them off, I&rsquo;m definitely not condoning that so be sure and give credit where credit is due.</p>
-
-<p>I&rsquo;m sure others have embarked on this particular quest only to fail or give up but I&rsquo;ll do my best not to. I see a lot of potential in this idea, many of the concepts are also very similar to Ractive. In fact I could implement this even faster in Ractive but have decided to embark on this from scratch just to learn things. It&rsquo;ll be a fun ride.</p>
-
-<p>At this point I have very basic typing working, the cursor is working and positioned (mostly) correctly, clicking somewhere will move the cursor, arrow keys will move from line to line and character to character correctly and enter to create new lines and split content is also working. Overall it&rsquo;s a little bit of work but nothing quite substantial yet. The repo lives here <a href="https://github.com/browniefed/Nonrte">https://github.com/browniefed/Nonrte</a> so feel free to contribute. I haven&rsquo;t hit many challenges yet but I will and when I do I&rsquo;ll be sure and document them and document the solutions.</p>
-
-	</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/contenteditable/'>contenteditable</a>, <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/nonrte/'>nonrte</a>
-	
-
-
-	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/">Ractive.JS Components for Speed and Flexibility</a></h1>
-		<time>27 April 2014</time>
-	</header>
-	<div class="content">
-		<p>Components in Ractive are crucial if you want to build a flexible application. Hopefully this changes in the future with partials living on the data object and various init options accepting functions rather than static objects. The main purpose of Components is to have reusable template pieces that you can drop in and work the same all over your application. Some examples might be a grid component that accepts rows and columns as it&rsquo;s data, maybe it&rsquo;s as simple as a checkbox that has some styling a particular way. Components will help you build consistency through out your application however you should know when to use a partial and when to use a component.</p>
-
-<p>If you&rsquo;re coming from the Angular world components are much like directives. However since there is no controller concept, or model concept in Ractive there are less headaches in getting components to work with scope and all that jazz.</p>
-
-<p>Enough talk, lets jump in</p>
-
-<h3>Example</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">Checkbox</span> <span class="o">=</span> <span class="nx">Ractive</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">isolated</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;label&gt;&lt;input type=&quot;checkbox&quot; checked=&quot;{{checked}}&quot;&gt; {{label}}&lt;/label&gt;&#39;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">checked</span><span class="o">:</span> <span class="kc">false</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>To use it</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">ractive</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Ractive</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;body&#39;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;Checkbox checkbox=&quot;{{active}}&quot; label=&quot;{{title}}&quot; /&gt;&#39;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">components</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">Checkbox</span> <span class="o">:</span> <span class="nx">Checkbox</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>  <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;This is a title&#39;</span><span class="p">,</span>
-</span><span class='line'>      <span class="nx">active</span><span class="o">:</span> <span class="kc">true</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">})</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Here is the checkbox example I was talking about. Components are just another instiation of Ractive, using Ractive.extend says &ldquo;use this stuff as the default&rdquo;. There are a few things to point on.</p>
-
-<p>On the component we have set <code>isolated</code> to <code>true</code>. This means that the template in the component does not have access to the parent data. That just means we couldn&rsquo;t do this.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;label&gt;&lt;input type=&quot;checkbox&quot; checked=&quot;{{active}}&quot;&gt; {{title}}&lt;/label&gt;&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In some cases you don&rsquo;t want your components to be isolated but for them to be modular and reusable it is good to make them isolated. Isolated is false by default.</p>
-
-<p>Isolating your components means you are in control, you can name your data anything. As you see the parent Ractive has <code>active</code> and <code>title</code> but we still reference them as <code>checkbox</code> and <code>label</code> inside the component. Ractive will wire up the keypaths for you and bind everything. So when a user clicks on the checkbox <code>checked</code> will update to <code>false</code> or <code>true</code> and on the parent Ractive <code>active</code> will update to <code>true</code> or <code>false</code>, depending on if the checkbox is checked or unchecked.
-Further more if you update the title, it&rsquo;ll propagate down to the component.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">ractive</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;This is a new title&#39;</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You are two-way data binding on DOM elements to the component as well as to the parent object. This is extremely powerful especially if you&rsquo;re coming from the jQuery world. There is no more finding the DOM element you want, determining if it is checked, finding the parent wrapping label, updating the text of the label.</p>
-
-<p>This is a very basic example. A more complex example would be the Grid component.</p>
-
-<p><code>grid-template</code></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;table&gt;</span>
-</span><span class='line'>  <span class="nt">&lt;tr&gt;</span>
-</span><span class='line'>      {{#columns}}
-</span><span class='line'>          <span class="nt">&lt;td&gt;</span>{{.label}}<span class="nt">&lt;/td&gt;</span>
-</span><span class='line'>      {{/columns}}
-</span><span class='line'>  <span class="nt">&lt;/tr&gt;</span>
-</span><span class='line'>  {{#rows:rowIndex}}
-</span><span class='line'>      <span class="nt">&lt;tr&gt;</span>
-</span><span class='line'>          {{#columns:columnIndex}}
-</span><span class='line'>              <span class="nt">&lt;td&gt;</span>
-</span><span class='line'>                  {{rows[rowIndex][.field]}}
-</span><span class='line'>              <span class="nt">&lt;/td&gt;</span>
-</span><span class='line'>          {{/columns}}
-</span><span class='line'>      <span class="nt">&lt;/tr&gt;</span>
-</span><span class='line'>  {{/rows}}
-</span><span class='line'>
-</span><span class='line'><span class="nt">&lt;/table&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">Grid</span> <span class="o">=</span> <span class="nx">Ractive</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">isolated</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;#grid-template&#39;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">data</span><span class="o">:</span> <span class="p">{}</span>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">ractive</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Ractive</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">el</span><span class="o">:</span> <span class="s1">&#39;body&#39;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;Grid rows=&quot;{{users}}&quot; columns=&quot;{{cols}}&quot; /&gt;&#39;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">cols</span><span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>          <span class="p">{</span><span class="nx">field</span><span class="o">:</span> <span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Username&#39;</span><span class="p">},</span>
-</span><span class='line'>          <span class="p">{</span><span class="nx">field</span><span class="o">:</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Full Name&#39;</span><span class="p">},</span>
-</span><span class='line'>          <span class="p">{</span><span class="nx">field</span><span class="o">:</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Email&#39;</span><span class="p">}</span>
-</span><span class='line'>      <span class="p">],</span>
-</span><span class='line'>      <span class="nx">users</span><span class="o">:</span> <span class="p">[</span>
-</span><span class='line'>          <span class="p">{</span><span class="nx">username</span><span class="o">:</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Admin&#39;</span><span class="p">,</span> <span class="nx">email</span><span class="o">:</span> <span class="s1">&#39;admin@example.com&#39;</span><span class="p">},</span>
-</span><span class='line'>          <span class="p">{</span><span class="nx">username</span><span class="o">:</span> <span class="s1">&#39;tg&#39;</span><span class="p">,</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Thadius Gorge&#39;</span><span class="p">,</span> <span class="nx">email</span><span class="o">:</span> <span class="s1">&#39;tg@example.com&#39;</span><span class="p">},</span>
-</span><span class='line'>          <span class="p">{</span><span class="nx">username</span><span class="o">:</span> <span class="s1">&#39;f999&#39;</span><span class="p">,</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Frank&#39;</span><span class="p">,</span> <span class="nx">email</span><span class="o">:</span> <span class="s1">&#39;frank@example.com&#39;</span><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="p">]</span>
-</span><span class='line'>  <span class="p">},</span>
-</span><span class='line'>  <span class="nx">components</span><span class="o">:</span> <span class="p">{</span><span class="nx">Grid</span><span class="o">:</span> <span class="nx">Grid</span><span class="p">}</span>
-</span><span class='line'><span class="p">})</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Here is the live example</p>
-
-<p data-height="268" data-theme-id="0" data-slug-hash="dvqIl" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/dvqIl/'>dvqIl</a> by browniefed (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-
-
-<script async src="//codepen.io/assets/embed/ei.js"></script>
-
-
-<p>All it takes is some slightly organized data and you&rsquo;d never have to construct a data table again. More advance component topics are coming in the future this was merely an introduction.</p>
-
-	</div>
-	<div>
-		
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/components/'>Components</a>, <a class='category' href='/blog/categories/javascript/'>JavaScript</a>, <a class='category' href='/blog/categories/ractive/'>Ractive</a>, <a class='category' href='/blog/categories/ractive-dot-js/'>Ractive.js</a>
-	
-
-
-	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/04/26/progress-report/">Progress reports</a></h1>
-		<time>26 April 2014</time>
-	</header>
-	<div class="content">
-		<p>After stumbling upon <a href="http://antimatter15.com/">http://antimatter15.com/</a> and all the awesome things he was doing I noticed that he would post progress reports each month. I often attempt at keeping a daily/weekly journal of sorts but it never pans out. I&rsquo;ve been trying to get into a decent state of mind to start serious personal development both in my projects and just myself. Reflecting on accomplishments each month is a great way to keep track of that growth. I would always get so in depth and fine-grained with everything that I did that it was pointless. I had some fantasy that if I kept a good enough diary that if I was rich and famous in the future that people would want to read my story. I&rsquo;d have an account of every little thing that I did and people could attempt to replicate it to a T. Typing that out just sounds insane.</p>
-
-<p>Where I go from here we shall see. I have a few goals I&rsquo;d like to accomplish for 2014 but am going to take it one week at a time. Weeks seem like they are small enough that I can sit down on a Sunday and plan out what I want to accomplish by the next Sunday. With little weekly notes I can compile the monthly progress report. Planning stuff out will  be a new concept for me since I generally shoot from the hip and do what I feel like.</p>
-
-<p>Some of my goals for 2014</p>
-
-<ul>
-<li>Become a bigger contributor to Ractive.JS</li>
-<li>Do a public talk at a meetup on any subject</li>
-<li>Start my own library and get some small adoption. Currently focused on NonRTE (what a terrible name)</li>
-<li>Do freelancing/client work one client at a time in technologies I&rsquo;m not as experienced in (have people pay me to learn). One new one every 2 months.</li>
-<li>More meetups ( at least 3 a month ), more free coding on other projects that have some sort of benefit to the world ( hackoregon, etc)</li>
-<li>Code Every Day. Simple. I must write code, documentation, a blog post, anything worth while and it must be public and visible on github.</li>
-<li>Work less hours, get more done in the 40 I&rsquo;m paid for. I love work, I love my job but I work too much and in the end I&rsquo;m working to accomplish someone elses dreams and not my own. I will focus on putting in a better 40 hours. How I do that I do not know but there are plenty of productivity methods I&rsquo;d love to try and see what sticks.</li>
-<li>Play with other technologies more. JavaScript is the future but I always enjoyed playing with other languages. I&rsquo;ve some how lost this curiosity over the course of becoming an adult.</li>
-<li>One blog post a week. This isn&rsquo;t a tall order by any means. It can be a small tutorial on CSS, JS, cool things I saw. Just write something of value.</li>
-</ul>
-
-
-<p>That&rsquo;s a tall order for 2014 as it&rsquo;s almost half way over but I&rsquo;ll be turning 24. My 15 year old self said I&rsquo;d be rich and retired at 21 so I&rsquo;m already behind.</p>
-
-<p>That&rsquo;s it from me</p>
-
-	</div>
-	<div>
-		
-
-
-		
-
-
-
-
-	
+    	
 	</div>
 	
 </article>
@@ -1519,7 +871,7 @@ Further more if you update the title, it&rsquo;ll propagate down to the componen
 		<a class="older" href="/blog/page/3/">Older</a>
 	
 	
-	<span class="total">2 of 3</span>
+	<span class="total">2 of 5</span>
 	
 	
 		<a class="newer" href="/">Newer</a>

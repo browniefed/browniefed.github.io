@@ -4,7 +4,7 @@
   <title><![CDATA[Category: layout | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/layout/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-08-01T09:04:28-07:00</updated>
+  <updated>2015-08-01T16:38:17-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -21,6 +21,9 @@
     <content type="html"><![CDATA[<p>Flexbox layout takes a bit getting used to. It&rsquo;s surprisngly simple but after so many years of box model css layout it throws you for a loop.</p>
 
 <p>Some examples</p>
+
+<!-- more -->
+
 
 <h2>Percentage height sections</h2>
 
@@ -143,6 +146,9 @@ That&rsquo;s when I saw <a href="http://www.invisionapp.com/do">http://www.invis
 <p>This is an over simplification but many times in <code>React</code> you have to hook into <code>componentDidMount</code> get the child width and take action.</p>
 
 <p>An example would be even width labels in a form. We could measure the text but depending on <code>font</code>, <code>font-size</code> it could measure each value differently. So we hide the form on initial render, get the max label width and set it on state.</p>
+
+<!-- more -->
+
 
 <h3>CSS-Layout Basics</h3>
 

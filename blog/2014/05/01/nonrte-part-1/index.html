@@ -6,7 +6,7 @@
 		<meta charset="utf-8">
 		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
 		<meta content="width=device-width,initial-scale=1" name="viewport">
-		<meta content="" name="description">
+		<meta content="A blog of JavaScript techniques and tutorials" name="description">
 		<meta content="JavaScript Without Grammar" name="author">
 		
         <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
@@ -26,9 +26,7 @@
 		<!-- Syntax highlighter -->
 		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="/js/prettify.js"></script>
-		
-		<!--<link href="http://feeds.feedburner.com/turkeltaub" rel="alternate" title="JavaScript Without Grammar" type="application/rss+xml" />-->
-		
+				
 	</head>
 	<body onload="prettyPrint()">
 	
@@ -58,7 +56,8 @@
 		<time>01 May 2014</time>
 	</header>
 	<div class="content">
-		<p>Once again stealing from antimatter I think writing about what you&rsquo;re currently building or have built is a good way to gain some clarity and also provide some value in explaining the topic. I&rsquo;ll be talking about NonRTE a non-contenteditable rich text editor for developers. One similar and the only one I know of is google docs. There are others that aren&rsquo;t rich text editors and are IDEs like codemirror and a few others that do not use contenteditbale. I personally don&rsquo;t know of any RTEs that are open source that developers can use and build with but I could be wrong so do ping me if that isn&rsquo;t the case.</p>
+		
+            <div class="entry-content"><p>Once again stealing from antimatter I think writing about what you&rsquo;re currently building or have built is a good way to gain some clarity and also provide some value in explaining the topic. I&rsquo;ll be talking about NonRTE a non-contenteditable rich text editor for developers. One similar and the only one I know of is google docs. There are others that aren&rsquo;t rich text editors and are IDEs like codemirror and a few others that do not use contenteditbale. I personally don&rsquo;t know of any RTEs that are open source that developers can use and build with but I could be wrong so do ping me if that isn&rsquo;t the case.</p>
 
 <p>Something that has always boggled my mind was how heavily people have relied on contenteditable. Managing the different ways that contenteditbale is implemented on every browser and versions of those browsers is a nightmare. There is a portion of code in most RTE libraries that change how everything works just for one particular browser. This is insane to me due to the world we live in now with NPM, github, and the open source world at our finger tips. We have amazing templating libraries, HTML parsers, two-way data bindings, word to HTML libraries, excel expression parsers and executors, and everything compiles to JavaScript despite this insane amount of open source code we still use contenteditable.</p>
 
@@ -67,10 +66,11 @@
 <p>I&rsquo;m sure others have embarked on this particular quest only to fail or give up but I&rsquo;ll do my best not to. I see a lot of potential in this idea, many of the concepts are also very similar to Ractive. In fact I could implement this even faster in Ractive but have decided to embark on this from scratch just to learn things. It&rsquo;ll be a fun ride.</p>
 
 <p>At this point I have very basic typing working, the cursor is working and positioned (mostly) correctly, clicking somewhere will move the cursor, arrow keys will move from line to line and character to character correctly and enter to create new lines and split content is also working. Overall it&rsquo;s a little bit of work but nothing quite substantial yet. The repo lives here <a href="https://github.com/browniefed/Nonrte">https://github.com/browniefed/Nonrte</a> so feel free to contribute. I haven&rsquo;t hit many challenges yet but I will and when I do I&rsquo;ll be sure and document them and document the solutions.</p>
-
+</div>
+        
 	</div>
 	<div>
-		
+    	
 
 
 		
@@ -85,7 +85,7 @@
 	
 
 
-	
+    	
 	</div>
 	
 </article>

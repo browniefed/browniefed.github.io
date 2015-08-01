@@ -4,7 +4,7 @@
   <title><![CDATA[Category: canvas | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/canvas/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-08-01T09:04:28-07:00</updated>
+  <updated>2015-08-01T16:38:17-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -30,6 +30,9 @@
 
 
 <p>All of these are great when working with <code>react-art</code> because it&rsquo;s just returning data. I&rsquo;ll say it once, and a million more but libraries that just generate data make it easy to traverse and render with <code>react-art</code>.</p>
+
+<!-- more -->
+
 
 <h3>Paths</h3>
 

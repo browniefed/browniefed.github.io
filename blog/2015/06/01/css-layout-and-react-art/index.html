@@ -6,7 +6,7 @@
 		<meta charset="utf-8">
 		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
 		<meta content="width=device-width,initial-scale=1" name="viewport">
-		<meta content="" name="description">
+		<meta content="A blog of JavaScript techniques and tutorials" name="description">
 		<meta content="JavaScript Without Grammar" name="author">
 		
         <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
@@ -26,9 +26,7 @@
 		<!-- Syntax highlighter -->
 		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="/js/prettify.js"></script>
-		
-		<!--<link href="http://feeds.feedburner.com/turkeltaub" rel="alternate" title="JavaScript Without Grammar" type="application/rss+xml" />-->
-		
+				
 	</head>
 	<body onload="prettyPrint()">
 	
@@ -58,7 +56,8 @@
 		<time>01 June 2015</time>
 	</header>
 	<div class="content">
-		<h3>Intro</h3>
+		
+            <div class="entry-content"><h3>Intro</h3>
 
 <p>If you&rsquo;ve used <code>react-native</code> before then you may know that &ldquo;css&rdquo; you&rsquo;re writing isn&rsquo;t actually CSS. It&rsquo;s a descriptor for a layout engine. That layout engine is <a href="https://github.com/facebook/css-layout">css-layout</a> which was created by <a href="https://twitter.com/Vjeux">@vjeux</a> and compiled to Java/Objective-C.</p>
 
@@ -73,6 +72,9 @@
 <p>This is an over simplification but many times in <code>React</code> you have to hook into <code>componentDidMount</code> get the child width and take action.</p>
 
 <p>An example would be even width labels in a form. We could measure the text but depending on <code>font</code>, <code>font-size</code> it could measure each value differently. So we hide the form on initial render, get the max label width and set it on state.</p>
+
+<!-- more -->
+
 
 <h3>CSS-Layout Basics</h3>
 
@@ -682,10 +684,11 @@ Then renders the component with selected props. We&rsquo;ll just render <code>st
 
 
 
-
+</div>
+        
 	</div>
 	<div>
-		
+    	
 
 
 		
@@ -700,7 +703,7 @@ Then renders the component with selected props. We&rsquo;ll just render <code>st
 	
 
 
-	
+    	
 	</div>
 	
 </article>

@@ -6,7 +6,7 @@
 		<meta charset="utf-8">
 		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
 		<meta content="width=device-width,initial-scale=1" name="viewport">
-		<meta content="" name="description">
+		<meta content="A blog of JavaScript techniques and tutorials" name="description">
 		<meta content="JavaScript Without Grammar" name="author">
 		
         <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
@@ -26,9 +26,7 @@
 		<!-- Syntax highlighter -->
 		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="/js/prettify.js"></script>
-		
-		<!--<link href="http://feeds.feedburner.com/turkeltaub" rel="alternate" title="JavaScript Without Grammar" type="application/rss+xml" />-->
-		
+				
 	</head>
 	<body onload="prettyPrint()">
 	
@@ -58,7 +56,8 @@
 		<time>01 August 2015</time>
 	</header>
 	<div class="content">
-		<h1>Introduction</h1>
+		
+            <div class="entry-content"><h1>Introduction</h1>
 
 <p>Have you ever wanted to swipe a row in a scroll view to take some sort of action. Swipe left to delete, swipe right to archive, swipe to do whatever. Well previously without the Animated API that wasn&rsquo;t necessarily hard it was just inefficient due to having to use <code>setState</code> causing a lot of diffs.</p>
 
@@ -69,6 +68,9 @@
 <p>This is not an orignal interaction I created, you can follow along with how I stumbled upon it and such here <a href="https://github.com/facebook/react-native/issues/2072">https://github.com/facebook/react-native/issues/2072</a>.</p>
 
 <p>Swiping rows is also just a normal action in iOS. However there is an ongoing debate here about ListView/ScrollView being wrapped in a UITableView which would provide some of this interaction as default. You can read through it here <a href="https://github.com/facebook/react-native/issues/332">https://github.com/facebook/react-native/issues/332</a> but we&rsquo;ll forge ahead and implement it with what we have to work with.</p>
+
+<!-- more -->
+
 
 <h1>The Concept</h1>
 
@@ -835,10 +837,11 @@ Back to point 1, we have to set the height specifically here.</p>
 </span><span class='line'>
 </span><span class='line'>AppRegistry.registerComponent('AnimatedFlick', () =&gt; AnimatedFlick);</span></code></pre></td></tr></table></div></figure>
 
-
+</div>
+        
 	</div>
 	<div>
-		
+    	
 
 
 		
@@ -853,7 +856,7 @@ Back to point 1, we have to set the height specifically here.</p>
 	
 
 
-	
+    	
 	</div>
 	
 </article>

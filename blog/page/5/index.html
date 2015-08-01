@@ -11,7 +11,7 @@
 		
         <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
 
-		<title>Meteor and Realtime Transit Mapping - Part 1 &mdash; JavaScript Without Grammar</title>
+		<title>JavaScript Without Grammar</title>
 		
 		<!-- Styles -->
 		<link href="/stylesheets/main.css" rel="stylesheet">
@@ -47,9 +47,42 @@
 								</div> <!-- // .navi -->
 			</header>
 		
-				<!-- START OF _layouts/post.html -->
+				<!-- START OF index.html -->
 
-<!-- START OF _includes/article.html -->
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/">Ractive.JS - Next Generation DOM Manipulation</a></h1>
+		<time>17 February 2014</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>Next generation DOM manipulation is right mainly because you don&rsquo;t have to do any. Ractive uses declarative binding(like Knockout and Angular) but also uses reactive programming methods (like React). The different is that it does do DOM diffing like React or dirty checking like Angular but utilizes dependancy tracking. Meaning it tracks the changes you make and will update the DOM accordingly. Now there are inherint issues in that ou can take performance hits if you have a large data set and call &ldquo;set&rdquo; within a loop. This will hit the DOM very hard since the nature of dependancy tracking says that &ldquo;when X changes update Y&rdquo;.</p>
+</div>
+          
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
 <article>
 	<header>
 		<h1><a href="/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/">Meteor and Realtime Transit Mapping - Part 1</a></h1>
@@ -57,7 +90,7 @@
 	</header>
 	<div class="content">
 		
-            <div class="entry-content"><h1>Overview</h1>
+          <div class="entry-content"><h1>Overview</h1>
 
 <p>The point of this series is to help people build out realtime transit maps for other cities.
 This will focus on Portland, OR and their transit system TriMet. They give us access to a wealth of information but all we really need is route numbers that make sense and latitude/longitude to make a map. I have built one for Kansas City, MO but they have their data hidden. Don&rsquo;t be afraid to dig around on your own transit website to find hidden APIs.</p>
@@ -275,6 +308,8 @@ You should have a map that completely fills your window.</p>
 <p>Part 2 getting Trimet data.
 Part 3 adding markers and animating their movements</p>
 </div>
+          
+          
         
 	</div>
 	<div>
@@ -299,28 +334,54 @@ Part 3 adding markers and animating their movements</p>
 </article>
 <!-- END OF _includes/article.html -->
 
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2013/11/12/hey-its-a-post/">hey it&#8217;s a post</a></h1>
+		<time>12 November 2013</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>Hey it&rsquo;s a post on my github.io account</p>
 
-  <section>
-    <h1>Comments</h1>
-    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-  </section>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">heyoooo</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<div class="article-wrap">
-<footer style="margin-top: 10px;">
-    <div id="post-author">
-	<div class="post-author-image" style="width: 20%; display: inline-block;">
-		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
-	</div>
-	<div class="post-author-content" style="width: 70%; display: inline-block;">
-		<p>
-			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a> )
-		</p>
-	</div>
 </div>
-</footer>
+          
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+	
+<div class="pagination">
+	
+	
+	<span class="total">5 of 5</span>
+	
+	
+		<a class="newer" href="/blog/page/4/">Newer</a>
+	
 </div>
-<!-- END OF _/layouts/post.html -->
+<!-- END OF index.html -->
 
 		
 			<footer>
@@ -338,10 +399,7 @@ Part 3 adding markers and animating their movements</p>
       var disqus_shortname = 'browniefedblog';
       
         
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://browniefed.com/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/';
-        var disqus_url = 'http://browniefed.com/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/';
-        var disqus_script = 'embed.js';
+        var disqus_script = 'count.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -385,10 +443,7 @@ Part 3 adding markers and animating their movements</p>
       var disqus_shortname = 'browniefedblog';
       
         
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://browniefed.com/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/';
-        var disqus_url = 'http://browniefed.com/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/';
-        var disqus_script = 'embed.js';
+        var disqus_script = 'count.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
