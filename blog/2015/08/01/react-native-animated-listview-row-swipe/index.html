@@ -1,0 +1,962 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="" name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+		
+        <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
+
+		<title>React-native Animated ScrollView Row Swipe Actions &mdash; JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+		
+		<!--<link href="http://feeds.feedburner.com/turkeltaub" rel="alternate" title="JavaScript Without Grammar" type="application/rss+xml" />-->
+		
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="http://browniefed.com">Portfolio?</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF _layouts/post.html -->
+
+<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/08/01/react-native-animated-listview-row-swipe/">React-native Animated ScrollView Row Swipe Actions</a></h1>
+		<time>01 August 2015</time>
+	</header>
+	<div class="content">
+		<h1>Introduction</h1>
+
+<p>Have you ever wanted to swipe a row in a scroll view to take some sort of action. Swipe left to delete, swipe right to archive, swipe to do whatever. Well previously without the Animated API that wasn&rsquo;t necessarily hard it was just inefficient due to having to use <code>setState</code> causing a lot of diffs.</p>
+
+<h1>What are we trying to accomplish</h1>
+
+<p><img src="http://i.imgur.com/z1tko0s.gif" title="Swipe Action GIF from @dubert" ></p>
+
+<p>This is not an orignal interaction I created, you can follow along with how I stumbled upon it and such here <a href="https://github.com/facebook/react-native/issues/2072">https://github.com/facebook/react-native/issues/2072</a>.</p>
+
+<p>Swiping rows is also just a normal action in iOS. However there is an ongoing debate here about ListView/ScrollView being wrapped in a UITableView which would provide some of this interaction as default. You can read through it here <a href="https://github.com/facebook/react-native/issues/332">https://github.com/facebook/react-native/issues/332</a> but we&rsquo;ll forge ahead and implement it with what we have to work with.</p>
+
+<h1>The Concept</h1>
+
+<p>Previously I attempted, and successfully implemented this with the <code>PanResponder</code>. There is nothing particularly bad about that approach except you will run into issues being embedded in a <code>ScrollView</code>.</p>
+
+<p>What issues? Well while swiping left/right the content direction locks won&rsquo;t be set, which means if you don&rsquo;t swipe perfectly left &lt;=> right and introduce some up/down your row will get stuck. That is not a good interaction.</p>
+
+<p>So thanks to the solid recommendation by <a href="https://github.com/sahrens">sahrens</a> we will do a <code>ScrollView</code> with each row being a Horizontal <code>ScrollView</code>. This means iOS will negotiate content direction locks correctly. So when you scroll up and down the body content will scroll, left and right will cause each row to slide.</p>
+
+<h1>Drawbacks</h1>
+
+<p>There are some drawbacks.</p>
+
+<ul>
+<li>With the horizontal ScrollView you have to define the height (at least from what I could figure out).</li>
+<li>The View in the horizontal ScrollView does not stretch completely regardless of what flex properties you add on it.</li>
+<li>The PanResponder vs ContentOffset X values are opposites, so you have to multiply by -1.</li>
+<li>The content offset is not as large as the PanResponder so I had to lower the RED threshold.</li>
+</ul>
+
+
+<p>Specifying the height is seemingly the largest drawback that I couldn&rsquo;t figure out. The width not auto-adjusting is also another drawback, however we have the dimensions to calculate the threshold so we could manually set the width if we wanted.</p>
+
+<h1>Setup</h1>
+
+<p>Variables we need</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>var Dimensions = require('Dimensions');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  width,
+</span><span class='line'>  height
+</span><span class='line'>} = Dimensions.get('window');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  AppRegistry,
+</span><span class='line'>  StyleSheet,
+</span><span class='line'>  ScrollView,
+</span><span class='line'>  View,
+</span><span class='line'>  Text,
+</span><span class='line'>  Animated
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>var GREY = 0;
+</span><span class='line'>var GREEN = 1;
+</span><span class='line'>var RED = 2;
+</span><span class='line'>
+</span><span class='line'>var values = [1,2,3,4];
+</span><span class='line'>
+</span><span class='line'>var AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We need the Device widths for calculating half the screen later for our events.
+Also we setup color as integer steps, and then define arbitrary values for rows.</p>
+
+<p>Finally we use the <code>createAnimatedComponent</code> supplied by <code>Animated</code> to create an Animated capable <code>ScrollView</code>.</p>
+
+<p>What that means is that when you pass it interpolated values (like an interpolated background color) it&rsquo;ll correctly negotiate the values.</p>
+
+<p>Styles</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>  container: {
+</span><span class='line'>    flex: 1,
+</span><span class='line'>    flexDirection: 'column'
+</span><span class='line'>  },
+</span><span class='line'>  outerScroll: {
+</span><span class='line'>    flex: 1,
+</span><span class='line'>    flexDirection: 'column'
+</span><span class='line'>  },
+</span><span class='line'>  row: {
+</span><span class='line'>    flex: 1
+</span><span class='line'>  }
+</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Just some base styles, you&rsquo;ll see where they are used in a second.</p>
+
+<h1>Basic ScrollView</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var AnimatedFlick = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>        values: values
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  _renderRow: function(value, index) {
+</span><span class='line'>    return (
+</span><span class='line'>        &lt;View 
+</span><span class='line'>          style={styles.row}
+</span><span class='line'>          key={index}
+</span><span class='line'>        &gt;
+</span><span class='line'>          &lt;Text&gt;{value + "  &lt;----- Slide the row that way and release"}&lt;/Text&gt;
+</span><span class='line'>        &lt;/View&gt;
+</span><span class='line'>    )
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;ScrollView style={styles.outerScroll}&gt;
+</span><span class='line'>          {this.state.values.map(this._renderRow, this)}
+</span><span class='line'>        &lt;/ScrollView&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We setup some intial state the values we set in the setup section <code>var values = [1,2,3,4]</code>.
+We map those values to the <code>_renderRow</code> function, which we just return a basic <code>View</code>, with some <code>Text</code>.</p>
+
+<h1>ScrollView with Horizontal ScrollViews</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  _renderRow: function(value, index) {
+</span><span class='line'>    return (
+</span><span class='line'>        &lt;View 
+</span><span class='line'>          style={styles.row}
+</span><span class='line'>          key={index}
+</span><span class='line'>        &gt;
+</span><span class='line'>          &lt;ScrollView
+</span><span class='line'>            horizontal={true}
+</span><span class='line'>            directionalLockEnabled={true}
+</span><span class='line'>            style=
+</span><span class='line'>          &gt;
+</span><span class='line'>            &lt;View&gt;
+</span><span class='line'>              &lt;Text&gt;{value + "  &lt;----- Slide the row that way and release"}&lt;/Text&gt;
+</span><span class='line'>            &lt;/View&gt;
+</span><span class='line'>          &lt;/ScrollView&gt;
+</span><span class='line'>        &lt;/View&gt;
+</span><span class='line'>    )
+</span><span class='line'>  }
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We wrap our view content in <code>ScrollView</code> with <code>horizontal</code> true and <code>directionLockEnabeled</code>. This means when you start scroll one direction it will lock that direction and not let you scroll a different way. In our case once you start swiping left/right you can only swipe left/right.
+Back to point 1, we have to set the height specifically here.</p>
+
+<p>This is what we have now.</p>
+
+<p><img src="http://i.imgur.com/DTFHAvu.gif" title="Scroll In a Scroll" ></p>
+
+<h1>Animate the Background Color</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  _renderRow: function(value, index) {
+</span><span class='line'>
+</span><span class='line'>    var bgColor = this.state.colors[index].interpolate({
+</span><span class='line'>      inputRange: [
+</span><span class='line'>        GREY,
+</span><span class='line'>        GREEN,
+</span><span class='line'>        RED
+</span><span class='line'>      ],
+</span><span class='line'>      outputRange: [
+</span><span class='line'>        'rgb(180, 180, 180)', // GREY
+</span><span class='line'>        'rgb(63, 236, 35)', // GREEN
+</span><span class='line'>        'rgb(233, 19, 19)', // RED
+</span><span class='line'>      ],
+</span><span class='line'>    });
+</span><span class='line'>
+</span><span class='line'>    return (
+</span><span class='line'>        &lt;View 
+</span><span class='line'>          style={styles.row}
+</span><span class='line'>          key={index}
+</span><span class='line'>        &gt;
+</span><span class='line'>          &lt;AnimatedScrollView
+</span><span class='line'>            horizontal={true}
+</span><span class='line'>            directionalLockEnabled={true}
+</span><span class='line'>            style={[{flex: 1, height: 100}, {backgroundColor: bgColor}]}
+</span><span class='line'>            onScroll={this._animateScroll.bind(this, index)}
+</span><span class='line'>            scrollEventThrottle={16}
+</span><span class='line'>          &gt;
+</span><span class='line'>            &lt;View style=&gt;
+</span><span class='line'>              &lt;Text&gt;{value + "  &lt;----- Slide the row that way and release"}&lt;/Text&gt;
+</span><span class='line'>            &lt;/View&gt;
+</span><span class='line'>          &lt;/AnimatedScrollView&gt;
+</span><span class='line'>        &lt;/View&gt;
+</span><span class='line'>    )
+</span><span class='line'>  },</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We need to create an interpolation. How the interpolation works is given a value, in our case colors that are just an array of values <code>[0,1,2]</code> will return a new value which corresponds to the <code>outputRange</code>. So when the <code>this.state.colors[index]</code> value is <code>0</code> it will return <code>GREY</code> or <code>rgb(180, 180, 180)</code>, and so on and so forth. When it changes from <code>GREY</code> to <code>GREEN</code> it&rsquo;ll animate to the new color of <code>rgb(63, 236, 35)</code>.</p>
+
+<p>This is where we use the <code>AnimatedScrollView</code> we created before. This will correctly take the animated value we pass in a grab the interpolatd background.</p>
+
+<p>We pass in a function to onScroll and setup the <code>scrollEventThrottle</code> with the default value. This means our scroll event will be called every 16 millseconds.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  _animateScroll: function(index, e) {
+</span><span class='line'>    var threshold = width / 5;
+</span><span class='line'>    var x = e.nativeEvent.contentOffset.x;
+</span><span class='line'>    var target = null;
+</span><span class='line'>
+</span><span class='line'>    x = x * -1;
+</span><span class='line'>
+</span><span class='line'>    if (x &gt; -50 && this._target != GREY) {
+</span><span class='line'>      target = GREY;
+</span><span class='line'>    } else if (x &lt; -50 && x &gt; -threshold && this._target != GREEN) {
+</span><span class='line'>      target = GREEN;
+</span><span class='line'>    } else if (x &lt; -threshold && this._target != RED) {
+</span><span class='line'>      target = RED;
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    if (target !== null) {
+</span><span class='line'>      this._target = target;
+</span><span class='line'>      this._targetIndex = index;
+</span><span class='line'>
+</span><span class='line'>      Animated.timing(this.state.colors[index], {
+</span><span class='line'>        toValue: target,
+</span><span class='line'>        duration: 180,
+</span><span class='line'>      }).start();
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>  },</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We get the threshold of the <code>deviceWidth</code> we got at the creation of the app. We get the <code>x</code> offset of the scrollView. Finally depending on which direction you want users to swipes to take action we need to multiply ( or not ) by <code>-1</code>. The <code>-1</code> means swiping right to left will cause the actions to trigger.</p>
+
+<p>We setup various thresholds to animate to. Start is <code>GREY</code>, middle threshold is <code>GREEN</code> and anything greater is <code>RED</code>.</p>
+
+<p>Finally if target isn&rsquo;t null (aka someone did something), we trigger an <code>Animated.timing</code> on our color. This will say for the next 180 milliseconds transition to our target color. This will cause our color interpolation to kick in and transition the background.</p>
+
+<p>Hopefully this all doesn&rsquo;t seem too complicated. We are essentially saying &ldquo;If someone swipes this far make the background color this one&rdquo;.</p>
+
+<h1>Take an action</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>return (
+</span><span class='line'>    &lt;View 
+</span><span class='line'>      style={styles.row}
+</span><span class='line'>      key={index}
+</span><span class='line'>    &gt;
+</span><span class='line'>      &lt;AnimatedScrollView
+</span><span class='line'>        horizontal={true}
+</span><span class='line'>        directionalLockEnabled={true}
+</span><span class='line'>        style={[{flex: 1, height: 100}, {backgroundColor: bgColor}]}
+</span><span class='line'>        onScroll={this._animateScroll.bind(this, index)}
+</span><span class='line'>        scrollEventThrottle={16}
+</span><span class='line'>        onMomentumScrollBegin={this.takeAction}
+</span><span class='line'>      &gt;
+</span><span class='line'>        &lt;View style=&gt;
+</span><span class='line'>          &lt;Text&gt;{value + "  &lt;----- Slide the row that way and release"}&lt;/Text&gt;
+</span><span class='line'>        &lt;/View&gt;
+</span><span class='line'>      &lt;/AnimatedScrollView&gt;
+</span><span class='line'>    &lt;/View&gt;
+</span><span class='line'>)
+</span><span class='line'>  },</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We do have to dig through the internal code a bit but a seemingly undocumented action of the <code>ScrollResponder</code> is the <code>onMomentumScrollBegin</code>. From the code comments this function is called when <code>When releasing the view starts bouncing back</code>. So the user has released, and the row is about to scroll back into the 0 position.</p>
+
+<p>Why this action? Well we setup things to operate on the scroll actions. Any other event would cause the actions the user want to take to be wrong since the <code>onScroll</code> events will be fired when the user releases.</p>
+
+<p>We should add some protection code and such, but you can implement that.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  takeAction: function() {
+</span><span class='line'>    this.setState({
+</span><span class='line'>      action: true
+</span><span class='line'>    });
+</span><span class='line'>  },</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here we just are causing a re-render so our app updates with the state below. However in this particular method you would actually take an action based upon the offset the person swiped to.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  getActionText: function() {
+</span><span class='line'>    var actionText = '';
+</span><span class='line'>
+</span><span class='line'>    if (this.state.action) {
+</span><span class='line'>      if (this._target == GREEN) {
+</span><span class='line'>        actionText = 'Save Action';
+</span><span class='line'>      } else if (this._target == RED) {
+</span><span class='line'>        actionText = 'Delete Action'
+</span><span class='line'>      } else {
+</span><span class='line'>        actionText = 'No Action';
+</span><span class='line'>      }
+</span><span class='line'>
+</span><span class='line'>      return 'You took "' + actionText + '" on the ' + this._targetIndex + ' row';
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    return 'You have not taken an action yet';
+</span><span class='line'>  },</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Just determing text to show to the user.</p>
+
+<h1>Final code</h1>
+
+<p>This is a pretty nice technique, and some what simple to implement but as mentioned it has some drawbacks.</p>
+
+<p>Check it out here live <a href="https://rnplay.org/apps/LDI42g">https://rnplay.org/apps/LDI42g</a>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>var Dimensions = require('Dimensions');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  width,
+</span><span class='line'>  height
+</span><span class='line'>} = Dimensions.get('window');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  AppRegistry,
+</span><span class='line'>  StyleSheet,
+</span><span class='line'>  ScrollView,
+</span><span class='line'>  ListView,
+</span><span class='line'>  View,
+</span><span class='line'>  Text,
+</span><span class='line'>  Animated
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>var GREY = 0;
+</span><span class='line'>var GREEN = 1;
+</span><span class='line'>var RED = 2;
+</span><span class='line'>
+</span><span class='line'>var values = [1,2,3,4];
+</span><span class='line'>
+</span><span class='line'>var AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
+</span><span class='line'>
+</span><span class='line'>var AnimatedFlick = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>        values: values,
+</span><span class='line'>        colors: values.map( () =&gt; new Animated.Value(GREY) )
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  _animateScroll: function(index, e) {
+</span><span class='line'>    var threshold = width / 5;
+</span><span class='line'>    var x = e.nativeEvent.contentOffset.x;
+</span><span class='line'>    var target = null;
+</span><span class='line'>
+</span><span class='line'>    x = x * -1;
+</span><span class='line'>
+</span><span class='line'>    if (x &gt; -50 && this._target != GREY) {
+</span><span class='line'>      target = GREY;
+</span><span class='line'>    } else if (x &lt; -50 && x &gt; -threshold && this._target != GREEN) {
+</span><span class='line'>      target = GREEN;
+</span><span class='line'>    } else if (x &lt; -threshold && this._target != RED) {
+</span><span class='line'>      target = RED;
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    if (target !== null) {
+</span><span class='line'>      this._target = target;
+</span><span class='line'>      this._targetIndex = index;
+</span><span class='line'>
+</span><span class='line'>      Animated.timing(this.state.colors[index], {
+</span><span class='line'>        toValue: target,
+</span><span class='line'>        duration: 180,
+</span><span class='line'>      }).start();
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>  },
+</span><span class='line'>  takeAction: function() {
+</span><span class='line'>    this.setState({
+</span><span class='line'>      action: true
+</span><span class='line'>    });
+</span><span class='line'>  },
+</span><span class='line'>  getActionText: function() {
+</span><span class='line'>    var actionText = '';
+</span><span class='line'>
+</span><span class='line'>    if (this.state.action) {
+</span><span class='line'>      if (this._target == GREEN) {
+</span><span class='line'>        actionText = 'Save Action';
+</span><span class='line'>      } else if (this._target == RED) {
+</span><span class='line'>        actionText = 'Delete Action'
+</span><span class='line'>      } else {
+</span><span class='line'>        actionText = 'No Action';
+</span><span class='line'>      }
+</span><span class='line'>
+</span><span class='line'>      return 'You took "' + actionText + '" on the ' + this._targetIndex + ' row';
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    return 'You have not taken an action yet';
+</span><span class='line'>  },
+</span><span class='line'>  _renderRow: function(value, index) {
+</span><span class='line'>
+</span><span class='line'>    var bgColor = this.state.colors[index].interpolate({
+</span><span class='line'>      inputRange: [
+</span><span class='line'>        GREY,
+</span><span class='line'>        GREEN,
+</span><span class='line'>        RED
+</span><span class='line'>      ],
+</span><span class='line'>      outputRange: [
+</span><span class='line'>        'rgb(180, 180, 180)',
+</span><span class='line'>        'rgb(63, 236, 35)',
+</span><span class='line'>        'rgb(233, 19, 19)',
+</span><span class='line'>      ],
+</span><span class='line'>    });
+</span><span class='line'>
+</span><span class='line'>    return (
+</span><span class='line'>        &lt;View 
+</span><span class='line'>          style={styles.row}
+</span><span class='line'>          key={index}
+</span><span class='line'>        &gt;
+</span><span class='line'>          &lt;AnimatedScrollView
+</span><span class='line'>            horizontal={true}
+</span><span class='line'>            directionalLockEnabled={true}
+</span><span class='line'>            style={[{flex: 1, height: 100}, {backgroundColor: bgColor}]}
+</span><span class='line'>            onScroll={this._animateScroll.bind(this, index)}
+</span><span class='line'>            scrollEventThrottle={16}
+</span><span class='line'>            onMomentumScrollBegin={this.takeAction}
+</span><span class='line'>          &gt;
+</span><span class='line'>            &lt;View style=&gt;
+</span><span class='line'>              &lt;Text&gt;{value + "  &lt;----- Slide the row that way and release"}&lt;/Text&gt;
+</span><span class='line'>            &lt;/View&gt;
+</span><span class='line'>          &lt;/AnimatedScrollView&gt;
+</span><span class='line'>        &lt;/View&gt;
+</span><span class='line'>    )
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;ScrollView style={styles.outerScroll}&gt;
+</span><span class='line'>          {this.state.values.map(this._renderRow, this)}
+</span><span class='line'>        &lt;/ScrollView&gt;
+</span><span class='line'>        &lt;Text&gt;{this.getActionText()}&lt;/Text&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>  container: {
+</span><span class='line'>    flex: 1,
+</span><span class='line'>    flexDirection: 'column'
+</span><span class='line'>  },
+</span><span class='line'>  outerScroll: {
+</span><span class='line'>    flex: 1,
+</span><span class='line'>    flexDirection: 'column'
+</span><span class='line'>  },
+</span><span class='line'>  row: {
+</span><span class='line'>    flex: 1
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>AppRegistry.registerComponent('AnimatedFlick', () =&gt; AnimatedFlick);</span></code></pre></td></tr></table></div></figure>
+
+
+	</div>
+	<div>
+		
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/animted/'>animted</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>, <a class='category' href='/blog/categories/row/'>row</a>, <a class='category' href='/blog/categories/scrollview/'>scrollview</a>, <a class='category' href='/blog/categories/swipe/'>swipe</a>
+	
+
+
+	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+<div class="article-wrap">
+<footer style="margin-top: 10px;">
+    <div id="post-author">
+	<div class="post-author-image" style="width: 20%; display: inline-block;">
+		<img src="/images/author.jpeg" style="max-width: 150px; width: 100%;">
+	</div>
+	<div class="post-author-content" style="width: 70%; display: inline-block;">
+		<p>
+			My name is Jason Brown, I'm an entrepreneur, developer, and general hobbyist. I work full time as a front end developer and develop in anything, and everything in my free time. If you ever want an explanation or to contact me for whatever reason you can drop me a line at <a href="http://twitter.com/browniefed">@browniefed</a> or email me at ( <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a> )
+		</p>
+	</div>
+</div>
+</footer>
+</div>
+<!-- END OF _/layouts/post.html -->
+
+		
+			<footer>
+				Copyright &copy; 2015
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/08/01/react-native-animated-listview-row-swipe/';
+        var disqus_url = 'http://browniefed.com/blog/2015/08/01/react-native-animated-listview-row-swipe/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: $(this).next('code').text(),
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+					}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/08/01/react-native-animated-listview-row-swipe/';
+        var disqus_url = 'http://browniefed.com/blog/2015/08/01/react-native-animated-listview-row-swipe/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->

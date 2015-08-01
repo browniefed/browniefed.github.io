@@ -56,6 +56,60 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
+		<h1><a href="/blog/2015/05/16/react-native-and-socket-dot-io/">React Native and Socket.io</a></h1>
+		<time>16 May 2015</time>
+	</header>
+	<div class="content">
+		<p>React Native finally supports Websockets. Which is awesome, however there is one gotcha with socket.io.</p>
+
+<p>1) <code>npm install socket.io-client</code>. This will just pull down the socket.io javascript client</p>
+
+<p>2) Everything works great but there is one issue that <code>window.navigator.userAgent</code> doesn&rsquo;t exist. Socket.IO checks to deal with some browser incosistencies but we don&rsquo;t care. So all we have to do is create it. However make sure you require <code>react-native</code> first!</p>
+
+<p>Just like so</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>
+</span><span class='line'>window.navigator.userAgent = "react-native";
+</span><span class='line'>
+</span><span class='line'>var io = require('socket.io-client/socket.io');</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you can do as you please with your new glorious websockets.</p>
+
+	</div>
+	<div>
+		
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/native/'>native</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/socket-dot-io/'>socket.io</a>, <a class='category' href='/blog/categories/websocket/'>websocket</a>
+	
+
+
+	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
 		<h1><a href="/blog/2015/05/03/getting-react-art-running-on-react-native/">Getting react-art running on react-native</a></h1>
 		<time>03 May 2015</time>
 	</header>
@@ -1441,33 +1495,6 @@ Further more if you update the title, it&rsquo;ll propagate down to the componen
 <p>That&rsquo;s a tall order for 2014 as it&rsquo;s almost half way over but I&rsquo;ll be turning 24. My 15 year old self said I&rsquo;d be rich and retired at 21 so I&rsquo;m already behind.</p>
 
 <p>That&rsquo;s it from me</p>
-
-	</div>
-	<div>
-		
-
-
-		
-
-
-
-
-	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/">Ractive.JS - Next Generation DOM Manipulation</a></h1>
-		<time>17 February 2014</time>
-	</header>
-	<div class="content">
-		<p>Next generation DOM manipulation is right mainly because you don&rsquo;t have to do any. Ractive uses declarative binding(like Knockout and Angular) but also uses reactive programming methods (like React). The different is that it does do DOM diffing like React or dirty checking like Angular but utilizes dependancy tracking. Meaning it tracks the changes you make and will update the DOM accordingly. Now there are inherint issues in that ou can take performance hits if you have a large data set and call &ldquo;set&rdquo; within a loop. This will hit the DOM very hard since the nature of dependancy tracking says that &ldquo;when X changes update Y&rdquo;.</p>
 
 	</div>
 	<div>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react-native | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/react-native/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-07-28T15:42:51-07:00</updated>
+  <updated>2015-08-01T09:04:28-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -12,6 +12,523 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[React-native Animated ScrollView Row Swipe Actions]]></title>
+    <link href="http://browniefed.com/blog/2015/08/01/react-native-animated-listview-row-swipe/"/>
+    <updated>2015-08-01T16:17:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/08/01/react-native-animated-listview-row-swipe</id>
+    <content type="html"><![CDATA[<h1>Introduction</h1>
+
+<p>Have you ever wanted to swipe a row in a scroll view to take some sort of action. Swipe left to delete, swipe right to archive, swipe to do whatever. Well previously without the Animated API that wasn&rsquo;t necessarily hard it was just inefficient due to having to use <code>setState</code> causing a lot of diffs.</p>
+
+<h1>What are we trying to accomplish</h1>
+
+<p><img class="<a" src="href="http://i.imgur.com/z1tko0s.gif">http://i.imgur.com/z1tko0s.gif</a>" title="Swipe Action GIF from @dubert" ></p>
+
+<p>This is not an orignal interaction I created, you can follow along with how I stumbled upon it and such here <a href="https://github.com/facebook/react-native/issues/2072">https://github.com/facebook/react-native/issues/2072</a>.</p>
+
+<p>Swiping rows is also just a normal action in iOS. However there is an ongoing debate here about ListView/ScrollView being wrapped in a UITableView which would provide some of this interaction as default. You can read through it here <a href="https://github.com/facebook/react-native/issues/332">https://github.com/facebook/react-native/issues/332</a> but we&rsquo;ll forge ahead and implement it with what we have to work with.</p>
+
+<h1>The Concept</h1>
+
+<p>Previously I attempted, and successfully implemented this with the <code>PanResponder</code>. There is nothing particularly bad about that approach except you will run into issues being embedded in a <code>ScrollView</code>.</p>
+
+<p>What issues? Well while swiping left/right the content direction locks won&rsquo;t be set, which means if you don&rsquo;t swipe perfectly left &lt;=> right and introduce some up/down your row will get stuck. That is not a good interaction.</p>
+
+<p>So thanks to the solid recommendation by <a href="https://github.com/sahrens">sahrens</a> we will do a <code>ScrollView</code> with each row being a Horizontal <code>ScrollView</code>. This means iOS will negotiate content direction locks correctly. So when you scroll up and down the body content will scroll, left and right will cause each row to slide.</p>
+
+<h1>Drawbacks</h1>
+
+<p>There are some drawbacks.</p>
+
+<ul>
+<li>With the horizontal ScrollView you have to define the height (at least from what I could figure out).</li>
+<li>The View in the horizontal ScrollView does not stretch completely regardless of what flex properties you add on it.</li>
+<li>The PanResponder vs ContentOffset X values are opposites, so you have to multiply by -1.</li>
+<li>The content offset is not as large as the PanResponder so I had to lower the RED threshold.</li>
+</ul>
+
+
+<p>Specifying the height is seemingly the largest drawback that I couldn&rsquo;t figure out. The width not auto-adjusting is also another drawback, however we have the dimensions to calculate the threshold so we could manually set the width if we wanted.</p>
+
+<h1>Setup</h1>
+
+<p>Variables we need</p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);</p>
+
+<p>var {
+  width,
+  height
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  ScrollView,
+  View,
+  Text,
+  Animated
+} = React;</p>
+
+<p>var GREY = 0;
+var GREEN = 1;
+var RED = 2;</p>
+
+<p>var values = [1,2,3,4];</p>
+
+<p>var AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
+```</p>
+
+<p>We need the Device widths for calculating half the screen later for our events.
+Also we setup color as integer steps, and then define arbitrary values for rows.</p>
+
+<p>Finally we use the <code>createAnimatedComponent</code> supplied by <code>Animated</code> to create an Animated capable <code>ScrollView</code>.</p>
+
+<p>What that means is that when you pass it interpolated values (like an interpolated background color) it&rsquo;ll correctly negotiate the values.</p>
+
+<p>Styles</p>
+
+<p>```</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+flexDirection: 'column'
+</code></pre>
+
+<p>  },
+  outerScroll: {</p>
+
+<pre><code>flex: 1,
+flexDirection: 'column'
+</code></pre>
+
+<p>  },
+  row: {</p>
+
+<pre><code>flex: 1
+</code></pre>
+
+<p>  }
+});
+```
+Just some base styles, you&rsquo;ll see where they are used in a second.</p>
+
+<h1>Basic ScrollView</h1>
+
+<p>```
+var AnimatedFlick = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    values: values
+};
+</code></pre>
+
+<p>  },</p>
+
+<p>  _renderRow: function(value, index) {</p>
+
+<pre><code>return (
+    &lt;View 
+      style={styles.row}
+      key={index}
+    &gt;
+      &lt;Text&gt;{value + "  &lt;----- Slide the row that way and release"}&lt;/Text&gt;
+    &lt;/View&gt;
+)
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;ScrollView style={styles.outerScroll}&gt;
+      {this.state.values.map(this._renderRow, this)}
+    &lt;/ScrollView&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>We setup some intial state the values we set in the setup section <code>var values = [1,2,3,4]</code>.
+We map those values to the <code>_renderRow</code> function, which we just return a basic <code>View</code>, with some <code>Text</code>.</p>
+
+<h1>ScrollView with Horizontal ScrollViews</h1>
+
+<p>```
+  _renderRow: function(value, index) {</p>
+
+<pre><code>return (
+    &lt;View 
+      style={styles.row}
+      key={index}
+    &gt;
+      &lt;ScrollView
+        horizontal={true}
+        directionalLockEnabled={true}
+        style=
+      &gt;
+        &lt;View&gt;
+          &lt;Text&gt;{value + "  &lt;----- Slide the row that way and release"}&lt;/Text&gt;
+        &lt;/View&gt;
+      &lt;/ScrollView&gt;
+    &lt;/View&gt;
+)
+</code></pre>
+
+<p>  }</p>
+
+<p><code>``
+We wrap our view content in</code>ScrollView<code>with</code>horizontal<code>true and</code>directionLockEnabeled`. This means when you start scroll one direction it will lock that direction and not let you scroll a different way. In our case once you start swiping left/right you can only swipe left/right.
+Back to point 1, we have to set the height specifically here.</p>
+
+<p>This is what we have now.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/DTFHAvu.gif">http://i.imgur.com/DTFHAvu.gif</a>" title="Scroll In a Scroll" ></p>
+
+<h1>Animate the Background Color</h1>
+
+<p>```
+  _renderRow: function(value, index) {</p>
+
+<pre><code>var bgColor = this.state.colors[index].interpolate({
+  inputRange: [
+    GREY,
+    GREEN,
+    RED
+  ],
+  outputRange: [
+    'rgb(180, 180, 180)', // GREY
+    'rgb(63, 236, 35)', // GREEN
+    'rgb(233, 19, 19)', // RED
+  ],
+});
+
+return (
+    &lt;View 
+      style={styles.row}
+      key={index}
+    &gt;
+      &lt;AnimatedScrollView
+        horizontal={true}
+        directionalLockEnabled={true}
+        style={[{flex: 1, height: 100}, {backgroundColor: bgColor}]}
+        onScroll={this._animateScroll.bind(this, index)}
+        scrollEventThrottle={16}
+      &gt;
+        &lt;View style=&gt;
+          &lt;Text&gt;{value + "  &lt;----- Slide the row that way and release"}&lt;/Text&gt;
+        &lt;/View&gt;
+      &lt;/AnimatedScrollView&gt;
+    &lt;/View&gt;
+)
+</code></pre>
+
+<p>  },
+<code>``
+We need to create an interpolation. How the interpolation works is given a value, in our case colors that are just an array of values</code>[0,1,2]<code>will return a new value which corresponds to the</code>outputRange<code>. So when the</code>this.state.colors[index]<code>value is</code>0<code>it will return</code>GREY<code>or</code>rgb(180, 180, 180)<code>, and so on and so forth. When it changes from</code>GREY<code>to</code>GREEN<code>it'll animate to the new color of</code>rgb(63, 236, 35)`.</p>
+
+<p>This is where we use the <code>AnimatedScrollView</code> we created before. This will correctly take the animated value we pass in a grab the interpolatd background.</p>
+
+<p>We pass in a function to onScroll and setup the <code>scrollEventThrottle</code> with the default value. This means our scroll event will be called every 16 millseconds.</p>
+
+<p>```
+  _animateScroll: function(index, e) {</p>
+
+<pre><code>var threshold = width / 5;
+var x = e.nativeEvent.contentOffset.x;
+var target = null;
+
+x = x * -1;
+
+if (x &gt; -50 &amp;&amp; this._target != GREY) {
+  target = GREY;
+} else if (x &lt; -50 &amp;&amp; x &gt; -threshold &amp;&amp; this._target != GREEN) {
+  target = GREEN;
+} else if (x &lt; -threshold &amp;&amp; this._target != RED) {
+  target = RED;
+}
+
+if (target !== null) {
+  this._target = target;
+  this._targetIndex = index;
+
+  Animated.timing(this.state.colors[index], {
+    toValue: target,
+    duration: 180,
+  }).start();
+}
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>We get the threshold of the <code>deviceWidth</code> we got at the creation of the app. We get the <code>x</code> offset of the scrollView. Finally depending on which direction you want users to swipes to take action we need to multiply ( or not ) by <code>-1</code>. The <code>-1</code> means swiping right to left will cause the actions to trigger.</p>
+
+<p>We setup various thresholds to animate to. Start is <code>GREY</code>, middle threshold is <code>GREEN</code> and anything greater is <code>RED</code>.</p>
+
+<p>Finally if target isn&rsquo;t null (aka someone did something), we trigger an <code>Animated.timing</code> on our color. This will say for the next 180 milliseconds transition to our target color. This will cause our color interpolation to kick in and transition the background.</p>
+
+<p>Hopefully this all doesn&rsquo;t seem too complicated. We are essentially saying &ldquo;If someone swipes this far make the background color this one&rdquo;.</p>
+
+<h1>Take an action</h1>
+
+<p>```</p>
+
+<pre><code>return (
+    &lt;View 
+      style={styles.row}
+      key={index}
+    &gt;
+      &lt;AnimatedScrollView
+        horizontal={true}
+        directionalLockEnabled={true}
+        style={[{flex: 1, height: 100}, {backgroundColor: bgColor}]}
+        onScroll={this._animateScroll.bind(this, index)}
+        scrollEventThrottle={16}
+        onMomentumScrollBegin={this.takeAction}
+      &gt;
+        &lt;View style=&gt;
+          &lt;Text&gt;{value + "  &lt;----- Slide the row that way and release"}&lt;/Text&gt;
+        &lt;/View&gt;
+      &lt;/AnimatedScrollView&gt;
+    &lt;/View&gt;
+)
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>We do have to dig through the internal code a bit but a seemingly undocumented action of the <code>ScrollResponder</code> is the <code>onMomentumScrollBegin</code>. From the code comments this function is called when <code>When releasing the view starts bouncing back</code>. So the user has released, and the row is about to scroll back into the 0 position.</p>
+
+<p>Why this action? Well we setup things to operate on the scroll actions. Any other event would cause the actions the user want to take to be wrong since the <code>onScroll</code> events will be fired when the user releases.</p>
+
+<p>We should add some protection code and such, but you can implement that.</p>
+
+<p>```
+  takeAction: function() {</p>
+
+<pre><code>this.setState({
+  action: true
+});
+</code></pre>
+
+<p>  },
+```
+Here we just are causing a re-render so our app updates with the state below. However in this particular method you would actually take an action based upon the offset the person swiped to.</p>
+
+<p>```
+  getActionText: function() {</p>
+
+<pre><code>var actionText = '';
+
+if (this.state.action) {
+  if (this._target == GREEN) {
+    actionText = 'Save Action';
+  } else if (this._target == RED) {
+    actionText = 'Delete Action'
+  } else {
+    actionText = 'No Action';
+  }
+
+  return 'You took "' + actionText + '" on the ' + this._targetIndex + ' row';
+}
+
+return 'You have not taken an action yet';
+</code></pre>
+
+<p>  },
+```
+Just determing text to show to the user.</p>
+
+<h1>Final code</h1>
+
+<p>This is a pretty nice technique, and some what simple to implement but as mentioned it has some drawbacks.</p>
+
+<p>Check it out here live <a href="https://rnplay.org/apps/LDI42g">https://rnplay.org/apps/LDI42g</a>.</p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);</p>
+
+<p>var {
+  width,
+  height
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  ScrollView,
+  ListView,
+  View,
+  Text,
+  Animated
+} = React;</p>
+
+<p>var GREY = 0;
+var GREEN = 1;
+var RED = 2;</p>
+
+<p>var values = [1,2,3,4];</p>
+
+<p>var AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);</p>
+
+<p>var AnimatedFlick = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    values: values,
+    colors: values.map( () =&gt; new Animated.Value(GREY) )
+};
+</code></pre>
+
+<p>  },
+  _animateScroll: function(index, e) {</p>
+
+<pre><code>var threshold = width / 5;
+var x = e.nativeEvent.contentOffset.x;
+var target = null;
+
+x = x * -1;
+
+if (x &gt; -50 &amp;&amp; this._target != GREY) {
+  target = GREY;
+} else if (x &lt; -50 &amp;&amp; x &gt; -threshold &amp;&amp; this._target != GREEN) {
+  target = GREEN;
+} else if (x &lt; -threshold &amp;&amp; this._target != RED) {
+  target = RED;
+}
+
+if (target !== null) {
+  this._target = target;
+  this._targetIndex = index;
+
+  Animated.timing(this.state.colors[index], {
+    toValue: target,
+    duration: 180,
+  }).start();
+}
+</code></pre>
+
+<p>  },
+  takeAction: function() {</p>
+
+<pre><code>this.setState({
+  action: true
+});
+</code></pre>
+
+<p>  },
+  getActionText: function() {</p>
+
+<pre><code>var actionText = '';
+
+if (this.state.action) {
+  if (this._target == GREEN) {
+    actionText = 'Save Action';
+  } else if (this._target == RED) {
+    actionText = 'Delete Action'
+  } else {
+    actionText = 'No Action';
+  }
+
+  return 'You took "' + actionText + '" on the ' + this._targetIndex + ' row';
+}
+
+return 'You have not taken an action yet';
+</code></pre>
+
+<p>  },
+  _renderRow: function(value, index) {</p>
+
+<pre><code>var bgColor = this.state.colors[index].interpolate({
+  inputRange: [
+    GREY,
+    GREEN,
+    RED
+  ],
+  outputRange: [
+    'rgb(180, 180, 180)',
+    'rgb(63, 236, 35)',
+    'rgb(233, 19, 19)',
+  ],
+});
+
+return (
+    &lt;View 
+      style={styles.row}
+      key={index}
+    &gt;
+      &lt;AnimatedScrollView
+        horizontal={true}
+        directionalLockEnabled={true}
+        style={[{flex: 1, height: 100}, {backgroundColor: bgColor}]}
+        onScroll={this._animateScroll.bind(this, index)}
+        scrollEventThrottle={16}
+        onMomentumScrollBegin={this.takeAction}
+      &gt;
+        &lt;View style=&gt;
+          &lt;Text&gt;{value + "  &lt;----- Slide the row that way and release"}&lt;/Text&gt;
+        &lt;/View&gt;
+      &lt;/AnimatedScrollView&gt;
+    &lt;/View&gt;
+)
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;ScrollView style={styles.outerScroll}&gt;
+      {this.state.values.map(this._renderRow, this)}
+    &lt;/ScrollView&gt;
+    &lt;Text&gt;{this.getActionText()}&lt;/Text&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+flexDirection: 'column'
+</code></pre>
+
+<p>  },
+  outerScroll: {</p>
+
+<pre><code>flex: 1,
+flexDirection: 'column'
+</code></pre>
+
+<p>  },
+  row: {</p>
+
+<pre><code>flex: 1
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>AppRegistry.registerComponent(&lsquo;AnimatedFlick&rsquo;, () => AnimatedFlick);
+```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[React-native Animated API Basic Example]]></title>
@@ -1450,279 +1967,6 @@ return props;
 <h3>Demo</h3>
 
 <p data-height="624" data-theme-id="0" data-slug-hash="zGZOMN" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/zGZOMN/'>zGZOMN</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-
-
-<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
-
-
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Create a map with React-Art]]></title>
-    <link href="http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art/"/>
-    <updated>2015-05-30T10:15:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art</id>
-    <content type="html"><![CDATA[<h3>Intro</h3>
-
-<p>Just Like the title states, we&rsquo;re going to make a map with <code>react-art</code>. When you think of maps many people jump straight to <code>leaflet</code>, <code>google maps</code>, or <code>mapbox</code>. Well one of the key things they are doing is just plotting map tiles.</p>
-
-<p>Map tiles are just images that can be stitched together and form a map. That is why whenever you drag on a map portions of it pop in in squares.</p>
-
-<p>Don&rsquo;t worry, I won&rsquo;t get deep into mapping terminology because I don&rsquo;t know it. If you want to learn checkout this post <a href="http://www.macwright.org/2012/05/15/how-web-maps-work.html">http://www.macwright.org/2012/05/15/how-web-maps-work.html</a></p>
-
-<p>All you&rsquo;ll need to know is <code>Latitude</code>, <code>Longitude</code>, and <code>Tile</code> aka (an image of a piece of a map).</p>
-
-<p>Our tilemap source will be the fabulous <a href="https://www.openstreetmap.org/">OpenStreetMap</a>. It&rsquo;s a community driven mapping solution. Check it out and contribute if you can!</p>
-
-<p>This was going to be a blog post about creating a map but I ended up turning it into a library.</p>
-
-<h3>What I Built</h3>
-
-<p>I ended up writing up a library to show it off.</p>
-
-<p>Checkout <a href="https://github.com/browniefed/react-art-map">https://github.com/browniefed/react-art-map</a> for the library and examples.</p>
-
-<p>We use <a href="https://github.com/zacbarton/node-googlemaps-utils">https://github.com/zacbarton/node-googlemaps-utils</a> and
-<a href="https://github.com/gagan-bansal/map-the-tiles">https://github.com/gagan-bansal/map-the-tiles</a>.</p>
-
-<p>These 2 libraries are helper libraries.</p>
-
-<p><code>googlemaps-utils</code> takes a <code>width/height</code> and a central <code>lat/long</code> and gives us a bounding box which is just the <code>top/left</code> coordinate and the <code>bottom/right</code> coordinate.</p>
-
-<p>We then take that bounding box and convert it to meter points so we can generate a <a href="http://en.wikipedia.org/wiki/Mercator_projection">mercator projection</a>.</p>
-
-<p>The <code>map-the-tiles</code> takes those meter points and returns <code>x,y,z</code> points;</p>
-
-<p>Those <code>x,y,z</code> points get fed into the OSM url <code>http://{s}.tile.osm.org/{z}/{x}/{y}.png</code> and we get our tile images.</p>
-
-<p>We can then render them at their given <code>top/left</code> points w/ <code>react-art</code>.</p>
-
-<p>Ultimately this library was built with A LOT of googling and assembling some tools people already constructed.</p>
-
-<h3>Some Internals</h3>
-
-<p>Most of the logic is just in the <code>TileUtil</code>. There are likely much more efficient ways to do this however this is my first stab at it with my limited geo knowledge.</p>
-
-<p>Converts <code>lat/long</code> to meter points
-```</p>
-
-<pre><code>degrees2meters(lon,lat) {
-    var x = lon * 20037508.34 / 180;
-    var y = Math.log(Math.tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180);
-    y = y * 20037508.34 / 180;
-    return [x, y]
-}
-</code></pre>
-
-<p>```</p>
-
-<p>Converts meters to coordinates
-```</p>
-
-<pre><code>meters2degress(x,y) {
-    var lon = x *  180 / 20037508.34 ;
-    var lat = Number(180 / Math.PI * (2 * Math.atan(Math.exp(y * Math.PI / 180)) - Math.PI / 2));
-    return [lon, lat]
-}
-</code></pre>
-
-<p>```</p>
-
-<p>The main layout generator.</p>
-
-<p>```</p>
-
-<pre><code>getTileLayout(options) {
-    var layout = [];
-    var bounds = gmu.calcBounds(options.center[1], options.center[0], options.zoom, options.width, options.height); // GET COORDINATE BOUNDS
-
-    var topLeftMeters = TileUtil.degrees2meters(bounds.left, bounds.top),
-        bottomRightMeters = TileUtil.degrees2meters(bounds.right, bounds.bottom);
-
-    //Conver the coordinates each to meters
-
-    var tiler = new MapTheTiles(null, options.tileWidth); // Create a generic tiler based on our tile width
-
-    var layoutForBounds = {
-        top: topLeftMeters[1],
-        left: topLeftMeters[0],
-        right: bottomRightMeters[0],
-        bottom: bottomRightMeters[1]
-    };
-    //Pass in the meters for each point
-
-    var tiles = tiler.getTiles(layoutForBounds, options.zoom) // Get the x,y,z points for our zoom level
-
-    tiles.forEach(function(tile) {
-        var coordPoint = {
-            x: tile.X,
-            y: tile.Y,
-            z: tile.Z
-        },
-        coord = {
-            x: tile.left,
-            y: tile.top,
-            img: TileUtil.getTileUrl(options.tileSource, coordPoint, options.subdomains) //Just format the OSM tile resource
-        };
-
-        layout.push(coord);
-    }, this);
-
-    return layout;
-}
-</code></pre>
-
-<p>```</p>
-
-<p>This is how we render each tile.
-We have the <code>x/y</code> coordinates thanks to our tiler.</p>
-
-<p>We use <code>Paths.js</code> to create a generic rectangular path.
-This is so we can support <code>react-native</code> in the future since the shapes have yet to be created.</p>
-
-<p>Then we create a new fill with the tile image and set it to the width/height of the generic tile at <code>0,0</code> of the shape.</p>
-
-<p>This technically is a pattern for the background but because we set it to the exact <code>width/height</code> of the image it just renders the image once.</p>
-
-<p>```
-var rectanglePath = Rectangle({
-  top: 0,
-  left: 0,
-  right: 256,
-  bottom: 256
-}).path.print();
-///UP ABOVE</p>
-
-<pre><code>    return layout.map(function(tile) {
-        return (
-            &lt;Shape
-                d={rectanglePath}
-                x={tile.x}
-                y={tile.y}
-                fill={new Pattern(tile.img, this.props.tileWidth , this.props.tileWidth, 0, 0)}
-            /&gt;
-        )
-    }, this);
-</code></pre>
-
-<p>```</p>
-
-<h3>The Code</h3>
-
-<p>```
-var React = require(&lsquo;react&rsquo;);
-var ReactMap = require(&lsquo;react-art-map&rsquo;);
-var ReactArt = require(&lsquo;react-art&rsquo;),</p>
-
-<pre><code>Circle = require('react-art/shapes/circle');
-</code></pre>
-
-<p>var Map = ReactMap.Map;</p>
-
-<p>var viewportWidth = function() {</p>
-
-<pre><code>return  window.innerWidth - 100;
-</code></pre>
-
-<p>}
-var viewportHeight = function() {</p>
-
-<pre><code>return window.innerHeight - 100;
-</code></pre>
-
-<p>}</p>
-
-<p>var center = [</p>
-
-<pre><code>-122.668197,45.525292
-</code></pre>
-
-<p>],
-offset = 3;</p>
-
-<p>var Demo = React.createClass({
-  getInitialState: function() {</p>
-
-<pre><code>return {
-  center: center,
-  zoom: 15,
-  x: 100
-}
-</code></pre>
-
-<p>  },
-  componentDidMount: function() {</p>
-
-<pre><code>requestAnimationFrame(this.updateCircle);
-</code></pre>
-
-<p>  },
-  updateCircle: function() {</p>
-
-<pre><code>if (this.state.x &gt;= viewportWidth()) {
-    offset = -3;
-} else if ( this.state.x &lt;= 99) {
-    offset = 3;
-}
-
-this.state.x += offset;
-this.setState(this.state, function() {
-    requestAnimationFrame(this.updateCircle);
-});
-</code></pre>
-
-<p>  },
-  handleDrag: function(newCenter) {</p>
-
-<pre><code>this.setState({
-  center: newCenter
-});
-</code></pre>
-
-<p>  },
-  render: function () {</p>
-
-<pre><code>return (
-  &lt;div&gt;
-    &lt;Map
-        width={viewportWidth()}
-        height={viewportHeight()}
-        center={this.state.center}
-        zoom={this.state.zoom}
-        tileSource="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
-        onDrag={this.handleDrag}
-    &gt;
-        &lt;Circle 
-            x={this.state.x}
-            y={100}
-            radius={30}
-            stroke="#000"
-            strokeWidth={5}
-        /&gt;
-    &lt;/Map&gt;
-  &lt;/div&gt;
-);
-</code></pre>
-
-<p>  }
-});</p>
-
-<p>module.exports = Demo;
-```</p>
-
-<h3>React Native?!?!?!</h3>
-
-<p>React Native has a map implementation but it doesn&rsquo;t allow for much flexibility. You can render pins but that is about it.</p>
-
-<p>With this library once the Pattern fill gets implemented you can render any map tile based service + any cool visualiztions on the map that you want.</p>
-
-<p>I&rsquo;ve logged an issue here <a href="https://github.com/facebook/react-native/issues/1462">https://github.com/facebook/react-native/issues/1462</a> so follow along for when it gets implemented.</p>
-
-<h3>Results</h3>
-
-<p data-height="624" data-theme-id="0" data-slug-hash="PqWRvz" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/PqWRvz/'>PqWRvz</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 
 
 <script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
