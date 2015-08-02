@@ -4,7 +4,7 @@
   <title><![CDATA[Category: components | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/components/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-08-01T16:39:14-07:00</updated>
+  <updated>2015-08-02T08:10:21-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -57,6 +57,9 @@ return NameSupplierComponent;
 <p>}</p>
 
 <p>```</p>
+
+<!-- more -->
+
 
 <p>This component is slightly contrived and doesn&rsquo;t show this will help us integrate with a legacy app. All this component is doing is passing down a prop to a component you gave it.
 So how would we go about using this higher order component?</p>

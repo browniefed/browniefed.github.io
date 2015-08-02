@@ -4,7 +4,7 @@
   <title><![CDATA[Category: canvas | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/canvas/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-08-01T16:39:14-07:00</updated>
+  <updated>2015-08-02T08:10:21-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -341,6 +341,9 @@ Combined with some tweening you could make some very effective graphs that anima
 
 <p></Group>
 ```</p>
+
+<!-- more -->
+
 
 <p>The coordinates of the circle on the whole canvas would actually be <code>120,120</code> but because of the group at <code>x = 100, y = 100</code> we just need to say <code>x = 20, y = 20</code>.</p>
 

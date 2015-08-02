@@ -4,7 +4,7 @@
   <title><![CDATA[Category: meteor | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/meteor/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-08-01T16:39:14-07:00</updated>
+  <updated>2015-08-02T08:10:21-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -40,6 +40,9 @@ The documentation we care about is here <a href="http://developer.trimet.org/ws_
 <p>Currently on Mac/Linux are officially supported and Windows has an unofficial installer. But you can&rsquo;t use Meteorite on Windows which you want meteorite!
 To install simple go here and follow the instrutions(2 steps!) <a href="http://docs.meteor.com/">http://docs.meteor.com/</a>
 Step 2 being creating a meteor project</p>
+
+<!-- more -->
+
 
 <p><code>
 meteor create realtimetransit

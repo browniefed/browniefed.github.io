@@ -4,7 +4,7 @@
   <title><![CDATA[Category: compass | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/compass/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-08-01T16:39:14-07:00</updated>
+  <updated>2015-08-02T08:10:21-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -44,6 +44,9 @@ If that isn&rsquo;t the case we&rsquo;ll need <code>webpack</code>, <code>raw-lo
 </code></pre>
 
 <p>```</p>
+
+<!-- more -->
+
 
 <p>This is where you&rsquo;re running into your issue where <code>node-sass</code> can&rsquo;t find the compass import.</p>
 

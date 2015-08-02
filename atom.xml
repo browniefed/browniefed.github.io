@@ -4,7 +4,7 @@
 	<title><![CDATA[JavaScript Without Grammar]]></title>
 	<link href="http://browniefed.com/atom.xml" rel="self"/>
 	<link href="http://browniefed.com/"/>
-	<updated>2015-08-01T16:39:14-07:00</updated>
+	<updated>2015-08-02T08:10:21-07:00</updated>
 	<id>http://browniefed.com/</id>
 	<author>
 		<name><![CDATA[Jason Brown]]></name>
@@ -4650,6 +4650,11 @@ However the great thing about <code>react</code> and <code>react-art</code> is t
 
 <p>Example of a basic tween movement</p>
 
+<!-- more -->
+
+
+
+
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -4731,6 +4736,11 @@ However the great thing about <code>react</code> and <code>react-art</code> is t
 </pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Group x={100} y={100}&gt;
 </span><span class='line'>    &lt;Circle radius={10} stroke="#000" strokeWidth={3} x={20} y={20}/&gt;
 </span><span class='line'>&lt;/Group&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<!-- more -->
 
 
 <p>The coordinates of the circle on the whole canvas would actually be <code>120,120</code> but because of the group at <code>x = 100, y = 100</code> we just need to say <code>x = 20, y = 20</code>.</p>
@@ -5319,6 +5329,9 @@ Then run <code>npm install art</code></p>
 </ul>
 
 
+<!-- more -->
+
+
 <p>To add ART.xcodeproj find the file located in <code>react-native/Libraries/ART/ART.xcodeproj</code> and just drag it over to the <code>Libraries</code> section in XCode.
 That should look like so</p>
 
@@ -5772,6 +5785,11 @@ It&rsquo;s a function that takes a React component of your choosing and then ret
 </span></code></pre></td></tr></table></div></figure>
 
 
+
+
+<!-- more -->
+
+
 <p>This component is slightly contrived and doesn&rsquo;t show this will help us integrate with a legacy app. All this component is doing is passing down a prop to a component you gave it.
 So how would we go about using this higher order component?</p>
 
@@ -5968,6 +5986,11 @@ If that isn&rsquo;t the case we&rsquo;ll need <code>webpack</code>, <code>raw-lo
 </span></code></pre></td></tr></table></div></figure>
 
 
+
+
+<!-- more -->
+
+
 <p>This is where you&rsquo;re running into your issue where <code>node-sass</code> can&rsquo;t find the compass import.</p>
 
 <p>Thanks to igosuki, compass mixins has been ported to just a bunch of sass-mixins outside of the ruby gem. <a href="https://github.com/Igosuki/compass-mixins">https://github.com/Igosuki/compass-mixins</a></p>
@@ -6043,6 +6066,11 @@ If you are running your build script from a different location you&rsquo;ll have
 			<![CDATA[<p>At my work we are a Java shop. So spinning up a server is quite a process. Additionally our static front end files are spread out across the system and we use RequireJS (ugh) to wrangle everything. Then in order to test we were running a selenium test to hit the test_runner page and wait for mocha to run and the tests. This is so unbelievably slow and quite hectic when it comes to managing relative paths of our config.</p>
 
 <p>So to make things simpler I decided it&rsquo;d be in my best interest to use PhatonmJS. I decided to spin up a server using <code>var server = require('webserver').create();</code> and manage the requests and just route and serve up all the correct files. I thought this would work however I ran into a snag. Here is some sample code below</p>
+
+<!-- more -->
+
+
+
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -6355,6 +6383,11 @@ If you are running your build script from a different location you&rsquo;ll have
 </span><span class='line'>
 </span><span class='line'><span class="p">});</span>
 </span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<!-- more -->
 
 
 <p>To use it</p>

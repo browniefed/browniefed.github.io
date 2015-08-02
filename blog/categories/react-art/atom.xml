@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react-art | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/react-art/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-08-01T16:39:14-07:00</updated>
+  <updated>2015-08-02T08:10:21-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -1570,6 +1570,9 @@ However the great thing about <code>react</code> and <code>react-art</code> is t
 <p>This article is less about <code>react-art</code> and more about just how to use <code>shifty.js</code> since <code>react-art</code> is just an extension of <code>react</code>, and if you know the fundamental concepts of <code>react</code> then you can do just about anything.</p>
 
 <p>Example of a basic tween movement</p>
+
+<!-- more -->
+
 
 <p>```
 var tweenable = new Shifty();</p>
