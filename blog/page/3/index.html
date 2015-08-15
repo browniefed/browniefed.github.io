@@ -54,6 +54,69 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
+		<h1><a href="/blog/2015/05/20/react-art-zooming-and-dragging/">React Art Zooming and Dragging</a></h1>
+		<time>20 May 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>React-art is awesome, you can easily embody the same concepts in React and your visualizations magically work.</p>
+
+<p>I personally have not done a ton of visualization, and the little I have done is mostly rendering graphs with D3.</p>
+
+<p>I&rsquo;ve been tasked with doing a dive for a difficult visualization. We ran into a scenario where we needed the ability to zoom and drag the canvas. D3 conveniently comes with zoom/drag behaviors. D3 integrates pretty well with react-art for doing a lot of the math/generating paths, however after watching <a href="https://www.youtube.com/watch?v=2ii1lEkIv1s">React.js Conf &ndash; Scalable Data Visualization</a> the things immediatley called out that D3 doesn&rsquo;t integrate with react-art are transitions and behaviors (zoom/drag).</p>
+
+<p>So immediately I&rsquo;m thinking about how to accomplish this. Do I need a global scaler that scales all of my coordinates for zooming? Do I need to manage a coordinate system and adjust all of my coordinates with the dragged X/Y offsets.</p>
+
+<p>I googled around, and a few people recommended using <code>canvasEl.getContext('2d').translate(x,y)</code>. I gave this a try with refs, that didn&rsquo;t work.</p>
+
+<p>It did lead me down the right path though. What if I was able to just utilize one global wrapper, and all of my other code could remain unchanged. The great thing about <code>Group</code> is that the coordinate system of the children gets reset, so <code>0,0</code> is now the <code>x,y</code> of the <code>Group</code></p>
+
+<p>Example:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;Group x={100} y={100}&gt;
+</span><span class='line'>    &lt;Circle radius={10} stroke="#000" strokeWidth={3} x={20} y={20}/&gt;
+</span><span class='line'>&lt;/Group&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2015/05/20/react-art-zooming-and-dragging/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/canvas/'>canvas</a>, <a class='category' href='/blog/categories/d3/'>d3</a>, <a class='category' href='/blog/categories/dragging/'>dragging</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/svg/'>svg</a>, <a class='category' href='/blog/categories/zooming/'>zooming</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
 		<h1><a href="/blog/2015/05/16/react-native-and-socket-dot-io/">React Native and Socket.io</a></h1>
 		<time>16 May 2015</time>
 	</header>
@@ -332,49 +395,6 @@ If that isn&rsquo;t the case we&rsquo;ll need <code>webpack</code>, <code>raw-lo
 			Tagged under
 		
     <a class='category' href='/blog/categories/compass/'>compass</a>, <a class='category' href='/blog/categories/sass/'>sass</a>, <a class='category' href='/blog/categories/scss/'>scss</a>, <a class='category' href='/blog/categories/webpack/'>webpack</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/">PhantomJS Creating &amp; Connecting to Server</a></h1>
-		<time>15 June 2014</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><p>At my work we are a Java shop. So spinning up a server is quite a process. Additionally our static front end files are spread out across the system and we use RequireJS (ugh) to wrangle everything. Then in order to test we were running a selenium test to hit the test_runner page and wait for mocha to run and the tests. This is so unbelievably slow and quite hectic when it comes to managing relative paths of our config.</p>
-
-<p>So to make things simpler I decided it&rsquo;d be in my best interest to use PhatonmJS. I decided to spin up a server using <code>var server = require('webserver').create();</code> and manage the requests and just route and serve up all the correct files. I thought this would work however I ran into a snag. Here is some sample code below</p>
-
-</div>
-          
-          
-            <a rel="full-article" href="/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/">Read on &rarr;</a>
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/css/'>css</a>, <a class='category' href='/blog/categories/file/'>file</a>, <a class='category' href='/blog/categories/html/'>html</a>, <a class='category' href='/blog/categories/img/'>img</a>, <a class='category' href='/blog/categories/js/'>js</a>, <a class='category' href='/blog/categories/phantomjs/'>phantomjs</a>, <a class='category' href='/blog/categories/server/'>server</a>, <a class='category' href='/blog/categories/server/'>server</a>, <a class='category' href='/blog/categories/static/'>static</a>, <a class='category' href='/blog/categories/testing/'>testing</a>, <a class='category' href='/blog/categories/unit/'>unit</a>
 	
 
 

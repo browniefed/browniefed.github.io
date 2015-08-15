@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/react/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-08-02T08:10:21-07:00</updated>
+  <updated>2015-08-15T08:07:54-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -12,6 +12,354 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[React-native Animated API with PanResponder]]></title>
+    <link href="http://browniefed.com/blog/2015/08/15/react-native-animated-api-with-panresponder/"/>
+    <updated>2015-08-15T14:17:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/08/15/react-native-animated-api-with-panresponder</id>
+    <content type="html"><![CDATA[<h1>Introduction</h1>
+
+<p>The previous example was a very basic one, just moving a box around the screen. But you&rsquo;ll likely want to do something by touch. Dragging, dropping, flicking, all those good mobile interactions. I previously covered how to make Tinder cards but I didn&rsquo;t add any true animations in. With the new Animated API you can make an even better Tinder card demo. And that&rsquo;s what <a href="https://twitter.com/notbrent">Brent</a> did.</p>
+
+<p>This blog post was inspired by <a href="https://github.com/brentvatne/react-native-animated-demo-tinder">https://github.com/brentvatne/react-native-animated-demo-tinder</a>. I decide to break it apart, simplify it and explain the bits as we re-build it.</p>
+
+<p>We will not fully reimplement it since you can learn the full ins and outs by checking out the code.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/b5K2fcx.gif">http://i.imgur.com/b5K2fcx.gif</a>" title="Final with rotation and opacity" ></p>
+
+<!-- more -->
+
+
+<h1>Setup</h1>
+
+<p>Just like before we&rsquo;ll get a pretty basic setup going</p>
+
+<p>Imports/Variables</p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  View,
+  Animated,
+  PanResponder
+} = React;</p>
+
+<p>var SQUARE_DIMENSIONS = 100;</p>
+
+<p>```</p>
+
+<p>Styles</p>
+
+<p>```
+var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+alignItems: 'center',
+justifyContent: 'center'
+</code></pre>
+
+<p>  },
+  square: {</p>
+
+<pre><code>width: SQUARE_DIMENSIONS,
+height: SQUARE_DIMENSIONS,
+backgroundColor: 'blue'
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>```</p>
+
+<p>Main Code</p>
+
+<p>```
+var AnimatedFlick = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    pan: new Animated.ValueXY()
+};
+</code></pre>
+
+<p>  },
+  getStyle: function() {</p>
+
+<pre><code>return [
+          styles.square, 
+          {
+            transform: this.state.pan.getTranslateTransform()
+          }
+        ];
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Animated.View style={this.getStyle()} /&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<h1>Pan Responder</h1>
+
+<p>The <code>PanResponder</code> is our touch handler. The great thing about the <code>PanResponder</code> and <code>Animated</code> API were that they were made to work together.</p>
+
+<p>We need to create our PanResponder</p>
+
+<p>```
+  componentWillMount: function() {</p>
+
+<pre><code>    this._panResponder = PanResponder.create({
+      onMoveShouldSetResponderCapture: () =&gt; true, //Tell iOS that we are allowing the movement
+      onMoveShouldSetPanResponderCapture: () =&gt; true, // Same here, tell iOS that we allow dragging
+      onPanResponderGrant: (e, gestureState) =&gt; {
+        this.state.pan.setOffset({x: this.state.pan.x.getAnimatedValue(), y: this.state.pan.y.getAnimatedValue()});
+        this.state.pan.setValue({x: 0, y: 0}); //Initial value
+      },
+      onPanResponderMove: Animated.event([
+        null, {dx: this.state.pan.x, dy: this.state.pan.y}
+      ]), // Creates a function to handle the movement and set offsets
+      onPanResponderRelease: () =&gt; {
+        this.state.pan.flattenOffset(); // Flatten the offset so it resets the default positioning
+      }
+    });
+</code></pre>
+
+<p>  },</p>
+
+<p><code>``
+We need</code>onMoveShouldSetResponderCapture<code>and</code>onMoveShouldSetPanResponderCapture` to always return true. This tells iOS that we are allowing the user to make movements and we&rsquo;re going to track them.</p>
+
+<p>The function <code>onPanResponderGrant</code> is called once when we approve the animation. This gives us all of our initial values. We set the start value, and then also the offset which is our current pan values. Then we set our animation start values to <code>0,0</code>. This basically resets our movement changes so our delta <code>x,y</code> will be applied from a 0 point. Hopefully that makes sense.</p>
+
+<p>We give our <code>onPanResponderMove</code> an <code>Animated.event</code>. This creates a function that will automatically take the gestureState which has 2 keys on it <code>dx</code> and <code>dy</code> and put those changes on our <code>this.state.pan.x</code> and our <code>this.state.pan.y</code> respectively.</p>
+
+<p>Finally <code>onPanResponderRelease</code> we call <code>flattenOffset</code>. This takes the current <code>x,y</code> and the current offset (aka how much you&rsquo;ve dragged it around). And combines them.</p>
+
+<p>The internal code for flattenOffset looks like this</p>
+
+<p>```
+  flattenOffset(): void {</p>
+
+<pre><code>this._value += this._offset;
+this._offset = 0;
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>```
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Animated.View 
+      style={this.getStyle()} 
+      {...this._panResponder.panHandlers}
+    /&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+<code>``
+Here we spread the handlers onto the our</code>Animated.View` so it sets up all the calls correctly.</p>
+
+<h1>We have a square that moves</h1>
+
+<p>Great we have a square that moves and it stays where we left it, and also when we move it again it picks up from the same coordinates that we dropped it at.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/vFYB4JY.gif">http://i.imgur.com/vFYB4JY.gif</a>" title="Moving Square" ></p>
+
+<h1>Reset to 0 with a spring</h1>
+
+<p>We just replace our <code>flattenOffset</code> call which would leave our square where we left it and instead create a spring that animates our <code>this.state.pan</code> back to 0. Which will correctly animate our <code>x,y</code> back to 0 and provide a nice little bounce.</p>
+
+<p>Here is the code.</p>
+
+<p>```
+  onPanResponderRelease: () => {</p>
+
+<pre><code>Animated.spring(this.state.pan, {
+  toValue: 0
+}).start();
+</code></pre>
+
+<p>  }
+```
+Yes it is really that simple.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/PkNpyBH.gif">http://i.imgur.com/PkNpyBH.gif</a>" title="Springs back to center" ></p>
+
+<h1>Opacity and rotation</h1>
+
+<p>Because we want the opacity and the rotation to be tied to the movement position we can use the <code>interpolate</code> we created from <code>Animated.ValueXY</code> on <code>this.state.pan</code> .</p>
+
+<p>We&rsquo;ll have to make some small adjustments but the only thing we need to change is our <code>getStyle</code> function.</p>
+
+<p>```
+  getStyle: function() {</p>
+
+<pre><code>return [
+          styles.square, 
+          {
+            transform: [
+              {
+                translateX: this.state.pan.x
+              },
+              {
+                translateY: this.state.pan.y
+              },
+              {
+                rotate: this.state.pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]})
+              }
+            ]
+          },
+          {
+            opacity: this.state.pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.5, 1, 0.5]})
+          }
+        ];
+</code></pre>
+
+<p>  },
+<code>``
+We create an interpolate that determines the correct value from an</code>inputRange<code>.
+When our drag is</code>-200<code>or greater our rotate will be</code>-30 degrees<code>, at 0 it is 0, and if moved to the right at</code>200<code>or great then it's</code>30 degrees`.</p>
+
+<p>Interpolate is smart enough to take an input range, and interpolate an inbetween degree. So as you slowly move the card the degrees will adjust, so an input value of <code>100</code> would translate to a <code>15 degree</code> rotation.</p>
+
+<p>For opacity we want the same inputs, except our outputs will be <code>.5</code> for both sides and <code>1</code> at 0 movement.
+The interpolation of the opacity operates the same as the degrees, as you rotate it&rsquo;ll adjust the opacity to a maximum/minimum of .5.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/b5K2fcx.gif">http://i.imgur.com/b5K2fcx.gif</a>" title="Final with rotation and opacity" ></p>
+
+<h1>Final</h1>
+
+<p>This doesn&rsquo;t explain all the techniques used in the tinder card demo. One such thing is the flicking capabilities.
+That uses <code>Animated.decay</code> and some physics (velocity,friction) to animate a value.</p>
+
+<h3>Play with it here <a href="https://rnplay.org/apps/71CyoA">https://rnplay.org/apps/71CyoA</a>.</h3>
+
+<h1>Full Code</h1>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  View,
+  Animated,
+  PanResponder
+} = React;</p>
+
+<p>var SQUARE_DIMENSIONS = 100;</p>
+
+<p>var AnimatedFlick = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    pan: new Animated.ValueXY()
+};
+</code></pre>
+
+<p>  },
+  componentWillMount: function() {</p>
+
+<pre><code>    this._panResponder = PanResponder.create({
+      onMoveShouldSetResponderCapture: () =&gt; true,
+      onMoveShouldSetPanResponderCapture: () =&gt; true,
+      onPanResponderGrant: (e, gestureState) =&gt; {
+        this.state.pan.setOffset({x: this.state.pan.x.getAnimatedValue(), y: this.state.pan.y.getAnimatedValue()});
+        this.state.pan.setValue({x: 0, y: 0});
+      },
+      onPanResponderMove: Animated.event([
+            null, {dx: this.state.pan.x, dy: this.state.pan.y},
+      ]),
+      onPanResponderRelease: () =&gt; {
+        Animated.spring(this.state.pan, {
+          toValue: 0
+        }).start();
+      }
+    });
+</code></pre>
+
+<p>  },<br/>
+  getStyle: function() {</p>
+
+<pre><code>return [
+          styles.square, 
+          {
+            transform: [
+              {
+                translateX: this.state.pan.x
+              },
+              {
+                translateY: this.state.pan.y
+              },
+              {
+                rotate: this.state.pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]})
+              }
+            ]
+          },
+          {
+            opacity: this.state.pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.5, 1, 0.5]})
+          }
+        ];
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Animated.View 
+      style={this.getStyle()} 
+      {...this._panResponder.panHandlers}
+    /&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+alignItems: 'center',
+justifyContent: 'center'
+</code></pre>
+
+<p>  },
+  square: {</p>
+
+<pre><code>width: SQUARE_DIMENSIONS,
+height: SQUARE_DIMENSIONS,
+backgroundColor: 'blue'
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>AppRegistry.registerComponent(&lsquo;AnimatedFlick&rsquo;, () => AnimatedFlick);</p>
+
+<p>```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[React-native Animated ScrollView Row Swipe Actions]]></title>
@@ -1869,282 +2217,6 @@ return props;
 <h3>Demo</h3>
 
 <p data-height="624" data-theme-id="0" data-slug-hash="zGZOMN" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/zGZOMN/'>zGZOMN</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-
-
-<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
-
-
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Create a map with React-Art]]></title>
-    <link href="http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art/"/>
-    <updated>2015-05-30T10:15:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art</id>
-    <content type="html"><![CDATA[<h3>Intro</h3>
-
-<p>Just Like the title states, we&rsquo;re going to make a map with <code>react-art</code>. When you think of maps many people jump straight to <code>leaflet</code>, <code>google maps</code>, or <code>mapbox</code>. Well one of the key things they are doing is just plotting map tiles.</p>
-
-<p>Map tiles are just images that can be stitched together and form a map. That is why whenever you drag on a map portions of it pop in in squares.</p>
-
-<p>Don&rsquo;t worry, I won&rsquo;t get deep into mapping terminology because I don&rsquo;t know it. If you want to learn checkout this post <a href="http://www.macwright.org/2012/05/15/how-web-maps-work.html">http://www.macwright.org/2012/05/15/how-web-maps-work.html</a></p>
-
-<p>All you&rsquo;ll need to know is <code>Latitude</code>, <code>Longitude</code>, and <code>Tile</code> aka (an image of a piece of a map).</p>
-
-<p>Our tilemap source will be the fabulous <a href="https://www.openstreetmap.org/">OpenStreetMap</a>. It&rsquo;s a community driven mapping solution. Check it out and contribute if you can!</p>
-
-<p>This was going to be a blog post about creating a map but I ended up turning it into a library.</p>
-
-<!-- more -->
-
-
-<h3>What I Built</h3>
-
-<p>I ended up writing up a library to show it off.</p>
-
-<p>Checkout <a href="https://github.com/browniefed/react-art-map">https://github.com/browniefed/react-art-map</a> for the library and examples.</p>
-
-<p>We use <a href="https://github.com/zacbarton/node-googlemaps-utils">https://github.com/zacbarton/node-googlemaps-utils</a> and
-<a href="https://github.com/gagan-bansal/map-the-tiles">https://github.com/gagan-bansal/map-the-tiles</a>.</p>
-
-<p>These 2 libraries are helper libraries.</p>
-
-<p><code>googlemaps-utils</code> takes a <code>width/height</code> and a central <code>lat/long</code> and gives us a bounding box which is just the <code>top/left</code> coordinate and the <code>bottom/right</code> coordinate.</p>
-
-<p>We then take that bounding box and convert it to meter points so we can generate a <a href="http://en.wikipedia.org/wiki/Mercator_projection">mercator projection</a>.</p>
-
-<p>The <code>map-the-tiles</code> takes those meter points and returns <code>x,y,z</code> points;</p>
-
-<p>Those <code>x,y,z</code> points get fed into the OSM url <code>http://{s}.tile.osm.org/{z}/{x}/{y}.png</code> and we get our tile images.</p>
-
-<p>We can then render them at their given <code>top/left</code> points w/ <code>react-art</code>.</p>
-
-<p>Ultimately this library was built with A LOT of googling and assembling some tools people already constructed.</p>
-
-<h3>Some Internals</h3>
-
-<p>Most of the logic is just in the <code>TileUtil</code>. There are likely much more efficient ways to do this however this is my first stab at it with my limited geo knowledge.</p>
-
-<p>Converts <code>lat/long</code> to meter points
-```</p>
-
-<pre><code>degrees2meters(lon,lat) {
-    var x = lon * 20037508.34 / 180;
-    var y = Math.log(Math.tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180);
-    y = y * 20037508.34 / 180;
-    return [x, y]
-}
-</code></pre>
-
-<p>```</p>
-
-<p>Converts meters to coordinates
-```</p>
-
-<pre><code>meters2degress(x,y) {
-    var lon = x *  180 / 20037508.34 ;
-    var lat = Number(180 / Math.PI * (2 * Math.atan(Math.exp(y * Math.PI / 180)) - Math.PI / 2));
-    return [lon, lat]
-}
-</code></pre>
-
-<p>```</p>
-
-<p>The main layout generator.</p>
-
-<p>```</p>
-
-<pre><code>getTileLayout(options) {
-    var layout = [];
-    var bounds = gmu.calcBounds(options.center[1], options.center[0], options.zoom, options.width, options.height); // GET COORDINATE BOUNDS
-
-    var topLeftMeters = TileUtil.degrees2meters(bounds.left, bounds.top),
-        bottomRightMeters = TileUtil.degrees2meters(bounds.right, bounds.bottom);
-
-    //Conver the coordinates each to meters
-
-    var tiler = new MapTheTiles(null, options.tileWidth); // Create a generic tiler based on our tile width
-
-    var layoutForBounds = {
-        top: topLeftMeters[1],
-        left: topLeftMeters[0],
-        right: bottomRightMeters[0],
-        bottom: bottomRightMeters[1]
-    };
-    //Pass in the meters for each point
-
-    var tiles = tiler.getTiles(layoutForBounds, options.zoom) // Get the x,y,z points for our zoom level
-
-    tiles.forEach(function(tile) {
-        var coordPoint = {
-            x: tile.X,
-            y: tile.Y,
-            z: tile.Z
-        },
-        coord = {
-            x: tile.left,
-            y: tile.top,
-            img: TileUtil.getTileUrl(options.tileSource, coordPoint, options.subdomains) //Just format the OSM tile resource
-        };
-
-        layout.push(coord);
-    }, this);
-
-    return layout;
-}
-</code></pre>
-
-<p>```</p>
-
-<p>This is how we render each tile.
-We have the <code>x/y</code> coordinates thanks to our tiler.</p>
-
-<p>We use <code>Paths.js</code> to create a generic rectangular path.
-This is so we can support <code>react-native</code> in the future since the shapes have yet to be created.</p>
-
-<p>Then we create a new fill with the tile image and set it to the width/height of the generic tile at <code>0,0</code> of the shape.</p>
-
-<p>This technically is a pattern for the background but because we set it to the exact <code>width/height</code> of the image it just renders the image once.</p>
-
-<p>```
-var rectanglePath = Rectangle({
-  top: 0,
-  left: 0,
-  right: 256,
-  bottom: 256
-}).path.print();
-///UP ABOVE</p>
-
-<pre><code>    return layout.map(function(tile) {
-        return (
-            &lt;Shape
-                d={rectanglePath}
-                x={tile.x}
-                y={tile.y}
-                fill={new Pattern(tile.img, this.props.tileWidth , this.props.tileWidth, 0, 0)}
-            /&gt;
-        )
-    }, this);
-</code></pre>
-
-<p>```</p>
-
-<h3>The Code</h3>
-
-<p>```
-var React = require(&lsquo;react&rsquo;);
-var ReactMap = require(&lsquo;react-art-map&rsquo;);
-var ReactArt = require(&lsquo;react-art&rsquo;),</p>
-
-<pre><code>Circle = require('react-art/shapes/circle');
-</code></pre>
-
-<p>var Map = ReactMap.Map;</p>
-
-<p>var viewportWidth = function() {</p>
-
-<pre><code>return  window.innerWidth - 100;
-</code></pre>
-
-<p>}
-var viewportHeight = function() {</p>
-
-<pre><code>return window.innerHeight - 100;
-</code></pre>
-
-<p>}</p>
-
-<p>var center = [</p>
-
-<pre><code>-122.668197,45.525292
-</code></pre>
-
-<p>],
-offset = 3;</p>
-
-<p>var Demo = React.createClass({
-  getInitialState: function() {</p>
-
-<pre><code>return {
-  center: center,
-  zoom: 15,
-  x: 100
-}
-</code></pre>
-
-<p>  },
-  componentDidMount: function() {</p>
-
-<pre><code>requestAnimationFrame(this.updateCircle);
-</code></pre>
-
-<p>  },
-  updateCircle: function() {</p>
-
-<pre><code>if (this.state.x &gt;= viewportWidth()) {
-    offset = -3;
-} else if ( this.state.x &lt;= 99) {
-    offset = 3;
-}
-
-this.state.x += offset;
-this.setState(this.state, function() {
-    requestAnimationFrame(this.updateCircle);
-});
-</code></pre>
-
-<p>  },
-  handleDrag: function(newCenter) {</p>
-
-<pre><code>this.setState({
-  center: newCenter
-});
-</code></pre>
-
-<p>  },
-  render: function () {</p>
-
-<pre><code>return (
-  &lt;div&gt;
-    &lt;Map
-        width={viewportWidth()}
-        height={viewportHeight()}
-        center={this.state.center}
-        zoom={this.state.zoom}
-        tileSource="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
-        onDrag={this.handleDrag}
-    &gt;
-        &lt;Circle 
-            x={this.state.x}
-            y={100}
-            radius={30}
-            stroke="#000"
-            strokeWidth={5}
-        /&gt;
-    &lt;/Map&gt;
-  &lt;/div&gt;
-);
-</code></pre>
-
-<p>  }
-});</p>
-
-<p>module.exports = Demo;
-```</p>
-
-<h3>React Native?!?!?!</h3>
-
-<p>React Native has a map implementation but it doesn&rsquo;t allow for much flexibility. You can render pins but that is about it.</p>
-
-<p>With this library once the Pattern fill gets implemented you can render any map tile based service + any cool visualiztions on the map that you want.</p>
-
-<p>I&rsquo;ve logged an issue here <a href="https://github.com/facebook/react-native/issues/1462">https://github.com/facebook/react-native/issues/1462</a> so follow along for when it gets implemented.</p>
-
-<h3>Results</h3>
-
-<p data-height="624" data-theme-id="0" data-slug-hash="PqWRvz" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/PqWRvz/'>PqWRvz</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
 
 
 <script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>

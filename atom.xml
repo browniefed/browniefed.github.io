@@ -4,7 +4,7 @@
 	<title><![CDATA[JavaScript Without Grammar]]></title>
 	<link href="http://browniefed.com/atom.xml" rel="self"/>
 	<link href="http://browniefed.com/"/>
-	<updated>2015-08-02T08:10:21-07:00</updated>
+	<updated>2015-08-15T08:07:54-07:00</updated>
 	<id>http://browniefed.com/</id>
 	<author>
 		<name><![CDATA[Jason Brown]]></name>
@@ -12,6 +12,508 @@
 	</author>
 	<generator uri="http://octopress.org/">Octopress</generator>
 
+	
+	<entry>
+		
+			<title type="html"><![CDATA[React-native Animated API with PanResponder]]></title>
+		
+		<link href="http://browniefed.com/blog/2015/08/15/react-native-animated-api-with-panresponder/"/>
+		<updated>2015-08-15T14:17:00-07:00</updated>
+		<id>http://browniefed.com/blog/2015/08/15/react-native-animated-api-with-panresponder</id>
+		<content type="html">
+			<![CDATA[
+				
+					<p></p>
+				
+			]]>
+			<![CDATA[<h1>Introduction</h1>
+
+<p>The previous example was a very basic one, just moving a box around the screen. But you&rsquo;ll likely want to do something by touch. Dragging, dropping, flicking, all those good mobile interactions. I previously covered how to make Tinder cards but I didn&rsquo;t add any true animations in. With the new Animated API you can make an even better Tinder card demo. And that&rsquo;s what <a href="https://twitter.com/notbrent">Brent</a> did.</p>
+
+<p>This blog post was inspired by <a href="https://github.com/brentvatne/react-native-animated-demo-tinder">https://github.com/brentvatne/react-native-animated-demo-tinder</a>. I decide to break it apart, simplify it and explain the bits as we re-build it.</p>
+
+<p>We will not fully reimplement it since you can learn the full ins and outs by checking out the code.</p>
+
+<p><img src="http://i.imgur.com/b5K2fcx.gif" title="Final with rotation and opacity" ></p>
+
+<!-- more -->
+
+
+<h1>Setup</h1>
+
+<p>Just like before we&rsquo;ll get a pretty basic setup going</p>
+
+<p>Imports/Variables</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  AppRegistry,
+</span><span class='line'>  StyleSheet,
+</span><span class='line'>  View,
+</span><span class='line'>  Animated, 
+</span><span class='line'>  PanResponder
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>var SQUARE_DIMENSIONS = 100;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Styles</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>  container: {
+</span><span class='line'>    flex: 1,
+</span><span class='line'>    alignItems: 'center',
+</span><span class='line'>    justifyContent: 'center'
+</span><span class='line'>  },
+</span><span class='line'>  square: {
+</span><span class='line'>    width: SQUARE_DIMENSIONS,
+</span><span class='line'>    height: SQUARE_DIMENSIONS,
+</span><span class='line'>    backgroundColor: 'blue'
+</span><span class='line'>  } 
+</span><span class='line'>});
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Main Code</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var AnimatedFlick = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>        pan: new Animated.ValueXY()
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  getStyle: function() {
+</span><span class='line'>    return [
+</span><span class='line'>              styles.square, 
+</span><span class='line'>              {
+</span><span class='line'>                transform: this.state.pan.getTranslateTransform()
+</span><span class='line'>              }
+</span><span class='line'>            ];
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;Animated.View style={this.getStyle()} /&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Pan Responder</h1>
+
+<p>The <code>PanResponder</code> is our touch handler. The great thing about the <code>PanResponder</code> and <code>Animated</code> API were that they were made to work together.</p>
+
+<p>We need to create our PanResponder</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  componentWillMount: function() {
+</span><span class='line'>        this._panResponder = PanResponder.create({
+</span><span class='line'>          onMoveShouldSetResponderCapture: () =&gt; true, //Tell iOS that we are allowing the movement
+</span><span class='line'>          onMoveShouldSetPanResponderCapture: () =&gt; true, // Same here, tell iOS that we allow dragging
+</span><span class='line'>          onPanResponderGrant: (e, gestureState) =&gt; {
+</span><span class='line'>            this.state.pan.setOffset({x: this.state.pan.x.getAnimatedValue(), y: this.state.pan.y.getAnimatedValue()});
+</span><span class='line'>            this.state.pan.setValue({x: 0, y: 0}); //Initial value
+</span><span class='line'>          },
+</span><span class='line'>          onPanResponderMove: Animated.event([
+</span><span class='line'>            null, {dx: this.state.pan.x, dy: this.state.pan.y}
+</span><span class='line'>          ]), // Creates a function to handle the movement and set offsets
+</span><span class='line'>          onPanResponderRelease: () =&gt; {
+</span><span class='line'>            this.state.pan.flattenOffset(); // Flatten the offset so it resets the default positioning
+</span><span class='line'>          }
+</span><span class='line'>        });
+</span><span class='line'>  },  
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We need <code>onMoveShouldSetResponderCapture</code> and <code>onMoveShouldSetPanResponderCapture</code> to always return true. This tells iOS that we are allowing the user to make movements and we&rsquo;re going to track them.</p>
+
+<p>The function <code>onPanResponderGrant</code> is called once when we approve the animation. This gives us all of our initial values. We set the start value, and then also the offset which is our current pan values. Then we set our animation start values to <code>0,0</code>. This basically resets our movement changes so our delta <code>x,y</code> will be applied from a 0 point. Hopefully that makes sense.</p>
+
+<p>We give our <code>onPanResponderMove</code> an <code>Animated.event</code>. This creates a function that will automatically take the gestureState which has 2 keys on it <code>dx</code> and <code>dy</code> and put those changes on our <code>this.state.pan.x</code> and our <code>this.state.pan.y</code> respectively.</p>
+
+<p>Finally <code>onPanResponderRelease</code> we call <code>flattenOffset</code>. This takes the current <code>x,y</code> and the current offset (aka how much you&rsquo;ve dragged it around). And combines them.</p>
+
+<p>The internal code for flattenOffset looks like this</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  flattenOffset(): void {
+</span><span class='line'>    this._value += this._offset;
+</span><span class='line'>    this._offset = 0;
+</span><span class='line'>  }</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;Animated.View 
+</span><span class='line'>          style={this.getStyle()} 
+</span><span class='line'>          {...this._panResponder.panHandlers}
+</span><span class='line'>        /&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here we spread the handlers onto the our <code>Animated.View</code> so it sets up all the calls correctly.</p>
+
+<h1>We have a square that moves</h1>
+
+<p>Great we have a square that moves and it stays where we left it, and also when we move it again it picks up from the same coordinates that we dropped it at.</p>
+
+<p><img src="http://i.imgur.com/vFYB4JY.gif" title="Moving Square" ></p>
+
+<h1>Reset to 0 with a spring</h1>
+
+<p>We just replace our <code>flattenOffset</code> call which would leave our square where we left it and instead create a spring that animates our <code>this.state.pan</code> back to 0. Which will correctly animate our <code>x,y</code> back to 0 and provide a nice little bounce.</p>
+
+<p>Here is the code.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  onPanResponderRelease: () =&gt; {
+</span><span class='line'>    Animated.spring(this.state.pan, {
+</span><span class='line'>      toValue: 0
+</span><span class='line'>    }).start();
+</span><span class='line'>  }</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Yes it is really that simple.</p>
+
+<p><img src="http://i.imgur.com/PkNpyBH.gif" title="Springs back to center" ></p>
+
+<h1>Opacity and rotation</h1>
+
+<p>Because we want the opacity and the rotation to be tied to the movement position we can use the <code>interpolate</code> we created from <code>Animated.ValueXY</code> on <code>this.state.pan</code> .</p>
+
+<p>We&rsquo;ll have to make some small adjustments but the only thing we need to change is our <code>getStyle</code> function.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  getStyle: function() {
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    return [
+</span><span class='line'>              styles.square, 
+</span><span class='line'>              {
+</span><span class='line'>                transform: [
+</span><span class='line'>                  {
+</span><span class='line'>                    translateX: this.state.pan.x
+</span><span class='line'>                  },
+</span><span class='line'>                  {
+</span><span class='line'>                    translateY: this.state.pan.y
+</span><span class='line'>                  },
+</span><span class='line'>                  {
+</span><span class='line'>                    rotate: this.state.pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]})
+</span><span class='line'>                  }
+</span><span class='line'>                ]
+</span><span class='line'>              },
+</span><span class='line'>              {
+</span><span class='line'>                opacity: this.state.pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.5, 1, 0.5]})
+</span><span class='line'>              }
+</span><span class='line'>            ];
+</span><span class='line'>  },</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We create an interpolate that determines the correct value from an <code>inputRange</code>.
+When our drag is <code>-200</code> or greater our rotate will be <code>-30 degrees</code>, at 0 it is 0, and if moved to the right at <code>200</code> or great then it&rsquo;s <code>30 degrees</code>.</p>
+
+<p>Interpolate is smart enough to take an input range, and interpolate an inbetween degree. So as you slowly move the card the degrees will adjust, so an input value of <code>100</code> would translate to a <code>15 degree</code> rotation.</p>
+
+<p>For opacity we want the same inputs, except our outputs will be <code>.5</code> for both sides and <code>1</code> at 0 movement.
+The interpolation of the opacity operates the same as the degrees, as you rotate it&rsquo;ll adjust the opacity to a maximum/minimum of .5.</p>
+
+<p><img src="http://i.imgur.com/b5K2fcx.gif" title="Final with rotation and opacity" ></p>
+
+<h1>Final</h1>
+
+<p>This doesn&rsquo;t explain all the techniques used in the tinder card demo. One such thing is the flicking capabilities.
+That uses <code>Animated.decay</code> and some physics (velocity,friction) to animate a value.</p>
+
+<h3>Play with it here <a href="https://rnplay.org/apps/71CyoA">https://rnplay.org/apps/71CyoA</a>.</h3>
+
+<h1>Full Code</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  AppRegistry,
+</span><span class='line'>  StyleSheet,
+</span><span class='line'>  View,
+</span><span class='line'>  Animated, 
+</span><span class='line'>  PanResponder
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>var SQUARE_DIMENSIONS = 100;
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>var AnimatedFlick = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>        pan: new Animated.ValueXY()
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  componentWillMount: function() {
+</span><span class='line'>        this._panResponder = PanResponder.create({
+</span><span class='line'>          onMoveShouldSetResponderCapture: () =&gt; true,
+</span><span class='line'>          onMoveShouldSetPanResponderCapture: () =&gt; true,
+</span><span class='line'>          onPanResponderGrant: (e, gestureState) =&gt; {
+</span><span class='line'>            this.state.pan.setOffset({x: this.state.pan.x.getAnimatedValue(), y: this.state.pan.y.getAnimatedValue()});
+</span><span class='line'>            this.state.pan.setValue({x: 0, y: 0});
+</span><span class='line'>          },
+</span><span class='line'>          onPanResponderMove: Animated.event([
+</span><span class='line'>                null, {dx: this.state.pan.x, dy: this.state.pan.y},
+</span><span class='line'>          ]),
+</span><span class='line'>          onPanResponderRelease: () =&gt; {
+</span><span class='line'>            Animated.spring(this.state.pan, {
+</span><span class='line'>              toValue: 0
+</span><span class='line'>            }).start();
+</span><span class='line'>          }
+</span><span class='line'>        });
+</span><span class='line'>  },  
+</span><span class='line'>  getStyle: function() {
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    return [
+</span><span class='line'>              styles.square, 
+</span><span class='line'>              {
+</span><span class='line'>                transform: [
+</span><span class='line'>                  {
+</span><span class='line'>                    translateX: this.state.pan.x
+</span><span class='line'>                  },
+</span><span class='line'>                  {
+</span><span class='line'>                    translateY: this.state.pan.y
+</span><span class='line'>                  },
+</span><span class='line'>                  {
+</span><span class='line'>                    rotate: this.state.pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]})
+</span><span class='line'>                  }
+</span><span class='line'>                ]
+</span><span class='line'>              },
+</span><span class='line'>              {
+</span><span class='line'>                opacity: this.state.pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.5, 1, 0.5]})
+</span><span class='line'>              }
+</span><span class='line'>            ];
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;Animated.View 
+</span><span class='line'>          style={this.getStyle()} 
+</span><span class='line'>          {...this._panResponder.panHandlers}
+</span><span class='line'>        /&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>  container: {
+</span><span class='line'>    flex: 1,
+</span><span class='line'>    alignItems: 'center',
+</span><span class='line'>    justifyContent: 'center'
+</span><span class='line'>  },
+</span><span class='line'>  square: {
+</span><span class='line'>    width: SQUARE_DIMENSIONS,
+</span><span class='line'>    height: SQUARE_DIMENSIONS,
+</span><span class='line'>    backgroundColor: 'blue'
+</span><span class='line'>  } 
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>AppRegistry.registerComponent('AnimatedFlick', () =&gt; AnimatedFlick);
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+]]>
+		</content>
+	</entry>
 	
 	<entry>
 		
@@ -6544,45 +7046,6 @@ Further more if you update the title, it&rsquo;ll propagate down to the componen
 
 
 <p>All it takes is some slightly organized data and you&rsquo;d never have to construct a data table again. More advance component topics are coming in the future this was merely an introduction.</p>
-]]>
-		</content>
-	</entry>
-	
-	<entry>
-		
-			<title type="html"><![CDATA[Progress reports]]></title>
-		
-		<link href="http://browniefed.com/blog/2014/04/26/progress-report/"/>
-		<updated>2014-04-26T08:51:00-07:00</updated>
-		<id>http://browniefed.com/blog/2014/04/26/progress-report</id>
-		<content type="html">
-			<![CDATA[
-				
-					<p></p>
-				
-			]]>
-			<![CDATA[<p>After stumbling upon <a href="http://antimatter15.com/">http://antimatter15.com/</a> and all the awesome things he was doing I noticed that he would post progress reports each month. I often attempt at keeping a daily/weekly journal of sorts but it never pans out. I&rsquo;ve been trying to get into a decent state of mind to start serious personal development both in my projects and just myself. Reflecting on accomplishments each month is a great way to keep track of that growth. I would always get so in depth and fine-grained with everything that I did that it was pointless. I had some fantasy that if I kept a good enough diary that if I was rich and famous in the future that people would want to read my story. I&rsquo;d have an account of every little thing that I did and people could attempt to replicate it to a T. Typing that out just sounds insane.</p>
-
-<p>Where I go from here we shall see. I have a few goals I&rsquo;d like to accomplish for 2014 but am going to take it one week at a time. Weeks seem like they are small enough that I can sit down on a Sunday and plan out what I want to accomplish by the next Sunday. With little weekly notes I can compile the monthly progress report. Planning stuff out will  be a new concept for me since I generally shoot from the hip and do what I feel like.</p>
-
-<p>Some of my goals for 2014</p>
-
-<ul>
-<li>Become a bigger contributor to Ractive.JS</li>
-<li>Do a public talk at a meetup on any subject</li>
-<li>Start my own library and get some small adoption. Currently focused on NonRTE (what a terrible name)</li>
-<li>Do freelancing/client work one client at a time in technologies I&rsquo;m not as experienced in (have people pay me to learn). One new one every 2 months.</li>
-<li>More meetups ( at least 3 a month ), more free coding on other projects that have some sort of benefit to the world ( hackoregon, etc)</li>
-<li>Code Every Day. Simple. I must write code, documentation, a blog post, anything worth while and it must be public and visible on github.</li>
-<li>Work less hours, get more done in the 40 I&rsquo;m paid for. I love work, I love my job but I work too much and in the end I&rsquo;m working to accomplish someone elses dreams and not my own. I will focus on putting in a better 40 hours. How I do that I do not know but there are plenty of productivity methods I&rsquo;d love to try and see what sticks.</li>
-<li>Play with other technologies more. JavaScript is the future but I always enjoyed playing with other languages. I&rsquo;ve some how lost this curiosity over the course of becoming an adult.</li>
-<li>One blog post a week. This isn&rsquo;t a tall order by any means. It can be a small tutorial on CSS, JS, cool things I saw. Just write something of value.</li>
-</ul>
-
-
-<p>That&rsquo;s a tall order for 2014 as it&rsquo;s almost half way over but I&rsquo;ll be turning 24. My 15 year old self said I&rsquo;d be rich and retired at 21 so I&rsquo;m already behind.</p>
-
-<p>That&rsquo;s it from me</p>
 ]]>
 		</content>
 	</entry>
