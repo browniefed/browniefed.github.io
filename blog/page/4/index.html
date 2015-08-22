@@ -54,6 +54,79 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
+		<h1><a href="/blog/2014/12/24/webpack-and-compass/">Webpack and Compass</a></h1>
+		<time>24 December 2014</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>Webpack is the greatest and latest in build systems. Every time I encounter an issue or wish Webpack did something a little googling solves the problem.</p>
+
+<p>One problem that I couldn&rsquo;t google and figure out was getting compass to work with <code>sass-loader</code>. Not just making it work but still allowing regular compass to compile on the command line.</p>
+
+<p>Thankfully there is a mostly simple solution. The only thing (to my knowledge) that this won&rsquo;t work with is sprite generation. Sounds like we need another loader.</p>
+
+<p>Lets get to it.</p>
+
+<p>This is all assuming you have webpack installed with a basic config.
+If that isn&rsquo;t the case we&rsquo;ll need <code>webpack</code>, <code>raw-loader</code>, <code>style-loader</code>, and <code>sass-loader</code> npm installed.</p>
+
+<p>Your webpack config may look something along the lines of</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>    module: {
+</span><span class='line'>        loaders: [
+</span><span class='line'>            { 
+</span><span class='line'>                test: /\.scss$/, 
+</span><span class='line'>                loader: "style-loader!raw-loader!sass-loader"
+</span><span class='line'>            }
+</span><span class='line'>        ]
+</span><span class='line'>    }
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2014/12/24/webpack-and-compass/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/compass/'>compass</a>, <a class='category' href='/blog/categories/sass/'>sass</a>, <a class='category' href='/blog/categories/scss/'>scss</a>, <a class='category' href='/blog/categories/webpack/'>webpack</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
 		<h1><a href="/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/">PhantomJS Creating &amp; Connecting to Server</a></h1>
 		<time>15 June 2014</time>
 	</header>
@@ -229,74 +302,6 @@
 			Tagged under
 		
     <a class='category' href='/blog/categories/contenteditable/'>contenteditable</a>, <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/nonrte/'>nonrte</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/">Ractive.JS Components for Speed and Flexibility</a></h1>
-		<time>27 April 2014</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><p>Components in Ractive are crucial if you want to build a flexible application. Hopefully this changes in the future with partials living on the data object and various init options accepting functions rather than static objects. The main purpose of Components is to have reusable template pieces that you can drop in and work the same all over your application. Some examples might be a grid component that accepts rows and columns as it&rsquo;s data, maybe it&rsquo;s as simple as a checkbox that has some styling a particular way. Components will help you build consistency through out your application however you should know when to use a partial and when to use a component.</p>
-
-<p>If you&rsquo;re coming from the Angular world components are much like directives. However since there is no controller concept, or model concept in Ractive there are less headaches in getting components to work with scope and all that jazz.</p>
-
-<p>Enough talk, lets jump in</p>
-
-<h3>Example</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">Checkbox</span> <span class="o">=</span> <span class="nx">Ractive</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
-</span><span class='line'>  <span class="nx">isolated</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;label&gt;&lt;input type=&quot;checkbox&quot; checked=&quot;{{checked}}&quot;&gt; {{label}}&lt;/label&gt;&#39;</span><span class="p">,</span>
-</span><span class='line'>  <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">checked</span><span class="o">:</span> <span class="kc">false</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">});</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-</div>
-          
-          
-            <a rel="full-article" href="/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/">Read on &rarr;</a>
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/components/'>Components</a>, <a class='category' href='/blog/categories/javascript/'>JavaScript</a>, <a class='category' href='/blog/categories/ractive/'>Ractive</a>, <a class='category' href='/blog/categories/ractive-dot-js/'>Ractive.js</a>
 	
 
 

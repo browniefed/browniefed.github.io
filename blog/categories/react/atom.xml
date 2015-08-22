@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/react/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-08-18T11:43:17-07:00</updated>
+  <updated>2015-08-22T13:36:51-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -12,6 +12,460 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[React-native press and hold button actions]]></title>
+    <link href="http://browniefed.com/blog/2015/08/22/react-native-press-and-hold-button-actions/"/>
+    <updated>2015-08-22T11:55:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/08/22/react-native-press-and-hold-button-actions</id>
+    <content type="html"><![CDATA[<h1>Introduction</h1>
+
+<p>Another common interaction is the press and hold to fire an action. Sometimes it&rsquo;s delete, sometimes it&rsquo;s save, but whatever it is you want to provide feedback to your user. React Native ships with a few Touchable components like <code>TouchableOpacity</code>, <code>TouchableHighlight</code> and also <code>TouchableBounce</code> that provide feedback to users but we&rsquo;ll build a button that fills up over a set period of time then triggers an action.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/aVeaXMc.gif">http://i.imgur.com/aVeaXMc.gif</a>" title="Final Press And Hold" ></p>
+
+<!-- more -->
+
+
+<h1>Setup</h1>
+
+<p>Lets do some code setup.</p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  Animated,
+  View,
+  Text,
+  TouchableWithoutFeedback
+} = React;</p>
+
+<p>var ACTION_TIMER = 400;
+var COLORS = [&lsquo;rgb(255,255,255)&rsquo;, &lsquo;rgb(111,235,62)&rsquo;];
+```</p>
+
+<p>We&rsquo;ll pull in the normal components from React Native and additionally setup some variables to use later. <code>ACTION_TIMER</code> will be how long the animation will take before it fires the action, the <code>COLORS</code> will be the start and end colors. This animtion will transition from white to a brightish green. Remember that animated interpolations do not work with hex.</p>
+
+<h1>Base Component With StyleSheet</h1>
+
+<p>```
+var AnimatedButtonPress = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    textComplete: ''
+};
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+   &lt;View style={styles.container}&gt;
+        &lt;TouchableWithoutFeedback&gt;
+            &lt;View style={styles.button} &gt;
+                &lt;Animated.View style={styles.bgFill} /&gt;
+                &lt;Text style={styles.text}&gt;Press And Hold Me&lt;/Text&gt;
+            &lt;/View&gt;
+        &lt;/TouchableWithoutFeedback&gt;
+        &lt;View&gt;
+            &lt;Text&gt;{this.state.textComplete}&lt;/Text&gt;
+        &lt;/View&gt;
+   &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+flexDirection: 'column',
+alignItems: 'center',
+justifyContent: 'center'
+</code></pre>
+
+<p>  },
+  button: {</p>
+
+<pre><code>padding: 10,
+borderWidth: 3,
+borderColor: '#111'
+</code></pre>
+
+<p>  },
+  text: {</p>
+
+<pre><code>backgroundColor: 'transparent',
+color: '#111'
+</code></pre>
+
+<p>  },
+  bgFill: {</p>
+
+<pre><code>position: 'absolute',
+top: 0,
+left: 0
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>To start out, for this to work we obviously don&rsquo;t need the <code>textComplete</code> but that&rsquo;s just going to be our visual feedback to let us know when the action completes.</p>
+
+<p>We setup a <code>TouchableWithoutFeedback</code> so we can get access to a few press handlers without directly using the <code>PanResponder</code>. Next we create a wrapping button view, add some text, and most importantly we create an <code>Animated.View</code>.</p>
+
+<p>We set it to be position absolute so it doesn&rsquo;t effect layout and sits behind the text, and set it to the <code>top: 0</code> and <code>left: 0</code> so it is position at the furthest top and left of the component. I&rsquo;ll explain later why we don&rsquo;t set <code>bottom:0</code> here as well.</p>
+
+<h1>Create The Animated</h1>
+
+<p>```
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    pressAction: new Animated.Value(0),
+    textComplete: ''
+};
+</code></pre>
+
+<p>  },
+```</p>
+
+<h1>Handle The Presses</h1>
+
+<p>```
+handlePressIn: function() {</p>
+
+<pre><code>Animated.timing(this.state.pressAction, {
+    duration: ACTION_TIMER,
+    toValue: 1
+}).start(this.animationActionComplete);
+</code></pre>
+
+<p>},
+handlePressOut: function() {</p>
+
+<pre><code>Animated.timing(this.state.pressAction, {
+    duration: this.state.pressAction.getAnimatedValue() * ACTION_TIMER,
+    toValue: 0
+}).start();
+</code></pre>
+
+<p>},
+animationActionComplete: function() {</p>
+
+<pre><code>var message = '';
+if (this.state.pressAction.getAnimatedValue() === 1) {
+    message = 'You held it long enough to fire the action!';
+}
+this.setState({
+    textComplete: message
+});
+</code></pre>
+
+<p>},
+render: function() {</p>
+
+<pre><code>return (
+   &lt;View style={styles.container}&gt;
+        &lt;TouchableWithoutFeedback 
+            onPressIn={this.handlePressIn} 
+            onPressOut={this.handlePressOut}
+        &gt;
+            &lt;View style={styles.button} &gt;
+                &lt;Animated.View style={styles.bgFill} /&gt;
+                &lt;Text style={styles.text}&gt;Press And Hold Me&lt;/Text&gt;
+            &lt;/View&gt;
+        &lt;/TouchableWithoutFeedback&gt;
+        &lt;View&gt;
+            &lt;Text&gt;{this.state.textComplete}&lt;/Text&gt;
+        &lt;/View&gt;
+   &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>Here we use the <code>onPressIn</code> and <code>onPressOut</code> callbacks. These will trigger timed animations. We&rsquo;ll use the <code>ACTION_TIMER</code> variable we setup at the top, and <code>onPressIn</code> we&rsquo;ll animate our <code>pressAction</code> animated value to <code>1</code> over <code>400ms</code>.</p>
+
+<p><code>onPressOut</code> we&rsquo;ll animate it from <code>1</code> back down to <code>0</code>. However if a user lifts their finger before the <code>400ms</code> threshold is reached then it will animated down from that value. For example holding it down for <code>200ms</code> would mean our <code>pressAction</code> animated value was at <code>.5</code> so it would then animated down from <code>.5</code> to <code>0</code> over <code>400ms</code>.</p>
+
+<p>Animating down over the full <code>400ms</code> is not ideal, so what we&rsquo;ll do is get the current animated value with <code>this.state.pressAction.getAnimatedValue()</code> and multiply it times the full <code>ACTION_TIMER</code> which means out <code>.5</code> animated value would yield us the correct <code>200ms</code> to transition back to <code>0</code>.</p>
+
+<p>Finally we pass in a callback to our <code>start</code> of <code>handlePressIn</code> which if our <code>pressAction</code> animated value gets to <code>1</code> aka being compelte then we will tell the user their action happened.</p>
+
+<h1>Measure the button</h1>
+
+<p>Due to absolute layout we&rsquo;ll need to use specific widths and heights. That means we&rsquo;ll have to get the layout of the button so we know how much to fill.</p>
+
+<p>```
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    pressAction: new Animated.Value(0),
+    textComplete: '',
+    buttonWidth: 0,
+    buttonHeight: 0
+};
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>We&rsquo;ll setup the <code>buttonWidth</code> and <code>buttonHeight</code> on our initial state.</p>
+
+<p>```
+  getButtonWidthLayout: function(e) {</p>
+
+<pre><code>this.setState({
+    buttonWidth: e.nativeEvent.layout.width - 6,
+    buttonHeight: e.nativeEvent.layout.height - 6
+});
+</code></pre>
+
+<p>  },</p>
+
+<p>  render: function() {</p>
+
+<pre><code>return (
+   &lt;View style={styles.container}&gt;
+        &lt;TouchableWithoutFeedback 
+            onPressIn={this.handlePressIn} 
+            onPressOut={this.handlePressOut}
+        &gt;
+            &lt;View style={styles.button} onLayout={this.getButtonWidthLayout}&gt;
+                &lt;Animated.View style={styles.bgFill} /&gt;
+                &lt;Text style={styles.text}&gt;Press And Hold Me&lt;/Text&gt;
+            &lt;/View&gt;
+        &lt;/TouchableWithoutFeedback&gt;
+        &lt;View&gt;
+            &lt;Text&gt;{this.state.textComplete}&lt;/Text&gt;
+        &lt;/View&gt;
+   &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>We&rsquo;ll use the <code>onLayout</code> callback for views and set the state of our buttons width and height. Why can&rsquo;t we use <code>bottom: 0</code>? Well because of the padding we set on the button it would only show the animated background where the text ends, so we&rsquo;ll explicitily set the height.</p>
+
+<p>Why the <code>-6</code>? Well the same things happens for <code>top: 0</code> and <code>left: 0</code>. It will sit inside the border, so if we animated to the full width and set the full height then it would extend the progress bar past the borders which we don&rsquo;t want.</p>
+
+<h1>Aniamte The Background and Width of our Fill</h1>
+
+<p>```
+  getProgressStyles: function() {</p>
+
+<pre><code>var width = this.state.pressAction.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, this.state.buttonWidth]
+});
+var bgColor = this.state.pressAction.interpolate({
+    inputRange: [0, 1],
+    outputRange: COLORS
+})
+return {
+    width: width,
+    height: this.state.buttonHeight,
+    backgroundColor: bgColor
+}
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+   &lt;View style={styles.container}&gt;
+        &lt;TouchableWithoutFeedback 
+            onPressIn={this.handlePressIn} 
+            onPressOut={this.handlePressOut}
+        &gt;
+            &lt;View style={styles.button} onLayout={this.getButtonWidthLayout}&gt;
+                &lt;Animated.View style={[styles.bgFill, this.getProgressStyles()]} /&gt;
+                &lt;Text style={styles.text}&gt;Press And Hold Me&lt;/Text&gt;
+            &lt;/View&gt;
+        &lt;/TouchableWithoutFeedback&gt;
+        &lt;View&gt;
+            &lt;Text&gt;{this.state.textComplete}&lt;/Text&gt;
+        &lt;/View&gt;
+   &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+<code>``
+We use the array syntax for style to combine our pre-set styles and our generated styles. We call</code>getProgressStyles<code>to return a new object with our dynamic styling. In our</code>getProgressStyles<code>we'll use the</code>interpolate<code>function on our</code>pressAction` animated value to setup animated values.</p>
+
+<p>So for the width we&rsquo;ll take an input of <code>[0,1]</code> and it will interpolate from <code>0</code> to the width of our button that we set in the <code>getButtonWidthLayout</code>.</p>
+
+<p>Same thing goes for the <code>bgColor</code> interpolation. It takes the same <code>[0,1]</code> inputRange and interpolates to the <code>rgb</code> colors we setup in the top.</p>
+
+<p>Finally we return our new style object with our animated values, and also the heigth of the button (minus the 6 border pixels).</p>
+
+<h1>Final</h1>
+
+<p>And just like that you have the ability to press and hold a button and execute an action when it&rsquo;s done, all while providing feedback to the user.</p>
+
+<p>As always checkout the live code <a href="https://rnplay.org/apps/umzv6g">https://rnplay.org/apps/umzv6g</a>.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/aVeaXMc.gif">http://i.imgur.com/aVeaXMc.gif</a>" title="Final Press And Hold" ></p>
+
+<h1>Final Code</h1>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  Animated,
+  View,
+  Text,
+  TouchableWithoutFeedback
+} = React;</p>
+
+<p>var ACTION_TIMER = 400;
+var COLORS = [&lsquo;rgb(255,255,255)&rsquo;, &lsquo;rgb(111,235,62)&rsquo;];</p>
+
+<p>var AnimatedButtonPress = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    pressAction: new Animated.Value(0),
+    textComplete: '',
+    buttonWidth: 0,
+    buttonHeight: 0
+};
+</code></pre>
+
+<p>  },
+  handlePressIn: function() {</p>
+
+<pre><code>Animated.timing(this.state.pressAction, {
+    duration: ACTION_TIMER,
+    toValue: 1
+}).start(this.animationActionComplete);
+</code></pre>
+
+<p>  },
+  handlePressOut: function() {</p>
+
+<pre><code>Animated.timing(this.state.pressAction, {
+        duration: this.state.pressAction.getAnimatedValue() * ACTION_TIMER,
+        toValue: 0
+}).start();
+</code></pre>
+
+<p>  },
+  animationActionComplete: function() {</p>
+
+<pre><code>var message = '';
+if (this.state.pressAction.getAnimatedValue() === 1) {
+    message = 'You held it long enough to fire the action!';
+}
+this.setState({
+    textComplete: message
+});
+</code></pre>
+
+<p>  },
+  getButtonWidthLayout: function(e) {</p>
+
+<pre><code>this.setState({
+    buttonWidth: e.nativeEvent.layout.width - 6,
+    buttonHeight: e.nativeEvent.layout.height - 6
+});
+</code></pre>
+
+<p>  },
+  getProgressStyles: function() {</p>
+
+<pre><code>var width = this.state.pressAction.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, this.state.buttonWidth]
+});
+var bgColor = this.state.pressAction.interpolate({
+    inputRange: [0, 1],
+    outputRange: COLORS
+})
+return {
+    width: width,
+    height: this.state.buttonHeight,
+    backgroundColor: bgColor
+}
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+   &lt;View style={styles.container}&gt;
+        &lt;TouchableWithoutFeedback 
+            onPressIn={this.handlePressIn} 
+            onPressOut={this.handlePressOut}
+        &gt;
+            &lt;View style={styles.button} onLayout={this.getButtonWidthLayout}&gt;
+                &lt;Animated.View style={[styles.bgFill, this.getProgressStyles()]} /&gt;
+                &lt;Text style={styles.text}&gt;Press And Hold Me&lt;/Text&gt;
+            &lt;/View&gt;
+        &lt;/TouchableWithoutFeedback&gt;
+        &lt;View&gt;
+            &lt;Text&gt;{this.state.textComplete}&lt;/Text&gt;
+        &lt;/View&gt;
+   &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+flexDirection: 'column',
+alignItems: 'center',
+justifyContent: 'center'
+</code></pre>
+
+<p>  },
+  button: {</p>
+
+<pre><code>padding: 10,
+borderWidth: 3,
+borderColor: '#111'
+</code></pre>
+
+<p>  },
+  text: {</p>
+
+<pre><code>backgroundColor: 'transparent',
+color: '#111'
+</code></pre>
+
+<p>  },
+  bgFill: {</p>
+
+<pre><code>position: 'absolute',
+top: 0,
+left: 0
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>AppRegistry.registerComponent(&lsquo;AnimatedButtonPress&rsquo;, () => AnimatedButtonPress);
+```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[React-native Animated API with PanResponder]]></title>
@@ -1797,432 +2251,6 @@ top: 0
 <p><a href="https://rnplay.org/apps/6uPJug">https://rnplay.org/apps/6uPJug</a></p>
 
 <p>Your homework can be to add a bounce when the card is released.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[CSS-Layout and React-Art]]></title>
-    <link href="http://browniefed.com/blog/2015/06/01/css-layout-and-react-art/"/>
-    <updated>2015-06-01T10:29:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/06/01/css-layout-and-react-art</id>
-    <content type="html"><![CDATA[<h3>Intro</h3>
-
-<p>If you&rsquo;ve used <code>react-native</code> before then you may know that &ldquo;css&rdquo; you&rsquo;re writing isn&rsquo;t actually CSS. It&rsquo;s a descriptor for a layout engine. That layout engine is <a href="https://github.com/facebook/css-layout">css-layout</a> which was created by <a href="https://twitter.com/Vjeux">@vjeux</a> and compiled to Java/Objective-C.</p>
-
-<p>Layout is difficult. There have been attempts at various constraint based layouts in JavaScript, <a href="http://gridstylesheets.org/">GSS</a> is one of those. Which is a port of Apples <code>Cassowary</code> constraint solver which was also ported to JavaScript <a href="https://github.com/slightlyoff/cassowary.js">https://github.com/slightlyoff/cassowary.js</a>.</p>
-
-<p>Now this is all fine and well but from the bit I&rsquo;ve read constraints fall down sometimes. This usually happens when you don&rsquo;t specify enough constraints based on the current layout.</p>
-
-<h3>Layout is hard!</h3>
-
-<p>Parent layouts get effected by their child layouts. CSS is weird in that you can remove items from layout with <code>position: absolute</code> but ultimately the top parent <code>width/height</code> is directly effected by it&rsquo;s children.</p>
-
-<p>This is an over simplification but many times in <code>React</code> you have to hook into <code>componentDidMount</code> get the child width and take action.</p>
-
-<p>An example would be even width labels in a form. We could measure the text but depending on <code>font</code>, <code>font-size</code> it could measure each value differently. So we hide the form on initial render, get the max label width and set it on state.</p>
-
-<!-- more -->
-
-
-<h3>CSS-Layout Basics</h3>
-
-<p>It takes a subset of flexbox and some other styling parameters and returns <code>width</code>, and the <code>left/top</code> offsets for each item and it&rsquo;s children.</p>
-
-<p>This example is taken directly from the <code>css-layout</code> git repo.</p>
-
-<p>```
-computeLayout(
-  {style: {padding: 50}, children: [</p>
-
-<pre><code>{style: {padding: 10, alignSelf: 'stretch'}}
-</code></pre>
-
-<p>  ]}
-);
-// =>
-{</p>
-
-<pre><code>width: 120,
-height: 120,
-top: 0,
-left: 0,
-children: [{
-    width: 20,
-    height: 20,
-    top: 50,
-    left: 50
-}]
-</code></pre>
-
-<p>}
-```</p>
-
-<p>So explaining this. We have an item with a padding of <code>50</code>, so <code>50px</code> around the entire item.</p>
-
-<p>It&rsquo;s child item has a padding of <code>10</code>, so <code>10px</code> all the way around.</p>
-
-<p>Therefore the parent has <code>50*2 = 100</code> initial width/height. Now we take into account the children.</p>
-
-<p>Width/Height:</p>
-
-<p><code>
-Parent: `50*2 = 100` +  `10*2 = 20` = `100 + 120`
-Child: `10*2 = 20`
-</code></p>
-
-<p>Position:</p>
-
-<p><code>
-Parent: `x = 0, y = 0` since we are starting there.
-Child: Parent padding `50` so our child is inset at `x = 50, y = 50`
-</code></p>
-
-<p>Lets change the child width and see what happens
-```
-computeLayout(</p>
-
-<pre><code>{
-    style: {
-        padding: 50
-    },
-    children: [{
-        style: {
-            padding: 10,
-            width: 1000,
-            alignSelf: 'stretch'
-        }
-    }]
-}
-</code></pre>
-
-<p>);
-// =>
-{</p>
-
-<pre><code>"width": 1100,
-"height": 120,
-"top": 0,
-"left": 0,
-"children": [{
-    "width": 1000,
-    "height": 20,
-    "top": 50,
-    "left": 50
-}]
-</code></pre>
-
-<p>}
-<code>``
-Because our child defined a width of</code>1000<code>we then add on our</code>50*2<code>of padding on both sides and now the parent has a width of</code>1100`.</p>
-
-<p>There are some other nuances that you can read about in the <code>css-layout</code> repo.</p>
-
-<h3>Basic Example</h3>
-
-<p>First off we&rsquo;ll need a component tree. Now in React they transpile JSX, and build the component tree for us. However in our case we can just create a JSON tree.</p>
-
-<p>```
-var componentTree = {</p>
-
-<pre><code>style: {
-    padding: 10
-},
-component: Rectangle,
-children: [{
-    style: {
-        padding: 10,
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-    component: Rectangle,
-    children: [
-        {
-            style: {
-                width: 30,
-                height: 30
-            },
-            component: Rectangle
-        },
-        {
-            style: {
-                margin: 10,
-                width: 50,
-                height: 50,
-                alignItems: 'center',
-                justifyContent: 'center'
-            },
-            component: Circle,
-            children: [
-                {
-                    style: {
-                        width: 10,
-                        height: 10
-                    },
-                    component: Circle
-                }
-            ]
-        }
-    ]
-}]
-</code></pre>
-
-<p>};</p>
-
-<p>```</p>
-
-<p>We add a <code>component</code> parameter to the tree. This is the thing that will be rendered.
-We could add additional properties here, maybe create custom renderers but we&rsquo;ll keep it simple.</p>
-
-<p>The break down is like so</p>
-
-<ul>
-<li>A surrounding rectangle w/ <code>10px</code> of padding all around</li>
-<li>1 child that is a rectangle with another <code>10px</code> of padding, and it&rsquo;s children in a <code>column</code> based layout.</li>
-<li>We align each of the items in the <code>center</code></li>
-<li>2 children one a Rectangle, one a Cirlce.</li>
-<li>Rectangle = <code>width = 30, height = 30</code></li>
-<li>Circle = <code>width = 50, height = 50</code> and a surrounding <code>10px</code> margin and it&rsquo;s children centered vertically and horizontally</li>
-<li>That cirlce has a circle inside that is <code>width = 10</code> and `height = 10
-We&rsquo;ll have to do some basic math on the Circle to compute the radius, and center it correctly.</li>
-</ul>
-
-
-<p>Now we&rsquo;ll need to traverse the layout.
-We&rsquo;ll do that with a function that calls itself</p>
-
-<p>```
-function traverseLayout(componentTree, layout) {</p>
-
-<pre><code>var Component = componentTree.component;
-return (
-    &lt;Group x={layout.left} y={layout.top}&gt;
-        &lt;Component
-            {...getProps(Component, layout)}
-         /&gt;
-         &lt;Group x={0} y={0}&gt;
-            {
-                !componentTree.children ? null : componentTree.children.map(function(child, index) {
-                    return traverseLayout(child, layout.children[index]);
-                })
-
-            }
-         &lt;/Group&gt;
-    &lt;/Group&gt;
-)
-</code></pre>
-
-<p>}
-```
-This is a super crude layout renderer but it works for our purposes.</p>
-
-<p>It creates a group and we pass in our <code>top/left</code> to <code>x/y</code> of the group. This is necessary to make our children <code>top/left</code> work correctly.
-Then renders the component with selected props. We&rsquo;ll just render <code>stroke="#000"</code> and a stroke={1}.</p>
-
-<p>Then if we have children we will call ourself with the child component and layout.</p>
-
-<p>To process the props we need to render different props for specific components.</p>
-
-<p><code>Rectangle</code> needs <code>width/height</code> which we have.
-<code>Circle</code> needs the radius computed, and to then be ofset by the radius. So we just divide the <code>width/2</code> and for positioning <code>y</code> we divide the <code>height/2</code>.</p>
-
-<p>```
-function getProps(component, layout) {</p>
-
-<pre><code>var props = {
-    x: 0,
-    y: 0
-};
-
-if (Rectangle === component) {
-    props.width = layout.width;
-    props.height = layout.height;
-
-} else if (Circle === component) {
-    props.radius = layout.width/2;
-    props.x += (layout.width/2)
-    props.y += (layout.height/2);
-}
-
-props.stroke = "#000"; // Just to visualize
-props.strokeWidth = 1; // Just to visualize
-return props;
-</code></pre>
-
-<p>}
-```</p>
-
-<p>That is it, now we can render a tree of <code>Rectangles</code> and <code>Circles</code>. The complete code is below.</p>
-
-<p>```
-var React = require(&lsquo;react&rsquo;);
-var ReactArt = require(&lsquo;react-art&rsquo;),</p>
-
-<pre><code>Surface = ReactArt.Surface,
-Group = ReactArt.Group,
-computeLayout = require('css-layout'),
-Circle = require('react-art/shapes/circle'),
-Rectangle = require('react-art/shapes/rectangle');
-</code></pre>
-
-<p>var Surface = ReactArt.Surface;</p>
-
-<p>var viewportWidth = function() {</p>
-
-<pre><code>return  window.innerWidth - 100;
-</code></pre>
-
-<p>}
-var viewportHeight = function() {</p>
-
-<pre><code>return window.innerHeight - 100;
-</code></pre>
-
-<p>}</p>
-
-<p>var componentTree = {</p>
-
-<pre><code>style: {
-    padding: 10
-},
-component: Rectangle,
-children: [{
-    style: {
-        padding: 10,
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-    component: Rectangle,
-    children: [
-        {
-            style: {
-                width: 30,
-                height: 30
-            },
-            component: Rectangle
-        },
-        {
-            style: {
-                margin: 10,
-                width: 50,
-                height: 50,
-                alignItems: 'center',
-                justifyContent: 'center'
-            },
-            component: Circle,
-            children: [
-                {
-                    style: {
-                        width: 10,
-                        height: 10
-                    },
-                    component: Circle
-                }
-            ]
-        }
-    ]
-}]
-</code></pre>
-
-<p>};</p>
-
-<p>var layout = computeLayout(componentTree);</p>
-
-<p>function traverseLayout(componentTree, layout) {</p>
-
-<pre><code>var Component = componentTree.component;
-return (
-    &lt;Group x={layout.left} y={layout.top}&gt;
-        &lt;Component
-            {...getProps(Component, layout)}
-         /&gt;
-         &lt;Group x={0} y={0}&gt;
-            {
-                !componentTree.children ? null : componentTree.children.map(function(child, index) {
-                    return traverseLayout(child, layout.children[index]);
-                })
-
-            }
-         &lt;/Group&gt;
-    &lt;/Group&gt;
-)
-</code></pre>
-
-<p>}</p>
-
-<p>function getProps(component, layout) {</p>
-
-<pre><code>var props = {
-    x: 0,
-    y: 0
-};
-
-if (Rectangle === component) {
-    props.width = layout.width;
-    props.height = layout.height;
-
-} else if (Circle === component) {
-    props.radius = layout.width/2;
-    props.x += (layout.width/2)
-    props.y += (layout.height/2);
-}
-
-props.stroke = "#000";
-props.strokeWidth = 1;
-return props;
-</code></pre>
-
-<p>}</p>
-
-<p>var Demo = React.createClass({
-  getInitialState: function() {</p>
-
-<pre><code>return {
-
-}
-</code></pre>
-
-<p>  },
-  getRenderLayout: function() {</p>
-
-<pre><code>return traverseLayout(componentTree, layout);
-</code></pre>
-
-<p>  },
-  render: function () {</p>
-
-<pre><code>return (
-  &lt;div&gt;
-    &lt;Surface
-        width={viewportWidth()}
-        height={viewportHeight()}
-    &gt;
-        {this.getRenderLayout()}
-    &lt;/Surface&gt;
-  &lt;/div&gt;
-);
-</code></pre>
-
-<p>  }
-});</p>
-
-<p>module.exports = Demo;
-```</p>
-
-<h3>Possibilities</h3>
-
-<p>Tic-tac-toe? Heh.</p>
-
-<p>This could be made to layout components arbitrarily much like we do with <code>react-native</code>. It&rsquo;s not perfect and could only be used in specific scenarios but it&rsquo;s still a fun prototype.</p>
-
-<h3>Demo</h3>
-
-<p data-height="624" data-theme-id="0" data-slug-hash="zGZOMN" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/zGZOMN/'>zGZOMN</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
-
-
-<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
-
-
-
 ]]></content>
   </entry>
   
