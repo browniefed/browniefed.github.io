@@ -1,0 +1,925 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: shooter | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/shooter/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2015-09-01T22:06:47-07:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React-Native Animated with React-Art - Firework Tap To Shoot]]></title>
+    <link href="http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/"/>
+    <updated>2015-08-29T22:12:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show</id>
+    <content type="html"><![CDATA[<h1>Introduction</h1>
+
+<p>This actually could be built with out react-art, but we&rsquo;ll use react-art just for good measure.
+What are we building? A firework show. Nothing fancy. Just tap on the screen and a firework will be shot to that point and explode.</p>
+
+<h1>What?</h1>
+
+<p>This is what we&rsquo;re building</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/Dj60a6e.gif">http://i.imgur.com/Dj60a6e.gif</a>" title="Firework Shooter" ></p>
+
+<!-- more -->
+
+
+<h1>Setup</h1>
+
+<p>Just like normal, lets set the scene. A blank app with everything imported, etc.</p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);
+var ReactNativeART = require(&lsquo;ReactNativeART&rsquo;);</p>
+
+<p>var {
+  width,
+  height
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  Animated,
+  View,
+  TouchableWithoutFeedback
+} = React;</p>
+
+<p>var {</p>
+
+<pre><code>Surface,
+Shape,
+Path,
+Group,
+Transform
+</code></pre>
+
+<p>} = ReactNativeART;</p>
+
+<p>var AnimatedShape = Animated.createAnimatedComponent(Shape);
+var AnimatedGroup = Animated.createAnimatedComponent(Group);
+```</p>
+
+<p>We bring in the <code>Animated</code> API, <code>ReactNativeART</code>, some components from <code>ART</code>.
+The thing that we have done before is creating <code>AnimatedShape</code>, and <code>AnimatedGroup</code>. What these do is allow us to set props like <code>fill</code>, <code>opacity</code>, <code>x</code>, <code>y</code>, that are Animated values. This will cause updates in our native world correctly and efficiently.</p>
+
+<p>Now our styles</p>
+
+<p>```
+var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+flexDirection: 'column'
+</code></pre>
+
+<p>  }
+});
+<code>``
+Yep that is it. Most of our stuff will take place in the</code>react-art` world.</p>
+
+<p>Now our basic class</p>
+
+<p>```
+var FireworkShooter = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  fireworks: []
+};
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;TouchableWithoutFeedback&gt;
+      &lt;View&gt;
+        &lt;Surface width={width} height={height}&gt;
+        &lt;/Surface&gt;
+      &lt;/View&gt;
+    &lt;/TouchableWithoutFeedback&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>So we have a simple setup. A full container view, with a <code>TouchableWithoutFeedback</code> so we can get the press coordinates. Then a wrapping <code>View</code> since <code>Touchable</code> stuff needs a native view below it. Then finally our <code>react-art</code> <code>Surface</code>. This takes a <code>width</code> and <code>height</code> prop. In our case we want the full screen, so we get the dimensions of the phone that we extracted up above and set it.</p>
+
+<h1>Shoot a mortar</h1>
+
+<p>Lets think about this.
+We want a mortar (a small glowing ball) to shoot from the bottom center of the screen to where we&rsquo;ve tapped.</p>
+
+<p>That means with <code>react-art</code> we&rsquo;ll have to create a closed <code>Path</code> that is a circle. It just so happens that <code>react-art</code> ships with a <code>Circle</code> shape for us to use.</p>
+
+<p>Okay so our list of needs</p>
+
+<ul>
+<li>A press handler to get where we tapped</li>
+<li>A <code>Circle</code> that can take Animated API props</li>
+<li>A way to animate that <code>Circle</code> aka mortar to the tap</li>
+<li>Render a mortar on the <code>Surface</code></li>
+</ul>
+
+
+<p><code>
+&lt;TouchableWithoutFeedback onPress={this._handleAddFirework}&gt;
+</code>
+We&rsquo;ll use the <code>TouchableWithoutFeedback</code> to call out to a function to queue up adding a firework.
+Check that off the list.</p>
+
+<p>```
+//React-Art ships with this component however not react-native-art implementation we&rsquo;ll just grab it and
+//modify this to use the AnimatedShape we create up above. Thanks Facebook :)</p>
+
+<p>/<em>*
+ * Copyright 2013-2014 Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule Circle.art
+ * @typechecks
+ *
+ * Example usage:
+ * <Circle
+ *   radius={10}
+ *   stroke="green"
+ *   strokeWidth={3}
+ *   fill="blue"
+ * />
+ *
+ </em>/
+var AnimatedCircle = React.createClass({displayName: &ldquo;Circle&rdquo;,
+  render: function() {</p>
+
+<pre><code>var radius = this.props.radius;
+
+var path = Path().moveTo(0, -radius)
+    .arc(0, radius * 2, radius)
+    .arc(0, radius * -2, radius)
+    .close();
+return React.createElement(AnimatedShape, React.__spread({},  this.props, {d: path}));
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Hey look we just grabbed it and changed <code>Shape</code> to <code>AnimatedShape</code>. Yaye for React and reusable code.</p>
+
+<p>```
+var MORTAR_RADIUS = 5;
+///&hellip;
+_handleAddFirework: function(e) {</p>
+
+<pre><code>var _shootingPosition = new Animated.ValueXY({x: width/2, y: height - MORTAR_RADIUS});
+
+this.state.fireworks.push({
+  shootingPosition: _shootingPosition,
+});
+
+Animated.timing(_shootingPosition, {
+    duration: 300,
+    toValue: {
+      y: e.nativeEvent.locationY,
+      x: e.nativeEvent.locationX
+    }
+}).start()
+
+this.setState(this.state);
+</code></pre>
+
+<p>}
+```
+Alright. Pause and lets analyze this code.</p>
+
+<p>First line <code>_shootingPosition</code>, we create a new <code>Animated.ValueXY</code> and set our defaults. These defaults are the starting position of the animation. Usually these would default to <code>x: 0, y:0</code> but we have other plans.</p>
+
+<p>We set our <code>x</code> to <code>width/2</code> which is the middle of the phone. Then our <code>y</code> is going to the <code>height</code> of the device minus a <code>MORTAR_RADIUS</code>. We put a constant at the top of the code to say our mortar radius is going to be 5.</p>
+
+<p>Next we add it to an array of fireworks we&rsquo;ll shoot later.</p>
+
+<p>Then we create the animation.
+We want the mortar to take <code>300</code> milliseconds to reach the spot the user pressed. We set the <code>toValue</code> to where our users pressed.
+Then we start the animation. Yeah we haven&rsquo;t even rendered anything yet but it&rsquo;ll all be okay trust me.</p>
+
+<p>Finally we set our state and thus it&rsquo;ll cause a re-render and we can render our firework.</p>
+
+<p>```
+<Surface width={width} height={height}>
+{</p>
+
+<pre><code>this.state.fireworks.map((firework) =&gt; {
+    return &lt;AnimatedCircle 
+                radius={MORTAR_RADIUS} 
+                x={firework.shootingPosition.x} 
+                y={firework.shootingPosition.y}
+                fill="#000"
+            /&gt;
+})
+</code></pre>
+
+<p>}
+</Surface>
+<code>``
+So we map over each firework, return the</code>AnimatedCircle<code>and set the appropriate properties, which 2 of those</code>x<code>, and</code>y` are animated properties. In our case we&rsquo;re going to fill the cirlcle with black to start.</p>
+
+<p>So what does that all look like? Something like this</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/arIjyoz.gif">http://i.imgur.com/arIjyoz.gif</a>" title="Black Shooting Circles" ></p>
+
+<h1>Shoot multiple mortars that disappear</h1>
+
+<p>Well mortars don&rsquo;t stick like that. So lets make them disappear.
+The <code>start()</code> function takes a callback that is called when the animation completes.</p>
+
+<p>To identify the firework in the array we&rsquo;ll just use the <code>shootingPosition</code> animation to identify it and filter it out.</p>
+
+<p>Something like this.</p>
+
+<p>```
+  removeSelf: function(_shootingPosition) {</p>
+
+<pre><code>this.state.fireworks = this.state.fireworks.filter((firework) =&gt; firework.shootingPosition !== _shootingPosition);
+this.setState(this.state);
+</code></pre>
+
+<p>  },</p>
+
+<p>  ///</p>
+
+<pre><code>Animated.timing(_shootingPosition, {
+    duration: 300,
+    toValue: {
+      y: e.nativeEvent.locationY,
+      x: e.nativeEvent.locationX
+    }
+]).start(this.removeSelf.bind(this, _shootingPosition));
+</code></pre>
+
+<p>```</p>
+
+<p>Not the most elegant of solutions but hey it works. It runs through each firework, removes our _shootingPosition, and then refreshes the UI.</p>
+
+<h1>Animate the color</h1>
+
+<p>Lets make the mortar more than just a black dot. Lets pretend it&rsquo;s a fire ball, and we want it to alternate between yellow and orange.</p>
+
+<p>We&rsquo;ll use these 2 colors and pop them at the top</p>
+
+<p><code>
+var SHOOTING_COLORS = [
+  'rgb(234,238,112)', //Yellow
+  'rgb(245,137,12)' //Orange
+];
+</code></p>
+
+<p>The <code>interpolate</code> function we&rsquo;re going to call only works with <code>rgb</code> hence the use of <code>rgb</code> instead of hex.</p>
+
+<p>Next we&rsquo;ll need to create another Animated value.</p>
+
+<p>Our code will look like so</p>
+
+<p>```</p>
+
+<pre><code>var _shootingPosition = new Animated.ValueXY({x: width/2, y: height - MORTAR_RADIUS});
+var _shootingColor = new Animated.Value(0);
+
+this.state.fireworks.push({
+  shootingPosition: _shootingPosition,
+  shootingColor: _shootingColor,
+});
+
+//
+
+_shootingPosition.addListener(this.adjustShootingFill.bind(null, _shootingColor));
+
+adjustShootingFill: function(_shootingColor, value) {
+    Animated.timing(_shootingColor, {
+      duration: 16,
+      toValue: _shootingColor.getAnimatedValue() == 0 ? 1 : 0
+    }).start()
+},
+</code></pre>
+
+<p><code>``
+We start off by adding a new</code>Animated.Value`, and set it to 0. We add it to our firework object.</p>
+
+<p>Then we add a listener to it. What <code>addListener</code> does is provides a callback that will be called each time the mortar position is updated.
+The bind is just so it&rsquo;ll pass in our <code>_shootingColor</code> Animated value as the first argument.</p>
+
+<p>We&rsquo;ll use the <code>Animated.timing</code> function again to transition it between colors over 16ms. We call <code>getAnimatedValue()</code> and do the inverse of it.</p>
+
+<p>So every <code>16ms</code> the mortar will transition from yellow => orange => yellow => orange, etc.</p>
+
+<p>Now what does that look like in our render?</p>
+
+<p>```
+<Surface width={width} height={height}>
+{</p>
+
+<pre><code>this.state.fireworks.map((firework) =&gt; {
+
+    var _shootingFill = firework.shootingColor.interpolate({
+      inputRange: [0,1],
+      outputRange: SHOOTING_COLORS
+    });
+
+
+    return &lt;AnimatedCircle 
+                radius={MORTAR_RADIUS} 
+                x={firework.shootingPosition.x} 
+                y={firework.shootingPosition.y}
+                fill={_shootingFill}
+            /&gt;
+})
+</code></pre>
+
+<p>}
+</Surface>
+<code>``
+We need to create an interpolator. This interpolate will encapsulate the logic that picks the color when we change the value of</code>shootingColor<code>up above in our</code>adjustShootingFill` function.</p>
+
+<p>It maps to</p>
+
+<p><code>
+0 =&gt; yellow
+1 =&gt; orange
+</code>
+Then we pass that into our fill property and we&rsquo;re done.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/r69Ba6r.gif">http://i.imgur.com/r69Ba6r.gif</a>" title="Orange Yellow Moratrs" ></p>
+
+<h1>Make those mortars explode</h1>
+
+<p>Now for the fun part. Lets make our mortars explode.</p>
+
+<p>Our mortar concept will be pretty simplistic, we&rsquo;ll create 20 circles that explode outwards and expand.
+We could create all sorts of tails that fly around and do cool things but that is a tutorial for another time.</p>
+
+<p>First lets setup some variables</p>
+
+<p>```
+var PARTICLE_RADIUS = 30; // How big should the explosions be
+var PARTICLE_COUNT = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]; // How many particles per explosion, this is the lazy persons range call</p>
+
+<p>var PARTICLE_COLORS = [</p>
+
+<pre><code>'rgba(54, 17, 52, 100)',
+'rgba(176, 34, 140, 100)',
+'rgba(234, 55, 136, 100)',
+'rgba(229, 107, 112, 100)',
+'rgba(243, 145, 160, 100)'
+</code></pre>
+
+<p>]
+```</p>
+
+<p>We the <code>PARTICLE_RADIUS</code> which will determine how large each explosion is. We setup <code>PARTICLE_COUNT</code> which is the amount of particles we&rsquo;ll use.
+Finally we want our firework show to be 5 different colors. So each explosion will change between each of these colors.</p>
+
+<p>For the sake of simplicity we&rsquo;ll make each particle the same exact color meaning we only need 1 <code>Animated.Value</code> for it.</p>
+
+<p>```</p>
+
+<pre><code>var _particleColor = new Animated.Value(0);
+var _particleRadius = new Animated.Value(0);
+var _coreOpacity = new Animated.Value(1);
+</code></pre>
+
+<p><code>``
+We also need an</code>Animated.Value<code>for our radius, we put it at 0 so it starts hidden. The other</code>Animated.Value` is our core opacity animation.
+That is the value for hiding our core mortar once it explodes.</p>
+
+<p>```</p>
+
+<pre><code>var _particlePositions = PARTICLE_COUNT.map(() =&gt; new Animated.ValueXY({x: 0, y: 0}));
+</code></pre>
+
+<p><code>``
+Each particle will have to go to a different position so in this case we'll need 20</code>Animated.ValueXY`.</p>
+
+<p>```
+this.state.fireworks.push({</p>
+
+<pre><code>  shootingPosition: _shootingPosition,
+  shootingColor: _shootingColor,
+  particleColor: _particleColor,
+  particleRadius: _particleRadius,
+  coreOpacity: _coreOpacity,
+  particlePositions: _particlePositions
+});
+</code></pre>
+
+<p>```</p>
+
+<p>Add them to our firework so we can access them later in our render.</p>
+
+<p>```</p>
+
+<pre><code>var _animatedParticles = [
+    Animated.timing(_particleRadius, {
+      duration: 700,
+      toValue: 1
+    }),
+    Animated.timing(_coreOpacity, {
+      duration: 200,
+      toValue: 0
+    })
+]
+
+_movingParticles = _particlePositions.map((particle, i) =&gt; {
+  var _xy = getXYParticle(PARTICLE_COUNT.length, i, PARTICLE_RADIUS);
+  return Animated.timing(particle, {
+    duration: 250,
+    toValue: _xy
+  })
+})
+
+//At the bottom of the file
+function getXYParticle(total, i, radius) {
+  var angle = 360/total*i;
+
+  var x = Math.round((radius*2) * Math.cos(angle - (Math.PI/2)));
+  var y = Math.round((radius*2) * Math.sin(angle - (Math.PI/2)));
+
+  return {
+    x: x,
+    y: y
+  }
+}
+
+_animatedParticles = _animatedParticles.concat(_movingParticles);
+</code></pre>
+
+<p>```</p>
+
+<p>This whole animation mapping is setting us up for what we are going to do next. Which is queue up our animations.</p>
+
+<p>We create an array of animations that need to happen. The first is expanding each <code>_particleRadius</code>. We have determine that it will take 700 milliseconds to fully expand the explosion. The <code>_particleRadius</code> will actually be the particle scale. We&rsquo;ll just scale up the circle so it looks like it&rsquo;s exploding outwards, but that will be shown off in our render function.</p>
+
+<p>We set our <code>_coreOpacity</code> aka our mortar ball to fade out and disappear over 200 milliseconds.</p>
+
+<p>We need to create the animations for each particle. It needs to shoot out from our current mortar location to different points on the circle.
+After googling around I found a function below, and deleted a bunch of stuff to basically get down to a rough position algorithim to return <code>x,y</code> positions.</p>
+
+<p>We once again use <code>Animated.timing</code> to say that the particle should take 250 milliseconds to get into it&rsquo;s position.</p>
+
+<p>```</p>
+
+<pre><code>Animated.sequence([
+  Animated.timing(_shootingPosition, {
+    duration: 300,
+    toValue: {
+      y: e.nativeEvent.locationY,
+      x: e.nativeEvent.locationX
+    }
+  }),
+  Animated.parallel(_animatedParticles)
+]).start(this.removeSelf.bind(this, _shootingPosition));
+</code></pre>
+
+<p>```</p>
+
+<p>Now to queue up our animations. We want our mortar shooting to happen first, then the explosion.
+We do that using <code>Animated.sequence</code>.</p>
+
+<p>We first have our mortar go up to the location of the users touch.
+The next piece is wrapping all of our explosion animations in an <code>Animated.parallel</code>. This is the opposite of sequence, which it says execute all of these animations at the same time.</p>
+
+<p>So our mortar fading out and disappearing, our particles expanding, changing color, and exploding outward will all happen at the same time.</p>
+
+<p>```</p>
+
+<pre><code>_shootingPosition.addListener(this.adjustShootingFill.bind(null, _shootingColor));
+_particleRadius.addListener(this.adjustParticleFill.bind(null, _particleColor));
+
+///
+  adjustParticleFill: function(_particleColor, value) {
+    var _currentFill = _particleColor.getAnimatedValue(),
+        _particleFill = _currentFill === 5 ? 0 : _currentFill + 1;
+
+    Animated.timing(_particleColor, {
+      duration: 16,
+      toValue: _particleFill
+    }).start()
+  },
+</code></pre>
+
+<p>```</p>
+
+<p>Finally we need to change our color of our particle. So like before we&rsquo;ll attach to the expanding of our particle and make it call a function to change the fill color.
+In our new case we have five colors to choose from so the logic is a little different but mostly the same.</p>
+
+<p>Now for our rendering of this all. We&rsquo;ll move it out to a different function to deal with.</p>
+
+<p>```
+  <Surface width={width} height={height}></p>
+
+<pre><code>{this.getFireworks()}
+</code></pre>
+
+<p>  </Surface>
+```</p>
+
+<p>```
+getFireworks: function() {</p>
+
+<pre><code>return this.state.fireworks.map((firework, i) =&gt; {
+
+  var _shootingFill = firework.shootingColor.interpolate({
+    inputRange: [0,1],
+    outputRange: SHOOTING_COLORS
+  });
+
+  var _particleFill = firework.particleColor.interpolate({
+    inputRange: [0,1,2,3,4],
+    outputRange: PARTICLE_COLORS
+  });
+
+  return (
+      &lt;AnimatedGroup 
+        x={firework.shootingPosition.x}
+        y={firework.shootingPosition.y}
+      &gt;
+            &lt;AnimatedCircle
+              opacity={firework.coreOpacity}
+              radius={MORTAR_RADIUS}
+              fill={_shootingFill}
+            /&gt;
+            &lt;Group&gt;
+            {
+              PARTICLE_COUNT.map((v, j) =&gt; {
+                return &lt;AnimatedCircle
+                  x={firework.particlePositions[j].x}
+                  y={firework.particlePositions[j].y}
+                  scaleX={firework.particleRadius}
+                  scaleY={firework.particleRadius}
+                  radius={PARTICLE_RADIUS}
+                  fill={_particleFill}
+                /&gt;
+              })
+            }
+            &lt;/Group&gt;
+      &lt;/AnimatedGroup&gt;
+  );
+})
+</code></pre>
+
+<p>  },
+<code>``
+There is a lot going on here. We have our same</code><em>shootingFill<code>like we did before, that causes the yellow =&gt; orange interpolation.
+We add another interpolation for the particleFill. Same concept as the</code></em>shootingFill` just with 5 colors now.</p>
+
+<p>What is much different here is the <code>AnimatedGroup</code>. We have moved our <code>x,y</code> from the <code>AnimatedCircle</code> to the <code>AnimatedGroup</code>.</p>
+
+<p>This will bundle our mortar, and our particles all in the same coordinate area. That way we can have our particles start at <code>0,0</code> and move outwards and the <code>AnimatedGroup</code> will make sure all the coordinates are handled correctly.</p>
+
+<p><code>
+&lt;AnimatedCircle
+  opacity={firework.coreOpacity}
+  radius={MORTAR_RADIUS}
+  fill={_shootingFill}
+/&gt;
+</code>
+You can see here we put out <code>coreOpacity</code> animation in there. So it&rsquo;ll fade from <code>1</code> opacity down to <code>0</code> over that 200 milliseconds we setup.</p>
+
+<p>```
+  <Group></p>
+
+<pre><code>{
+  PARTICLE_COUNT.map((v, j) =&gt; {
+    return &lt;AnimatedCircle
+      x={firework.particlePositions[j].x}
+      y={firework.particlePositions[j].y}
+      scaleX={firework.particleRadius}
+      scaleY={firework.particleRadius}
+      radius={PARTICLE_RADIUS}
+      fill={_particleFill}
+    /&gt;
+  })
+}
+</code></pre>
+
+<p>  </Group>
+<code>``
+We group the Particles with a</code>Group` component but that&rsquo;s just arbitrary.</p>
+
+<p>We map over our 20 particles, and set the <code>x</code> and <code>y</code> to the points we had determined with our <code>getXYParticle</code> function.</p>
+
+<p>You&rsquo;ll notice we are passing in <code>particleRadius</code> to the <code>scaleX</code> and <code>scaleY</code> properties.
+This is because while writing this I realized that the <code>AnimatedCircle</code> takes the radius property and creates a path out of it. That is not animateable in this particular way, so the solution I came up was to scale each particle to 0. Basically making it completely hidden.</p>
+
+<p>That then allows us to expand it out to it&rsquo;s full scale and make it look like an explosion. It actually works better.</p>
+
+<p>Finally we add in our <code>PARTICLE_RADIUS</code> we defined at the top, aka size of each explosion, and put in our <code>_particleFill</code> which is the color interpolation between those 5 colors.</p>
+
+<h1>Play with it</h1>
+
+<p>That is all! We have a firework shooter!</p>
+
+<p>Check it out on RNPlay as per usual <a href="https://rnplay.org/apps/ysm12A">https://rnplay.org/apps/ysm12A</a>.</p>
+
+<p>Tap to your hearts content and watch all the explosive animation goodness appear on screen.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/Dj60a6e.gif">http://i.imgur.com/Dj60a6e.gif</a>" title="Firework Shooter" ></p>
+
+<h1>Final Code</h1>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);
+var ReactNativeART = require(&lsquo;ReactNativeART&rsquo;);</p>
+
+<p>var {
+  width,
+  height
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var MORTAR_RADIUS = 5;
+var PARTICLE_RADIUS = 30;
+var PARTICLE_COUNT = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  Animated,
+  View,
+  TouchableWithoutFeedback
+} = React;</p>
+
+<p>var {</p>
+
+<pre><code>Surface,
+Shape,
+Path,
+Group,
+Transform
+</code></pre>
+
+<p>} = ReactNativeART;</p>
+
+<p>var SHOOTING_COLORS = [
+  &lsquo;rgb(234,238,112)&rsquo;,
+  &lsquo;rgb(245,137,12)&rsquo;
+];</p>
+
+<p>var PARTICLE_COLORS = [</p>
+
+<pre><code>'rgba(54, 17, 52, 100)',
+'rgba(176, 34, 140, 100)',
+'rgba(234, 55, 136, 100)',
+'rgba(229, 107, 112, 100)',
+'rgba(243, 145, 160, 100)'
+</code></pre>
+
+<p>]</p>
+
+<p>var AnimatedShape = Animated.createAnimatedComponent(Shape);
+var AnimatedGroup = Animated.createAnimatedComponent(Group);</p>
+
+<p>var FireworkShooter = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  fireworks: []
+};
+</code></pre>
+
+<p>  },
+  adjustShootingFill: function(_shootingColor, value) {</p>
+
+<pre><code>Animated.timing(_shootingColor, {
+  duration: 16,
+  toValue: _shootingColor.getAnimatedValue() == 0 ? 1 : 0
+}).start()
+</code></pre>
+
+<p>  },
+  adjustParticleFill: function(_particleColor, value) {</p>
+
+<pre><code>var _currentFill = _particleColor.getAnimatedValue(),
+    _particleFill = _currentFill === 5 ? 0 : _currentFill + 1;
+
+Animated.timing(_particleColor, {
+  duration: 16,
+  toValue: _particleFill
+}).start()
+</code></pre>
+
+<p>  },
+  removeSelf: function(_shootingPosition) {</p>
+
+<pre><code>this.state.fireworks = this.state.fireworks.filter((firework) =&gt; firework.shootingPosition !== _shootingPosition);
+this.setState(this.state);
+</code></pre>
+
+<p>  },
+  _handleAddFirework: function(e) {</p>
+
+<pre><code>var _shootingPosition = new Animated.ValueXY({x: width/2, y: height - MORTAR_RADIUS});
+var _shootingColor = new Animated.Value(0);
+
+var _particleColor = new Animated.Value(0);
+var _particleRadius = new Animated.Value(0);
+var _coreOpacity = new Animated.Value(1);
+
+var _particlePositions = PARTICLE_COUNT.map(() =&gt; new Animated.ValueXY({x: 0, y: 0}));
+
+this.state.fireworks.push({
+  shootingPosition: _shootingPosition,
+  shootingColor: _shootingColor,
+  particleColor: _particleColor,
+  particleRadius: _particleRadius,
+  coreOpacity: _coreOpacity,
+  particlePositions: _particlePositions
+});
+
+var _animatedParticles = [
+    Animated.timing(_particleRadius, {
+      duration: 700,
+      toValue: 1
+    }),
+    Animated.timing(_coreOpacity, {
+      duration: 200,
+      toValue: 0
+    })
+]
+
+_movingParticles = _particlePositions.map((particle, i) =&gt; {
+  var _xy = getXYParticle(PARTICLE_COUNT.length, i, PARTICLE_RADIUS);
+  return Animated.timing(particle, {
+    duration: 250,
+    toValue: _xy
+  })
+})
+
+_animatedParticles = _animatedParticles.concat(_movingParticles);
+
+Animated.sequence([
+  Animated.timing(_shootingPosition, {
+    duration: 300,
+    toValue: {
+      y: e.nativeEvent.locationY,
+      x: e.nativeEvent.locationX
+    }
+  }),
+  Animated.parallel(_animatedParticles)
+]).start(this.removeSelf.bind(this, _shootingPosition));
+
+_shootingPosition.addListener(this.adjustShootingFill.bind(null, _shootingColor));
+_particleRadius.addListener(this.adjustParticleFill.bind(null, _particleColor));
+
+this.setState(this.state);
+</code></pre>
+
+<p>  },</p>
+
+<p>  getFireworks: function() {</p>
+
+<pre><code>return this.state.fireworks.map((firework, i) =&gt; {
+
+  var _shootingFill = firework.shootingColor.interpolate({
+    inputRange: [0,1],
+    outputRange: SHOOTING_COLORS
+  });
+
+  var _particleFill = firework.particleColor.interpolate({
+    inputRange: [0,1,2,3,4],
+    outputRange: PARTICLE_COLORS
+  });
+
+  return (
+      &lt;AnimatedGroup 
+        x={firework.shootingPosition.x}
+        y={firework.shootingPosition.y}
+      &gt;
+            &lt;AnimatedCircle
+              key={i}
+              opacity={firework.coreOpacity}
+              radius={MORTAR_RADIUS}
+              fill={_shootingFill}
+            /&gt;
+            &lt;Group&gt;
+            {
+              PARTICLE_COUNT.map((v, j) =&gt; {
+                return &lt;AnimatedCircle
+                  x={firework.particlePositions[j].x}
+                  y={firework.particlePositions[j].y}
+                  scaleX={firework.particleRadius}
+                  scaleY={firework.particleRadius}
+                  radius={PARTICLE_RADIUS}
+                  fill={_particleFill}
+                /&gt;
+              })
+            }
+            &lt;/Group&gt;
+      &lt;/AnimatedGroup&gt;
+  );
+})
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;TouchableWithoutFeedback onPress={this._handleAddFirework}&gt;
+      &lt;View&gt;
+        &lt;Surface width={width} height={height}&gt;
+          {this.getFireworks()}
+        &lt;/Surface&gt;
+      &lt;/View&gt;
+    &lt;/TouchableWithoutFeedback&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+flexDirection: 'column'
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>function getXYParticle(total, i, radius) {
+  var angle = 360/total*i;</p>
+
+<p>  var x = Math.round((radius<em>2) * Math.cos(angle &ndash; (Math.PI/2)));
+  var y = Math.round((radius</em>2) * Math.sin(angle &ndash; (Math.PI/2)));</p>
+
+<p>  return {</p>
+
+<pre><code>x: x,
+y: y
+</code></pre>
+
+<p>  }
+}</p>
+
+<p>//Modified this to use the AnimatedShape we create up above. Thanks Facebook :)</p>
+
+<p>/<em>*
+ * Copyright 2013-2014 Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule Circle.art
+ * @typechecks
+ *
+ * Example usage:
+ * <Circle
+ *   radius={10}
+ *   stroke="green"
+ *   strokeWidth={3}
+ *   fill="blue"
+ * />
+ *
+ </em>/
+var AnimatedCircle = React.createClass({displayName: &ldquo;Circle&rdquo;,
+  render: function() {</p>
+
+<pre><code>var radius = this.props.radius;
+
+var path = Path().moveTo(0, -radius)
+    .arc(0, radius * 2, radius)
+    .arc(0, radius * -2, radius)
+    .close();
+return React.createElement(AnimatedShape, React.__spread({},  this.props, {d: path}));
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>AppRegistry.registerComponent(&lsquo;FireworkShooter&rsquo;, () => FireworkShooter);
+```</p>
+]]></content>
+  </entry>
+  
+</feed>

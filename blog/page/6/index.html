@@ -1,0 +1,234 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="A blog of JavaScript techniques and tutorials" name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+		
+        <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
+
+		<title>JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+				
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="mailto:browniefed@gmail.com">Email</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF index.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/">Meteor and Realtime Transit Mapping - Part 1</a></h1>
+		<time>16 November 2013</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><h1>Overview</h1>
+
+<p>The point of this series is to help people build out realtime transit maps for other cities.
+This will focus on Portland, OR and their transit system TriMet. They give us access to a wealth of information but all we really need is route numbers that make sense and latitude/longitude to make a map. I have built one for Kansas City, MO but they have their data hidden. Don&rsquo;t be afraid to dig around on your own transit website to find hidden APIs.</p>
+
+<p>Finally we chose MeteorJS because the whole system is built on realtime applications. Code can be run on both the client/server which is AWESOME! It pretends to be lo-latency, meaning it&rsquo;ll save the data in client side minimongo databases and not wait for the server to return &ldquo;yeah we saved&rdquo;. It also somehow magically invalidates the data correctly. It&rsquo;s just a framework that works and I can&rsquo;t wait for the 1.0 release.</p>
+
+<p>As always all code is open sourced. Check out the final project here
+<a href="https://github.com/browniefed/livemet">https://github.com/browniefed/livemet</a></p>
+
+<h1>Setup</h1>
+
+<h2>APIs</h2>
+
+<p>Go to <a href="http://developer.trimet.org/registration/">http://developer.trimet.org/registration/</a> and get an API key.
+The documentation we care about is here <a href="http://developer.trimet.org/ws_docs/">http://developer.trimet.org/ws_docs/</a></p>
+
+<h2>Meteor</h2>
+
+<p>Currently on Mac/Linux are officially supported and Windows has an unofficial installer. But you can&rsquo;t use Meteorite on Windows which you want meteorite!
+To install simple go here and follow the instrutions(2 steps!) <a href="http://docs.meteor.com/">http://docs.meteor.com/</a>
+Step 2 being creating a meteor project</p>
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/maps/'>maps</a>, <a class='category' href='/blog/categories/meteor/'>meteor</a>, <a class='category' href='/blog/categories/meteor-dot-js/'>meteor.js</a>, <a class='category' href='/blog/categories/relatime/'>relatime</a>, <a class='category' href='/blog/categories/transit/'>transit</a>, <a class='category' href='/blog/categories/trimet/'>trimet</a>, <a class='category' href='/blog/categories/websockets/'>websockets</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2013/11/12/hey-its-a-post/">hey it&#8217;s a post</a></h1>
+		<time>12 November 2013</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>Hey it&rsquo;s a post on my github.io account</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">heyoooo</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+          
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+	
+<div class="pagination">
+	
+	
+	<span class="total">6 of 6</span>
+	
+	
+		<a class="newer" href="/blog/page/5/">Newer</a>
+	
+</div>
+<!-- END OF index.html -->
+
+		
+			<footer>
+				Copyright &copy; 2015
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: $(this).next('code').text(),
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+					}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->

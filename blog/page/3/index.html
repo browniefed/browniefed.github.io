@@ -54,6 +54,106 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
+		<h1><a href="/blog/2015/05/29/react-art-and-bar-charts/">React-Art and Bar Charts</a></h1>
+		<time>29 May 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><h3>Introduction</h3>
+
+<p>I&rsquo;ve shown in the past how to utilize <code>react-art</code> and other libraries to do animations, and render arbitrary things. So now lets bring it all together, lets render a simple bar chart.</p>
+
+<p>I&rsquo;m going to leverage <a href="https://github.com/andreaferretti/paths-js">Paths.js</a> because it was made for this exact reason. Given data, generate an immutable set of paths. Ultimately that is what visualizations are, a data set converted to a set of paths.</p>
+
+<p>The end result will look something
+<img src="http://i.imgur.com/DpChFtO.png" title="Bar Chart Result w/ Hover" ></p>
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2015/05/29/react-art-and-bar-charts/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/bar/'>bar</a>, <a class='category' href='/blog/categories/chart/'>chart</a>, <a class='category' href='/blog/categories/graphs/'>graphs</a>, <a class='category' href='/blog/categories/pathsjs/'>pathsjs</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/05/27/react-art-and-paths-dot-js/">React Art and Paths.js</a></h1>
+		<time>27 May 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><h3>Intro</h3>
+
+<p><a href="https://github.com/andreaferretti/paths-js">Paths.js</a> is a cool library. It comes with 3 levels of generating paths.</p>
+
+<ul>
+<li>Low level which helps you generate paths/lines.</li>
+<li>Mid level which generates paths for shapes</li>
+<li>High level which takes a set of data and generates graphs</li>
+</ul>
+
+
+<p>All of these are great when working with <code>react-art</code> because it&rsquo;s just returning data. I&rsquo;ll say it once, and a million more but libraries that just generate data make it easy to traverse and render with <code>react-art</code>.</p>
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2015/05/27/react-art-and-paths-dot-js/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/canvas/'>canvas</a>, <a class='category' href='/blog/categories/graphing/'>graphing</a>, <a class='category' href='/blog/categories/paths-dot-js/'>paths.js</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/svg/'>svg</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
 		<h1><a href="/blog/2015/05/26/animating-with-react-art-and-shifty-dot-js/">Animating with React Art and Shifty.js</a></h1>
 		<time>26 May 2015</time>
 	</header>
@@ -223,174 +323,13 @@ However the great thing about <code>react</code> and <code>react-art</code> is t
 <!-- END OF _includes/article.html -->
 
 	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2015/05/03/getting-react-art-running-on-react-native/">Getting react-art running on react-native</a></h1>
-		<time>03 May 2015</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><p>I hadn&rsquo;t realized that the react-art native rendering stuff had landed in into the react-native core.
-So I figured I&rsquo;d try and get in running. I am an XCode noob so I&rsquo;ll be sure and be descriptive.</p>
-
-<p>First off lets set up a react-native project. (Assuming you have react-native cli installed);</p>
-
-<p><code>react-native init react_art_demo</code></p>
-
-<p>The current released version of <code>react-native</code> doesn&rsquo;t have the ART libs in it so in our <code>node_modules</code> folder we can delete the <code>react-native</code> in there and do a git clone of master <code>git clone https://github.com/facebook/react-native.git</code></p>
-
-<p>We will also need the <code>art</code> lib itself installed. So <code>cd</code> to the root of <code>react_art_demo</code>.
-Then run <code>npm install art</code></p>
-
-<p>Once we have the master repo of <code>react-native</code>, and <code>art</code> installed we can open up our <code>react_art_demo</code> project in XCode.</p>
-
-<p>We will need to do 2 things.</p>
-
-<ul>
-<li>Add the <code>ART.xcodeproj</code> to XCode</li>
-<li>Link the binary</li>
-</ul>
-
-
-</div>
-          
-          
-            <a rel="full-article" href="/blog/2015/05/03/getting-react-art-running-on-react-native/">Read on &rarr;</a>
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2015/05/02/react/">React, Higher Order Components, and Legacy Applications</a></h1>
-		<time>02 May 2015</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><p>At work we embarked on an ambitious task of converting our legacy application (ExtJS 3.4) over to React.
-Now obviously rewriting an application that has been built over the course of 7 years could not just be simply re-written. We had to be very strategic about it.</p>
-
-<p>React is one of the perfect rendering libraries for this since re-rendering the same component at the same spot will just cause the React to go through its diff/normal rendering process.</p>
-
-<p>However if you don&rsquo;t maintain separation of concerns you may just get a lot of Ext into your ReactJS components, and you&rsquo;ll be in an even bigger mess. We don&rsquo;t want that, and that is where higher order components come into play.</p>
-
-<h3>Higher Order Components</h3>
-
-<p>If you haven&rsquo;t read the post <a href="https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750">Mixins Are Dead. Long Live Composition</a> then I highly recommend you do so. Higher order components are not a bullet proof replacement for mixins but they are an amazing solution for integrating at the seams of where your legacy application meets your new React world.</p>
-
-<p>If you don&rsquo;t understand what a Higher order component is after reading the article above let me quickly explain.
-It&rsquo;s a function that takes a React component of your choosing and then returns a wrapped React component that renders the React component that you provided it.</p>
-
-<p>A Quick example</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>
-</span><span class='line'>var NameSupplier = function(Component) {
-</span><span class='line'>    
-</span><span class='line'>    var NameSupplierComponent = React.createClass({
-</span><span class='line'>
-</span><span class='line'>        getUserName: function() {
-</span><span class='line'>            //Somewhere the username is stored but we'll just return a string
-</span><span class='line'>            return "Jason"
-</span><span class='line'>        },
-</span><span class='line'>        render: function() {
-</span><span class='line'>
-</span><span class='line'>            return (
-</span><span class='line'>                &lt;Component username={this.getUserName()} /&gt;
-</span><span class='line'>            )
-</span><span class='line'>        }
-</span><span class='line'>    });
-</span><span class='line'>
-</span><span class='line'>    return NameSupplierComponent;
-</span><span class='line'>}
-</span><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-</div>
-          
-          
-            <a rel="full-article" href="/blog/2015/05/02/react/">Read on &rarr;</a>
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/applications/'>applications</a>, <a class='category' href='/blog/categories/components/'>components</a>, <a class='category' href='/blog/categories/ext/'>ext</a>, <a class='category' href='/blog/categories/higher/'>higher</a>, <a class='category' href='/blog/categories/legacy/'>legacy</a>, <a class='category' href='/blog/categories/order/'>order</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/reactjs/'>reactjs</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
 	
 <div class="pagination">
 	
 		<a class="older" href="/blog/page/4/">Older</a>
 	
 	
-	<span class="total">3 of 5</span>
+	<span class="total">3 of 6</span>
 	
 	
 		<a class="newer" href="/blog/page/2/">Newer</a>

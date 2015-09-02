@@ -54,6 +54,163 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
+		<h1><a href="/blog/2015/07/26/react-native-animated-api-basic-example/">React-native Animated API Basic Example</a></h1>
+		<time>26 July 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><h1>Introduction</h1>
+
+<p>Animations are finally solved in React? That&rsquo;s a bold claim, but lets explore the new Animated API in <code>react-native</code>. This won&rsquo;t apply to React for the web, however there is also <a href="https://github.com/chenglou/react-motion">react-motion</a> also released at <code>react-europe</code>.</p>
+
+<p><img src="http://i.imgur.com/JlX4nV0.gif" title="Final Animation Result" ></p>
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2015/07/26/react-native-animated-api-basic-example/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/animated/'>animated</a>, <a class='category' href='/blog/categories/api/'>api</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/06/07/react-native-layout-examples/">React-Native layout examples</a></h1>
+		<time>07 June 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>Flexbox layout takes a bit getting used to. It&rsquo;s surprisngly simple but after so many years of box model css layout it throws you for a loop.</p>
+
+<p>Some examples</p>
+
+<h2>Percentage height sections</h2>
+
+<p>These are seemingly simple to do in CSS. Specify <code>height: 50%</code> and you get a magical 50% height. Yeah I&rsquo;m over simplifying it but in general that&rsquo;s what you get. In flex it&rsquo;s different.</p>
+
+<p>This percentage based layout question was asked here <a href="https://github.com/facebook/react-native/issues/364">https://github.com/facebook/react-native/issues/364</a>.</p>
+
+<p>Laying out login screens may require significant white space. To accomplish % based layout we can use the <code>flex</code> property along with <code>flexDirection</code>.</p>
+
+<p>Say you want 3 sections. Top <code>50%</code>, then two <code>25%</code> sections.</p>
+
+<p>Our code would look something like this</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var SampleApp = React.createClass({
+</span><span class='line'>  render: function() {
+</span><span class='line'>      return (
+</span><span class='line'>          &lt;View style={styles.container}&gt;
+</span><span class='line'>              &lt;View style={styles.halfHeight} /&gt;
+</span><span class='line'>              &lt;View style={styles.quarterHeight} /&gt;
+</span><span class='line'>              &lt;View style={[styles.quarterHeight, {backgroundColor: '#CCC'}]} /&gt;
+</span><span class='line'>          &lt;/View&gt;
+</span><span class='line'>      )
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>    container: {
+</span><span class='line'>        flex: 1,
+</span><span class='line'>        flexDirection: 'column'
+</span><span class='line'>    },
+</span><span class='line'>    halfHeight: {
+</span><span class='line'>        flex: .5,
+</span><span class='line'>        backgroundColor: '#FF3366'
+</span><span class='line'>    },
+</span><span class='line'>    quarterHeight: {
+</span><span class='line'>        flex: .25,
+</span><span class='line'>        backgroundColor: '#000'
+</span><span class='line'>    }
+</span><span class='line'>});
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2015/06/07/react-native-layout-examples/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/flexbox/'>flexbox</a>, <a class='category' href='/blog/categories/layout/'>layout</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
 		<h1><a href="/blog/2015/06/06/react-native-tinder-like-cards/">React-Native Tinder like cards</a></h1>
 		<time>06 June 2015</time>
 	</header>
@@ -209,113 +366,13 @@
 <!-- END OF _includes/article.html -->
 
 	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2015/05/29/react-art-and-bar-charts/">React-Art and Bar Charts</a></h1>
-		<time>29 May 2015</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><h3>Introduction</h3>
-
-<p>I&rsquo;ve shown in the past how to utilize <code>react-art</code> and other libraries to do animations, and render arbitrary things. So now lets bring it all together, lets render a simple bar chart.</p>
-
-<p>I&rsquo;m going to leverage <a href="https://github.com/andreaferretti/paths-js">Paths.js</a> because it was made for this exact reason. Given data, generate an immutable set of paths. Ultimately that is what visualizations are, a data set converted to a set of paths.</p>
-
-<p>The end result will look something
-<img src="http://i.imgur.com/DpChFtO.png" title="Bar Chart Result w/ Hover" ></p>
-
-</div>
-          
-          
-            <a rel="full-article" href="/blog/2015/05/29/react-art-and-bar-charts/">Read on &rarr;</a>
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/bar/'>bar</a>, <a class='category' href='/blog/categories/chart/'>chart</a>, <a class='category' href='/blog/categories/graphs/'>graphs</a>, <a class='category' href='/blog/categories/pathsjs/'>pathsjs</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2015/05/27/react-art-and-paths-dot-js/">React Art and Paths.js</a></h1>
-		<time>27 May 2015</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><h3>Intro</h3>
-
-<p><a href="https://github.com/andreaferretti/paths-js">Paths.js</a> is a cool library. It comes with 3 levels of generating paths.</p>
-
-<ul>
-<li>Low level which helps you generate paths/lines.</li>
-<li>Mid level which generates paths for shapes</li>
-<li>High level which takes a set of data and generates graphs</li>
-</ul>
-
-
-<p>All of these are great when working with <code>react-art</code> because it&rsquo;s just returning data. I&rsquo;ll say it once, and a million more but libraries that just generate data make it easy to traverse and render with <code>react-art</code>.</p>
-
-</div>
-          
-          
-            <a rel="full-article" href="/blog/2015/05/27/react-art-and-paths-dot-js/">Read on &rarr;</a>
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/canvas/'>canvas</a>, <a class='category' href='/blog/categories/graphing/'>graphing</a>, <a class='category' href='/blog/categories/paths-dot-js/'>paths.js</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/svg/'>svg</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
 	
 <div class="pagination">
 	
 		<a class="older" href="/blog/page/3/">Older</a>
 	
 	
-	<span class="total">2 of 5</span>
+	<span class="total">2 of 6</span>
 	
 	
 		<a class="newer" href="/">Newer</a>
