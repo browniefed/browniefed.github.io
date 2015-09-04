@@ -187,7 +187,7 @@
 </span><span class='line'>    return (
 </span><span class='line'>      &lt;View style={styles.container}&gt;
 </span><span class='line'>              &lt;AnimatedVideo 
-</span><span class='line'>                  source=
+</span><span class='line'>                  source={{uri: "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"}}
 </span><span class='line'>                  style={styles.videoSizing}
 </span><span class='line'>                  rate={1}
 </span><span class='line'>                  paused={false}
@@ -798,7 +798,7 @@ The video source comes from <a href="http://camendesign.com/code/video_for_every
 </span><span class='line'>      &lt;View style={styles.container}&gt;
 </span><span class='line'>              &lt;AnimatedVideo 
 </span><span class='line'>                  {...this._panResponder.panHandlers}
-</span><span class='line'>                  source=
+</span><span class='line'>                  source={{uri: "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"}}
 </span><span class='line'>                  style={[styles.videoSizing, this.getScalePosition()]}
 </span><span class='line'>                  rate={this.state.rate}
 </span><span class='line'>                  paused={this.state.paused}

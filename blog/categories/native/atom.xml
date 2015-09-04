@@ -4,7 +4,7 @@
   <title><![CDATA[Category: native | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/native/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2015-09-01T22:06:47-07:00</updated>
+  <updated>2015-09-04T15:18:32-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -74,6 +74,8 @@ var AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);</p>
 
 <h1>Basic Component</h1>
 
+<p></p>
+
 <p>```
 var YoutubeVideoSlide = React.createClass({
   getInitialState: function() {</p>
@@ -90,7 +92,7 @@ var YoutubeVideoSlide = React.createClass({
 <pre><code>return (
   &lt;View style={styles.container}&gt;
           &lt;AnimatedVideo 
-              source=
+              source={{uri: "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"}}
               style={styles.videoSizing}
               rate={1}
               paused={false}
@@ -133,6 +135,8 @@ height: videoHeight
 });</p>
 
 <p>```</p>
+
+<p></p>
 
 <p>We setup <code>flex:1</code> on the <code>View</code> so that the <code>ScrollView</code> will size correctly. We set the <code>width</code> and <code>height</code> on the <code>AnimatedVideo</code> to our <code>16:9</code> ratio. In the state we setup the initial scale to <code>1</code>, and an <code>X,Y</code> position for the moving video.</p>
 
@@ -335,6 +339,8 @@ The video source comes from <a href="http://camendesign.com/code/video_for_every
 
 <h1>Full Code</h1>
 
+<p></p>
+
 <p>```
 var React = require(&lsquo;react-native&rsquo;);
 var Dimensions = require(&lsquo;Dimensions&rsquo;);
@@ -467,7 +473,7 @@ this._opacity = this.state.position.y.interpolate({
   &lt;View style={styles.container}&gt;
           &lt;AnimatedVideo 
               {...this._panResponder.panHandlers}
-              source=
+              source={{uri: "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"}}
               style={[styles.videoSizing, this.getScalePosition()]}
               rate={this.state.rate}
               paused={this.state.paused}
@@ -528,7 +534,8 @@ height: videoHeight
 <p>  }
 });</p>
 
-<p>```</p>
+<p>```
+</p>
 ]]></content>
   </entry>
   
