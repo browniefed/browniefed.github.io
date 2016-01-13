@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: slider | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/slider/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React Native Youtube Animated Video Slide]]></title>
+    <link href="http://browniefed.com/blog/2015/08/31/react-native-youtube-animated-video-slide/"/>
+    <updated>2015-08-31T08:58:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/08/31/react-native-youtube-animated-video-slide</id>
+    <content type="html"><![CDATA[<h1>Introduciton</h1>
+
+<p>I was going to spend some time digging into <a href="https://github.com/ProjectSeptemberInc/gl-react-native">gl-react-native</a> when someone asked in the slack channel how to achieve youtube like video sliding navigation. Now I won&rsquo;t get into the navigation portion, just the animation part. The navigation portion can be solved by basically treating video routes as a modal. Thus they are always over the top of whatever the previous route was.</p>
+
+<h1>What are we building?</h1>
+
+<p>If you haven&rsquo;t seen it, YouTube allows you to drag the current playing video down to the bottom right corner and have it continue to play while you browse the rest of the app.</p>
+
+<p>Something like this.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/gwbkw5f.gif">http://i.imgur.com/gwbkw5f.gif</a>" title="YouTube demo clone" ></p>
+
+<!-- more -->
+
+
+<h1>Setup</h1>
+
+<p>React native doesn&rsquo;t have a <code>Video</code> component but Brent Vatne created a fantastic video component called <a href="https://github.com/brentvatne/react-native-video">react-native-video</a>. This allows you to use videos added to your app bundle, or external video urls.</p>
+
+<p>So unlike a normal project you will need to run <code>npm install react-native-video --save</code>. Then follow the instructions on the <code>README</code> in <code>react-native-video</code> on how to add the library in XCode.</p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var Video = require(&lsquo;react-native-video&rsquo;);</p>
+
+<p>var Dimensions = require(&lsquo;Dimensions&rsquo;);
+var {width: deviceWidth, height: deviceHeight} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var videoWidth = deviceWidth,</p>
+
+<pre><code>videoHeight = Math.round((deviceWidth/16)*9);
+</code></pre>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  View,
+  Text,
+  Animated,
+  PanResponder,
+  ScrollView
+} = React;</p>
+
+<p>var AnimatedVideo = Animated.createAnimatedComponent(Video);
+var AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);</p>
+
+<p>```</p>
+
+<p>So a few things to call out here.</p>
+
+<p>We pull in dimensions of the screen and name them <code>deviceHeight</code> and <code>deviceWidth</code>. This is so we can calculate <code>videoWidth</code> and <code>videoHeight</code>. We use a simple calculation to create a video that is in the <code>16:9</code> aspect ratio.</p>
+
+<p>Then we use <code>createAnimatedComponent</code> to create an animated <code>ScrollView</code> and <code>AnimatedVideo</code> element.</p>
+
+<h1>Basic Component</h1>
+
+<p></p>
+
+<p>```
+var YoutubeVideoSlide = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  scale: new Animated.Value(1),
+  position: new Animated.ValueXY(),
+};
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+          &lt;AnimatedVideo 
+              source={{uri: "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"}}
+              style={styles.videoSizing}
+              rate={1}
+              paused={false}
+              volume={1}
+              resizeMode={'stretch'}
+              repeat={true} 
+          /&gt;
+        &lt;AnimatedScrollView style={styles.container}&gt;
+          &lt;View style={styles.comment}&gt;
+            &lt;Text&gt;Video Comment&lt;/Text&gt;
+          &lt;/View&gt;
+        &lt;/AnimatedScrollView&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1
+</code></pre>
+
+<p>  },
+  videoSizing: {</p>
+
+<pre><code>width: videoWidth,
+height: videoHeight
+</code></pre>
+
+<p>  },
+  comment: {</p>
+
+<pre><code>height: 100
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>```</p>
+
+<p></p>
+
+<p>We setup <code>flex:1</code> on the <code>View</code> so that the <code>ScrollView</code> will size correctly. We set the <code>width</code> and <code>height</code> on the <code>AnimatedVideo</code> to our <code>16:9</code> ratio. In the state we setup the initial scale to <code>1</code>, and an <code>X,Y</code> position for the moving video.</p>
+
+<h1>Setup the PanResponder</h1>
+
+<p>```</p>
+
+<pre><code>this._panResponder = PanResponder.create({
+  onStartShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onStartShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onPanResponderMove: Animated.event([
+      null, 
+      {
+          dy: this.state.position.y
+      }
+  ])
+});
+</code></pre>
+
+<p>```</p>
+
+<p>We&rsquo;ll do the normal &ldquo;say yes to allowing us to touch things&rdquo;, and then we&rsquo;ll setup an <code>Animated.event</code>. This is a helper function to traverse the arguments from <code>onPanResponderMove</code> and update an Animated value.</p>
+
+<p><code>onPanResponderMove</code> gets called with an <code>event</code> as the first argument, and <code>gestureState</code> as the second. The <code>null</code> tells <code>Animated.event</code> to ignore the first argument, but to grab the <code>dy</code> from the <code>gestureState</code> and update the <code>y</code> value on our <code>Animated.ValueXY</code> we created.</p>
+
+<h1>Interpolate and Animate</h1>
+
+<p>```</p>
+
+<pre><code>this._scale = this.state.position.y.interpolate({
+  inputRange: [0, deviceHeight ],
+  outputRange: [1, .71],
+  extrapolate: 'clamp'
+});
+
+this._translateY = this.state.position.y.interpolate({
+  inputRange: [0, deviceHeight],
+  outputRange: [0, deviceHeight],
+  extrapolate: 'clamp'
+});
+
+this.state.position.y.addListener((value) =&gt; {
+  this._y = value.value;
+  var scaleValue = this._scale.__getAnimatedValue();
+  var currentVideoWidth = scaleValue * videoWidth;
+  var buffer = ((videoWidth - currentVideoWidth)/2);
+  this.state.position.x.setValue(buffer);
+}.bind(this));
+
+this._opacity = this.state.position.y.interpolate({
+  inputRange: [0, deviceHeight ],
+  outputRange: [1, .1]
+});
+</code></pre>
+
+<p>```</p>
+
+<p>Now we need to setup a few more things in the <code>componentWillMount</code>. The <code>this._scale</code> will be set on a scale transform. This is directly tied to the <code>y</code> position of us dragging. So we setup an interpolate, which goes from <code>0</code> to the <code>deviceHeight</code> and map that to an output range of <code>1</code> to <code>.71</code>. The <code>.71</code> was a trial and error number, I&rsquo;m sure there is math to calculate this but I guessed till I got it right.</p>
+
+<p>The <code>clamp</code> is to say that this value cannot go above or below these values.</p>
+
+<p>You may be wondering why we setup <code>translateY</code> when the <code>inputRange</code> and <code>outputRange</code> are exactly the same. The <code>clamp</code> is the key part. This means that if a user tries to slide the video up it will not grow in scale, or slide the video upwards. It can only go down.</p>
+
+<p>We setup the listener so we can keep track of our <code>y</code> value, we&rsquo;ll get into that later. We&rsquo;ll use <code>__getAnimatedValue</code> to get the current scale. <strong>THIS WILL NOT WORK IN .11-rc</strong> and above. You cannot currently listen on interpolated values, and we need the interpolated value for our math.</p>
+
+<p>We get the original <code>videoWidth</code> and multiply it times the scale value so we can get the current <code>videoWidth</code>. We subtract the <code>currentVideoWidth</code> from the <code>videoWidth</code> and divide it by <code>2</code> to get the current buffer. That buffer is the space between the right side of the video and the current scaled video. If we don&rsquo;t do this then the X/Y scaling on the video will just squish it to the middle of the screen. What we want to do is have it slide down the right side of the screen.</p>
+
+<p>Finally we setup the opacity, this is for the <code>scrollView</code> to slowly fade as we swipe down.</p>
+
+<h1>Setup the styling</h1>
+
+<p>```
+  getScalePosition: function() {</p>
+
+<pre><code>return {
+  transform: [
+    {scale: this._scale},
+    {translateX: this.state.position.x},
+    {translateY: this._translateY}
+  ]
+}
+</code></pre>
+
+<p>  },
+  getScrollOffset: function() {</p>
+
+<pre><code>return {
+  transform: [
+    {translateY: this._translateY},
+  ],
+  opacity: this._opacity
+}
+</code></pre>
+
+<p>  },</p>
+
+<pre><code>&lt;AnimatedVideo 
+  {...this._panResponder.panHandlers}
+  source=
+  style={[styles.videoSizing, this.getScalePosition()]}
+  rate={this.state.rate}
+  paused={this.state.paused}
+  volume={this.state.volume}
+  muted={this.state.muted}
+  resizeMode={this.state.resizeMode}
+  repeat={true}
+/&gt;
+&lt;AnimatedScrollView style={[styles.container, this.getScrollOffset()]}&gt;
+&lt;/AnimatedScrollView&gt;
+</code></pre>
+
+<p>```</p>
+
+<p>Here we set default styling, and then make our calls to get the style objects with our animated values. For our video scale position we pass our <code>this._scale</code> to <code>scale</code> to transform both <code>scaleX</code>, and <code>scaleY</code>. We pass in our position x, and our <code>this._translateY</code> that is clamped.</p>
+
+<p>For our <code>ScrollView</code> , we setup <code>translateY</code>, and pass in the opacity we created.</p>
+
+<h1>Set Offset and Animate the Release</h1>
+
+<p>```</p>
+
+<pre><code>this._panResponder = PanResponder.create({
+  onStartShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onStartShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onPanResponderGrant: function() {
+    this.state.position.y.setOffset(this._y)
+  }.bind(this),
+  onPanResponderMove: Animated.event([
+      null, 
+      {
+          dy: this.state.position.y
+      }
+  ]),
+  onPanResponderRelease: (e, gestureState) =&gt; {
+    this.state.position.flattenOffset();
+
+    if (gestureState.dy &gt;= 40) {
+      Animated.timing(this.state.position.y, {
+        duration: 200,
+        toValue: deviceHeight
+      }).start();
+    } else {
+      Animated.timing(this.state.position.y, {
+        duration: 200,
+        toValue: 0
+      }).start();
+    }
+
+  }.bind(this)
+});
+</code></pre>
+
+<p>```</p>
+
+<p>When I said we&rsquo;d get to why we kept track of the <code>y</code> this is why. This is so we can set the offset of the initial press and prevent the video from jumping. It will work for sliding down, but with <code>dy</code> it is always the delta. So on the slide up from the bottom it would immediately jump to the top, and we don&rsquo;t want that.</p>
+
+<p>```</p>
+
+<pre><code>  onPanResponderGrant: function() {
+    this.state.position.y.setOffset(this._y)
+  }.bind(this),
+</code></pre>
+
+<p>```
+This code sets the initial offset when you first touch to whatever the current y value is.</p>
+
+<p>```</p>
+
+<pre><code>  onPanResponderRelease: (e, gestureState) =&gt; {
+    this.state.position.flattenOffset();
+
+    if (gestureState.dy &gt;= 100) {
+      Animated.timing(this.state.position.y, {
+        duration: 200,
+        toValue: deviceHeight
+      }).start();
+    } else {
+      Animated.timing(this.state.position.y, {
+        duration: 200,
+        toValue: 0
+      }).start();
+    }
+
+  }.bind(this)
+</code></pre>
+
+<p>```</p>
+
+<p>On release we flatten the offset. Which just squashes the current value and offset together.
+If the user has moved greater than <code>100</code> pixels then we&rsquo;ll animate the video to the bottom of the screen. If not we&rsquo;ll animate it back to the top.</p>
+
+<h1>Final</h1>
+
+<p>As always check it out on RNPlay at <a href="https://rnplay.org/apps/Cp_SSA">https://rnplay.org/apps/Cp_SSA</a>.
+The video source comes from <a href="http://camendesign.com/code/video_for_everybody/test.html">http://camendesign.com/code/video_for_everybody/test.html</a>. It&rsquo;s a wonderfully open sourced mp4 video that we can link to test out.</p>
+
+<h1>Full Code</h1>
+
+<p></p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);
+var {width: deviceWidth, height: deviceHeight} = Dimensions.get(&lsquo;window&rsquo;);
+var Video = require(&lsquo;react-native-video&rsquo;);</p>
+
+<p>var videoWidth = deviceWidth,</p>
+
+<pre><code>videoHeight = Math.round((deviceWidth/16)*9);
+</code></pre>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  View,
+  Text,
+  Animated,
+  PanResponder,
+  ScrollView
+} = React;</p>
+
+<p>var AnimatedVideo = Animated.createAnimatedComponent(Video);
+var AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);</p>
+
+<p>var YoutubeVideoSlide = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  rate: 1,
+  volume: 1,
+  muted: true,
+  resizeMode: 'stretch',
+  duration: 0.0,
+  currentTime: 0.0,
+  scale: new Animated.Value(1),
+  position: new Animated.ValueXY(),
+
+};
+</code></pre>
+
+<p>  },
+  _y: 0,
+  componentWillMount: function() {</p>
+
+<pre><code>this._panResponder = PanResponder.create({
+  onStartShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onStartShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onPanResponderGrant: function() {
+    this.state.position.y.setOffset(this._y)
+  }.bind(this),
+  onPanResponderMove: Animated.event([
+      null, 
+      {
+          dy: this.state.position.y
+      }
+  ]),
+  onPanResponderRelease: (e, gestureState) =&gt; {
+    this.state.position.flattenOffset();
+
+    if (gestureState.dy &gt;= 100) {
+      Animated.timing(this.state.position.y, {
+        duration: 200,
+        toValue: deviceHeight
+      }).start();
+    } else {
+      Animated.timing(this.state.position.y, {
+        duration: 200,
+        toValue: 0
+      }).start();
+    }
+
+  }.bind(this)
+});
+
+this._scale = this.state.position.y.interpolate({
+  inputRange: [0, deviceHeight ],
+  outputRange: [1, .71],
+  extrapolate: 'clamp'
+});
+
+this._translateY = this.state.position.y.interpolate({
+  inputRange: [0, deviceHeight],
+  outputRange: [0, deviceHeight],
+  extrapolate: 'clamp'
+});
+
+this.state.position.y.addListener((value) =&gt; {
+  this._y = value.value;
+  var scaleValue = this._scale.__getAnimatedValue();
+  var currentVideoWidth = scaleValue * videoWidth;
+  var buffer = ((videoWidth - currentVideoWidth)/2);
+  this.state.position.x.setValue(buffer);
+}.bind(this));
+
+this._opacity = this.state.position.y.interpolate({
+  inputRange: [0, deviceHeight ],
+  outputRange: [1, .1]
+});
+</code></pre>
+
+<p>  },
+  getScalePosition: function() {</p>
+
+<pre><code>return {
+  transform: [
+    {scale: this._scale},
+    {translateX: this.state.position.x},
+    {translateY: this._translateY}
+  ]
+}
+</code></pre>
+
+<p>  },
+  getScrollOffset: function() {</p>
+
+<pre><code>return {
+  transform: [
+    {translateY: this._translateY},
+  ],
+  opacity: this._opacity
+}
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+          &lt;AnimatedVideo 
+              {...this._panResponder.panHandlers}
+              source={{uri: "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"}}
+              style={[styles.videoSizing, this.getScalePosition()]}
+              rate={this.state.rate}
+              paused={this.state.paused}
+              volume={this.state.volume}
+              muted={this.state.muted}
+              resizeMode={this.state.resizeMode}
+              repeat={true} 
+          /&gt;
+        &lt;AnimatedScrollView style={[styles.container, this.getScrollOffset()]}&gt;
+          &lt;View style={styles.comment}&gt;
+            &lt;Text&gt;Video Comment&lt;/Text&gt;
+          &lt;/View&gt;
+          &lt;View style={styles.comment}&gt;
+            &lt;Text&gt;Video Comment&lt;/Text&gt;
+          &lt;/View&gt;
+          &lt;View style={styles.comment}&gt;
+            &lt;Text&gt;Video Comment&lt;/Text&gt;
+          &lt;/View&gt;
+          &lt;View style={styles.comment}&gt;
+            &lt;Text&gt;Video Comment&lt;/Text&gt;
+          &lt;/View&gt;
+          &lt;View style={styles.comment}&gt;
+            &lt;Text&gt;Video Comment&lt;/Text&gt;
+          &lt;/View&gt;
+          &lt;View style={styles.comment}&gt;
+            &lt;Text&gt;Video Comment&lt;/Text&gt;
+          &lt;/View&gt;
+          &lt;View style={styles.comment}&gt;
+            &lt;Text&gt;Video Comment&lt;/Text&gt;
+          &lt;/View&gt;
+        &lt;/AnimatedScrollView&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1
+</code></pre>
+
+<p>  },
+  videoSizing: {</p>
+
+<pre><code>width: videoWidth,
+height: videoHeight
+</code></pre>
+
+<p>  },
+  comment: {</p>
+
+<pre><code>height: 100
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>```
+</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: panresponder | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/panresponder/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React Native - Pan Responder inside of a ScrollView]]></title>
+    <link href="http://browniefed.com/blog/2015/10/10/react-native-pan-responder-inside-of-a-scrollview/"/>
+    <updated>2015-10-10T06:59:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/10/10/react-native-pan-responder-inside-of-a-scrollview</id>
+    <content type="html"><![CDATA[<p>Lets talk <code>PanResponder</code> in a <code>ScrollView</code>. This gets brought up frequently, so lets address it.</p>
+
+<h2>Scenario</h2>
+
+<p>You&rsquo;ve got a <code>PanResponder</code> in your <code>ScrollView</code>. When you scroll you want it to scroll, when you interact with the component with the <code>PanResponder</code> you want it to do <code>PanResponder</code> things.</p>
+
+<h2>What happens</h2>
+
+<p>Things start scrolling just fine. You attemp to drag, all goes swimmingly, then the <code>ScrollView</code> scrolls, your drag stops working and it just sits there stuck until you go re-interact with it. Yikes. You curse the react native gods and begrudgingly start learning Objective-C.</p>
+
+<h2>Janky</h2>
+
+<p><img class="<a" src="href="http://i.imgur.com/2d8nB6u.gif">http://i.imgur.com/2d8nB6u.gif</a>" title="Screw it, lets just go native" ></p>
+
+<!-- more -->
+
+
+<h2>Solution</h2>
+
+<p>The magic solution is <code>scrollEnabled={false}</code>. That&rsquo;s it. Seriously. Sadly it&rsquo;s only supported on <code>ios</code> as of me writing this blog post. I&rsquo;m sure it&rsquo;ll be supported in the future for <code>android</code>.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/Z34hsmN.gif">http://i.imgur.com/Z34hsmN.gif</a>" title="Sort of acceptable" ></p>
+
+<h2>Done</h2>
+
+<h4>Play with it here <a href="https://rnplay.org/apps/we3HnA">https://rnplay.org/apps/we3HnA</a></h4>
+
+<h2>Full Code Here</h2>
+
+<p></p>
+
+<p>```
+&lsquo;use strict&rsquo;;</p>
+
+<p>var React = require(&lsquo;react-native&rsquo;);
+var {
+  AppRegistry,
+  StyleSheet,
+  PanResponder,
+  ScrollView,
+  View,
+  Animated,
+  Text
+} = React;</p>
+
+<p>var SampleApp = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>    return {
+  scroll: true,
+  pan: new Animated.ValueXY()
+}
+</code></pre>
+
+<p>  },
+  componentWillMount: function() {</p>
+
+<pre><code>this._panResponder = PanResponder.create({
+  onStartShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onStartShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onPanResponderGrant: () =&gt; this.setState({scroll: false}),
+  onPanResponderMove: Animated.event([null, {dx: this.state.pan.x, dy: this.state.pan.y}]),
+    onPanResponderRelease: () =&gt; this.setState({scroll: true})
+})
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+            &lt;ScrollView 
+        style={{flex: 1}}
+      scrollEnabled={this.state.scroll}                      
+    &gt;
+        &lt;Animated.View 
+            style={{transform: this.state.pan.getTranslateTransform(), position: 'absolute', left: 150, top: 150}}
+            {...this._panResponder.panHandlers}
+        &gt;
+            &lt;Text&gt;Drag Me&lt;/Text&gt;
+        &lt;/Animated.View&gt;
+    &lt;/ScrollView&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+</code></pre>
+
+<p>  },
+});</p>
+
+<p>AppRegistry.registerComponent(&lsquo;SampleApp&rsquo;, () => SampleApp);
+```</p>
+
+<p></p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: flexboxfroggy | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/flexboxfroggy/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React Native FlexboxFroggy]]></title>
+    <link href="http://browniefed.com/blog/2015/12/23/react-native-flexboxfroggy/"/>
+    <updated>2015-12-23T15:33:00-08:00</updated>
+    <id>http://browniefed.com/blog/2015/12/23/react-native-flexboxfroggy</id>
+    <content type="html"><![CDATA[<p>If you are in the React Native world and haven&rsquo;t heard about <a href="https://exponentjs.com/">Exponent</a> then you&rsquo;ve been living under a rock. It&rsquo;s being built by James Ide, Brent Vatne, and Charlie Cheever. All who have contributed significantly to the React Native community and ecosystem.</p>
+
+<p>Brent is holding a contest to win some awesome prizes, including tickets to the sold out ReactJS 2016 Conf. Check out the contest here <a href="https://gist.github.com/brentvatne/7d88f846417452355b18">https://gist.github.com/brentvatne/7d88f846417452355b18</a>.</p>
+
+<p>What does this have to do with flexbox? Well as my entry into the contest I converted <a href="http://flexboxfroggy.com/">http://flexboxfroggy.com/</a> to React Native.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/BuCjWBl.gif">http://i.imgur.com/BuCjWBl.gif</a>" title="CHEAT CODES" ></p>
+
+<p>Even adding animations was a breeze! One line of code <code>LayoutAnimation.spring()</code> easily makes all frogs spring into place!</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/cyyYZAS.gif">http://i.imgur.com/cyyYZAS.gif</a>" title="Hop on froggies" ></p>
+
+<p>You can check out the code here <a href="https://github.com/browniefed/flexboxfroggy">https://github.com/browniefed/flexboxfroggy</a></p>
+
+<p>Or if you have Exponent installed you can run it easily on your phone by just tapping this link <a href="http://exp.host/@browniefed/flexboxfroggy">http://exp.host/@browniefed/flexboxfroggy</a></p>
+
+<p>If you don&rsquo;t have Exponent installed I highly suggest you install it!</p>
+
+<p>That&rsquo;s all from me for now. Looking forward to getting back to blogging in 2016!</p>
+]]></content>
+  </entry>
+  
+</feed>

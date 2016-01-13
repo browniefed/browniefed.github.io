@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: phonegap | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/phonegap/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Phonegap 3.4 GeoLocation]]></title>
+    <link href="http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation/"/>
+    <updated>2014-06-07T08:28:00-07:00</updated>
+    <id>http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation</id>
+    <content type="html"><![CDATA[<p>It doesn&rsquo;t appear to be just me but PhoneGap can be incredibly difficult to use. Simply because any information pertaining to the most current version of phonegap is so fragmented. A google search will reveal virtually nothing about the error messages you&rsquo;re receiving and how to remedy them for current versions.</p>
+
+<p>For example, I was attempting to use the GeoLocation API. Could care less about the extreme accuracy. After attempting to use it I was getting an Error Code 2 , failed to start geolocation service. Well maybe that was my fault for enabling <code>enableHighAccuracy</code> but wait you have to enableHighAccuracy for older versions of android otherwise it won&rsquo;t work. Or was that only for older versions of the geolocation plugin which then got deprecated in some versions of android in favor of the native browser geolocation API because it provides better and faster GPS locations. In the end the fault was all mine, I had simply forgotten to include the plugin in my <code>config.xml</code></p>
+
+<p>```</p>
+
+<pre><code>&lt;gap:plugin name="org.apache.cordova.geolocation" version="0.3.8" /&gt;
+</code></pre>
+
+<p>```</p>
+
+<p>Version <code>0.3.8</code> was the current version at the time of this article. Actually released on June 5th, 2014 just before the article written on June 6th, 2014.</p>
+
+<p>I&rsquo;ve sort of determined that the only real reliable way to determine anything is just to look at the release notes on <a href="https://github.com/apache/cordova-plugin-geolocation/blob/master/RELEASENOTES.md">github</a> for the best most up to date information.</p>
+
+<p>To end I should say I really love PhoneGap and all of the time and effort people are putting into developing it. The documentation and information about current versions is fragmented, and rather than ranting I should be helping out and contributing to documentation and solving the problems. That should always be the goal if you find a problem in the open source world. Don&rsquo;t rant, help out, and that is what I will do.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Socket.io on Android + Phonegap]]></title>
+    <link href="http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/"/>
+    <updated>2014-06-01T08:12:00-07:00</updated>
+    <id>http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap</id>
+    <content type="html"><![CDATA[<p>WebSockets are wonderful, they are one of the cheapest ways to get realtime communications into your web app. They&rsquo;re also a great way to get realtime communications into your mobile application. AJAX is great but wasn&rsquo;t applicable to my needs. Developing PDXLiveBus app required the server to handle all requests to TriMets servers and use AJAX to request the state of particular buses/routes was less realtime than I wanted. I could go more in depth about my usage and experience but the main point of this post is to prevent some table flipping.</p>
+
+<p>I had it all working in browser however it was not working when I did my phonegap serve. It just would not connect, nor even error out ( I don&rsquo;t think I waited long enough). I had been using <a href="https://github.com/mkuklis/phonegap-websocket">https://github.com/mkuklis/phonegap-websocket</a>, which Android WebView (what phonegap utilizes) doesn&rsquo;t support WebSockets until Android KitKat (4.4). I think this is a tremendous oversight, but I digress. I attempted various things to get <code>phonegap-websocket</code> to work but I just couldn&rsquo;t.</p>
+
+<p>The real problem wasn&rsquo;t with <code>phonegap-websocket</code> it was with my own server code. I had allowed CORS for the <code>restify</code> REST API I had setup but had forgotten to allow CORS for Socket.IO. It all came down to this single line of code.</p>
+
+<p><code>
+io.set( 'origins', '*:*' );
+</code></p>
+
+<p>Yeah not the most secure but then again I don&rsquo;t think I have a choice since everything is being served from phones and not a particular domain. Also I&rsquo;m dealing with public transportation vehicle location which doesn&rsquo;t necessarily needing extreme security.</p>
+
+<p>So if you can&rsquo;t get Socket.IO to work on your Android Phonegap app, add <code>phonegap-websocket</code> and make sure you have allowed CORS on your server.</p>
+]]></content>
+  </entry>
+  
+</feed>

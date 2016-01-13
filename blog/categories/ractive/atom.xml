@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Ractive | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/ractive/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Ractive.JS Components for Speed and Flexibility]]></title>
+    <link href="http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/"/>
+    <updated>2014-04-27T08:35:00-07:00</updated>
+    <id>http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility</id>
+    <content type="html"><![CDATA[<p>Components in Ractive are crucial if you want to build a flexible application. Hopefully this changes in the future with partials living on the data object and various init options accepting functions rather than static objects. The main purpose of Components is to have reusable template pieces that you can drop in and work the same all over your application. Some examples might be a grid component that accepts rows and columns as it&rsquo;s data, maybe it&rsquo;s as simple as a checkbox that has some styling a particular way. Components will help you build consistency through out your application however you should know when to use a partial and when to use a component.</p>
+
+<p>If you&rsquo;re coming from the Angular world components are much like directives. However since there is no controller concept, or model concept in Ractive there are less headaches in getting components to work with scope and all that jazz.</p>
+
+<p>Enough talk, lets jump in</p>
+
+<h3>Example</h3>
+
+<p></p>
+
+<p>```js</p>
+
+<p>var Checkbox = Ractive.extend({</p>
+
+<pre><code>isolated: true,
+template: '&lt;label&gt;&lt;input type="checkbox" checked="{{checked}}"&gt; {{label}}&lt;/label&gt;',
+data: {
+    checked: false
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```
+</p>
+
+<!-- more -->
+
+
+<p>To use it
+</p>
+
+<p>```js</p>
+
+<p>var ractive = new Ractive({</p>
+
+<pre><code>el: 'body',
+template: '&lt;Checkbox checkbox="{{active}}" label="{{title}}" /&gt;',
+components: {
+    Checkbox : Checkbox
+},
+data: {
+    title: 'This is a title',
+    active: true
+}
+</code></pre>
+
+<p>})
+```
+</p>
+
+<p>Here is the checkbox example I was talking about. Components are just another instiation of Ractive, using Ractive.extend says &ldquo;use this stuff as the default&rdquo;. There are a few things to point on.</p>
+
+<p>On the component we have set <code>isolated</code> to <code>true</code>. This means that the template in the component does not have access to the parent data. That just means we couldn&rsquo;t do this.
+</p>
+
+<p><code>js
+template: '&lt;label&gt;&lt;input type="checkbox" checked="{{active}}"&gt; {{title}}&lt;/label&gt;'
+</code>
+</p>
+
+<p>In some cases you don&rsquo;t want your components to be isolated but for them to be modular and reusable it is good to make them isolated. Isolated is false by default.</p>
+
+<p>Isolating your components means you are in control, you can name your data anything. As you see the parent Ractive has <code>active</code> and <code>title</code> but we still reference them as <code>checkbox</code> and <code>label</code> inside the component. Ractive will wire up the keypaths for you and bind everything. So when a user clicks on the checkbox <code>checked</code> will update to <code>false</code> or <code>true</code> and on the parent Ractive <code>active</code> will update to <code>true</code> or <code>false</code>, depending on if the checkbox is checked or unchecked.
+Further more if you update the title, it&rsquo;ll propagate down to the component.</p>
+
+<p><code>js
+ractive.set('title', 'This is a new title');
+</code></p>
+
+<p>You are two-way data binding on DOM elements to the component as well as to the parent object. This is extremely powerful especially if you&rsquo;re coming from the jQuery world. There is no more finding the DOM element you want, determining if it is checked, finding the parent wrapping label, updating the text of the label.</p>
+
+<p>This is a very basic example. A more complex example would be the Grid component.</p>
+
+<p><code>grid-template</code>
+</p>
+
+<p>```html</p>
+
+<table>
+    <tr>
+        {{#columns}}
+            <td>{{.label}}</td>
+        {{/columns}}
+    </tr>
+    {{#rows:rowIndex}}
+        <tr>
+            {{#columns:columnIndex}}
+                <td>
+                    {{rows[rowIndex][.field]}}
+                </td>
+            {{/columns}}
+        </tr>
+    {{/rows}}
+
+</table>
+
+
+<p>```
+</p>
+
+<p>```js</p>
+
+<p>var Grid = Ractive.extend({</p>
+
+<pre><code>isolated: true,
+template: '#grid-template',
+data: {}
+</code></pre>
+
+<p>});</p>
+
+<p>```
+</p>
+
+<p>```js</p>
+
+<p>var ractive = new Ractive({</p>
+
+<pre><code>el: 'body',
+template: '&lt;Grid rows="{{users}}" columns="{{cols}}" /&gt;',
+data: {
+    cols: [
+        {field: 'username', label: 'Username'},
+        {field: 'name', label: 'Full Name'},
+        {field: 'email', label: 'Email'}
+    ],
+    users: [
+        {username: 'admin', name: 'Admin', email: 'admin@example.com'},
+        {username: 'tg', name: 'Thadius Gorge', email: 'tg@example.com'},
+        {username: 'f999', name: 'Frank', email: 'frank@example.com'}
+
+    ]
+},
+components: {Grid: Grid}
+</code></pre>
+
+<p>})
+```
+</p>
+
+<p>Here is the live example</p>
+
+<p data-height="268" data-theme-id="0" data-slug-hash="dvqIl" data-default-tab="result" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/dvqIl/'>dvqIl</a> by browniefed (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="http://browniefed.com//codepen.io/assets/embed/ei.js"></script>
+
+
+<p>All it takes is some slightly organized data and you&rsquo;d never have to construct a data table again. More advance component topics are coming in the future this was merely an introduction.</p>
+]]></content>
+  </entry>
+  
+</feed>

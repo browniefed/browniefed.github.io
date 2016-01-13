@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: documentation | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/documentation/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Phonegap 3.4 GeoLocation]]></title>
+    <link href="http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation/"/>
+    <updated>2014-06-07T08:28:00-07:00</updated>
+    <id>http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation</id>
+    <content type="html"><![CDATA[<p>It doesn&rsquo;t appear to be just me but PhoneGap can be incredibly difficult to use. Simply because any information pertaining to the most current version of phonegap is so fragmented. A google search will reveal virtually nothing about the error messages you&rsquo;re receiving and how to remedy them for current versions.</p>
+
+<p>For example, I was attempting to use the GeoLocation API. Could care less about the extreme accuracy. After attempting to use it I was getting an Error Code 2 , failed to start geolocation service. Well maybe that was my fault for enabling <code>enableHighAccuracy</code> but wait you have to enableHighAccuracy for older versions of android otherwise it won&rsquo;t work. Or was that only for older versions of the geolocation plugin which then got deprecated in some versions of android in favor of the native browser geolocation API because it provides better and faster GPS locations. In the end the fault was all mine, I had simply forgotten to include the plugin in my <code>config.xml</code></p>
+
+<p>```</p>
+
+<pre><code>&lt;gap:plugin name="org.apache.cordova.geolocation" version="0.3.8" /&gt;
+</code></pre>
+
+<p>```</p>
+
+<p>Version <code>0.3.8</code> was the current version at the time of this article. Actually released on June 5th, 2014 just before the article written on June 6th, 2014.</p>
+
+<p>I&rsquo;ve sort of determined that the only real reliable way to determine anything is just to look at the release notes on <a href="https://github.com/apache/cordova-plugin-geolocation/blob/master/RELEASENOTES.md">github</a> for the best most up to date information.</p>
+
+<p>To end I should say I really love PhoneGap and all of the time and effort people are putting into developing it. The documentation and information about current versions is fragmented, and rather than ranting I should be helping out and contributing to documentation and solving the problems. That should always be the goal if you find a problem in the open source world. Don&rsquo;t rant, help out, and that is what I will do.</p>
+]]></content>
+  </entry>
+  
+</feed>

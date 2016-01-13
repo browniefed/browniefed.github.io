@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: book | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/book/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React Native Animated Book]]></title>
+    <link href="http://browniefed.com/blog/2015/12/23/react-native-animated-book/"/>
+    <updated>2015-12-23T15:31:00-08:00</updated>
+    <id>http://browniefed.com/blog/2015/12/23/react-native-animated-book</id>
+    <content type="html"><![CDATA[<p>So I wrote a book of sorts on React Native animations. Mostly covering the animated API, and soon much much more. Check it out here <a href="http://browniefed.com/react-native-animation-book/">http://browniefed.com/react-native-animation-book/</a>.</p>
+
+<p>I cover the API, and walk through basic animation examples, and soon advanced topics. Learn to create a fun dragging, spinning square.</p>
+
+<p><img class="<a" src="href="http://browniefed.com/react-native-animation-book/images/SimpleDragAnimation.gif">http://browniefed.com/react-native-animation-book/images/SimpleDragAnimation.gif</a>" title="DragNSpin" ></p>
+
+<p>This is just a quick update :)</p>
+]]></content>
+  </entry>
+  
+</feed>

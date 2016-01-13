@@ -1,0 +1,846 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: hearts | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/hearts/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React Native Periscope Hearts Animation]]></title>
+    <link href="http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation/"/>
+    <updated>2015-09-07T11:02:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation</id>
+    <content type="html"><![CDATA[<h1>Introduction</h1>
+
+<p>I was contacted asking if it was possible to recreate the periscope heart animations in react-native. I was also linked to someone rebuilding the same effect in Framer.js, you can check out the linked video here <a href="https://www.youtube.com/watch?v=qFUXxqzZytU">https://www.youtube.com/watch?v=qFUXxqzZytU</a>.</p>
+
+<p>Periscope not only has an iPhone/Android app but it also has a web app with the same heart effect. I could take a look at the animations being done on it but we&rsquo;ll just eye ball it.</p>
+
+<h1>What we are building</h1>
+
+<p><img class="<a" src="href="http://i.imgur.com/5JhgzQV.gif">http://i.imgur.com/5JhgzQV.gif</a>" title="Purple floating fading swaying rotating hearts" ></p>
+
+<h3>Live code: <a href="https://rnplay.org/apps/8VhSjw">https://rnplay.org/apps/8VhSjw</a></h3>
+
+<!-- more -->
+
+
+<h1>What it looks like on Periscope</h1>
+
+<p>If you don&rsquo;t know what I&rsquo;m talking about, the heart animation looks like this.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/sEJf9Md.gif">http://i.imgur.com/sEJf9Md.gif</a>" title="Periscope hearts" ></p>
+
+<h1>Break Down</h1>
+
+<p>In order to replicate the animation we have to break it down into it&rsquo;s parts.</p>
+
+<ul>
+<li>Heart appears and scales up then quickly scales back down. Animation <code>Scale 0 =&gt; Scale 1.2 =&gt; Scale 1</code></li>
+<li>Heart moves upwards with a slight sway to the left then back to the right. <code>X/Y from 0 =&gt; deviceHeight/2</code></li>
+<li>Slight rotation of the heart through out each sway <code>rotate -15deg =&gt; 0 =&gt; 15deg</code></li>
+<li>Heart opacity fades out over entire animation <code>opacity 1 =&gt; 0</code></li>
+</ul>
+
+
+<p>We likely won&rsquo;t need <code>Animated</code> values for all of these, the goal of Animating is to attempt to interpolate other values from one <code>Animated.Value</code>. In our case that one constant is the <code>X/Y</code> values. All of the other animations are dependent on where the heart is currently located.</p>
+
+<p>The opacity is derived from the <code>X/Y</code> that it can be an interpolated value. The scale could be interpolated too, with 3 small input ranges, and output ranges of <code>[0, 1.2, 1]</code>. The rotation can also be interpolated based upon the <code>X</code> value. Even the X can be interpolated based upon the Y if we determine that we want 2 sways to happen before the animation is complete.</p>
+
+<h1>Make the Heart</h1>
+
+<p>Now we have to decide how to make the heart. One option is to use an <code>&lt;Image /&gt;</code> however this means I have to open up an image editor and I&rsquo;m a developer, not a designer! If you haven&rsquo;t seen <a href="https://css-tricks.com/examples/ShapesOfCSS/">The Shapes of CSS</a> I recommend checking it out. For basics shapes CSS will work great, and in our case a heart is a simple shape.</p>
+
+<p>It&rsquo;s composed of 2 objects overlayed on top of each other. Two squares, with top left / top right border radiuses and then drop them on top of each other.</p>
+
+<p>Apart they look like this</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/mUu1Yt8.png">http://i.imgur.com/mUu1Yt8.png</a>" title="Two squares not slammed together" ></p>
+
+<p>Then together we get a heart!</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/o8WOlDU.png">http://i.imgur.com/o8WOlDU.png</a>" title="Now it&rsquo;s a heart" ></p>
+
+<p>This also gives us control over the color more easily, the sizing, and anything else you can do with a simple view.</p>
+
+<h1>Setup</h1>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);</p>
+
+<p>var {
+  width: deviceWidth,
+  height: deviceHeight
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  View,
+  Animated,
+  TouchableWithoutFeedback
+} = React;</p>
+
+<p>var ANIMATION_END_Y = Math.ceil(deviceHeight * .5);
+var NEGATIVE_END_Y = ANIMATION_END_Y * -1;
+var startCount = 1;
+<code>``
+We'll bring in the necessary includes. The</code>ANIMATION_END_Y<code>and the reverse</code>NEGATIVE_END_Y` will become apparent as what they are later. Due to some interpolation we&rsquo;ll need to do some trickery to make our animation interpolations make more sense.</p>
+
+<h1>Create The Heart</h1>
+
+<p>As we showed before the heart is 2 pieces. These pieces will have to be absolutely positioned so lets creating a wrapping view, and 2 pieces. We&rsquo;ll style each piece <code>leftHeart</code> and <code>rightHeat</code>. Then setup some styles.</p>
+
+<p>```
+var Heart = React.createClass({</p>
+
+<pre><code>render: function() {
+    return (
+        &lt;View {...this.props} style={[styles.heart, this.props.style]}&gt;
+            &lt;View style={styles.leftHeart} /&gt;
+            &lt;View style={styles.rightHeart} /&gt;
+        &lt;/View&gt;
+    )
+}
+</code></pre>
+
+<p>})</p>
+
+<p>//Styles</p>
+
+<p>  heart: {</p>
+
+<pre><code>width: 50,
+height: 50
+</code></pre>
+
+<p>  },
+  heartShape: {</p>
+
+<pre><code>width: 30,
+height: 45,
+position: 'absolute',
+top: 0,
+borderTopLeftRadius: 15,
+borderTopRightRadius: 15,
+backgroundColor: '#6427d1',
+</code></pre>
+
+<p>  },
+  leftHeart: {</p>
+
+<pre><code>transform: [
+    {rotate: '-45deg'}
+],
+left: 5
+</code></pre>
+
+<p>  },
+  rightHeart: {</p>
+
+<pre><code>transform: [
+    {rotate: '45deg'}
+],
+right: 5
+</code></pre>
+
+<p>  }</p>
+
+<p><code>``
+We set a width and height on the wrapping heart so it takes up space. We move all default styling into</code>heartShape<code>style and give it a nice purple color. Then we just adjust each left and right heart. The</code>leftHeart<code>piece will be on the left side, and rotated</code>-45deg<code>aka</code>45deg` towards the left, and the right will be the reverse.</p>
+
+<h1>Setup Base Rendering</h1>
+
+<p>```
+var HeartFloater = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {};
+</code></pre>
+
+<p>  },</p>
+
+<p>  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Animated.View style={styles.heartWrap}&gt;
+      &lt;Heart /&gt;
+    &lt;/Animated.View&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1
+</code></pre>
+
+<p>  },
+  heartWrap: {</p>
+
+<pre><code>  position: 'absolute',
+  bottom: 50,
+  right: (deviceWidth/2) - 25
+</code></pre>
+
+<p>  },
+  heart: {</p>
+
+<pre><code>width: 50,
+height: 50
+</code></pre>
+
+<p>  },
+  heartShape: {</p>
+
+<pre><code>width: 30,
+height: 45,
+position: 'absolute',
+top: 0,
+borderTopLeftRadius: 15,
+borderTopRightRadius: 15,
+backgroundColor: '#6427d1',
+</code></pre>
+
+<p>  },
+  leftHeart: {</p>
+
+<pre><code>transform: [
+    {rotate: '-45deg'}
+],
+left: 5
+</code></pre>
+
+<p>  },
+  rightHeart: {</p>
+
+<pre><code>transform: [
+    {rotate: '45deg'}
+],
+right: 5
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Nothing much to call out here, except we add a new <code>heartWrap</code> class. We&rsquo;ll leave the heart be a static heart and then just animate a wrapper. The <code>heartWrap</code> is positioned absolutely and centered.</p>
+
+<h1>Move the Heart</h1>
+
+<p>```
+var HeartFloater = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  position: new Animated.Value(0)
+};
+</code></pre>
+
+<p>  },
+  componentDidMount: function() {</p>
+
+<pre><code>Animated.timing(this.state.position, {
+  duration: 2000,
+  toValue: NEGATIVE_END_Y
+}).start();
+</code></pre>
+
+<p>  },
+  getHeartAnimationStyle: function() {</p>
+
+<pre><code>return {
+  transform: [
+    {translateY: this.state.position},
+  ]
+}
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Animated.View style={[styles.heartWrap, this.getHeartAnimationStyle()]}&gt;
+      &lt;Heart /&gt;
+    &lt;/Animated.View&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>We only setup a basic <code>Animated.Value</code> instead of an <code>Animated.ValueXY</code> because we will interpolate all the necessary effects and even the <code>X</code> position from the <code>Y</code> value.</p>
+
+<p>We kick off an animation when the component mounts to animate the heart from <code>0</code> to negative half <code>deviceHeight</code>. We do this since translateY moves up when it is negative, and moves down when it is positive. We do this animation for 2 seconds.</p>
+
+<h1>Fade the Heart</h1>
+
+<p>Now this is where we are going to get a little tricky with interpolation.</p>
+
+<p>```
+  componentWillMount: function() {</p>
+
+<pre><code>this._yAnimation = this.state.position.interpolate({
+  inputRange: [NEGATIVE_END_Y, 0],
+  outputRange: [ANIMATION_END_Y, 0]
+});
+
+this._opacityAnimation = this._yAnimation.interpolate({
+  inputRange: [0, ANIMATION_END_Y],
+  outputRange: [1, 0]
+})
+</code></pre>
+
+<p>  },</p>
+
+<p>  getHeartAnimationStyle: function() {</p>
+
+<pre><code>return {
+  transform: [
+    {translateY: this.state.position},
+  ],
+  opacity: this._opacityAnimation
+}
+</code></pre>
+
+<p>  },
+```
+You can interpolate on an interpolated value. So we&rsquo;ll map our negative values, directly to positive values and also flip the step scale.</p>
+
+<p>Our animation would typically go from <code>0</code> to <code>-300</code> but our new <code>_yAnimation</code> will flip that and stay we are animation goes from <code>0</code> to <code>300</code>.</p>
+
+<p>This allows our animations like <code>opacity</code> to make more sense. We can interpolate on our <code>this._yAnimation</code> and specify <code>[0, ANIMATION_END_Y]</code> is tied to the opacity values <code>[1,0]</code>. So <code>0</code> aka the start is at <code>opacity</code> of <code>1</code> and moves to <code>0</code> which is tied to the <code>ANIMATION_END_Y</code> (roughly 300 depending on your device).</p>
+
+<p>Then we pass the interpolated opacity value in <code>opacity</code>.</p>
+
+<h1>Scale the Heart</h1>
+
+<p>```</p>
+
+<pre><code>this._scaleAnimation = this._yAnimation.interpolate({
+  inputRange: [0, 15, 30],
+  outputRange: [0, 1.2, 1],
+  extrapolate: 'clamp'
+})
+
+getHeartAnimationStyle: function() {
+return {
+  transform: [
+    {translateY: this.state.position},
+    {scale: this._scaleAnimation}
+  ],
+  opacity: this._opacityAnimation
+}
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>Now we&rsquo;ll add another animation below the other that will handle the scale. Because our now interpolated value runs positively we can just define pixel scale steps. So <code>0</code> maps to <code>0</code> so on creation the heart doesn&rsquo;t exist. The heart will quickly scale from <code>0</code> to <code>1.2x</code> it&rsquo;s size over the first <code>15</code> pixels it travels, then from <code>15</code> to <code>30</code> pixels it&rsquo;ll scale back down from <code>1.2</code> to <code>1</code>.</p>
+
+<p>This gives us a quick little pulse of the heart. We must add the <code>extrapolate: clamp</code> otherwise the heart will start scaling down and eventually go negative causing the heart to flip.</p>
+
+<h1>Rotate/Sway the Heart</h1>
+
+<p>Almost done! Now lets make it sway a little bit. This one is a little difficult to fine tune, but I errored on the less dramtic side of things.</p>
+
+<p>```
+this.<em>xAnimation = this.</em>yAnimation.interpolate({
+  inputRange: [0, ANIMATION_END_Y/2, ANIMATION_END_Y],
+  outputRange: [0, 15, 0]
+})</p>
+
+<p>this.<em>rotateAnimation = this.</em>yAnimation.interpolate({
+  inputRange: [0, ANIMATION_END_Y/4, ANIMATION_END_Y/3, ANIMATION_END_Y/2, ANIMATION_END_Y],
+  outputRange: [&lsquo;0deg&rsquo;, &lsquo;-2deg&rsquo;, &lsquo;0deg&rsquo;, &lsquo;2deg&rsquo;, &lsquo;0deg&rsquo;]
+});</p>
+
+<p>getHeartAnimationStyle: function() {
+  return {</p>
+
+<pre><code>transform: [
+  {translateY: this.state.position},
+  {translateX: this._xAnimation},
+  {scale: this._scaleAnimation},
+  {rotate: this._rotateAnimation}
+],
+opacity: this._opacityAnimation
+</code></pre>
+
+<p>  }
+},
+```</p>
+
+<p>This causes one sway to happen for <code>15</code> pixels then come back to the center. There are three rotations that happen that will make it look like it&rsquo;s wobbling a bit more.</p>
+
+<p>The <code>_xAnimation</code> input range is from <code>0</code> to half the animation, to the end. Since our value of the <code>_xAnimation</code> interpolation is the end value of the animation we don&rsquo;t need to <code>extrapolate: clamp</code> here.</p>
+
+<p>The <code>_rotateAnimation</code> takes <code>5</code> different steps. We just divide by each step. We start at <code>0</code>, then divide by 4 for quarter of the height animation, then a third of animation, half of the animation, then finally rotate back to 0 to finish the animation off. I pulled these out of thin air, and it looks okay but could use some fine tuning.</p>
+
+<h1>Make AnimatedHeart component</h1>
+
+<p>Now lets make it show a bunch of hearts when we press down. Each press should put another heart onto an array, and when the heart is done animating we should remove it.</p>
+
+<p>First move all the code to an <code>AnimatedHeart</code> like so.</p>
+
+<p>```
+var AnimatedHeart = React.createClass({
+  getDefaultProps: function() {</p>
+
+<pre><code>return {
+  onComplete: function() {}
+};
+</code></pre>
+
+<p>  },
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  position: new Animated.Value(0)
+};
+</code></pre>
+
+<p>  },
+  componentWillMount: function() {</p>
+
+<pre><code>this._yAnimation = this.state.position.interpolate({
+  inputRange: [NEGATIVE_END_Y, 0],
+  outputRange: [ANIMATION_END_Y, 0]
+});
+
+this._opacityAnimation = this._yAnimation.interpolate({
+  inputRange: [0, ANIMATION_END_Y],
+  outputRange: [1, 0]
+});
+
+this._scaleAnimation = this._yAnimation.interpolate({
+  inputRange: [0, 15, 30],
+  outputRange: [0, 1.2, 1],
+  extrapolate: 'clamp'
+});
+
+this._xAnimation = this._yAnimation.interpolate({
+  inputRange: [0, ANIMATION_END_Y/2, ANIMATION_END_Y],
+  outputRange: [0, 15, 0]
+})
+
+this._rotateAnimation = this._yAnimation.interpolate({
+  inputRange: [0, ANIMATION_END_Y/4, ANIMATION_END_Y/3, ANIMATION_END_Y/2, ANIMATION_END_Y],
+  outputRange: ['0deg', '-2deg', '0deg', '2deg', '0deg']
+});
+</code></pre>
+
+<p>  },
+  componentDidMount: function() {</p>
+
+<pre><code>Animated.timing(this.state.position, {
+  duration: 2000,
+  toValue: NEGATIVE_END_Y
+}).start(this.props.onComplete);
+</code></pre>
+
+<p>  },
+  getHeartAnimationStyle: function() {</p>
+
+<pre><code>return {
+  transform: [
+    {translateY: this.state.position},
+    {translateX: this._xAnimation},
+    {scale: this._scaleAnimation},
+    {rotate: this._rotateAnimation}
+  ],
+  opacity: this._opacityAnimation
+}
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+    &lt;Animated.View style={[styles.heartWrap, this.getHeartAnimationStyle(), this.props.style]}&gt;
+      &lt;Heart /&gt;
+    &lt;/Animated.View&gt;
+)
+</code></pre>
+
+<p>  }
+})
+```</p>
+
+<p>We modified a few things. We adjusted our <code>style</code> to include <code>this.props.style</code>.
+Also we added a callback when the animation is finished.</p>
+
+<p>```
+  componentDidMount: function() {</p>
+
+<pre><code>Animated.timing(this.state.position, {
+  duration: 2000,
+  toValue: NEGATIVE_END_Y
+}).start(this.props.onComplete);
+</code></pre>
+
+<p>  },
+```</p>
+
+<h1>Add AnimatedHeart on press</h1>
+
+<p>```
+//<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random</a>
+function getRandomNumber(min, max) {
+  return Math.random() * (max &ndash; min) + min;
+}</p>
+
+<p>var HeartFloater = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  hearts: [] 
+};
+</code></pre>
+
+<p>  },
+  addHeart: function() {</p>
+
+<pre><code>startCount += 1;
+this.state.hearts.push({
+  id: startCount,
+  right: getRandomNumber(50, 150)
+});
+this.setState(this.state);
+</code></pre>
+
+<p>  },
+  removeHeart: function(v) {</p>
+
+<pre><code>var index = this.state.hearts.findIndex(function(heart) { return heart.id === v});
+this.state.hearts.splice(index, 1);
+this.setState(this.state);
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;TouchableWithoutFeedback style={styles.container} onPress={this.addHeart}&gt;
+      &lt;View style={styles.container}&gt;
+        {
+          this.state.hearts.map(function(v, i) {
+            return (
+                &lt;AnimatedHeart 
+                  key={v.id}
+                  onComplete={this.removeHeart.bind(this, v.id)}
+                  style=
+                /&gt;
+            ) 
+          }, this)
+        }
+      &lt;/View&gt;
+    &lt;/TouchableWithoutFeedback&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Our HeartFloater, now has a hearts array to hold our hearts for state. We&rsquo;ve adjusted our <code>render</code> to use <code>TouchableWithoutFeedback</code> to call <code>addHeart</code> on press.</p>
+
+<p>Each press will increase our <code>startCount</code> which we use as an id generator. Also we add a random <code>right</code> style. a</p>
+
+<p>Our render just loops over each heart, and renders the <code>AnimatedHeart</code> with a <code>key</code> which is essential for performance, an <code>onComplete</code> which is called when our animation is finished, and the right style we randomly generated.</p>
+
+<p>On complete we call remove. Which finds the index of the heart, splices it, and sets state.</p>
+
+<h1>Fix Background Colors and Styles</h1>
+
+<p>```
+  heartWrap: {</p>
+
+<pre><code>  position: 'absolute',
+  bottom: 30,
+  backgroundColor: 'transparent'
+</code></pre>
+
+<p>  },
+  heart: {</p>
+
+<pre><code>width: 50,
+height: 50,
+backgroundColor: 'transparent'
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>Without setting the background to transparent the background will be white causing one heart to clip another. This will prevent that.</p>
+
+<p>We also removed the <code>right</code> position since we generate random positions between <code>50</code> and <code>150</code>.</p>
+
+<h1>Final</h1>
+
+<p>Thank you to Anthony Webb for the submission. As always check out the live code on RNPlay.</p>
+
+<h3>Live code: <a href="https://rnplay.org/apps/8VhSjw">https://rnplay.org/apps/8VhSjw</a></h3>
+
+<p>If you any other inquiries do let me know and I&rsquo;ll show you how to build them.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/5JhgzQV.gif">http://i.imgur.com/5JhgzQV.gif</a>" title="Purple floating fading swaying rotating hearts" ></p>
+
+<h1>Final Code</h1>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);</p>
+
+<p>var {
+  width: deviceWidth,
+  height: deviceHeight
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  View,
+  Animated,
+  TouchableWithoutFeedback
+} = React;</p>
+
+<p>var ANIMATION_END_Y = Math.ceil(deviceHeight * .5);
+var NEGATIVE_END_Y = ANIMATION_END_Y * -1;
+var startCount = 1;</p>
+
+<p>function getRandomNumber(min, max) {
+  return Math.random() * (max &ndash; min) + min;
+}</p>
+
+<p>var Heart = React.createClass({</p>
+
+<pre><code>render: function() {
+    return (
+        &lt;View {...this.props} style={[styles.heart, this.props.style]}&gt;
+            &lt;View style={[styles.leftHeart, styles.heartShape]} /&gt;
+            &lt;View style={[styles.rightHeart, styles.heartShape]} /&gt;
+        &lt;/View&gt;
+    )
+}
+</code></pre>
+
+<p>});</p>
+
+<p>var AnimatedHeart = React.createClass({
+  getDefaultProps: function() {</p>
+
+<pre><code>return {
+  onComplete: function() {}
+};
+</code></pre>
+
+<p>  },
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  position: new Animated.Value(0)
+};
+</code></pre>
+
+<p>  },
+  componentWillMount: function() {</p>
+
+<pre><code>this._yAnimation = this.state.position.interpolate({
+  inputRange: [NEGATIVE_END_Y, 0],
+  outputRange: [ANIMATION_END_Y, 0]
+});
+
+this._opacityAnimation = this._yAnimation.interpolate({
+  inputRange: [0, ANIMATION_END_Y],
+  outputRange: [1, 0]
+});
+
+this._scaleAnimation = this._yAnimation.interpolate({
+  inputRange: [0, 15, 30],
+  outputRange: [0, 1.2, 1],
+  extrapolate: 'clamp'
+});
+
+this._xAnimation = this._yAnimation.interpolate({
+  inputRange: [0, ANIMATION_END_Y/2, ANIMATION_END_Y],
+  outputRange: [0, 15, 0]
+})
+
+this._rotateAnimation = this._yAnimation.interpolate({
+  inputRange: [0, ANIMATION_END_Y/4, ANIMATION_END_Y/3, ANIMATION_END_Y/2, ANIMATION_END_Y],
+  outputRange: ['0deg', '-2deg', '0deg', '2deg', '0deg']
+});
+</code></pre>
+
+<p>  },
+  componentDidMount: function() {</p>
+
+<pre><code>Animated.timing(this.state.position, {
+  duration: 2000,
+  toValue: NEGATIVE_END_Y
+}).start(this.props.onComplete);
+</code></pre>
+
+<p>  },
+  getHeartAnimationStyle: function() {</p>
+
+<pre><code>return {
+  transform: [
+    {translateY: this.state.position},
+    {translateX: this._xAnimation},
+    {scale: this._scaleAnimation},
+    {rotate: this._rotateAnimation}
+  ],
+  opacity: this._opacityAnimation
+}
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+    &lt;Animated.View style={[styles.heartWrap, this.getHeartAnimationStyle(), this.props.style]}&gt;
+      &lt;Heart /&gt;
+    &lt;/Animated.View&gt;
+)
+</code></pre>
+
+<p>  }
+})</p>
+
+<p>var HeartFloater = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  hearts: [] 
+};
+</code></pre>
+
+<p>  },
+  addHeart: function() {</p>
+
+<pre><code>startCount += 1;
+this.state.hearts.push({
+  id: startCount,
+  right: getRandomNumber(50, 150)
+});
+this.setState(this.state);
+</code></pre>
+
+<p>  },
+  removeHeart: function(v) {</p>
+
+<pre><code>var index = this.state.hearts.findIndex(function(heart) { return heart.id === v});
+this.state.hearts.splice(index, 1);
+this.setState(this.state);
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;TouchableWithoutFeedback style={styles.container} onPress={this.addHeart}&gt;
+      &lt;View style={styles.container}&gt;
+        {
+          this.state.hearts.map(function(v, i) {
+            return (
+                &lt;AnimatedHeart 
+                  key={v.id}
+                  onComplete={this.removeHeart.bind(this, v.id)}
+                  style=
+                /&gt;
+            ) 
+          }, this)
+        }
+      &lt;/View&gt;
+    &lt;/TouchableWithoutFeedback&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1
+</code></pre>
+
+<p>  },
+  heartWrap: {</p>
+
+<pre><code>  position: 'absolute',
+  bottom: 30,
+  backgroundColor: 'transparent'
+</code></pre>
+
+<p>  },
+  heart: {</p>
+
+<pre><code>width: 50,
+height: 50,
+backgroundColor: 'transparent'
+</code></pre>
+
+<p>  },
+  heartShape: {</p>
+
+<pre><code>width: 30,
+height: 45,
+position: 'absolute',
+top: 0,
+borderTopLeftRadius: 15,
+borderTopRightRadius: 15,
+backgroundColor: '#6427d1',
+</code></pre>
+
+<p>  },
+  leftHeart: {</p>
+
+<pre><code>transform: [
+    {rotate: '-45deg'}
+],
+left: 5
+</code></pre>
+
+<p>  },
+  rightHeart: {</p>
+
+<pre><code>transform: [
+    {rotate: '45deg'}
+],
+right: 5
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>AppRegistry.registerComponent(&lsquo;animate_slide&rsquo;, () => HeartFloater);</p>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>

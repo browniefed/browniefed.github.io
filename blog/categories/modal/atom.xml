@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: modal | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/modal/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React Native - Easy Overlay Modal with Navigator]]></title>
+    <link href="http://browniefed.com/blog/2015/10/18/react-native-easy-overlay-modal-with-navigator/"/>
+    <updated>2015-10-18T01:43:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/10/18/react-native-easy-overlay-modal-with-navigator</id>
+    <content type="html"><![CDATA[<p>It pays to have the <code>Navigator</code> at the root of your application. This allows you to tunnel back and render something at the root. In our case a custom Modal overlay component. You can pass anything on the route object, and anytime you render the same component at the same place it will just re-render that same component. So lets use the power of React to solve our problems.</p>
+
+<h2>What are we making</h2>
+
+<p><img class="<a" src="href="http://i.imgur.com/5LhPD3l.gif">http://i.imgur.com/5LhPD3l.gif</a>" title="I should have made this loop" ></p>
+
+<!-- more -->
+
+
+<h2>Setup</h2>
+
+<p>Lets setup our app</p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var {
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+  Navigator,
+  TouchableOpacity,
+  Animated,
+  Dimensions
+} = React;</p>
+
+<p>var {
+  height: deviceHeight
+} = Dimensions.get(&lsquo;window&rsquo;);
+```</p>
+
+<p>We&rsquo;ll get our <code>deviceHeight</code> so we can manually animate our modal up. You could use <code>LayoutAnimation</code> here as well and not deal with getting the deviceHeight but I like <code>Animated</code> so deal with it.</p>
+
+<h2>Route Stack</h2>
+
+<p>```
+var RouteStack = {</p>
+
+<pre><code>app: {
+  component: App 
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>This is our super complex route stack. All we do is have a named route with the componet to render.</p>
+
+<h2>Root Application</h2>
+
+<p>```
+var ModalApp = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return { modal: false };
+</code></pre>
+
+<p>  },
+  renderScene: function(route, navigator) {</p>
+
+<pre><code>var Component = route.component;
+
+return (
+  &lt;Component openModal={() =&gt; this.setState({modal: true})}/&gt;
+);
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Navigator
+        initialRoute={RouteStack.app}
+        renderScene={this.renderScene}
+    /&gt;
+    {this.state.modal ? &lt;TopModal closeModal={() =&gt; this.setState({modal: false}) }/&gt; : null }
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>```</p>
+
+<p>This is the root of our application. Our render function is pretty basic. We render <code>Navigator</code> with our <code>intialRoute</code> being our only Route. Our <code>renderScene</code> function is going to control our logic.</p>
+
+<p>When we render our component we pass down an <code>openModal</code> function. This will set <code>modal:true</code> on our state which will allow for us to open/close the modal over the current route. This will just cause <code>Navigator</code> to re-render at the current route. This means your rendered <code>Component</code> at the current route will have <code>componentWillReceiveProps</code> triggered. Our <code>TopModal</code> will receive a <code>closeModal</code> function to set <code>modal:false</code> on state and unmount our <code>TopModal</code>.</p>
+
+<p>We put our modal after the <code>Navigator</code> so we can render on top of it.</p>
+
+<h2>Open Modal</h2>
+
+<p>```
+var App = React.createClass({</p>
+
+<pre><code>render: function() {
+  return (
+    &lt;View style={styles.flexCenter}&gt;
+      &lt;TouchableOpacity onPress={this.props.openModal}&gt;
+        &lt;Text&gt;Open Modal&lt;/Text&gt;  
+      &lt;/TouchableOpacity&gt;
+    &lt;/View&gt;
+  )
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<p>All we do is when we want to open the modal just call the <code>openModal</code> function on props. That will call up to the function in <code>Navigator</code> <code>renderScene</code> and pop open the modal over the existing app.</p>
+
+<h2>The Modal</h2>
+
+<p>
+```
+var TopModal = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return { offset: new Animated.Value(deviceHeight) }
+</code></pre>
+
+<p>  },
+  componentDidMount: function() {</p>
+
+<pre><code>Animated.timing(this.state.offset, {
+  duration: 100,
+  toValue: 0
+}).start();
+</code></pre>
+
+<p>  },
+  closeModal: function() {</p>
+
+<pre><code>Animated.timing(this.state.offset, {
+  duration: 100,
+  toValue: deviceHeight
+}).start(this.props.closeModal);
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+    &lt;Animated.View style={[styles.modal, styles.flexCenter, {transform: [{translateY: this.state.offset}]}]}&gt;
+      &lt;TouchableOpacity onPress={this.closeModal}&gt;
+        &lt;Text style={{color: '#FFF'}}&gt;Close Menu&lt;/Text&gt;
+      &lt;/TouchableOpacity&gt;
+    &lt;/Animated.View&gt;
+)
+</code></pre>
+
+<p>  }
+});
+<code>``
+
+Here we have a basic modal. We set the</code>translateY<code>to the full device height so that it renders off screen, and on mount we slide it up in</code>100ms<code>. On close we slide it down, call the</code>closeModal<code>which will trigger the re-render in our</code>renderScene<code>. This case we won't have</code>modal: true<code>set so our</code>TopModal` will just unmount.</p>
+
+<h2>Done</h2>
+
+<p>Hey now go get your modal on. Just remember, React is flexible. Sometimes you need to pass something up to render at the top. Yes slightly a pain, but it&rsquo;s a manageable pain.</p>
+
+<h4>Live Demo <a href="https://rnplay.org/apps/kF7avw">https://rnplay.org/apps/kF7avw</a></h4>
+
+<p><img class="<a" src="href="http://i.imgur.com/5LhPD3l.gif">http://i.imgur.com/5LhPD3l.gif</a>" title="I should have made this loop" ></p>
+
+<h2>Full Code</h2>
+
+<p>
+```
+var React = require(&lsquo;react-native&rsquo;);
+var {
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+  Navigator,
+  TouchableOpacity,
+  Animated,
+  Dimensions
+} = React;</p>
+
+<p>var {
+  height: deviceHeight
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var TopModal = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return { offset: new Animated.Value(deviceHeight) }
+</code></pre>
+
+<p>  },
+  componentDidMount: function() {</p>
+
+<pre><code>Animated.timing(this.state.offset, {
+  duration: 100,
+  toValue: 0
+}).start();
+</code></pre>
+
+<p>  },
+  closeModal: function() {</p>
+
+<pre><code>Animated.timing(this.state.offset, {
+  duration: 100,
+  toValue: deviceHeight
+}).start(this.props.closeModal);
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+    &lt;Animated.View style={[styles.modal, styles.flexCenter, {transform: [{translateY: this.state.offset}]}]}&gt;
+      &lt;TouchableOpacity onPress={this.closeModal}&gt;
+        &lt;Text style={{color: '#FFF'}}&gt;Close Menu&lt;/Text&gt;
+      &lt;/TouchableOpacity&gt;
+    &lt;/Animated.View&gt;
+)
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var App = React.createClass({</p>
+
+<pre><code>render: function() {
+  return (
+    &lt;View style={styles.flexCenter}&gt;
+      &lt;TouchableOpacity onPress={this.props.openModal}&gt;
+        &lt;Text&gt;Open Modal&lt;/Text&gt;  
+      &lt;/TouchableOpacity&gt;
+    &lt;/View&gt;
+  )
+}
+</code></pre>
+
+<p>});</p>
+
+<p>var RouteStack = {
+  app: {</p>
+
+<pre><code>component: App 
+</code></pre>
+
+<p>  }
+}</p>
+
+<p>var ModalApp = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  modal: false 
+};
+</code></pre>
+
+<p>  },
+  renderScene: function(route, navigator) {</p>
+
+<pre><code>var Component = route.component;
+return (
+  &lt;Component openModal={() =&gt; this.setState({modal: true})}/&gt;
+)
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Navigator
+      initialRoute={RouteStack.app}
+      renderScene={this.renderScene}
+    /&gt;
+    {this.state.modal ? &lt;TopModal closeModal={() =&gt; this.setState({modal: false}) }/&gt; : null }
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+</code></pre>
+
+<p>  },
+  flexCenter: {</p>
+
+<pre><code>flex: 1,
+justifyContent: 'center', 
+alignItems: 'center'
+</code></pre>
+
+<p>  },
+  modal: {</p>
+
+<pre><code>backgroundColor: 'rgba(0,0,0,.8)',
+position: 'absolute',
+top: 0,
+right: 0,
+bottom: 0,
+left: 0
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>```</p>
+
+<p></p>
+]]></content>
+  </entry>
+  
+</feed>

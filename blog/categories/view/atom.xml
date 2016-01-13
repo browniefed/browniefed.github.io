@@ -1,0 +1,673 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: view | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/view/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React Native - How to Bridge an Objective-C View Component]]></title>
+    <link href="http://browniefed.com/blog/2015/11/24/react-native-how-to-bridge-an-objective-c-view-component/"/>
+    <updated>2015-11-24T14:15:00-08:00</updated>
+    <id>http://browniefed.com/blog/2015/11/24/react-native-how-to-bridge-an-objective-c-view-component</id>
+    <content type="html"><![CDATA[<p>I am not an Objective-C developer so some of the things I say here may be wrong, so tell me if I&rsquo;m wrong!
+React Native is young enough that some cool existing native components need to still be bridged to take advantage of.
+There is plenty of information out there about bridging modules, and view components.</p>
+
+<p>Here are a fiew</p>
+
+<ul>
+<li><a href="http://moduscreate.com/leverage-existing-ios-views-react-native-app/">Leverage Existing iOS Views In Your React Native App</a></li>
+<li><a href="http://brentvatne.ca/react-native-view-component-1/">React Native View Components (&frac12;)</a></li>
+<li><a href="http://brentvatne.ca/react-native-view-component-2/">React Native View Components (2/2)</a></li>
+<li><a href="http://brentvatne.ca/packaging-react-native-component/">Packaging a React Native component</a></li>
+<li><a href="http://facebook.github.io/react-native/docs/native-components-ios.html#content">Native UI Components &ndash; React Native Documentation</a></li>
+</ul>
+
+
+<p>Some of these are more up to date and in depth and others lesser so.</p>
+
+<h2>What?</h2>
+
+<p><img class="<a" src="href="http://i.imgur.com/GFisosN.gif">http://i.imgur.com/GFisosN.gif</a>" title="NyanNyan Needs Performance" ></p>
+
+<!-- more -->
+
+
+<h2>What are we bridging?</h2>
+
+<p>We are going to do a very basic bridge of <a href="https://github.com/Flipboard/FLAnimatedImage">FLAnimatedImage</a>.
+Basically it&rsquo;s a performant component to render animated gifs.</p>
+
+<p>Straight from their README.</p>
+
+<p>FLAnimatedImage is a performant animated GIF engine for iOS:</p>
+
+<ul>
+<li>Plays multiple GIFs simultaneously with a playback speed comparable to desktop browsers</li>
+<li>Honors variable frame delays</li>
+<li>Behaves gracefully under memory pressure</li>
+<li>Eliminates delays or blocking during the first playback loop</li>
+<li>Interprets the frame delays of fast GIFs the same way modern browsers do</li>
+</ul>
+
+
+<h2>Creating a Component</h2>
+
+<p>I tend to like to make my component as an application first and then I&rsquo;ll bust it out into a separate component. I already did that, so we&rsquo;ll just focus on the real process.</p>
+
+<p>To do that we&rsquo;ll create a library.</p>
+
+<p>In XCode go to <code>File &gt; New &gt; Project</code> and select <code>Static Library</code></p>
+
+<p>Like so</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/xFBkJfD.png">http://i.imgur.com/xFBkJfD.png</a>" title="Stolen from Brent Vatne" ></p>
+
+<p>Save that somewhere and call it <code>RNFLAnimatedImage</code> so that you can follow along with the tutorial.</p>
+
+<h2>External Dependencies</h2>
+
+<p>In our case we are depending on the FLAnimatedImage library. We have a few different choices, using pods?, using Carthage?, or just copy and pasting.
+For the sake of this we&rsquo;re going to copy and paste. We&rsquo;ll get into this when the tutorial actually starts.</p>
+
+<p>I essentially cloned the repo, and copied over the necessary files. You then go through the usual process of adding a library to an XCode project.
+You can read about linking libraries here <a href="http://facebook.github.io/react-native/docs/linking-libraries-ios.html#content">http://facebook.github.io/react-native/docs/linking-libraries-ios.html#content</a>.</p>
+
+<p>Basically do this.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/AfCMdHF.png">http://i.imgur.com/AfCMdHF.png</a>" title="Find the FLAnimatedImage.xcodeporj" ></p>
+
+<p>Then do this</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/BySd9oD.png">http://i.imgur.com/BySd9oD.png</a>" title="Press + and add the framework" ></p>
+
+<h2>Manager vs View</h2>
+
+<p>The Manager is the orchestrator of this particular view we are bridging. It&rsquo;s essentially a singleton (there is just one of them) that when asked will produce a new view to use of whatever kind you define. In our case we have an <code>RNFLAnimatedImageManager</code> that when asked will create an <code>RNFLAnimateImage</code> which will create and setup our <code>FLAnimatedImage</code> Objective-C component.</p>
+
+<p>The Manager is also where we setup the module bridge, and declare what sort of properties we need, event callbacks, and additional constants to export if we need any.</p>
+
+<p>The View portion is just that, the View. This is what will be instantiated and hook into some lifecycle events so you can manipulate the Objective-C world.</p>
+
+<p>Each View will need to do different things during these lifecycle events, it&rsquo;s up to you to implement them and figure out what exactly needs to be handled for the component that you are bridging.</p>
+
+<h2>Life Cycles/Initializer in the Objective C World</h2>
+
+<p>The main life cycle we need to implement is <code>- (void)layoutSubviews</code>.
+The other non-lifecycle method that is important is <code>- (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher</code>.</p>
+
+<p>Additional life cycle calls are <code>- (void)insertReactSubview:(UIView *)view atIndex:(NSInteger)atIndex</code> and <code>- (void)removeReactSubview:(UIView *)subview</code> but we won&rsquo;t talk about those.</p>
+
+<p>The <code>layoutSubviews</code> method gives us an arbitrary hook to control the current view component. You can manipulate the view, add subviews, or add sublayers. In our case we&rsquo;ll add the FLAnimatedImage as a subview.</p>
+
+<p>The <code>initWithEventDispatcher</code> method allows us to handle initialization of the View and additionally save off our <code>eventDispatcher</code> which means we can send messages back to the JavaScript world.</p>
+
+<p>So when you see people sending back callback functions to the native world this is what is sending back the events. So things like <code>onLoad</code>, <code>onVideoProgress</code>, etc you would use this event dispatcher to send out a <code>onLoad</code> or <code>onVideoProgress</code> event name with a payload of data.</p>
+
+<h2>Specifying callbacks</h2>
+
+<p>In a manager file you would specify something like so</p>
+
+<p>```
+&ndash; (NSArray *) customDirectEventTypes {
+  return @[</p>
+
+<pre><code>       @"onFrameChange"
+      ];
+</code></pre>
+
+<p>}</p>
+
+<p>```
+In our case we may want to listen for when the GIF frame index changes.</p>
+
+<p>We send stuff from Objective-C world to JavaScript like so</p>
+
+<p>```</p>
+
+<pre><code>  [_eventDispatcher sendInputEventWithName:@"onFrameChange" body:@{
+                                                                   @"currentFrameIndex":[NSNumber numberWithUnsignedInteger:[object currentFrameIndex]],
+                                                                   @"frameCount": [NSNumber numberWithUnsignedInteger:[_image frameCount]],
+                                                                   @"target": self.reactTag
+                                                                   }];
+</code></pre>
+
+<p>```</p>
+
+<p>Then in our JavaScript world we can do this.</p>
+
+<p>```</p>
+
+<pre><code>      &lt;FLAnimatedImage 
+        style= 
+        src={this.state.url}
+        resizeMode={this.state.resizeMode} 
+        onFrameChange={(e) =&gt; console.log(e.nativeEvent.currentFrameIndex + '/' + e.nativeEvent.frameCount)}
+      /&gt;
+</code></pre>
+
+<p>```</p>
+
+<h2>Properties from ObjC to JavaScript</h2>
+
+<p>That looks something like</p>
+
+<p><code>RCTFLAnimatedImageManager.m</code></p>
+
+<p>```</p>
+
+<p>RCT_EXPORT_VIEW_PROPERTY(src, NSString);
+RCT_EXPORT_VIEW_PROPERTY(contentMode, NSNumber);</p>
+
+<p>```</p>
+
+<p><code>RCTFLAnimatedImage.m</code></p>
+
+<p>```</p>
+
+<p>@property (nonatomic, assign) NSString <em>src;
+@property (nonatomic, assign) NSNumber </em>contentMode;</p>
+
+<p>```</p>
+
+<p>In the JavaScript world when we render our component whatever the <code>src</code> prop is will be put there.</p>
+
+<p>```</p>
+
+<p><RNFlAnimatedImage src="http://someanimated.gif" resizeMode={1} /></p>
+
+<p>```</p>
+
+<p>In the JavaScript world we do need to define our <code>PropTypes</code> on the component.</p>
+
+<p>
+```
+  propTypes: {</p>
+
+<pre><code>/*
+  native only
+*/
+contentMode: PropTypes.number,
+/*
+
+*/
+src: PropTypes.string,
+resizeMode: PropTypes.string,
+onFrameChange: PropTypes.func
+</code></pre>
+
+<p>  }</p>
+
+<p>```</p>
+
+<p></p>
+
+<h2>Exporting Constants</h2>
+
+<p>Sometimes there are strings, numbers, enums, etc in the Objective-C world that you may want to use in the JavaScript world. To do this we use the <code>constantsToExport</code> method in our manager.</p>
+
+<p>```
+&ndash; (NSDictionary *) constantsToExport {
+  return @{</p>
+
+<pre><code>       @"ScaleAspectFit": @(UIViewContentModeScaleAspectFit),
+       @"ScaleAspectFill": @(UIViewContentModeScaleAspectFill),
+       @"ScaleToFill": @(UIViewContentModeScaleToFill)
+      };
+</code></pre>
+
+<p>}</p>
+
+<p>```</p>
+
+<p>We export some <code>NSIntegers</code> (converting them to <code>NSNumbers</code> with the <code>@</code>, thanks Google) and this will get put onto React Native <code>NativeModules</code>.</p>
+
+<p>```
+React.NativeModules.RNFLAnimatedImageManager;
+/*
+  {</p>
+
+<pre><code>  ScaleToFill: 0,
+  ScaleAspectFit: 1,
+  ScaleAspectFill: 2
+</code></pre>
+
+<p>  }
+*/
+```</p>
+
+<h2>Stop?</h2>
+
+<p>Alright that was all a preface to show you the little bits and areas that you can bridge. Maybe you just needed syntax, maybe you wondering about it&rsquo;s capabilities. Either way if you got enough information then no need to go any further. However I encourage you to read on.</p>
+
+<h2>Tutorial Start</h2>
+
+<p>So we have the empty <code>RNFLAnimatedImage</code> project you created right? Go do it now if you haven&rsquo;t already.</p>
+
+<p>The first thing we are going to need to do is setup our <code>Header Search Paths</code> and add React to it.
+We&rsquo;ll need to add various locations to tell Objective-C to look for all the <code>.h</code> and <code>.m</code> files.</p>
+
+<p>add these 5</p>
+
+<p><code>
+$(inherited)
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include
+$(SRCROOT)/../../React
+$(SRCROOT)/../react-native/React
+$(SRCROOT)/node_modules/react-native/React
+</code></p>
+
+<p>It should look something like.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/GFfRgNV.png">http://i.imgur.com/GFfRgNV.png</a>" title="Header Search Paths for all the Reacts" ></p>
+
+<p><code>FLAnimatedImage</code> ships as a framework, I wasn&rsquo;t able to import the required <code>.h</code> and <code>.m</code> files until I told XCode where to look for <code>FLAnimatedImage</code>.
+So lets set that up, add <code>$(SRCROOT)/FLAnimatedImage</code> the <code>Framework Search Paths</code> right above <code>Header Search Paths</code></p>
+
+<p><img class="<a" src="href="http://i.imgur.com/gkkZJ4d.png">http://i.imgur.com/gkkZJ4d.png</a>" title="I have no clue if this is correct" ></p>
+
+<h2>Add Manager Files</h2>
+
+<p>In creating this <code>RNFLAnimatedImage.m/.h</code> were created but lets create our manager files now.
+Just right click on the folder select &ldquo;New File&rdquo; and create a <code>.m</code> and name in <code>RNFLAnimatedImageManager.m</code> , same for the <code>.h</code></p>
+
+<p><img class="<a" src="href="http://i.imgur.com/jEQdrce.png">http://i.imgur.com/jEQdrce.png</a>" title="Sponsored by H and M" ></p>
+
+<p>We need to add our new manager files to our compile source.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/6Kzve8u.png">http://i.imgur.com/6Kzve8u.png</a>" title="Compile sources, what are they good for" ></p>
+
+<h2>RNFLAnimatedImageManager.h</h2>
+
+<p>```</p>
+
+<h1>import &ldquo;RCTViewManager.h&rdquo;</h1>
+
+<p>@interface RNFLAnimatedImageManager : RCTViewManager</p>
+
+<p>@end
+<code>``
+That's it, we just have our</code>interface<code>we called</code>RNFLAnimatedImageManager<code>and inherit from</code>RCTViewManager` which is provided by React.</p>
+
+<h2>RNFLAnimatedImageManager.m</h2>
+
+<p>First we need to import some stuff</p>
+
+<p>```</p>
+
+<h1>import &lt;Foundation/Foundation.h></h1>
+
+<h1>import &ldquo;RCTBridge.h&rdquo;</h1>
+
+<h1>import &ldquo;RNFLAnimatedImageManager.h&rdquo;</h1>
+
+<h1>import &ldquo;RNFLAnimatedImage.h&rdquo;</h1>
+
+<p><code>``
+We bring in the bridging mechanism from React, the</code>Manager.h<code>file, and additionally the</code>.h` for the view we&rsquo;re bridging.</p>
+
+<p>```
+@implementation RNFLAnimatedImageManager</p>
+
+<p>RCT_EXPORT_MODULE();</p>
+
+<p>@synthesize bridge = _bridge;</p>
+
+<p>```</p>
+
+<p>Inside our implementation we call <code>RCT_EXPORT_MODULE()</code> that tells React we are exporting a module.</p>
+
+<p>The <code>@synthesize bridge</code> stuff is declaring that we want to just auto generate some getters and setters for our bridge.</p>
+
+<p><code>
+- (UIView *)view
+{
+  return [[RNFLAnimatedImage alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
+}
+</code>
+This is called to create a new view. We are allocating our view <code>RNFLAnimatedImage</code> and initializing it with the <code>eventDispatcher</code> so we can communicate back to the JavaScript world.</p>
+
+<p><code>
+- (dispatch_queue_t)methodQueue
+{
+  return dispatch_get_main_queue();
+}
+</code>
+This has something to do with dispatching :). I think it says that when we dispatch it should go on the main queue?</p>
+
+<p><code>
+RCT_EXPORT_VIEW_PROPERTY(src, NSString);
+RCT_EXPORT_VIEW_PROPERTY(contentMode, NSNumber);
+</code>
+Define some properties to bridge.</p>
+
+<p>```
+&ndash; (NSArray *) customDirectEventTypes {
+  return @[</p>
+
+<pre><code>       @"onFrameChange"
+      ];
+</code></pre>
+
+<p>}
+```
+Define some function callback/events we can dispatch.</p>
+
+<p>```
+&ndash; (NSDictionary *) constantsToExport {
+  return @{</p>
+
+<pre><code>       @"ScaleAspectFit": @(UIViewContentModeScaleAspectFit),
+       @"ScaleAspectFill": @(UIViewContentModeScaleAspectFill),
+       @"ScaleToFill": @(UIViewContentModeScaleToFill)
+      };
+</code></pre>
+
+<p>}</p>
+
+<p>@end
+```</p>
+
+<p>Finally we define some constants to export and end our implementation.</p>
+
+<p>Link to the file on github <a href="https://github.com/browniefed/react-native-flanimatedimage/blob/master/RNFLAnimatedImage/RNFLAnimatedImage/RNFLAnimatedImageManager.m">https://github.com/browniefed/react-native-flanimatedimage/blob/master/RNFLAnimatedImage/RNFLAnimatedImage/RNFLAnimatedImageManager.m</a>.</p>
+
+<h2>RNFLAnimatedImage.h</h2>
+
+<p>```</p>
+
+<h1>import &ldquo;RCTEventDispatcher.h&rdquo;</h1>
+
+<h1>import &ldquo;FLAnimatedImage/FLAnimatedImage.h&rdquo;</h1>
+
+<p>@class RCTEventDispatcher;</p>
+
+<p>@interface RNFLAnimatedImage : UIView</p>
+
+<p>@property (nonatomic, assign) NSString <em>src;
+@property (nonatomic, assign) NSNumber </em>contentMode;</p>
+
+<ul>
+<li>(instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher NS_DESIGNATED_INITIALIZER;</li>
+</ul>
+
+
+<p>@end
+<code>``
+We import our event dispatcher, and tell the compiler that the class</code>RCTEventDispatcher<code>will be defined.
+We create our interface, give it the name</code>RNFLAniamtedImage<code>and inherit from the base</code>UIView`.</p>
+
+<p>We add our properties, don&rsquo;t worry about the <code>nonatomic</code> stuff, if you want to know go le google it.</p>
+
+<p>Finally we define our initWithEventDispatcher method that our <code>Manager</code> initialized with. The <code>NS_DESIGNATED_INITIALIZER</code> is to tell the compiler that this is our initializer vs the typical <code>init</code>.</p>
+
+<h2>RNFlAnimatedImage.m</h2>
+
+<p>Alright this will be where all of our bridging work comes into play. Read through the full source here <a href="https://github.com/browniefed/react-native-flanimatedimage/blob/master/RNFLAnimatedImage/RNFLAnimatedImage/RNFLAnimatedImage.m">https://github.com/browniefed/react-native-flanimatedimage/blob/master/RNFLAnimatedImage/RNFLAnimatedImage/RNFLAnimatedImage.m</a>.</p>
+
+<p>So first we need to import stuff and define our basic implementation</p>
+
+<p>```</p>
+
+<h1>import &lt;Foundation/Foundation.h></h1>
+
+<h1>import &ldquo;FLAnimatedImage/FLAnimatedImage.h&rdquo;</h1>
+
+<h1>import &ldquo;RCTBridgeModule.h&rdquo;</h1>
+
+<h1>import &ldquo;RCTEventDispatcher.h&rdquo;</h1>
+
+<h1>import &ldquo;UIView+React.h&rdquo;</h1>
+
+<h1>import &ldquo;RNFLAnimatedImage.h&rdquo;</h1>
+
+<p>@implementation RNFLAnimatedImage : UIView  {</p>
+
+<p>}</p>
+
+<p>@end
+```</p>
+
+<p>Don&rsquo;t worry too much about what&rsquo;s getting imported. Most of them are just so React can do it&rsquo;s thing.</p>
+
+<p>
+```</p>
+
+<p>@implementation RNFLAnimatedImage : UIView  {</p>
+
+<p>  RCTEventDispatcher <em>_eventDispatcher;
+  FLAnimatedImage </em><em>image;
+  FLAnimatedImageView *</em>imageView;</p>
+
+<p>}</p>
+
+<p>```</p>
+
+<p></p>
+
+<p>We now define our instance variables that we&rsquo;ll assign inside of this implementation. We setup our <code>eventDispatcher</code>, the <code>image</code> and <code>imageView</code> with their specific types.</p>
+
+<p>```
+&ndash; (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher
+{
+  if ((self = [super init])) {</p>
+
+<pre><code>_eventDispatcher = eventDispatcher;
+_imageView = [[FLAnimatedImageView alloc] init];
+
+[_imageView addObserver:self forKeyPath:@"currentFrameIndex" options:0 context:nil];
+</code></pre>
+
+<p>  }</p>
+
+<pre><code>return self;
+</code></pre>
+
+<p>}
+<code>``
+This is our initializer that we had defined. It receives</code>eventDispatcher<code>as the only argument. We then save it off to the</code>eventDispatcher<code>variable we create up above. Then create a new</code>FLAnimatedImageView<code>and save that off. The</code>addObserver<code>we'll get into later, but this is going to allow us to asynchronously hook into the</code>currentFrameIndex` of our animated gif and call the callback.</p>
+
+<p>```</p>
+
+<h1>pragma mark &ndash; React View Management</h1>
+
+<ul>
+<li><p>(void)insertReactSubview:(UIView *)view atIndex:(NSInteger)atIndex
+{
+  RCTLogError(@&ldquo;image cannot have any subviews&rdquo;);
+  return;
+}</p></li>
+<li><p>(void)removeReactSubview:(UIView *)subview
+{
+  RCTLogError(@&ldquo;image cannot have any subviews&rdquo;);
+  return;
+}</p></li>
+<li><p>(void)layoutSubviews
+{
+[super layoutSubviews];
+<em>imageView.frame = self.bounds;
+[self addSubview:</em>imageView];
+}
+```</p></li>
+</ul>
+
+
+<p>These are the important React added lifecylce methods. The <code>insertReactSubview</code> and <code>removeReactSubview</code> is how we would go about allowing <code>children</code>.</p>
+
+<p>The <code>layoutSubviews</code> is the call that gives us the ability to add in our <code>FLAnimatedImageView</code> that we created into the <code>RNFLAnimatedImage</code> that we are creating. This method is going to be the one that is going to be mostly a custom implementation depending on what components you end up bridging.</p>
+
+<p>The other import thing to call out is <code>self.bounds</code> this is a <code>CGRect</code> that contains <code>x,y</code> and <code>width/height</code> that is going to be provided from the <code>style</code> that is defined in the JavaScript world!</p>
+
+<p>```
+&ndash; (void)setSrc:(NSString *)src
+{
+  if (![src isEqual:_src]) {</p>
+
+<pre><code>_src = [src copy];
+[self reloadImage];
+</code></pre>
+
+<p>  }
+}</p>
+
+<ul>
+<li>(void)setContentMode:(NSNumber *)contentMode
+{
+if(![contentMode isEqual:<em>contentMode]) {
+  </em>contentMode = [contentMode copy];
+  [self reloadImage];
+}
+}
+<code>``
+These are setters that we hook into so that when a</code>setState<code>happens and a re-render is triggered in the JavaScript world these get called. We check if our</code>src<code>is different and or if our</code>contentMode<code>is different, if it is we set our instance variables to the new values and call</code>reloadImage`.</li>
+</ul>
+
+
+<p><code>
+-(void)reloadImage {
+  _image = [FLAnimatedImage animatedImageWithGIFData:[NSData dataWithContentsOfURL:[NSURL URLWithString:_src]]];
+  _imageView.contentMode = [_contentMode integerValue];
+  _imageView.animatedImage = _image;
+}
+</code></p>
+
+<p>Our reload image is more of a setup/modify image. We set our <code>image</code> to be the <code>FLAnimatedImage</code> with the gif data from a URL. We pass our <code>src</code> in there which comes from the bridged value from the JavaScript world.</p>
+
+<p>We setup our contentMode on the <code>imageView</code> then set our <code>imageView.animatedImage</code> to be the <code>image</code> of the url.</p>
+
+<p>```
+&ndash;(void)observeValueForKeyPath:(NSString <em>)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> </em>)change context:(void *)context {
+  if (object == _imageView) {</p>
+
+<pre><code>if ([keyPath isEqualToString:@"currentFrameIndex"]) {
+  [_eventDispatcher sendInputEventWithName:@"onFrameChange" body:@{
+                                                                   @"currentFrameIndex":[NSNumber numberWithUnsignedInteger:[object currentFrameIndex]],
+                                                                   @"frameCount": [NSNumber numberWithUnsignedInteger:[_image frameCount]],
+                                                                   @"target": self.reactTag
+                                                                   }];
+}
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>When observers get setup (like we did in the initializer) the <code>observerveValueForKeyPath</code> method will be called with the information about the thing that changed.
+In our case <code>object</code> was setup to be our <code>imageView</code> and the <code>keyPath</code> was <code>currentFrameIndex</code>.</p>
+
+<p>We do some checking to make sure that the <code>object</code> is in fact our <code>imageView</code>, and that the <code>keyPath</code> we are dealing with is the <code>currentFrameIndex</code>. If it is this when we send our event to be dispatched. It just so happens to be named <code>onFrameChange</code> and our <code>body</code> can be custom crafted and will be ultimately translated into JSON for us. We pass back the <code>currentFrameIndex</code> and the total <code>frameCount</code> as well as the React Component we are dealing with.</p>
+
+<p>```
+&ndash; (void)removeFromSuperview
+{</p>
+
+<pre><code>[_imageView removeObserver:self forKeyPath:@"currentFrameIndex"];
+_eventDispatcher = nil;
+_image = nil;
+_imageView = nil;
+[super removeFromSuperview];
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Finally the <code>removeFromSuperview</code> function is called. This is the equivalence of <code>componentWillUnmount</code> in the React JavaScript world. Here we clean up the observer, as well as the other things we have created.</p>
+
+<p>You are now done with Objective-C! Check out the full source code here <a href="https://github.com/browniefed/react-native-flanimatedimage/blob/master/RNFLAnimatedImage/RNFLAnimatedImage/RNFLAnimatedImage.m">https://github.com/browniefed/react-native-flanimatedimage/blob/master/RNFLAnimatedImage/RNFLAnimatedImage/RNFLAnimatedImage.m</a>.</p>
+
+<h2>FLAnimatedImage.js</h2>
+
+<p>Now we are back in our JavaScript world. We&rsquo;ve done the hard part.</p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var { requireNativeComponent, PropTypes, NativeModules, } = React;</p>
+
+<p>var {
+  ScaleToFill,
+  ScaleAspectFit,
+  ScaleAspectFill
+} = NativeModules.RNFLAnimatedImageManager;</p>
+
+<p>var MODES = {
+  &lsquo;stretch&rsquo;: ScaleToFill,
+  &lsquo;contain&rsquo;: ScaleAspectFit,
+  &lsquo;cover&rsquo;: ScaleAspectFill
+}</p>
+
+<p>var FLAnimatedImage = React.createClass({
+  propTypes: {</p>
+
+<pre><code>/*
+  native only
+*/
+contentMode: PropTypes.number,
+/*
+
+*/
+src: PropTypes.string,
+resizeMode: PropTypes.string,
+onFrameChange: PropTypes.func
+</code></pre>
+
+<p>  },
+  render() {</p>
+
+<pre><code>var contentMode = MODES[this.props.resizeMode] || MODES.stretch;
+return (
+        &lt;RNFLAnimatedImage 
+            {...this.props} 
+            contentMode={contentMode}
+        /&gt;
+      );
+</code></pre>
+
+<p>  },
+});</p>
+
+<p>var RNFLAnimatedImage = requireNativeComponent(&lsquo;RNFLAnimatedImage&rsquo;, FLAnimatedImage);</p>
+
+<p>module.exports = FLAnimatedImage;
+```</p>
+
+<p>The important parts to call out is that all values being passed to the component/native world need to have a <code>PropType</code> specified! If you noticed something a bit weird. We create a class called <code>FLAnimatedImage</code> which we call to <code>requireNativeComponent</code> that creates <code>RNFLAnimatedImage</code> which then <code>FLAnimatedImage</code> renders. Weird cyclic thing, but ultimately it allows us to tell React what component our class is going to need to be rendered.</p>
+
+<p>The <code>MODES</code> thing is just so we can map a nice string the user can give us to one of the constants that we exported from our Objective-C world.</p>
+
+<h2>DONE!</h2>
+
+<p>Hey look you did it. We got through the weird brackted world of Objective-C. To use it we require it and pass in our props.
+
+```</p>
+
+<pre><code>      &lt;FLAnimatedImage 
+        style={{flex: 1}} 
+        src="http://raphaelschaad.com/static/nyan.gif"
+        resizeMode="contain" 
+        onFrameChange={(e) =&gt; console.log(e.nativeEvent.currentFrameIndex + '/' + e.nativeEvent.frameCount)}
+      /&gt;
+</code></pre>
+
+<p>```
+</p>
+
+<h2>Final Code</h2>
+
+<p>The code is all up on github, check the repo out here <a href="https://github.com/browniefed/react-native-flanimatedimage">https://github.com/browniefed/react-native-flanimatedimage</a> and the folder where the Objective-C code is at is right here <a href="https://github.com/browniefed/react-native-flanimatedimage/tree/master/RNFLAnimatedImage/RNFLAnimatedImage">https://github.com/browniefed/react-native-flanimatedimage/tree/master/RNFLAnimatedImage/RNFLAnimatedImage</a>.</p>
+
+<p>Now we have a bridge AnimatedGif component at our exposure.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/GFisosN.gif">http://i.imgur.com/GFisosN.gif</a>" title="Now that is stuck in your head" ></p>
+]]></content>
+  </entry>
+  
+</feed>

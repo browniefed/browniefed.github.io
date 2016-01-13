@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: movement | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/movement/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React-native Animated API with PanResponder]]></title>
+    <link href="http://browniefed.com/blog/2015/08/15/react-native-animated-api-with-panresponder/"/>
+    <updated>2015-08-15T14:17:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/08/15/react-native-animated-api-with-panresponder</id>
+    <content type="html"><![CDATA[<h1>Introduction</h1>
+
+<p>The previous example was a very basic one, just moving a box around the screen. But you&rsquo;ll likely want to do something by touch. Dragging, dropping, flicking, all those good mobile interactions. I previously covered how to make Tinder cards but I didn&rsquo;t add any true animations in. With the new Animated API you can make an even better Tinder card demo. And that&rsquo;s what <a href="https://twitter.com/notbrent">Brent</a> did.</p>
+
+<p>This blog post was inspired by <a href="https://github.com/brentvatne/react-native-animated-demo-tinder">https://github.com/brentvatne/react-native-animated-demo-tinder</a>. I decide to break it apart, simplify it and explain the bits as we re-build it.</p>
+
+<p>We will not fully reimplement it since you can learn the full ins and outs by checking out the code.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/b5K2fcx.gif">http://i.imgur.com/b5K2fcx.gif</a>" title="Final with rotation and opacity" ></p>
+
+<!-- more -->
+
+
+<h1>Setup</h1>
+
+<p>Just like before we&rsquo;ll get a pretty basic setup going</p>
+
+<p>Imports/Variables</p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  View,
+  Animated,
+  PanResponder
+} = React;</p>
+
+<p>var SQUARE_DIMENSIONS = 100;</p>
+
+<p>```</p>
+
+<p>Styles</p>
+
+<p>```
+var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+alignItems: 'center',
+justifyContent: 'center'
+</code></pre>
+
+<p>  },
+  square: {</p>
+
+<pre><code>width: SQUARE_DIMENSIONS,
+height: SQUARE_DIMENSIONS,
+backgroundColor: 'blue'
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>```</p>
+
+<p>Main Code</p>
+
+<p>```
+var AnimatedFlick = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    pan: new Animated.ValueXY()
+};
+</code></pre>
+
+<p>  },
+  getStyle: function() {</p>
+
+<pre><code>return [
+          styles.square, 
+          {
+            transform: this.state.pan.getTranslateTransform()
+          }
+        ];
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Animated.View style={this.getStyle()} /&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<h1>Pan Responder</h1>
+
+<p>The <code>PanResponder</code> is our touch handler. The great thing about the <code>PanResponder</code> and <code>Animated</code> API were that they were made to work together.</p>
+
+<p>We need to create our PanResponder</p>
+
+<p>```</p>
+
+<p>  componentWillMount: function() {</p>
+
+<pre><code>  this._animatedValueX = 0;
+  this._animatedValueY = 0; 
+  this.state.pan.x.addListener((value) =&gt; this._animatedValueX = value.value);
+  this.state.pan.y.addListener((value) =&gt; this._animatedValueY = value.value);
+
+    this._panResponder = PanResponder.create({
+      onMoveShouldSetResponderCapture: () =&gt; true, //Tell iOS that we are allowing the movement
+      onMoveShouldSetPanResponderCapture: () =&gt; true, // Same here, tell iOS that we allow dragging
+      onPanResponderGrant: (e, gestureState) =&gt; {
+        this.state.pan.setOffset({x: this._animatedValueX, y: this._animatedValueY});
+        this.state.pan.setValue({x: 0, y: 0}); //Initial value
+      },
+      onPanResponderMove: Animated.event([
+        null, {dx: this.state.pan.x, dy: this.state.pan.y}
+      ]), // Creates a function to handle the movement and set offsets
+      onPanResponderRelease: () =&gt; {
+        this.state.pan.flattenOffset(); // Flatten the offset so it resets the default positioning
+      }
+    });
+</code></pre>
+
+<p>  },
+  componentWillUnmount: function() {</p>
+
+<pre><code>this.state.pan.x.removeAllListeners();  
+this.state.pan.y.removeAllListeners();
+</code></pre>
+
+<p>  },</p>
+
+<p><code>``
+We need</code>onMoveShouldSetResponderCapture<code>and</code>onMoveShouldSetPanResponderCapture` to always return true. This tells iOS that we are allowing the user to make movements and we&rsquo;re going to track them.</p>
+
+<p>The function <code>onPanResponderGrant</code> is called once when we approve the animation. This gives us all of our initial values. We set the start value, and then also the offset which is our current pan values.</p>
+
+<p><strong>UPDATE</strong> As of .11 of React Native, <code>getAnimatedValue</code> has been deprecated. The accepted practice is to add a listener to each of the x/y values on our <code>Animated.Value</code>. Then we keep track of them. The callback/arrow function will be given an object like so <code>{value: .123}</code> or whatever the corresponding value is. We then update our tracking variables.
+Don&rsquo;t forget to removeAllListeners in our <code>componetWillUnmount</code> or we&rsquo;ll have a memory leak.</p>
+
+<p>Then we set our animation start values to <code>0,0</code>. This basically resets our movement changes so our delta <code>x,y</code> will be applied from a 0 point. Hopefully that makes sense.</p>
+
+<p>We give our <code>onPanResponderMove</code> an <code>Animated.event</code>. This creates a function that will automatically take the gestureState which has 2 keys on it <code>dx</code> and <code>dy</code> and put those changes on our <code>this.state.pan.x</code> and our <code>this.state.pan.y</code> respectively.</p>
+
+<p>Finally <code>onPanResponderRelease</code> we call <code>flattenOffset</code>. This takes the current <code>x,y</code> and the current offset (aka how much you&rsquo;ve dragged it around). And combines them.</p>
+
+<p>The internal code for flattenOffset looks like this</p>
+
+<p>```
+  flattenOffset(): void {</p>
+
+<pre><code>this._value += this._offset;
+this._offset = 0;
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>```
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Animated.View 
+      style={this.getStyle()} 
+      {...this._panResponder.panHandlers}
+    /&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+<code>``
+Here we spread the handlers onto the our</code>Animated.View` so it sets up all the calls correctly.</p>
+
+<h1>We have a square that moves</h1>
+
+<p>Great we have a square that moves and it stays where we left it, and also when we move it again it picks up from the same coordinates that we dropped it at.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/vFYB4JY.gif">http://i.imgur.com/vFYB4JY.gif</a>" title="Moving Square" ></p>
+
+<h1>Reset to 0 with a spring</h1>
+
+<p>We just replace our <code>flattenOffset</code> call which would leave our square where we left it and instead create a spring that animates our <code>this.state.pan</code> back to 0. Which will correctly animate our <code>x,y</code> back to 0 and provide a nice little bounce.</p>
+
+<p>Here is the code.</p>
+
+<p>```
+  onPanResponderRelease: () => {</p>
+
+<pre><code>Animated.spring(this.state.pan, {
+  toValue: 0
+}).start();
+</code></pre>
+
+<p>  }
+```
+Yes it is really that simple.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/PkNpyBH.gif">http://i.imgur.com/PkNpyBH.gif</a>" title="Springs back to center" ></p>
+
+<h1>Opacity and rotation</h1>
+
+<p>Because we want the opacity and the rotation to be tied to the movement position we can use the <code>interpolate</code> we created from <code>Animated.ValueXY</code> on <code>this.state.pan</code> .</p>
+
+<p>We&rsquo;ll have to make some small adjustments but the only thing we need to change is our <code>getStyle</code> function.</p>
+
+<p>```
+  getStyle: function() {</p>
+
+<pre><code>return [
+          styles.square, 
+          {
+            transform: [
+              {
+                translateX: this.state.pan.x
+              },
+              {
+                translateY: this.state.pan.y
+              },
+              {
+                rotate: this.state.pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]})
+              }
+            ]
+          },
+          {
+            opacity: this.state.pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.5, 1, 0.5]})
+          }
+        ];
+</code></pre>
+
+<p>  },
+<code>``
+We create an interpolate that determines the correct value from an</code>inputRange<code>.
+When our drag is</code>-200<code>or greater our rotate will be</code>-30 degrees<code>, at 0 it is 0, and if moved to the right at</code>200<code>or great then it's</code>30 degrees`.</p>
+
+<p>Interpolate is smart enough to take an input range, and interpolate an inbetween degree. So as you slowly move the card the degrees will adjust, so an input value of <code>100</code> would translate to a <code>15 degree</code> rotation.</p>
+
+<p>For opacity we want the same inputs, except our outputs will be <code>.5</code> for both sides and <code>1</code> at 0 movement.
+The interpolation of the opacity operates the same as the degrees, as you rotate it&rsquo;ll adjust the opacity to a maximum/minimum of .5.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/b5K2fcx.gif">http://i.imgur.com/b5K2fcx.gif</a>" title="Final with rotation and opacity" ></p>
+
+<h1>Final</h1>
+
+<p>This doesn&rsquo;t explain all the techniques used in the tinder card demo. One such thing is the flicking capabilities.
+That uses <code>Animated.decay</code> and some physics (velocity,friction) to animate a value.</p>
+
+<h3>Play with it here <a href="https://rnplay.org/apps/71CyoA">https://rnplay.org/apps/71CyoA</a>.</h3>
+
+<h1>Full Code</h1>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  View,
+  Animated,
+  PanResponder
+} = React;</p>
+
+<p>var SQUARE_DIMENSIONS = 100;</p>
+
+<p>var AnimatedFlick = React.createClass({</p>
+
+<p>  getInitialState: function() {</p>
+
+<pre><code>return {
+    pan: new Animated.ValueXY()
+};
+</code></pre>
+
+<p>  },
+  componentWillMount: function() {</p>
+
+<pre><code>this._animatedValueX = 0;
+this._animatedValueY = 0; 
+this.state.pan.x.addListener((value) =&gt; this._animatedValueX = value.value);
+this.state.pan.y.addListener((value) =&gt; this._animatedValueY = value.value);
+
+    this._panResponder = PanResponder.create({
+      onMoveShouldSetResponderCapture: () =&gt; true,
+      onMoveShouldSetPanResponderCapture: () =&gt; true,
+      onPanResponderGrant: (e, gestureState) =&gt; {
+        this.state.pan.setOffset({x: this._animatedValueX, y: this._animatedValueY});
+        this.state.pan.setValue({x: 0, y: 0});
+      },
+      onPanResponderMove: Animated.event([
+            null, {dx: this.state.pan.x, dy: this.state.pan.y},
+      ]),
+      onPanResponderRelease: () =&gt; {
+        Animated.spring(this.state.pan, {
+          toValue: 0
+        }).start();
+      }
+    });
+</code></pre>
+
+<p>  },<br/>
+  componentWillUnmount: function() {</p>
+
+<pre><code>this.state.pan.x.removeAllListeners();  
+this.state.pan.y.removeAllListeners();
+</code></pre>
+
+<p>  },
+  getStyle: function() {</p>
+
+<pre><code>return [
+          styles.square, 
+          {
+            transform: [
+              {
+                translateX: this.state.pan.x
+              },
+              {
+                translateY: this.state.pan.y
+              },
+              {
+                rotate: this.state.pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]})
+              }
+            ]
+          },
+          {
+            opacity: this.state.pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.5, 1, 0.5]})
+          }
+        ];
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Animated.View 
+      style={this.getStyle()} 
+      {...this._panResponder.panHandlers}
+    /&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+alignItems: 'center',
+justifyContent: 'center'
+</code></pre>
+
+<p>  },
+  square: {</p>
+
+<pre><code>width: SQUARE_DIMENSIONS,
+height: SQUARE_DIMENSIONS,
+backgroundColor: 'blue'
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>AppRegistry.registerComponent(&lsquo;SampleApp&rsquo;, () => AnimatedFlick);</p>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>

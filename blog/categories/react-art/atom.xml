@@ -1,0 +1,2500 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: react-art | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/react-art/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React Native - How to create Twitter exploding hearts]]></title>
+    <link href="http://browniefed.com/blog/2015/11/07/react-native-how-to-create-twitter-exploding-hearts/"/>
+    <updated>2015-11-07T08:55:00-08:00</updated>
+    <id>http://browniefed.com/blog/2015/11/07/react-native-how-to-create-twitter-exploding-hearts</id>
+    <content type="html"><![CDATA[<p>So we&rsquo;re going to build this exploding heart, except just know Twitter kind of cheated. Not really but they used an image and played each frame adjusting <code>background-position</code> so it looked animated. Okay not cheated they used a really smart technique but what&rsquo;s the fun in doing that when we can build it for real!</p>
+
+<p>I&rsquo;ve already built a Firework concept here <a href="http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/">http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/</a> and about Hearts here <a href="http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation/">http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation/</a> now we just need to bring them together.</p>
+
+<p>For the record this is what theirs looks like here <a href="http://i.imgur.com/3a8PiSY.png">http://i.imgur.com/3a8PiSY.png</a></p>
+
+<h2>What are we building</h2>
+
+<p><img class="<a" src="href="http://i.imgur.com/lMOxqIL.gif">http://i.imgur.com/lMOxqIL.gif</a>" title="So not lazy like Twitter" ></p>
+
+<!-- more -->
+
+
+<h2>Concept</h2>
+
+<p>Rather than iterating over 28 separate image frames what we&rsquo;re going to do instead is make some pseudo-keyframe-animations. We&rsquo;ll use <code>Animated</code> of course. We&rsquo;ll define our range from <code>0</code> to <code>28</code>. Meaning we&rsquo;ll have 28 frames to deal with.</p>
+
+<p>This makes the math easy, because we can walk through each frame, and describe what the animation should look like for each frame.</p>
+
+<p>We could create separate animated values for each property and coordinate the animation with <code>Animated.sequence</code> and <code>Animated.parallel</code> but I prefer interpolation. YMMV</p>
+
+<h2>Setup</h2>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  View,
+  Dimensions,
+  TouchableWithoutFeedback,
+  Animated
+} = React;</p>
+
+<p>var Art = require(&lsquo;ReactNativeART&rsquo;);</p>
+
+<p>var {
+  Surface,
+  Group,
+  Shape,
+  Path
+} = Art;</p>
+
+<p>var AnimatedShape = Animated.createAnimatedComponent(Shape);</p>
+
+<p>var {
+  width: deviceWidth,
+  height: deviceHeight
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p><code>``
+We'll need to setup</code>ReactNativeArt` in XCode, you can check out how to do that <a href="http://browniefed.com/blog/2015/05/03/getting-react-art-running-on-react-native/">here</a>.</p>
+
+<p>Things to call out here is we are creating a custom animated view, called <code>AnimatedShape</code>. We pass in the <code>art</code> <code>Shape</code> component into <code>Animated.createAnimatedComponent</code>. This allows us to use <code>Animated</code> values in any component.</p>
+
+<h2>More Setup</h2>
+
+<p>```
+var HEART_SVG = &ldquo;M130.4-0.8c25.4 0 46 20.6 46 46.1 0 13.1-5.5 24.9-14.2 33.3L88 153.6 12.5 77.3c-7.9-8.3-12.8-19.6-12.8-31.9 0-25.5 20.6-46.1 46-46.2 19.1 0 35.5 11.7 42.4 28.4C94.9 11 111.3-0.8 130.4-0.8&rdquo;
+var HEART_COLOR = &lsquo;rgb(226,38,77,1)&rsquo;;
+var GRAY_HEART_COLOR = &ldquo;rgb(204,204,204,1)&rdquo;;</p>
+
+<p>var FILL_COLORS = [
+  &lsquo;rgba(221,70,136,1)&rsquo;,
+  &lsquo;rgba(212,106,191,1)&rsquo;,
+  &lsquo;rgba(204,142,245,1)&rsquo;,
+  &lsquo;rgba(204,142,245,1)&rsquo;,
+  &lsquo;rgba(204,142,245,1)&rsquo;,
+  &lsquo;rgba(0,0,0,0)&rsquo;
+];</p>
+
+<p>var PARTICLE_COLORS = [
+  &lsquo;rgb(158, 202, 250)&rsquo;,
+  &lsquo;rgb(161, 235, 206)&rsquo;,
+  &lsquo;rgb(208, 148, 246)&rsquo;,
+  &lsquo;rgb(244, 141, 166)&rsquo;,
+  &lsquo;rgb(234, 171, 104)&rsquo;,
+  &lsquo;rgb(170, 163, 186)&rsquo;
+]
+```</p>
+
+<p>More setup here. We create our heart SVG path to render, and setup a bunch of colors that we will use in our animations later. We need to set stuff up as <code>rgb</code> or <code>rgba</code> so that <code>Animated</code> can interpolate it correctly as at the moment it cannot do hex values.</p>
+
+<p>```</p>
+
+<p>function getXYParticle(total, i, radius) {
+  var angle = ( (2*Math.PI) / total ) * i;</p>
+
+<p>  var x = Math.round((radius<em>2) * Math.cos(angle &ndash; (Math.PI/2)));
+  var y = Math.round((radius</em>2) * Math.sin(angle &ndash; (Math.PI/2)));
+  return {</p>
+
+<pre><code>x: x,
+y: y
+</code></pre>
+
+<p>  }
+}</p>
+
+<p>function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max &ndash; min)) + min;
+}</p>
+
+<p>function shuffleArray(array) {</p>
+
+<pre><code>for (var i = array.length - 1; i &gt; 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+}
+return array;
+</code></pre>
+
+<p>}</p>
+
+<p><code>``
+Yes more setup.</code>getXYParticle` is a function I&rsquo;ve modified from the fireworks particle blog post I wrote. This essentially distributes a random number of particles around a circle. This is what we will use for the little particles that blow up.</p>
+
+<p>The <code>getRandomInt</code> is pretty self explanatory, but it just returns a random number and we&rsquo;ll use it to create some variance.</p>
+
+<p><code>shuffleArray</code> also just shuffles things in an array, we&rsquo;ll use this to achieve random color effects later.</p>
+
+<h2>Blank Canvas</h2>
+
+<p>```
+var ExplodingHearts = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  animation: new Animated.Value(0) 
+};
+</code></pre>
+
+<p>  },
+  explode: function() {</p>
+
+<pre><code>Animated.timing(this.state.animation, {
+  duration: 1500,
+  toValue: 28
+}).start(() =&gt; {
+  this.state.animation.setValue(0);
+  this.forceUpdate();
+}.bind(this));
+</code></pre>
+
+<p>  },</p>
+
+<p>  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;TouchableWithoutFeedback onPress={this.explode} style={styles.container}&gt; 
+      &lt;View&gt;
+        &lt;Surface width={deviceWidth} height={deviceHeight}&gt;
+        &lt;/Surface&gt;
+      &lt;/View&gt;
+    &lt;/TouchableWithoutFeedback&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>```</p>
+
+<p>We setup a blank canvas. We need to create our initial <code>animation</code> value so we just do a <code>new Animated.Value(0)</code> in our <code>getInitialState</code>.</p>
+
+<p>We setup a <code>TouchableWithoutFeedback</code> for the ability to use <code>onPress</code> to trigger our animation. We then setup our <code>ART</code> <code>Surface</code> to fill the screen.</p>
+
+<p>Why are we using ART for this? Well it&rsquo;ll make our rendering and animations very efficient, we could use a bunch of <code>Views</code> for this demo but on a large scale with lots of graphics work you should use <code>ART</code></p>
+
+<p>Our <code>explode</code> function kicks off our animation and we do it over 1.5 seconds. We will animate to 28 because that is how many &ldquo;frames&rdquo; we have.</p>
+
+<p>Don&rsquo;t worry about the callback, that&rsquo;s just to reset the animation when it is done, and also the <code>forceUpdate</code> re-renders so we get new random values on each subsequent trigger.</p>
+
+<h2>Render A Heart</h2>
+
+<p>```
+<Surface width={deviceWidth} height={deviceHeight}></p>
+
+<pre><code>&lt;AnimatedShape
+  d={HEART_SVG}
+  x={0}
+  y={0}
+  scale={1}
+  fill={GRAY_HEART_COLOR}
+/&gt;
+</code></pre>
+
+<p></Surface>
+```</p>
+
+<p>We just render a heart, pass in our SVG path, put it at the top left <code>0,0</code> coordinates. Scale is set to 1 and we fill it with our <code>GRAY_HEART_COLOR</code> we setup above.</p>
+
+<h2>Talking Keyframes and Animations</h2>
+
+<p>Before we dive in I want to explain what is about to happen. The original Twitter exploding has 28 frames. Our animation will start at <code>0</code>, and that is our default state. So we&rsquo;ll need to set everything up to default when we start <code>0</code> (initial render).</p>
+
+<p>Then anytime from <code>1</code> to <code>28</code> we will need to design our values so that they produce the correct frame animation.</p>
+
+<p><code>Animated</code> provides a way to interpolate. What that means is given a value, we want it to go through a formula and spit out another value. <code>Animated</code> does this via ranges, which can at times be a little inflexible and we have to hack around it&rsquo;s shortcomings to get desired effects.</p>
+
+<p>All (well almost all) our animations will be interpolating from the single <code>this.state.animation</code> that we created earlier. This just makes it easy to comprehend and layout your animation frames. Because you can then specify that something happens at frame <code>10</code> instead of dividing <code>1/28</code> and say start at <code>0.03571428571</code>.</p>
+
+<h2>Scale it up</h2>
+
+<p>```
+render: function() {</p>
+
+<pre><code>var heart_scale = this.state.animation.interpolate({
+  inputRange: [0, .01, 6, 10, 12, 18, 28],
+  outputRange: [1, 0, .1, 1, 1.2, 1, 1],
+  extrapolate: 'clamp'
+});
+
+var heart_fill = this.state.animation.interpolate({
+  inputRange: [0, 2],
+  outputRange: [GRAY_HEART_COLOR, HEART_COLOR],
+  extrapolate: 'clamp'
+})
+
+var heart_x = heart_scale.interpolate({
+  inputRange: [0, 1],
+  outputRange: [90, 0],
+})
+
+var heart_y = heart_scale.interpolate({
+  inputRange: [0, 1],
+  outputRange: [75, 0],
+})
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Alright there is a lot going on. Lets break it down.</p>
+
+<p>```</p>
+
+<pre><code>var heart_scale = this.state.animation.interpolate({
+  inputRange: [0, .01, 6, 10, 12, 18],
+  outputRange: [1, 0, .1, 1, 1.2, 1],
+  extrapolate: 'clamp'
+});
+</code></pre>
+
+<p><code>``
+We</code>interpolate<code>on the</code>this.state.animation<code>and give it an</code>inputRange<code>and</code>outputRange` array. These must have the same amount of array values.</p>
+
+<p>I talked about some weird things with <code>Animated</code> and setting up defaults. Well <code>inputRange: [0, .01], outputRange: [1, 0]</code> is the first example.</p>
+
+<p>At 0 we want it to be fully scaled, so output at 1. However as soon as the animation is triggered we want it to be at 0. If we only specified <code>0, 1</code> as the inputRange, it would have the heart scale down from 1 to 0. So specifying the scale inputRange at <code>0 =&gt; .01</code> means it&rsquo;ll basically disappear.</p>
+
+<p>It&rsquo;s essentially a way to make an animation not a whole frame, and or happen virtually immediately.</p>
+
+<p>There is a slight spring in the heart. So from frame <code>10</code> to <code>12</code> it will spring up fast to <code>1.2</code> scale, and then slowly fall back from <code>1.2</code> to <code>1</code> from frames <code>12</code> to <code>18</code>.</p>
+
+<p><code>extrapolate: 'clamp'</code> IS EXTREMELY IMPORTANT HERE. If we want it to just stay the same once it hits frame 18 and not do anything else until the end we must add the clamp. Otherwise it will continue to animate at the current stepping value, so it would scale down below 1 and we don&rsquo;t want that.</p>
+
+<p>```</p>
+
+<pre><code>var heart_fill = this.state.animation.interpolate({
+  inputRange: [0, 2],
+  outputRange: [GRAY_HEART_COLOR, HEART_COLOR],
+  extrapolate: 'clamp'
+})
+</code></pre>
+
+<p><code>``
+We have the heart hidden after frame</code>1<code>, so what this animation says is at</code>0` , inital render, be gray. Anytime from frame 2 and out be red, and always be read.</p>
+
+<p>```</p>
+
+<pre><code>var heart_x = heart_scale.interpolate({
+  inputRange: [0, 1],
+  outputRange: [90, 0],
+})
+
+var heart_y = heart_scale.interpolate({
+  inputRange: [0, 1],
+  outputRange: [75, 0],
+})
+</code></pre>
+
+<p>```</p>
+
+<p>This is the one part where we don&rsquo;t want to base things on the key frame. Because there is no <code>transform-origin</code> like there is in CSS, the default scale will scale out to the top left.
+That isn&rsquo;t what we want.</p>
+
+<p>So to scale out to the center we need to animate the x/y while scaling, so we interpolate off the interpolate for scale. Remember we default our scale up above to 1, so we are reversing stuff here saying when the scale is scaling down from 0 to 1 adjust to 90 for x and 75 for y.</p>
+
+<p>The 90/75 just has to deal with the current surface center.</p>
+
+<p>```</p>
+
+<pre><code>return (
+    &lt;Surface width={deviceWidth} height={deviceHeight}&gt;
+        &lt;AnimatedShape
+          d={HEART_SVG}
+          x={heart_x}
+          y={heart_y}
+          scale={heart_scale}
+          fill={heart_fill}
+        /&gt;
+    &lt;/Surface&gt;
+
+)
+</code></pre>
+
+<p>```</p>
+
+<p>We use our <code>AnimatedShape</code> and pass in the animated values we created. A lot of things I explain up above are the basic concepts through out this tutorial so I wont' explain them again.</p>
+
+<h2>Add a Circle</h2>
+
+<p>```
+var AnimatedCircle = React.createClass({displayName: &ldquo;Circle&rdquo;,
+  render: function() {</p>
+
+<pre><code>var radius = this.props.radius;
+var path = Path().moveTo(0, -radius)
+    .arc(0, radius * 2, radius)
+    .arc(0, radius * -2, radius)
+    .close();
+return React.createElement(AnimatedShape, React.__spread({},  this.props, {d: path}));
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>This is taken from previous firework demos and default ReactART, but I&rsquo;ve converted it to use our <code>AnimatedShape</code> we created up above.</p>
+
+<p>```
+<Surface width={deviceWidth} height={deviceHeight}>
+  <Group x={100} y={200}></p>
+
+<pre><code>&lt;AnimatedShape
+  d={HEART_SVG}
+  x={heart_x}
+  y={heart_y}
+  scale={heart_scale}
+  fill={heart_fill}
+/&gt;
+&lt;AnimatedCircle
+  x={90}
+  y={75}
+  radius={150}
+  scale={1}
+  strokeWidth={3}
+  fill="#000"
+  opacity={1}
+/&gt;
+</code></pre>
+
+<p>  </Group>
+</Surface>
+```</p>
+
+<p>We render an arbitrary circle, at <code>90</code> and <code>75</code> which is the center of our current surface.</p>
+
+<h2>Blow that Circle Up</h2>
+
+<p>```</p>
+
+<pre><code>var circle_scale = this.state.animation.interpolate({
+  inputRange: [0, 1, 4],
+  outputRange: [0, .3, 1],
+  extrapolate: 'clamp'
+});
+
+var circle_stroke_width = this.state.animation.interpolate({
+  inputRange: [0, 5.99, 6, 7, 10],
+  outputRange: [0, 0, 15, 8, 0],
+  extrapolate: 'clamp'
+});
+
+var circle_fill_colors = this.state.animation.interpolate({
+  inputRange: [1, 2, 3, 4, 4.99, 5],
+  outputRange: FILL_COLORS,
+  extrapolate: 'clamp'
+})
+
+var circle_opacity = this.state.animation.interpolate({
+  inputRange: [1,9.99, 10],
+  outputRange: [1, 1, 0],
+  extrapolate: 'clamp'
+})
+</code></pre>
+
+<p>```</p>
+
+<p>Alright so we scale up, based on the image we scale up to <code>.3</code> in a single frame, then over the course of 3 frames we scale up our circle to a scale of 1.</p>
+
+<p>Our stroke width also changes however we won&rsquo;t always render it. We only need it for a few frames starting at frame 6. So we will specify that the stroke width stays at <code>0</code> from <code>0</code> to frame <code>5.99</code>.</p>
+
+<p>Then over the course of 1 frame it goes to 15 which I chose at random, down to 8, and eventually 0 by frame 10.</p>
+
+<p>We specify a range of colors in the array I talked about in setup. The weird part is that we have to specify the final color a few times before setting the fill to transparent. The reason is that if we specify just the transparent color the purple color will fade out to transparent but we want it to completely disappear and just show the stroke.</p>
+
+<p>So we have to coordinate stroke frames appearing with the fill color disappearing.</p>
+
+<p>Finally our opacity stays 1 until frame 9.99 (the end of our circle stroke) then we kill it on frame 10.</p>
+
+<p>```</p>
+
+<pre><code>&lt;AnimatedCircle
+  x={89}
+  y={75}
+  radius={150}
+  scale={circle_scale}
+  strokeWidth={circle_stroke_width}
+  stroke={FILL_COLORS[2]}
+  fill={circle_fill_colors}
+  opacity={circle_opacity}
+/&gt;
+</code></pre>
+
+<p>```
+We put those in and because our stroke color is always the same we just reference our fill colors.</p>
+
+<h2>Bunch of Circles Blowing Up</h2>
+
+<p>```
+<Surface width={deviceWidth} height={deviceHeight}>
+  <Group x={100} y={200}></p>
+
+<pre><code>&lt;AnimatedShape
+  d={HEART_SVG}
+  x={heart_x}
+  y={heart_y}
+  scale={heart_scale}
+  fill={heart_fill}
+/&gt;
+&lt;AnimatedCircle
+  x={90}
+  y={75}
+  radius={150}
+  scale={circle_scale}
+  strokeWidth={circle_stroke_width}
+  stroke={FILL_COLORS[2]}
+  fill={circle_fill_colors}
+  opacity={circle_opacity}
+/&gt;
+
+{this.getSmallExplosions(150, {x:90, y:75})}
+</code></pre>
+
+<p>  </Group>
+</Surface>
+```</p>
+
+<p>Alright now we setup our final piece. Calling <code>getSmallExplosions</code> with some data. In our case the radius of our circle and the central coordinates.</p>
+
+<p>```
+  getSmallExplosions: function(radius, offset) {</p>
+
+<pre><code>return [0,1,2,3,4,5,6].map((v, i, t) =&gt; {
+
+  var scaleOut = this.state.animation.interpolate({
+    inputRange: [0, 5.99, 6, 13.99, 14, 21],
+    outputRange: [0, 0, 1, 1, 1, 0],
+    extrapolate: 'clamp'
+  });
+
+  var moveUp = this.state.animation.interpolate({
+    inputRange: [0, 5.99, 14],
+    outputRange: [0, 0, -15],
+    extrapolate: 'clamp'
+  });
+
+  var moveDown = this.state.animation.interpolate({
+    inputRange: [0, 5.99, 14],
+    outputRange: [0, 0, 15],
+    extrapolate: 'clamp'
+  });
+
+  var color_top_particle = this.state.animation.interpolate({
+    inputRange: [6, 8, 10, 12, 17, 21],
+    outputRange: shuffleArray(PARTICLE_COLORS)
+  })
+
+  var color_bottom_particle = this.state.animation.interpolate({
+    inputRange: [6, 8, 10, 12, 17, 21],
+    outputRange: shuffleArray(PARTICLE_COLORS)
+  })
+
+  var position = getXYParticle(7, i, radius)
+
+  return (
+    &lt;Group 
+      x={position.x + offset.x } 
+      y={position.y + offset.y} 
+      rotation={getRandomInt(0, 40) * i}
+    &gt;
+      &lt;AnimatedCircle 
+        x={moveUp}
+        y={moveUp}
+        radius={15} 
+        scale={scaleOut} 
+        fill={color_top_particle} 
+      /&gt;
+      &lt;AnimatedCircle 
+        x={moveDown}
+        y={moveDown}
+        radius={8} 
+        scale={scaleOut} 
+        fill={color_bottom_particle} 
+      /&gt;
+    &lt;/Group&gt;
+  )
+}, this)
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>Not going to explain this one too indepth or I&rsquo;ll keep repeating myself. We create a bunch of animations for each particle but add some randomness into the mix. We call <code>shuffleArray</code> on our <code>PARTICLE_COLORS</code> so over the course of the frames it is active it&rsquo;ll animate to random colors for each particle.</p>
+
+<p>Also we add a bit of <code>rotation</code> to the group, so when we animate the particles up/down they&rsquo;ll go in all different directions.</p>
+
+<h2>Done</h2>
+
+<p>Now you too can add a new interaction that all of your users will despise! No this isn&rsquo;t a perfect replica of the the Twiter animation because I added color variance and some random rotation to the small exploding/shrinking circles.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/lMOxqIL.gif">http://i.imgur.com/lMOxqIL.gif</a>" title="That is hot" ></p>
+
+<h3>Interactive Demo at <a href="https://rnplay.org/apps/nJjHdw">https://rnplay.org/apps/nJjHdw</a></h3>
+
+<p>I&rsquo;m not posting the full code, this is a long one. Just check it out on RNPlay.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[React Native - Morphing SVG Paths with React Art]]></title>
+    <link href="http://browniefed.com/blog/2015/10/14/react-native-morphing-svg-paths-with-react-art/"/>
+    <updated>2015-10-14T20:37:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/10/14/react-native-morphing-svg-paths-with-react-art</id>
+    <content type="html"><![CDATA[<p>More paths, more React Art, and more animations. What else have you come to expect of me. A question was posed on Reactiflux about morphing one path to another with React Art. Of course I took this as a &ldquo;challenge&rdquo;.</p>
+
+<p>I say &ldquo;challenge&rdquo; because it took all of a few moments to check out the ART repo and see the <a href="https://github.com/sebmarkbage/art/blob/master/demos/morph/morph.js">Morph Demo</a> which links to <code>art/morph/path</code>. That&rsquo;s of course what this all about, morphing a path. Sebastian Markbåge has thought of everything.</p>
+
+<p>On Reactiflux the demo of morphing batman logos was proposed and linked to. You can read the orignal source with the linked SVG at <a href="http://tavmjong.free.fr/blog/?p=741">http://tavmjong.free.fr/blog/?p=741</a>.</p>
+
+<h2>What are we building</h2>
+
+<p><img class="<a" src="href="http://i.imgur.com/KxNBQsb.gif">http://i.imgur.com/KxNBQsb.gif</a>" title="POW BAM KAPOW" ></p>
+
+<!-- more -->
+
+
+<h2>Concept</h2>
+
+<p>We&rsquo;re going to take a path. In our case all of the Batman logos, and transform each SVG path into the next until we&rsquo;re all out. Then we&rsquo;re going to transform it into a square.</p>
+
+<h2>Setup</h2>
+
+<p>If you&rsquo;re unsure how to get React Art running on React Native checkout my previous blog post here <a href="http://browniefed.com/blog/2015/05/03/getting-react-art-running-on-react-native/">Getting react-art running on react-native</a>.</p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var ReactART = require(&lsquo;ReactNativeART&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);</p>
+
+<p>var {
+  width,
+  height
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+} = React;</p>
+
+<p>var {
+  Surface,
+  Shape
+} = ReactART;</p>
+
+<p>var Morph = require(&lsquo;art/morph/path&rsquo;);
+<code>``
+We bring in the usuals, but also require</code>art/morph/path` which will do our magic morphing.</p>
+
+<h2>The SVG Paths</h2>
+
+<p>Thanks to the blog post I just parsed out the SVG paths, and tossed them into an array. For the sake of parsing, I map over each and convert them into native React Art paths.</p>
+
+<p>```
+var BatmanLogoSVGs = [
+  &rsquo;M 256,213 C 245,181 206,187 234,262 147,181 169,71.2 233,18   220,56   235,81   283,88   285,78.7 286,69.3 288,60   289,61.3 290,62.7 291,64   291,64   297,63   300,63   303,63   309,64   309,64   310,62.7 311,61.3 312,60   314,69.3 315,78.7 317,88   365,82   380,56   367,18   431,71   453,181 366,262 394,187 356,181 344,213 328,185 309,184 300,284 291,184 272,185 256,213 Z',       <br/>
+  &rsquo;M 212,220 C 197,171 156,153 123,221 109,157 120,109  159,63.6 190,114  234,115  254,89.8 260,82.3 268,69.6 270,60.3 273,66.5 275,71.6 280,75.6 286,79.5 294,79.8 300,79.8 306,79.8 314,79.5 320,75.6 325,71.6 327,66.5 330,60.3 332,69.6 340,82.3 346,89.8 366,115  410,114  441,63.6 480,109  491,157 477,221 444,153 403,171 388,220 366,188 316,200 300,248 284,200 234,188 212,220 Z',      <br/>
+  &rsquo;M 213,222 C 219,150 165,139 130,183 125,123 171,73.8 247,51.6 205,78   236,108  280,102  281,90.3 282,79   286,68.2 287,72   288,75.8 289,79.7 293,79.7 296,79.7 300,79.7 304,79.7 307,79.7 311,79.7 312,75.8 313,72   314,68.2 318,79   319,90.3 320,102  364,108  395,78   353,51.6 429,73.8 475,123 470,183 435,139 381,150 387,222 364,176 315,172 300,248 285,172 236,176 213,222 Z',</p>
+
+<pre><code>// There are many more, truncated for blog reading purposes
+</code></pre>
+
+<p>];</p>
+
+<p>var BatmanLogoPaths = BatmanLogoSVGs.map((svg) => Morph.Path(svg));</p>
+
+<p>var square = Morph.Path()
+  .move(100,0)
+  .line(100,0)
+  .line(0,100)
+  .line(-100,0)
+  .close();</p>
+
+<p>BatmanLogoPaths.push(square);</p>
+
+<p>```</p>
+
+<p>Then we throw a square on the end.</p>
+
+<h2>Render</h2>
+
+<p>There is nothing special here. We just add a <code>Surface</code> the full width/height of the phone and instead of a string SVG path we give it the transition which just happens to be a <code>MorphPath</code>, which extends from <code>Path</code> which React Art knows what to do with. Fancy.</p>
+
+<p>```
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Surface width={width} height={height}&gt;
+      &lt;Shape x={-100} y={100} d={this.state.transition} fill="#000" /&gt;
+    &lt;/Surface&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+```
+The person that created the SVGs made the central point the start of the SVG so we just set it back -100 to center it-ish. I don&rsquo;t know. We fill it with black. Batman likes black.</p>
+
+<h2>Initial Setup</h2>
+
+<p>```
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  transition: Morph.Tween(BatmanLogoPaths[0], BatmanLogoPaths[1])
+};
+</code></pre>
+
+<p>  },
+  componentWillMount: function() {</p>
+
+<pre><code>this._current = 1;
+</code></pre>
+
+<p>  },
+  componentDidMount: function() {</p>
+
+<pre><code>this.animate(null, this.nextAnimation)
+</code></pre>
+
+<p>  },
+<code>``
+We start the intial render with a</code>Morph.Tween<code>of the first and second Batman logos. We do a little setup in</code>componentWillMount` to say we&rsquo;re currently animating to the second logo (it&rsquo;s a 1 since we have 0 based array indexes).</p>
+
+<p>Then once the component is mounted we kick off the animation with our <code>this.animate</code> call.</p>
+
+<h2>Animate it</h2>
+
+<p>```
+  animate: function(start, cb) {</p>
+
+<pre><code>requestAnimationFrame((timestamp) =&gt; {
+  if (!start) start = timestamp;
+  var delta = (timestamp - start) / 1000;
+
+  if (delta &gt; 1) return cb();
+
+  this.state.transition.tween(delta);
+  this.setState(this.state);
+  this.animate(start, cb);
+})
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>Our animate call takes a start, and a callback for when the animation is complete. Thanks to React Native with get a polyfilled <code>requestAnimationFrame</code>. If we don&rsquo;t have a start, then we set it to the timestamp that <code>requestAnimationFrame</code> provides us. The start allows us to compute how far along in the animation we are.</p>
+
+<p>The <code>delta</code> is the current <code>timestamp</code> which is some amount of time in the future, minus the <code>start</code>. The <code>/1000</code> is the amount of time each animation will take. So each morph will take <code>1000ms</code> to complete.</p>
+
+<p>If our change is greater than 1 then we know our animation is complete and trigger are callback, and also return so we don&rsquo;t keep animating a complete animation.</p>
+
+<p>We tween our transition with the new <code>delta</code> progress, we trigger a <code>setState</code> to cause our UI to re-render, then we call ourself (aka <code>this.animate</code>), with our <code>start</code> and our <code>callback</code> so we can trigger the next animation frame.</p>
+
+<p>A lot of this is just boilerplate logic you can see here <a href="https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame">https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame</a>.</p>
+
+<h2>Animate it Again</h2>
+
+<p>```
+  nextAnimation: function() {</p>
+
+<pre><code>this._current += 1;
+if (this._current &gt;= BatmanLogoPaths.length) return;
+
+this.setState({
+  transition: Morph.Tween(BatmanLogoPaths[this._current - 1], BatmanLogoPaths[this._current])
+}, () =&gt; this.animate(null, this.nextAnimation))
+</code></pre>
+
+<p>  },
+```
+Okay so we need a little logic around keeping track of which logo is transitioning to which other shape. If this function is called it means an animation has completed and we need to trigger the next one.</p>
+
+<p>We add one to the current to setup that we&rsquo;re about to animate to the next logo path.</p>
+
+<p>First we check if it&rsquo;s equal to or somehow greater than the amount of logos we have. If it is we stop animating and just leave the current render as the last shape in the array.</p>
+
+<p>If not we trigger a setState to adjust the <code>this.state.transition</code> (which we pass into the <code>Shape</code>). This just gets set to the <code>this._current - 1</code> logo and then the <code>this._current</code> which is going to be the next logo. Because currently on screen is <code>this._current - 1</code> and we do a <code>setState</code>, nothing will flash/jump since you&rsquo;re rendering the same exact shape again.</p>
+
+<p><code>setState</code> also takes a success callback, meaning the UI has updated, we then kick off the animation. TahDah. Batman Animating.</p>
+
+<h2>More than Batman Logos?</h2>
+
+<p>Of course. You can animate from anything to anything with <code>Morph.Tween</code>. See I animated Batman into a square at the end. But really you can do any sort of path to another path. If you&rsquo;re animating a complex path to another compelx path they not animate elegantly but they&rsquo;ll animate.</p>
+
+<h2>Clean it up</h2>
+
+<p><code>setState</code> is hacky for animations, you could wrap this up just like Animated to make it all nice and performant with <code>setNativeProps</code> but you can take care of that yourself. Vjeux shows how to do that in his React Rally talk, seriously watch it <a href="https://www.youtube.com/watch?v=xtqUJVqpKNo">https://www.youtube.com/watch?v=xtqUJVqpKNo</a>. Also slides here <a href="https://speakerdeck.com/vjeux/react-rally-animated-react-performance-toolbox">https://speakerdeck.com/vjeux/react-rally-animated-react-performance-toolbox</a></p>
+
+<h2>Done</h2>
+
+<p>Okay, so now you know how to morph paths. Go make cool animated transitions on React Native now!</p>
+
+<h4>Live Demo: <a href="https://rnplay.org/apps/9txbFQ">https://rnplay.org/apps/9txbFQ</a></h4>
+
+<h2>Final Code</h2>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var ReactART = require(&lsquo;ReactNativeART&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);</p>
+
+<p>var {
+  width,
+  height
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+} = React;</p>
+
+<p>var {
+  Surface,
+  Shape
+} = ReactART;</p>
+
+<p>var Morph = require(&lsquo;art/morph/path&rsquo;);</p>
+
+<p>var BatmanLogoSVGs = [
+  &rsquo;M 256,213 C 245,181 206,187 234,262 147,181 169,71.2 233,18   220,56   235,81   283,88   285,78.7 286,69.3 288,60   289,61.3 290,62.7 291,64   291,64   297,63   300,63   303,63   309,64   309,64   310,62.7 311,61.3 312,60   314,69.3 315,78.7 317,88   365,82   380,56   367,18   431,71   453,181 366,262 394,187 356,181 344,213 328,185 309,184 300,284 291,184 272,185 256,213 Z',       <br/>
+  &rsquo;M 212,220 C 197,171 156,153 123,221 109,157 120,109  159,63.6 190,114  234,115  254,89.8 260,82.3 268,69.6 270,60.3 273,66.5 275,71.6 280,75.6 286,79.5 294,79.8 300,79.8 306,79.8 314,79.5 320,75.6 325,71.6 327,66.5 330,60.3 332,69.6 340,82.3 346,89.8 366,115  410,114  441,63.6 480,109  491,157 477,221 444,153 403,171 388,220 366,188 316,200 300,248 284,200 234,188 212,220 Z',      <br/>
+  &rsquo;M 213,222 C 219,150 165,139 130,183 125,123 171,73.8 247,51.6 205,78   236,108  280,102  281,90.3 282,79   286,68.2 287,72   288,75.8 289,79.7 293,79.7 296,79.7 300,79.7 304,79.7 307,79.7 311,79.7 312,75.8 313,72   314,68.2 318,79   319,90.3 320,102  364,108  395,78   353,51.6 429,73.8 475,123 470,183 435,139 381,150 387,222 364,176 315,172 300,248 285,172 236,176 213,222 Z',      <br/>
+  &rsquo;M 218,231 C 191,238 165,252 140,266 144,209 156,153  193,93.7 218,106  249,105  280,102  282,90.3 284,78.6 289,67.8 290,71.6 291,75.8 292,79.7 292,79.7 297,79.7 300,79.7 303,79.7 308,79.7 308,79.7 309,75.8 310,71.6 311,67.8 316,78.6 318,90.3 320,102  351,105  382,106  407,93.7 444,153  456,209 460,266 435,252 409,238 382,231 355,224 328,223 300,223 272,223 245,224 218,231 Z',       <br/>
+  &rsquo;M 258,243 C 220,201 221,220 253,281 154,243 150,108  229,61.9 242,83   257,98.1 275,110  278,88   282,65.8 285,43.6 287,49.9 288,56.2 290,62.5 293,62.7 297,62.9 300,62.9 303,62.9 307,62.7 310,62.5 312,56.2 313,49.9 315,43.6 318,65.8 322,88   325,110  343,98.1 358,83   371,61.9 450,108  446,243 347,281 379,220 380,201 342,243 330,187 329,202 300,271 271,202 270,187 258,243 Z',       <br/>
+  &rsquo;M 235,210 C 214,139 143,145 183,229 108,175 135,70.1 242,48.3 190,85.6 245,142  278,95.5 281,80.2 281,62.7 284,48.7 287,53.9 287,59.1 289,64.5 292,64.7 297,64.2 300,64.2 303,64.2 308,64.7 311,64.5 313,59.1 313,53.9 316,48.7 319,62.7 319,80.2 322,95.5 355,142  410,85.6 358,48.3 465,70.1 492,175 417,229 457,145 386,139 365,210 357,147 309,190 300,271 291,190 243,147 235,210 Z',       <br/>
+  &rsquo;M 249,157 C 214,157 201,203 273,255 157,221 157,69   274,32.8 188,87.2 211,140  256,140  291,140  289,128  291,98.1 293,107  293,116  295,125  297,125  298,125  300,125  302,125  305,125  305,125  307,116  307,107  309,98.1 311,128  309,140  344,140  389,140  412,87.2 326,32.8 443,69   443,221 327,255 399,203 386,157 351,157 317,157 300,195 300,238 300,195 283,157 249,157 Z',      <br/>
+  &rsquo;M 264,212 C 213,138 150,171 232,244 101,217 112,55.1 257,36.9 182,86.6 222,106  266,106  285,106  284,66.7 286,36.8 288,42.6 289,48.4 291,54.2 291,54.2 297,54.2 300,54.2 303,54.2 309,54.2 309,54.2 311,48.4 312,42.6 314,36.8 316,66.7 315,106  334,106  378,106  418,86.6 343,36.9 488,55.1 499,217 368,244 450,171 387,138 336,212 354,161 300,163 300,249 300,163 246,161 264,212 Z',       <br/>
+  &rsquo;M 223,217 C 194,153 165,168 133,219 143,158 161,99.2 189,38.4 214,69.8 241,84.7 272,86.2 272,70.2 273,53.5 273,37.5 275,47.9 278,58.4 280,68.8 287,64.9 292,62.4 300,62.4 308,62.4 313,64.9 320,68.8 322,58.4 325,47.9 327,37.5 327,53.5 328,70.2 328,86.2 359,84.7 386,69.8 411,38.4 439,99.2 457,158 467,219 435,168 406,153 377,217 350,162 319,176 300,245 281,176 250,162 223,217 Z',       <br/>
+  &rsquo;M 231,185 C 186,159 161,180 190,215 86.2,180 92.6,99.6 211,68.9 195,112 254,141 279,96.7 279,83.2 279,69.8 279,56.3 283,63.6 288,70.8 292,78.1 295,78.1 297,78.1 300,78.1 303,78.1 305,78.1 308,78.1 312,70.8 317,63.6 321,56.3 321,69.8 321,83.2 321,96.7 346,141 405,112 389,68.9 507,99.6 514,180 410,215 439,180 414,159 369,185 351,165 324,167 300,216 276,167 249,165 231,185 Z',   <br/>
+  &rsquo;M 194,146 C 192,107 164,76.4 136,45.6 166,55.7 196,65.7 226,75.8 238,107 265,163 279,136 282,130 281,108 281,94.8 285,103 288,111 293,115 295,116 298,117 300,117 302,117 305,116 307,115 312,111 315,103 319,94.8 319,108 318,130 321,136 335,163 362,107 374,75.8 404,65.7 434,55.7 464,45.6 436,76.4 408,107 406,146 355,158 323,189 300,231 277,189 245,158 194,146 Z',      <br/>
+  &rsquo;M 209,182 C 184,132 176,138 113,161 140,136 168,111 196,86.5 221,104 247,115 278,115 281,99.9 285,85.5 287,70.2 289,78.5 292,88.4 294,96.7 296,96.7 298,96.7 300,96.7 302,96.7 304,96.7 306,96.7 308,88.4 311,78.5 313,70.2 315,85.5 319,99.9 322,115 353,115 379,104 404,86.5 432,111 460,136 487,161 424,138 416,132 391,182 332,150 341,161 300,214 259,161 268,150 209,182 Z',       <br/>
+  &rsquo;M 198,171 C 189,131 150,120 113,140 142,104 182,74.4 249,70.2 208,89 248,125 278,106 285,101 286,93.5 286,74.2 288,78.1 291,81.5 294,83.2 296,84.2 298,84.7 300,84.7 302,84.7 304,84.2 306,83.2 309,81.5 312,78.1 314,74.2 314,93.5 315,101 322,106 352,125 392,89 351,70.2 418,74.4 458,104 487,140 450,120 411,131 402,171 357,147 322,171 300,214 278,171 243,147 198,171 Z',       <br/>
+  &rsquo;M 202,170 C 188,115 157,108 124,105 146,84.3 171,71.5 199,70.2 211,98.6 243,103 277,106 279,99.3 281,92.6 283,86 285,91.9 287,97.9 290,104 293,104 297,104 300,104 303,104 307,104 310,104 313,97.9 315,91.9 317,86 319,92.6 321,99.3 323,106 357,103 389,98.6 401,70.2 429,71.5 454,84.3 476,105 443,108 412,115 398,170 349,157 318,175 300,214 282,175 251,157 202,170 Z',       <br/>
+  &rsquo;M 220,179 C 200,127 150,130 123,175 122,110 160,85.1 201,64 208,99.2 243,111 268,92.9 278,86.1 284,68.2 287,40.7 289,49.6 292,58.4 294,67.3 296,67.3 298,67.3 300,67.3 302,67.3 304,67.3 306,67.3 308,58.4 311,49.6 313,40.7 316,68.2 322,86.1 332,92.9 357,111 392,99.3 399,64 440,85.1 478,110 477,175 450,130 400,127 380,179 355,155 305,208 300,247 295,208 245,155 220,179 Z',       <br/>
+  &rsquo;M 166,154 C 179,119 154,95.4 114,79.3 155,79.1 197,78.9 239,78.7 242,103 250,109 283,109 289,109 290,93.9 291,83.7 292,88.3 292,92.9 293,97.5 295,97.5 298,97.5 300,97.5 302,97.5 305,97.5 307,97.5 308,92.9 308,88.3 309,83.7 310,93.9 311,109 317,109 350,109 358,103 361,78.7 403,78.9 445,79.1 486,79.3 446,95.4 421,119 434,154 377,151 320,151 300,207 280,151 223,151 166,154 Z'
+];</p>
+
+<p>var BatmanLogoPaths = BatmanLogoSVGs.map((svg) => Morph.Path(svg));</p>
+
+<p>var square = Morph.Path()
+  .move(100,0)
+  .line(100,0)
+  .line(0,100)
+  .line(-100,0)
+  .close();</p>
+
+<p>BatmanLogoPaths.push(square);</p>
+
+<p>var rn_morph = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  transition: Morph.Tween(BatmanLogoPaths[0], BatmanLogoPaths[1])
+};
+</code></pre>
+
+<p>  },
+  componentWillMount: function() {</p>
+
+<pre><code>this._current = 1;
+</code></pre>
+
+<p>  },
+  componentDidMount: function() {</p>
+
+<pre><code>this.animate(null, this.nextAnimation)
+</code></pre>
+
+<p>  },
+  nextAnimation: function() {</p>
+
+<pre><code>this._current += 1;
+if (this._current &gt;= BatmanLogoPaths.length) return;
+
+this.setState({
+  transition: Morph.Tween(BatmanLogoPaths[this._current - 1], BatmanLogoPaths[this._current])
+}, () =&gt; this.animate(null, this.nextAnimation))
+</code></pre>
+
+<p>  },
+  animate: function(start, cb) {</p>
+
+<pre><code>requestAnimationFrame((timestamp) =&gt; {
+  if (!start) start = timestamp;
+  var delta = (timestamp - start) / 1000;
+
+  if (delta &gt; 1) return cb();
+
+  this.state.transition.tween(delta);
+  this.setState(this.state);
+  this.animate(start, cb);
+})
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;Surface width={width} height={height}&gt;
+      &lt;Shape x={-100} y={100} d={this.state.transition} fill="#000" /&gt;
+    &lt;/Surface&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1
+</code></pre>
+
+<p>  },</p>
+
+<p>});</p>
+
+<p>AppRegistry.registerComponent(&lsquo;rn_morph&rsquo;, () => rn_morph);</p>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[React-Native Animated with React-Art - Firework Tap To Shoot]]></title>
+    <link href="http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/"/>
+    <updated>2015-08-29T22:12:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show</id>
+    <content type="html"><![CDATA[<h1>Introduction</h1>
+
+<p>This actually could be built with out react-art, but we&rsquo;ll use react-art just for good measure.
+What are we building? A firework show. Nothing fancy. Just tap on the screen and a firework will be shot to that point and explode.</p>
+
+<h1>What?</h1>
+
+<p>This is what we&rsquo;re building</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/Dj60a6e.gif">http://i.imgur.com/Dj60a6e.gif</a>" title="Firework Shooter" ></p>
+
+<!-- more -->
+
+
+<h1>Setup</h1>
+
+<p>Just like normal, lets set the scene. A blank app with everything imported, etc.</p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);
+var ReactNativeART = require(&lsquo;ReactNativeART&rsquo;);</p>
+
+<p>var {
+  width,
+  height
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  Animated,
+  View,
+  TouchableWithoutFeedback
+} = React;</p>
+
+<p>var {</p>
+
+<pre><code>Surface,
+Shape,
+Path,
+Group,
+Transform
+</code></pre>
+
+<p>} = ReactNativeART;</p>
+
+<p>var AnimatedShape = Animated.createAnimatedComponent(Shape);
+var AnimatedGroup = Animated.createAnimatedComponent(Group);
+```</p>
+
+<p>We bring in the <code>Animated</code> API, <code>ReactNativeART</code>, some components from <code>ART</code>.
+The thing that we have done before is creating <code>AnimatedShape</code>, and <code>AnimatedGroup</code>. What these do is allow us to set props like <code>fill</code>, <code>opacity</code>, <code>x</code>, <code>y</code>, that are Animated values. This will cause updates in our native world correctly and efficiently.</p>
+
+<p>Now our styles</p>
+
+<p>```
+var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+flexDirection: 'column'
+</code></pre>
+
+<p>  }
+});
+<code>``
+Yep that is it. Most of our stuff will take place in the</code>react-art` world.</p>
+
+<p>Now our basic class</p>
+
+<p>```
+var FireworkShooter = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  fireworks: []
+};
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;TouchableWithoutFeedback&gt;
+      &lt;View&gt;
+        &lt;Surface width={width} height={height}&gt;
+        &lt;/Surface&gt;
+      &lt;/View&gt;
+    &lt;/TouchableWithoutFeedback&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>So we have a simple setup. A full container view, with a <code>TouchableWithoutFeedback</code> so we can get the press coordinates. Then a wrapping <code>View</code> since <code>Touchable</code> stuff needs a native view below it. Then finally our <code>react-art</code> <code>Surface</code>. This takes a <code>width</code> and <code>height</code> prop. In our case we want the full screen, so we get the dimensions of the phone that we extracted up above and set it.</p>
+
+<h1>Shoot a mortar</h1>
+
+<p>Lets think about this.
+We want a mortar (a small glowing ball) to shoot from the bottom center of the screen to where we&rsquo;ve tapped.</p>
+
+<p>That means with <code>react-art</code> we&rsquo;ll have to create a closed <code>Path</code> that is a circle. It just so happens that <code>react-art</code> ships with a <code>Circle</code> shape for us to use.</p>
+
+<p>Okay so our list of needs</p>
+
+<ul>
+<li>A press handler to get where we tapped</li>
+<li>A <code>Circle</code> that can take Animated API props</li>
+<li>A way to animate that <code>Circle</code> aka mortar to the tap</li>
+<li>Render a mortar on the <code>Surface</code></li>
+</ul>
+
+
+<p><code>
+&lt;TouchableWithoutFeedback onPress={this._handleAddFirework}&gt;
+</code>
+We&rsquo;ll use the <code>TouchableWithoutFeedback</code> to call out to a function to queue up adding a firework.
+Check that off the list.</p>
+
+<p>```
+//React-Art ships with this component however not react-native-art implementation we&rsquo;ll just grab it and
+//modify this to use the AnimatedShape we create up above. Thanks Facebook :)</p>
+
+<p>/<em>*
+ * Copyright 2013-2014 Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule Circle.art
+ * @typechecks
+ *
+ * Example usage:
+ * <Circle
+ *   radius={10}
+ *   stroke="green"
+ *   strokeWidth={3}
+ *   fill="blue"
+ * />
+ *
+ </em>/
+var AnimatedCircle = React.createClass({displayName: &ldquo;Circle&rdquo;,
+  render: function() {</p>
+
+<pre><code>var radius = this.props.radius;
+
+var path = Path().moveTo(0, -radius)
+    .arc(0, radius * 2, radius)
+    .arc(0, radius * -2, radius)
+    .close();
+return React.createElement(AnimatedShape, React.__spread({},  this.props, {d: path}));
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>Hey look we just grabbed it and changed <code>Shape</code> to <code>AnimatedShape</code>. Yaye for React and reusable code.</p>
+
+<p>```
+var MORTAR_RADIUS = 5;
+///&hellip;
+_handleAddFirework: function(e) {</p>
+
+<pre><code>var _shootingPosition = new Animated.ValueXY({x: width/2, y: height - MORTAR_RADIUS});
+
+this.state.fireworks.push({
+  shootingPosition: _shootingPosition,
+});
+
+Animated.timing(_shootingPosition, {
+    duration: 300,
+    toValue: {
+      y: e.nativeEvent.locationY,
+      x: e.nativeEvent.locationX
+    }
+}).start()
+
+this.setState(this.state);
+</code></pre>
+
+<p>}
+```
+Alright. Pause and lets analyze this code.</p>
+
+<p>First line <code>_shootingPosition</code>, we create a new <code>Animated.ValueXY</code> and set our defaults. These defaults are the starting position of the animation. Usually these would default to <code>x: 0, y:0</code> but we have other plans.</p>
+
+<p>We set our <code>x</code> to <code>width/2</code> which is the middle of the phone. Then our <code>y</code> is going to the <code>height</code> of the device minus a <code>MORTAR_RADIUS</code>. We put a constant at the top of the code to say our mortar radius is going to be 5.</p>
+
+<p>Next we add it to an array of fireworks we&rsquo;ll shoot later.</p>
+
+<p>Then we create the animation.
+We want the mortar to take <code>300</code> milliseconds to reach the spot the user pressed. We set the <code>toValue</code> to where our users pressed.
+Then we start the animation. Yeah we haven&rsquo;t even rendered anything yet but it&rsquo;ll all be okay trust me.</p>
+
+<p>Finally we set our state and thus it&rsquo;ll cause a re-render and we can render our firework.</p>
+
+<p>```
+<Surface width={width} height={height}>
+{</p>
+
+<pre><code>this.state.fireworks.map((firework) =&gt; {
+    return &lt;AnimatedCircle 
+                radius={MORTAR_RADIUS} 
+                x={firework.shootingPosition.x} 
+                y={firework.shootingPosition.y}
+                fill="#000"
+            /&gt;
+})
+</code></pre>
+
+<p>}
+</Surface>
+<code>``
+So we map over each firework, return the</code>AnimatedCircle<code>and set the appropriate properties, which 2 of those</code>x<code>, and</code>y` are animated properties. In our case we&rsquo;re going to fill the cirlcle with black to start.</p>
+
+<p>So what does that all look like? Something like this</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/arIjyoz.gif">http://i.imgur.com/arIjyoz.gif</a>" title="Black Shooting Circles" ></p>
+
+<h1>Shoot multiple mortars that disappear</h1>
+
+<p>Well mortars don&rsquo;t stick like that. So lets make them disappear.
+The <code>start()</code> function takes a callback that is called when the animation completes.</p>
+
+<p>To identify the firework in the array we&rsquo;ll just use the <code>shootingPosition</code> animation to identify it and filter it out.</p>
+
+<p>Something like this.</p>
+
+<p>```
+  removeSelf: function(_shootingPosition) {</p>
+
+<pre><code>this.state.fireworks = this.state.fireworks.filter((firework) =&gt; firework.shootingPosition !== _shootingPosition);
+this.setState(this.state);
+</code></pre>
+
+<p>  },</p>
+
+<p>  ///</p>
+
+<pre><code>Animated.timing(_shootingPosition, {
+    duration: 300,
+    toValue: {
+      y: e.nativeEvent.locationY,
+      x: e.nativeEvent.locationX
+    }
+]).start(this.removeSelf.bind(this, _shootingPosition));
+</code></pre>
+
+<p>```</p>
+
+<p>Not the most elegant of solutions but hey it works. It runs through each firework, removes our _shootingPosition, and then refreshes the UI.</p>
+
+<h1>Animate the color</h1>
+
+<p>Lets make the mortar more than just a black dot. Lets pretend it&rsquo;s a fire ball, and we want it to alternate between yellow and orange.</p>
+
+<p>We&rsquo;ll use these 2 colors and pop them at the top</p>
+
+<p><code>
+var SHOOTING_COLORS = [
+  'rgb(234,238,112)', //Yellow
+  'rgb(245,137,12)' //Orange
+];
+</code></p>
+
+<p>The <code>interpolate</code> function we&rsquo;re going to call only works with <code>rgb</code> hence the use of <code>rgb</code> instead of hex.</p>
+
+<p>Next we&rsquo;ll need to create another Animated value.</p>
+
+<p>Our code will look like so</p>
+
+<p>```</p>
+
+<pre><code>var _shootingPosition = new Animated.ValueXY({x: width/2, y: height - MORTAR_RADIUS});
+var _shootingColor = new Animated.Value(0);
+
+this.state.fireworks.push({
+  shootingPosition: _shootingPosition,
+  shootingColor: _shootingColor,
+});
+
+//
+
+_shootingPosition.addListener(this.adjustShootingFill.bind(null, _shootingColor));
+
+adjustShootingFill: function(_shootingColor, value) {
+    Animated.timing(_shootingColor, {
+      duration: 16,
+      toValue: _shootingColor.__getAnimatedValue() == 0 ? 1 : 0
+    }).start()
+},
+</code></pre>
+
+<p><code>``
+We start off by adding a new</code>Animated.Value`, and set it to 0. We add it to our firework object.</p>
+
+<p>Then we add a listener to it. What <code>addListener</code> does is provides a callback that will be called each time the mortar position is updated.
+The bind is just so it&rsquo;ll pass in our <code>_shootingColor</code> Animated value as the first argument.</p>
+
+<p>We&rsquo;ll use the <code>Animated.timing</code> function again to transition it between colors over 16ms. We call <code>__getAnimatedValue()</code> and do the inverse of it.</p>
+
+<p>So every <code>16ms</code> the mortar will transition from yellow => orange => yellow => orange, etc.</p>
+
+<p>Now what does that look like in our render?</p>
+
+<p>```
+<Surface width={width} height={height}>
+{</p>
+
+<pre><code>this.state.fireworks.map((firework) =&gt; {
+
+    var _shootingFill = firework.shootingColor.interpolate({
+      inputRange: [0,1],
+      outputRange: SHOOTING_COLORS
+    });
+
+
+    return &lt;AnimatedCircle 
+                radius={MORTAR_RADIUS} 
+                x={firework.shootingPosition.x} 
+                y={firework.shootingPosition.y}
+                fill={_shootingFill}
+            /&gt;
+})
+</code></pre>
+
+<p>}
+</Surface>
+<code>``
+We need to create an interpolator. This interpolate will encapsulate the logic that picks the color when we change the value of</code>shootingColor<code>up above in our</code>adjustShootingFill` function.</p>
+
+<p>It maps to</p>
+
+<p><code>
+0 =&gt; yellow
+1 =&gt; orange
+</code>
+Then we pass that into our fill property and we&rsquo;re done.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/r69Ba6r.gif">http://i.imgur.com/r69Ba6r.gif</a>" title="Orange Yellow Moratrs" ></p>
+
+<h1>Make those mortars explode</h1>
+
+<p>Now for the fun part. Lets make our mortars explode.</p>
+
+<p>Our mortar concept will be pretty simplistic, we&rsquo;ll create 20 circles that explode outwards and expand.
+We could create all sorts of tails that fly around and do cool things but that is a tutorial for another time.</p>
+
+<p>First lets setup some variables</p>
+
+<p>```
+var PARTICLE_RADIUS = 30; // How big should the explosions be
+var PARTICLE_COUNT = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]; // How many particles per explosion, this is the lazy persons range call</p>
+
+<p>var PARTICLE_COLORS = [</p>
+
+<pre><code>'rgba(54, 17, 52, 100)',
+'rgba(176, 34, 140, 100)',
+'rgba(234, 55, 136, 100)',
+'rgba(229, 107, 112, 100)',
+'rgba(243, 145, 160, 100)'
+</code></pre>
+
+<p>]
+```</p>
+
+<p>We the <code>PARTICLE_RADIUS</code> which will determine how large each explosion is. We setup <code>PARTICLE_COUNT</code> which is the amount of particles we&rsquo;ll use.
+Finally we want our firework show to be 5 different colors. So each explosion will change between each of these colors.</p>
+
+<p>For the sake of simplicity we&rsquo;ll make each particle the same exact color meaning we only need 1 <code>Animated.Value</code> for it.</p>
+
+<p>```</p>
+
+<pre><code>var _particleColor = new Animated.Value(0);
+var _particleRadius = new Animated.Value(0);
+var _coreOpacity = new Animated.Value(1);
+</code></pre>
+
+<p><code>``
+We also need an</code>Animated.Value<code>for our radius, we put it at 0 so it starts hidden. The other</code>Animated.Value` is our core opacity animation.
+That is the value for hiding our core mortar once it explodes.</p>
+
+<p>```</p>
+
+<pre><code>var _particlePositions = PARTICLE_COUNT.map(() =&gt; new Animated.ValueXY({x: 0, y: 0}));
+</code></pre>
+
+<p><code>``
+Each particle will have to go to a different position so in this case we'll need 20</code>Animated.ValueXY`.</p>
+
+<p>```
+this.state.fireworks.push({</p>
+
+<pre><code>  shootingPosition: _shootingPosition,
+  shootingColor: _shootingColor,
+  particleColor: _particleColor,
+  particleRadius: _particleRadius,
+  coreOpacity: _coreOpacity,
+  particlePositions: _particlePositions
+});
+</code></pre>
+
+<p>```</p>
+
+<p>Add them to our firework so we can access them later in our render.</p>
+
+<p>```</p>
+
+<pre><code>var _animatedParticles = [
+    Animated.timing(_particleRadius, {
+      duration: 700,
+      toValue: 1
+    }),
+    Animated.timing(_coreOpacity, {
+      duration: 200,
+      toValue: 0
+    })
+]
+
+_movingParticles = _particlePositions.map((particle, i) =&gt; {
+  var _xy = getXYParticle(PARTICLE_COUNT.length, i, PARTICLE_RADIUS);
+  return Animated.timing(particle, {
+    duration: 250,
+    toValue: _xy
+  })
+})
+
+//At the bottom of the file
+function getXYParticle(total, i, radius) {
+  var angle = 360/total*i;
+
+  var x = Math.round((radius*2) * Math.cos(angle - (Math.PI/2)));
+  var y = Math.round((radius*2) * Math.sin(angle - (Math.PI/2)));
+
+  return {
+    x: x,
+    y: y
+  }
+}
+
+_animatedParticles = _animatedParticles.concat(_movingParticles);
+</code></pre>
+
+<p>```</p>
+
+<p>This whole animation mapping is setting us up for what we are going to do next. Which is queue up our animations.</p>
+
+<p>We create an array of animations that need to happen. The first is expanding each <code>_particleRadius</code>. We have determine that it will take 700 milliseconds to fully expand the explosion. The <code>_particleRadius</code> will actually be the particle scale. We&rsquo;ll just scale up the circle so it looks like it&rsquo;s exploding outwards, but that will be shown off in our render function.</p>
+
+<p>We set our <code>_coreOpacity</code> aka our mortar ball to fade out and disappear over 200 milliseconds.</p>
+
+<p>We need to create the animations for each particle. It needs to shoot out from our current mortar location to different points on the circle.
+After googling around I found a function below, and deleted a bunch of stuff to basically get down to a rough position algorithim to return <code>x,y</code> positions.</p>
+
+<p>We once again use <code>Animated.timing</code> to say that the particle should take 250 milliseconds to get into it&rsquo;s position.</p>
+
+<p>```</p>
+
+<pre><code>Animated.sequence([
+  Animated.timing(_shootingPosition, {
+    duration: 300,
+    toValue: {
+      y: e.nativeEvent.locationY,
+      x: e.nativeEvent.locationX
+    }
+  }),
+  Animated.parallel(_animatedParticles)
+]).start(this.removeSelf.bind(this, _shootingPosition));
+</code></pre>
+
+<p>```</p>
+
+<p>Now to queue up our animations. We want our mortar shooting to happen first, then the explosion.
+We do that using <code>Animated.sequence</code>.</p>
+
+<p>We first have our mortar go up to the location of the users touch.
+The next piece is wrapping all of our explosion animations in an <code>Animated.parallel</code>. This is the opposite of sequence, which it says execute all of these animations at the same time.</p>
+
+<p>So our mortar fading out and disappearing, our particles expanding, changing color, and exploding outward will all happen at the same time.</p>
+
+<p>```</p>
+
+<pre><code>_shootingPosition.addListener(this.adjustShootingFill.bind(null, _shootingColor));
+_particleRadius.addListener(this.adjustParticleFill.bind(null, _particleColor));
+
+///
+  adjustParticleFill: function(_particleColor, value) {
+    var _currentFill = _particleColor.__getAnimatedValue(),
+        _particleFill = _currentFill === 5 ? 0 : _currentFill + 1;
+
+    Animated.timing(_particleColor, {
+      duration: 16,
+      toValue: _particleFill
+    }).start()
+  },
+</code></pre>
+
+<p>```</p>
+
+<p>Finally we need to change our color of our particle. So like before we&rsquo;ll attach to the expanding of our particle and make it call a function to change the fill color.
+In our new case we have five colors to choose from so the logic is a little different but mostly the same.</p>
+
+<p>Now for our rendering of this all. We&rsquo;ll move it out to a different function to deal with.</p>
+
+<p>```
+  <Surface width={width} height={height}></p>
+
+<pre><code>{this.getFireworks()}
+</code></pre>
+
+<p>  </Surface>
+```</p>
+
+<p>```
+getFireworks: function() {</p>
+
+<pre><code>return this.state.fireworks.map((firework, i) =&gt; {
+
+  var _shootingFill = firework.shootingColor.interpolate({
+    inputRange: [0,1],
+    outputRange: SHOOTING_COLORS
+  });
+
+  var _particleFill = firework.particleColor.interpolate({
+    inputRange: [0,1,2,3,4],
+    outputRange: PARTICLE_COLORS
+  });
+
+  return (
+      &lt;AnimatedGroup 
+        x={firework.shootingPosition.x}
+        y={firework.shootingPosition.y}
+      &gt;
+            &lt;AnimatedCircle
+              opacity={firework.coreOpacity}
+              radius={MORTAR_RADIUS}
+              fill={_shootingFill}
+            /&gt;
+            &lt;Group&gt;
+            {
+              PARTICLE_COUNT.map((v, j) =&gt; {
+                return &lt;AnimatedCircle
+                  x={firework.particlePositions[j].x}
+                  y={firework.particlePositions[j].y}
+                  scaleX={firework.particleRadius}
+                  scaleY={firework.particleRadius}
+                  radius={PARTICLE_RADIUS}
+                  fill={_particleFill}
+                /&gt;
+              })
+            }
+            &lt;/Group&gt;
+      &lt;/AnimatedGroup&gt;
+  );
+})
+</code></pre>
+
+<p>  },
+<code>``
+There is a lot going on here. We have our same</code><em>shootingFill<code>like we did before, that causes the yellow =&gt; orange interpolation.
+We add another interpolation for the particleFill. Same concept as the</code></em>shootingFill` just with 5 colors now.</p>
+
+<p>What is much different here is the <code>AnimatedGroup</code>. We have moved our <code>x,y</code> from the <code>AnimatedCircle</code> to the <code>AnimatedGroup</code>.</p>
+
+<p>This will bundle our mortar, and our particles all in the same coordinate area. That way we can have our particles start at <code>0,0</code> and move outwards and the <code>AnimatedGroup</code> will make sure all the coordinates are handled correctly.</p>
+
+<p><code>
+&lt;AnimatedCircle
+  opacity={firework.coreOpacity}
+  radius={MORTAR_RADIUS}
+  fill={_shootingFill}
+/&gt;
+</code>
+You can see here we put out <code>coreOpacity</code> animation in there. So it&rsquo;ll fade from <code>1</code> opacity down to <code>0</code> over that 200 milliseconds we setup.</p>
+
+<p>```
+  <Group></p>
+
+<pre><code>{
+  PARTICLE_COUNT.map((v, j) =&gt; {
+    return &lt;AnimatedCircle
+      x={firework.particlePositions[j].x}
+      y={firework.particlePositions[j].y}
+      scaleX={firework.particleRadius}
+      scaleY={firework.particleRadius}
+      radius={PARTICLE_RADIUS}
+      fill={_particleFill}
+    /&gt;
+  })
+}
+</code></pre>
+
+<p>  </Group>
+<code>``
+We group the Particles with a</code>Group` component but that&rsquo;s just arbitrary.</p>
+
+<p>We map over our 20 particles, and set the <code>x</code> and <code>y</code> to the points we had determined with our <code>getXYParticle</code> function.</p>
+
+<p>You&rsquo;ll notice we are passing in <code>particleRadius</code> to the <code>scaleX</code> and <code>scaleY</code> properties.
+This is because while writing this I realized that the <code>AnimatedCircle</code> takes the radius property and creates a path out of it. That is not animateable in this particular way, so the solution I came up was to scale each particle to 0. Basically making it completely hidden.</p>
+
+<p>That then allows us to expand it out to it&rsquo;s full scale and make it look like an explosion. It actually works better.</p>
+
+<p>Finally we add in our <code>PARTICLE_RADIUS</code> we defined at the top, aka size of each explosion, and put in our <code>_particleFill</code> which is the color interpolation between those 5 colors.</p>
+
+<h1>Play with it</h1>
+
+<p>That is all! We have a firework shooter!</p>
+
+<p>Check it out on RNPlay as per usual <a href="https://rnplay.org/apps/ysm12A">https://rnplay.org/apps/ysm12A</a>.</p>
+
+<p>Tap to your hearts content and watch all the explosive animation goodness appear on screen.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/Dj60a6e.gif">http://i.imgur.com/Dj60a6e.gif</a>" title="Firework Shooter" ></p>
+
+<h1>Final Code</h1>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var Dimensions = require(&lsquo;Dimensions&rsquo;);
+var ReactNativeART = require(&lsquo;ReactNativeART&rsquo;);</p>
+
+<p>var {
+  width,
+  height
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p>var MORTAR_RADIUS = 5;
+var PARTICLE_RADIUS = 30;
+var PARTICLE_COUNT = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  Animated,
+  View,
+  TouchableWithoutFeedback
+} = React;</p>
+
+<p>var {</p>
+
+<pre><code>Surface,
+Shape,
+Path,
+Group,
+Transform
+</code></pre>
+
+<p>} = ReactNativeART;</p>
+
+<p>var SHOOTING_COLORS = [
+  &lsquo;rgb(234,238,112)&rsquo;,
+  &lsquo;rgb(245,137,12)&rsquo;
+];</p>
+
+<p>var PARTICLE_COLORS = [</p>
+
+<pre><code>'rgba(54, 17, 52, 100)',
+'rgba(176, 34, 140, 100)',
+'rgba(234, 55, 136, 100)',
+'rgba(229, 107, 112, 100)',
+'rgba(243, 145, 160, 100)'
+</code></pre>
+
+<p>]</p>
+
+<p>var AnimatedShape = Animated.createAnimatedComponent(Shape);
+var AnimatedGroup = Animated.createAnimatedComponent(Group);</p>
+
+<p>var FireworkShooter = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  fireworks: []
+};
+</code></pre>
+
+<p>  },
+  adjustShootingFill: function(_shootingColor, value) {</p>
+
+<pre><code>Animated.timing(_shootingColor, {
+  duration: 16,
+  toValue: _shootingColor.__getAnimatedValue() == 0 ? 1 : 0
+}).start()
+</code></pre>
+
+<p>  },
+  adjustParticleFill: function(_particleColor, value) {</p>
+
+<pre><code>var _currentFill = _particleColor.__getAnimatedValue(),
+    _particleFill = _currentFill === 5 ? 0 : _currentFill + 1;
+
+Animated.timing(_particleColor, {
+  duration: 16,
+  toValue: _particleFill
+}).start()
+</code></pre>
+
+<p>  },
+  removeSelf: function(_shootingPosition) {</p>
+
+<pre><code>this.state.fireworks = this.state.fireworks.filter((firework) =&gt; firework.shootingPosition !== _shootingPosition);
+this.setState(this.state);
+</code></pre>
+
+<p>  },
+  _handleAddFirework: function(e) {</p>
+
+<pre><code>var _shootingPosition = new Animated.ValueXY({x: width/2, y: height - MORTAR_RADIUS});
+var _shootingColor = new Animated.Value(0);
+
+var _particleColor = new Animated.Value(0);
+var _particleRadius = new Animated.Value(0);
+var _coreOpacity = new Animated.Value(1);
+
+var _particlePositions = PARTICLE_COUNT.map(() =&gt; new Animated.ValueXY({x: 0, y: 0}));
+
+this.state.fireworks.push({
+  shootingPosition: _shootingPosition,
+  shootingColor: _shootingColor,
+  particleColor: _particleColor,
+  particleRadius: _particleRadius,
+  coreOpacity: _coreOpacity,
+  particlePositions: _particlePositions
+});
+
+var _animatedParticles = [
+    Animated.timing(_particleRadius, {
+      duration: 700,
+      toValue: 1
+    }),
+    Animated.timing(_coreOpacity, {
+      duration: 200,
+      toValue: 0
+    })
+]
+
+_movingParticles = _particlePositions.map((particle, i) =&gt; {
+  var _xy = getXYParticle(PARTICLE_COUNT.length, i, PARTICLE_RADIUS);
+  return Animated.timing(particle, {
+    duration: 250,
+    toValue: _xy
+  })
+})
+
+_animatedParticles = _animatedParticles.concat(_movingParticles);
+
+Animated.sequence([
+  Animated.timing(_shootingPosition, {
+    duration: 300,
+    toValue: {
+      y: e.nativeEvent.locationY,
+      x: e.nativeEvent.locationX
+    }
+  }),
+  Animated.parallel(_animatedParticles)
+]).start(this.removeSelf.bind(this, _shootingPosition));
+
+_shootingPosition.addListener(this.adjustShootingFill.bind(null, _shootingColor));
+_particleRadius.addListener(this.adjustParticleFill.bind(null, _particleColor));
+
+this.setState(this.state);
+</code></pre>
+
+<p>  },</p>
+
+<p>  getFireworks: function() {</p>
+
+<pre><code>return this.state.fireworks.map((firework, i) =&gt; {
+
+  var _shootingFill = firework.shootingColor.interpolate({
+    inputRange: [0,1],
+    outputRange: SHOOTING_COLORS
+  });
+
+  var _particleFill = firework.particleColor.interpolate({
+    inputRange: [0,1,2,3,4],
+    outputRange: PARTICLE_COLORS
+  });
+
+  return (
+      &lt;AnimatedGroup 
+        x={firework.shootingPosition.x}
+        y={firework.shootingPosition.y}
+      &gt;
+            &lt;AnimatedCircle
+              key={i}
+              opacity={firework.coreOpacity}
+              radius={MORTAR_RADIUS}
+              fill={_shootingFill}
+            /&gt;
+            &lt;Group&gt;
+            {
+              PARTICLE_COUNT.map((v, j) =&gt; {
+                return &lt;AnimatedCircle
+                  x={firework.particlePositions[j].x}
+                  y={firework.particlePositions[j].y}
+                  scaleX={firework.particleRadius}
+                  scaleY={firework.particleRadius}
+                  radius={PARTICLE_RADIUS}
+                  fill={_particleFill}
+                /&gt;
+              })
+            }
+            &lt;/Group&gt;
+      &lt;/AnimatedGroup&gt;
+  );
+})
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;TouchableWithoutFeedback onPress={this._handleAddFirework}&gt;
+      &lt;View&gt;
+        &lt;Surface width={width} height={height}&gt;
+          {this.getFireworks()}
+        &lt;/Surface&gt;
+      &lt;/View&gt;
+    &lt;/TouchableWithoutFeedback&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+flexDirection: 'column'
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>function getXYParticle(total, i, radius) {
+  var angle = 360/total*i;</p>
+
+<p>  var x = Math.round((radius<em>2) * Math.cos(angle &ndash; (Math.PI/2)));
+  var y = Math.round((radius</em>2) * Math.sin(angle &ndash; (Math.PI/2)));</p>
+
+<p>  return {</p>
+
+<pre><code>x: x,
+y: y
+</code></pre>
+
+<p>  }
+}</p>
+
+<p>//Modified this to use the AnimatedShape we create up above. Thanks Facebook :)</p>
+
+<p>/<em>*
+ * Copyright 2013-2014 Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule Circle.art
+ * @typechecks
+ *
+ * Example usage:
+ * <Circle
+ *   radius={10}
+ *   stroke="green"
+ *   strokeWidth={3}
+ *   fill="blue"
+ * />
+ *
+ </em>/
+var AnimatedCircle = React.createClass({displayName: &ldquo;Circle&rdquo;,
+  render: function() {</p>
+
+<pre><code>var radius = this.props.radius;
+
+var path = Path().moveTo(0, -radius)
+    .arc(0, radius * 2, radius)
+    .arc(0, radius * -2, radius)
+    .close();
+return React.createElement(AnimatedShape, React.__spread({},  this.props, {d: path}));
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>AppRegistry.registerComponent(&lsquo;FireworkShooter&rsquo;, () => FireworkShooter);
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[CSS-Layout and React-Art]]></title>
+    <link href="http://browniefed.com/blog/2015/06/01/css-layout-and-react-art/"/>
+    <updated>2015-06-01T10:29:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/06/01/css-layout-and-react-art</id>
+    <content type="html"><![CDATA[<h3>Intro</h3>
+
+<p>If you&rsquo;ve used <code>react-native</code> before then you may know that &ldquo;css&rdquo; you&rsquo;re writing isn&rsquo;t actually CSS. It&rsquo;s a descriptor for a layout engine. That layout engine is <a href="https://github.com/facebook/css-layout">css-layout</a> which was created by <a href="https://twitter.com/Vjeux">@vjeux</a> and compiled to Java/Objective-C.</p>
+
+<p>Layout is difficult. There have been attempts at various constraint based layouts in JavaScript, <a href="http://gridstylesheets.org/">GSS</a> is one of those. Which is a port of Apples <code>Cassowary</code> constraint solver which was also ported to JavaScript <a href="https://github.com/slightlyoff/cassowary.js">https://github.com/slightlyoff/cassowary.js</a>.</p>
+
+<p>Now this is all fine and well but from the bit I&rsquo;ve read constraints fall down sometimes. This usually happens when you don&rsquo;t specify enough constraints based on the current layout.</p>
+
+<h3>Layout is hard!</h3>
+
+<p>Parent layouts get effected by their child layouts. CSS is weird in that you can remove items from layout with <code>position: absolute</code> but ultimately the top parent <code>width/height</code> is directly effected by it&rsquo;s children.</p>
+
+<p>This is an over simplification but many times in <code>React</code> you have to hook into <code>componentDidMount</code> get the child width and take action.</p>
+
+<p>An example would be even width labels in a form. We could measure the text but depending on <code>font</code>, <code>font-size</code> it could measure each value differently. So we hide the form on initial render, get the max label width and set it on state.</p>
+
+<!-- more -->
+
+
+<h3>CSS-Layout Basics</h3>
+
+<p>It takes a subset of flexbox and some other styling parameters and returns <code>width</code>, and the <code>left/top</code> offsets for each item and it&rsquo;s children.</p>
+
+<p>This example is taken directly from the <code>css-layout</code> git repo.</p>
+
+<p>```
+computeLayout(
+  {style: {padding: 50}, children: [</p>
+
+<pre><code>{style: {padding: 10, alignSelf: 'stretch'}}
+</code></pre>
+
+<p>  ]}
+);
+// =>
+{</p>
+
+<pre><code>width: 120,
+height: 120,
+top: 0,
+left: 0,
+children: [{
+    width: 20,
+    height: 20,
+    top: 50,
+    left: 50
+}]
+</code></pre>
+
+<p>}
+```</p>
+
+<p>So explaining this. We have an item with a padding of <code>50</code>, so <code>50px</code> around the entire item.</p>
+
+<p>It&rsquo;s child item has a padding of <code>10</code>, so <code>10px</code> all the way around.</p>
+
+<p>Therefore the parent has <code>50*2 = 100</code> initial width/height. Now we take into account the children.</p>
+
+<p>Width/Height:</p>
+
+<p><code>
+Parent: `50*2 = 100` +  `10*2 = 20` = `100 + 120`
+Child: `10*2 = 20`
+</code></p>
+
+<p>Position:</p>
+
+<p><code>
+Parent: `x = 0, y = 0` since we are starting there.
+Child: Parent padding `50` so our child is inset at `x = 50, y = 50`
+</code></p>
+
+<p>Lets change the child width and see what happens
+```
+computeLayout(</p>
+
+<pre><code>{
+    style: {
+        padding: 50
+    },
+    children: [{
+        style: {
+            padding: 10,
+            width: 1000,
+            alignSelf: 'stretch'
+        }
+    }]
+}
+</code></pre>
+
+<p>);
+// =>
+{</p>
+
+<pre><code>"width": 1100,
+"height": 120,
+"top": 0,
+"left": 0,
+"children": [{
+    "width": 1000,
+    "height": 20,
+    "top": 50,
+    "left": 50
+}]
+</code></pre>
+
+<p>}
+<code>``
+Because our child defined a width of</code>1000<code>we then add on our</code>50*2<code>of padding on both sides and now the parent has a width of</code>1100`.</p>
+
+<p>There are some other nuances that you can read about in the <code>css-layout</code> repo.</p>
+
+<h3>Basic Example</h3>
+
+<p>First off we&rsquo;ll need a component tree. Now in React they transpile JSX, and build the component tree for us. However in our case we can just create a JSON tree.</p>
+
+<p>```
+var componentTree = {</p>
+
+<pre><code>style: {
+    padding: 10
+},
+component: Rectangle,
+children: [{
+    style: {
+        padding: 10,
+        flexDirection: 'column',
+        alignItems: 'center'
+    },
+    component: Rectangle,
+    children: [
+        {
+            style: {
+                width: 30,
+                height: 30
+            },
+            component: Rectangle
+        },
+        {
+            style: {
+                margin: 10,
+                width: 50,
+                height: 50,
+                alignItems: 'center',
+                justifyContent: 'center'
+            },
+            component: Circle,
+            children: [
+                {
+                    style: {
+                        width: 10,
+                        height: 10
+                    },
+                    component: Circle
+                }
+            ]
+        }
+    ]
+}]
+</code></pre>
+
+<p>};</p>
+
+<p>```</p>
+
+<p>We add a <code>component</code> parameter to the tree. This is the thing that will be rendered.
+We could add additional properties here, maybe create custom renderers but we&rsquo;ll keep it simple.</p>
+
+<p>The break down is like so</p>
+
+<ul>
+<li>A surrounding rectangle w/ <code>10px</code> of padding all around</li>
+<li>1 child that is a rectangle with another <code>10px</code> of padding, and it&rsquo;s children in a <code>column</code> based layout.</li>
+<li>We align each of the items in the <code>center</code></li>
+<li>2 children one a Rectangle, one a Cirlce.</li>
+<li>Rectangle = <code>width = 30, height = 30</code></li>
+<li>Circle = <code>width = 50, height = 50</code> and a surrounding <code>10px</code> margin and it&rsquo;s children centered vertically and horizontally</li>
+<li>That cirlce has a circle inside that is <code>width = 10</code> and `height = 10
+We&rsquo;ll have to do some basic math on the Circle to compute the radius, and center it correctly.</li>
+</ul>
+
+
+<p>Now we&rsquo;ll need to traverse the layout.
+We&rsquo;ll do that with a function that calls itself</p>
+
+<p>```
+function traverseLayout(componentTree, layout) {</p>
+
+<pre><code>var Component = componentTree.component;
+return (
+    &lt;Group x={layout.left} y={layout.top}&gt;
+        &lt;Component
+            {...getProps(Component, layout)}
+         /&gt;
+         &lt;Group x={0} y={0}&gt;
+            {
+                !componentTree.children ? null : componentTree.children.map(function(child, index) {
+                    return traverseLayout(child, layout.children[index]);
+                })
+
+            }
+         &lt;/Group&gt;
+    &lt;/Group&gt;
+)
+</code></pre>
+
+<p>}
+```
+This is a super crude layout renderer but it works for our purposes.</p>
+
+<p>It creates a group and we pass in our <code>top/left</code> to <code>x/y</code> of the group. This is necessary to make our children <code>top/left</code> work correctly.
+Then renders the component with selected props. We&rsquo;ll just render <code>stroke="#000"</code> and a stroke={1}.</p>
+
+<p>Then if we have children we will call ourself with the child component and layout.</p>
+
+<p>To process the props we need to render different props for specific components.</p>
+
+<p><code>Rectangle</code> needs <code>width/height</code> which we have.
+<code>Circle</code> needs the radius computed, and to then be ofset by the radius. So we just divide the <code>width/2</code> and for positioning <code>y</code> we divide the <code>height/2</code>.</p>
+
+<p>```
+function getProps(component, layout) {</p>
+
+<pre><code>var props = {
+    x: 0,
+    y: 0
+};
+
+if (Rectangle === component) {
+    props.width = layout.width;
+    props.height = layout.height;
+
+} else if (Circle === component) {
+    props.radius = layout.width/2;
+    props.x += (layout.width/2)
+    props.y += (layout.height/2);
+}
+
+props.stroke = "#000"; // Just to visualize
+props.strokeWidth = 1; // Just to visualize
+return props;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>That is it, now we can render a tree of <code>Rectangles</code> and <code>Circles</code>. The complete code is below.</p>
+
+<p>```
+var React = require(&lsquo;react&rsquo;);
+var ReactArt = require(&lsquo;react-art&rsquo;),</p>
+
+<pre><code>Surface = ReactArt.Surface,
+Group = ReactArt.Group,
+computeLayout = require('css-layout'),
+Circle = require('react-art/shapes/circle'),
+Rectangle = require('react-art/shapes/rectangle');
+</code></pre>
+
+<p>var Surface = ReactArt.Surface;</p>
+
+<p>var viewportWidth = function() {</p>
+
+<pre><code>return  window.innerWidth - 100;
+</code></pre>
+
+<p>}
+var viewportHeight = function() {</p>
+
+<pre><code>return window.innerHeight - 100;
+</code></pre>
+
+<p>}</p>
+
+<p>var componentTree = {</p>
+
+<pre><code>style: {
+    padding: 10
+},
+component: Rectangle,
+children: [{
+    style: {
+        padding: 10,
+        flexDirection: 'column',
+        alignItems: 'center'
+    },
+    component: Rectangle,
+    children: [
+        {
+            style: {
+                width: 30,
+                height: 30
+            },
+            component: Rectangle
+        },
+        {
+            style: {
+                margin: 10,
+                width: 50,
+                height: 50,
+                alignItems: 'center',
+                justifyContent: 'center'
+            },
+            component: Circle,
+            children: [
+                {
+                    style: {
+                        width: 10,
+                        height: 10
+                    },
+                    component: Circle
+                }
+            ]
+        }
+    ]
+}]
+</code></pre>
+
+<p>};</p>
+
+<p>var layout = computeLayout(componentTree);</p>
+
+<p>function traverseLayout(componentTree, layout) {</p>
+
+<pre><code>var Component = componentTree.component;
+return (
+    &lt;Group x={layout.left} y={layout.top}&gt;
+        &lt;Component
+            {...getProps(Component, layout)}
+         /&gt;
+         &lt;Group x={0} y={0}&gt;
+            {
+                !componentTree.children ? null : componentTree.children.map(function(child, index) {
+                    return traverseLayout(child, layout.children[index]);
+                })
+
+            }
+         &lt;/Group&gt;
+    &lt;/Group&gt;
+)
+</code></pre>
+
+<p>}</p>
+
+<p>function getProps(component, layout) {</p>
+
+<pre><code>var props = {
+    x: 0,
+    y: 0
+};
+
+if (Rectangle === component) {
+    props.width = layout.width;
+    props.height = layout.height;
+
+} else if (Circle === component) {
+    props.radius = layout.width/2;
+    props.x += (layout.width/2)
+    props.y += (layout.height/2);
+}
+
+props.stroke = "#000";
+props.strokeWidth = 1;
+return props;
+</code></pre>
+
+<p>}</p>
+
+<p>var Demo = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+
+}
+</code></pre>
+
+<p>  },
+  getRenderLayout: function() {</p>
+
+<pre><code>return traverseLayout(componentTree, layout);
+</code></pre>
+
+<p>  },
+  render: function () {</p>
+
+<pre><code>return (
+  &lt;div&gt;
+    &lt;Surface
+        width={viewportWidth()}
+        height={viewportHeight()}
+    &gt;
+        {this.getRenderLayout()}
+    &lt;/Surface&gt;
+  &lt;/div&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>module.exports = Demo;
+```</p>
+
+<h3>Possibilities</h3>
+
+<p>Tic-tac-toe? Heh.</p>
+
+<p>This could be made to layout components arbitrarily much like we do with <code>react-native</code>. It&rsquo;s not perfect and could only be used in specific scenarios but it&rsquo;s still a fun prototype.</p>
+
+<h3>Demo</h3>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="zGZOMN" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/zGZOMN/'>zGZOMN</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Create a map with React-Art]]></title>
+    <link href="http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art/"/>
+    <updated>2015-05-30T10:15:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art</id>
+    <content type="html"><![CDATA[<h3>Intro</h3>
+
+<p>Just Like the title states, we&rsquo;re going to make a map with <code>react-art</code>. When you think of maps many people jump straight to <code>leaflet</code>, <code>google maps</code>, or <code>mapbox</code>. Well one of the key things they are doing is just plotting map tiles.</p>
+
+<p>Map tiles are just images that can be stitched together and form a map. That is why whenever you drag on a map portions of it pop in in squares.</p>
+
+<p>Don&rsquo;t worry, I won&rsquo;t get deep into mapping terminology because I don&rsquo;t know it. If you want to learn checkout this post <a href="http://www.macwright.org/2012/05/15/how-web-maps-work.html">http://www.macwright.org/2012/05/15/how-web-maps-work.html</a></p>
+
+<p>All you&rsquo;ll need to know is <code>Latitude</code>, <code>Longitude</code>, and <code>Tile</code> aka (an image of a piece of a map).</p>
+
+<p>Our tilemap source will be the fabulous <a href="https://www.openstreetmap.org/">OpenStreetMap</a>. It&rsquo;s a community driven mapping solution. Check it out and contribute if you can!</p>
+
+<p>This was going to be a blog post about creating a map but I ended up turning it into a library.</p>
+
+<!-- more -->
+
+
+<h3>What I Built</h3>
+
+<p>I ended up writing up a library to show it off.</p>
+
+<p>Checkout <a href="https://github.com/browniefed/react-art-map">https://github.com/browniefed/react-art-map</a> for the library and examples.</p>
+
+<p>We use <a href="https://github.com/zacbarton/node-googlemaps-utils">https://github.com/zacbarton/node-googlemaps-utils</a> and
+<a href="https://github.com/gagan-bansal/map-the-tiles">https://github.com/gagan-bansal/map-the-tiles</a>.</p>
+
+<p>These 2 libraries are helper libraries.</p>
+
+<p><code>googlemaps-utils</code> takes a <code>width/height</code> and a central <code>lat/long</code> and gives us a bounding box which is just the <code>top/left</code> coordinate and the <code>bottom/right</code> coordinate.</p>
+
+<p>We then take that bounding box and convert it to meter points so we can generate a <a href="http://en.wikipedia.org/wiki/Mercator_projection">mercator projection</a>.</p>
+
+<p>The <code>map-the-tiles</code> takes those meter points and returns <code>x,y,z</code> points;</p>
+
+<p>Those <code>x,y,z</code> points get fed into the OSM url <code>http://{s}.tile.osm.org/{z}/{x}/{y}.png</code> and we get our tile images.</p>
+
+<p>We can then render them at their given <code>top/left</code> points w/ <code>react-art</code>.</p>
+
+<p>Ultimately this library was built with A LOT of googling and assembling some tools people already constructed.</p>
+
+<h3>Some Internals</h3>
+
+<p>Most of the logic is just in the <code>TileUtil</code>. There are likely much more efficient ways to do this however this is my first stab at it with my limited geo knowledge.</p>
+
+<p>Converts <code>lat/long</code> to meter points
+```</p>
+
+<pre><code>degrees2meters(lon,lat) {
+    var x = lon * 20037508.34 / 180;
+    var y = Math.log(Math.tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180);
+    y = y * 20037508.34 / 180;
+    return [x, y]
+}
+</code></pre>
+
+<p>```</p>
+
+<p>Converts meters to coordinates
+```</p>
+
+<pre><code>meters2degress(x,y) {
+    var lon = x *  180 / 20037508.34 ;
+    var lat = Number(180 / Math.PI * (2 * Math.atan(Math.exp(y * Math.PI / 180)) - Math.PI / 2));
+    return [lon, lat]
+}
+</code></pre>
+
+<p>```</p>
+
+<p>The main layout generator.</p>
+
+<p>```</p>
+
+<pre><code>getTileLayout(options) {
+    var layout = [];
+    var bounds = gmu.calcBounds(options.center[1], options.center[0], options.zoom, options.width, options.height); // GET COORDINATE BOUNDS
+
+    var topLeftMeters = TileUtil.degrees2meters(bounds.left, bounds.top),
+        bottomRightMeters = TileUtil.degrees2meters(bounds.right, bounds.bottom);
+
+    //Conver the coordinates each to meters
+
+    var tiler = new MapTheTiles(null, options.tileWidth); // Create a generic tiler based on our tile width
+
+    var layoutForBounds = {
+        top: topLeftMeters[1],
+        left: topLeftMeters[0],
+        right: bottomRightMeters[0],
+        bottom: bottomRightMeters[1]
+    };
+    //Pass in the meters for each point
+
+    var tiles = tiler.getTiles(layoutForBounds, options.zoom) // Get the x,y,z points for our zoom level
+
+    tiles.forEach(function(tile) {
+        var coordPoint = {
+            x: tile.X,
+            y: tile.Y,
+            z: tile.Z
+        },
+        coord = {
+            x: tile.left,
+            y: tile.top,
+            img: TileUtil.getTileUrl(options.tileSource, coordPoint, options.subdomains) //Just format the OSM tile resource
+        };
+
+        layout.push(coord);
+    }, this);
+
+    return layout;
+}
+</code></pre>
+
+<p>```</p>
+
+<p>This is how we render each tile.
+We have the <code>x/y</code> coordinates thanks to our tiler.</p>
+
+<p>We use <code>Paths.js</code> to create a generic rectangular path.
+This is so we can support <code>react-native</code> in the future since the shapes have yet to be created.</p>
+
+<p>Then we create a new fill with the tile image and set it to the width/height of the generic tile at <code>0,0</code> of the shape.</p>
+
+<p>This technically is a pattern for the background but because we set it to the exact <code>width/height</code> of the image it just renders the image once.</p>
+
+<p>```
+var rectanglePath = Rectangle({
+  top: 0,
+  left: 0,
+  right: 256,
+  bottom: 256
+}).path.print();
+///UP ABOVE</p>
+
+<pre><code>    return layout.map(function(tile) {
+        return (
+            &lt;Shape
+                d={rectanglePath}
+                x={tile.x}
+                y={tile.y}
+                fill={new Pattern(tile.img, this.props.tileWidth , this.props.tileWidth, 0, 0)}
+            /&gt;
+        )
+    }, this);
+</code></pre>
+
+<p>```</p>
+
+<h3>The Code</h3>
+
+<p>```
+var React = require(&lsquo;react&rsquo;);
+var ReactMap = require(&lsquo;react-art-map&rsquo;);
+var ReactArt = require(&lsquo;react-art&rsquo;),</p>
+
+<pre><code>Circle = require('react-art/shapes/circle');
+</code></pre>
+
+<p>var Map = ReactMap.Map;</p>
+
+<p>var viewportWidth = function() {</p>
+
+<pre><code>return  window.innerWidth - 100;
+</code></pre>
+
+<p>}
+var viewportHeight = function() {</p>
+
+<pre><code>return window.innerHeight - 100;
+</code></pre>
+
+<p>}</p>
+
+<p>var center = [</p>
+
+<pre><code>-122.668197,45.525292
+</code></pre>
+
+<p>],
+offset = 3;</p>
+
+<p>var Demo = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  center: center,
+  zoom: 15,
+  x: 100
+}
+</code></pre>
+
+<p>  },
+  componentDidMount: function() {</p>
+
+<pre><code>requestAnimationFrame(this.updateCircle);
+</code></pre>
+
+<p>  },
+  updateCircle: function() {</p>
+
+<pre><code>if (this.state.x &gt;= viewportWidth()) {
+    offset = -3;
+} else if ( this.state.x &lt;= 99) {
+    offset = 3;
+}
+
+this.state.x += offset;
+this.setState(this.state, function() {
+    requestAnimationFrame(this.updateCircle);
+});
+</code></pre>
+
+<p>  },
+  handleDrag: function(newCenter) {</p>
+
+<pre><code>this.setState({
+  center: newCenter
+});
+</code></pre>
+
+<p>  },
+  render: function () {</p>
+
+<pre><code>return (
+  &lt;div&gt;
+    &lt;Map
+        width={viewportWidth()}
+        height={viewportHeight()}
+        center={this.state.center}
+        zoom={this.state.zoom}
+        tileSource="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+        onDrag={this.handleDrag}
+    &gt;
+        &lt;Circle 
+            x={this.state.x}
+            y={100}
+            radius={30}
+            stroke="#000"
+            strokeWidth={5}
+        /&gt;
+    &lt;/Map&gt;
+  &lt;/div&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>module.exports = Demo;
+```</p>
+
+<h3>React Native?!?!?!</h3>
+
+<p>React Native has a map implementation but it doesn&rsquo;t allow for much flexibility. You can render pins but that is about it.</p>
+
+<p>With this library once the Pattern fill gets implemented you can render any map tile based service + any cool visualiztions on the map that you want.</p>
+
+<p>I&rsquo;ve logged an issue here <a href="https://github.com/facebook/react-native/issues/1462">https://github.com/facebook/react-native/issues/1462</a> so follow along for when it gets implemented.</p>
+
+<h3>Results</h3>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="PqWRvz" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/PqWRvz/'>PqWRvz</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+
+]]></content>
+  </entry>
+  
+</feed>

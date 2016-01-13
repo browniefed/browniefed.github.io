@@ -1,0 +1,802 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: gif | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/gif/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React Native - How to make Facebook Reactions]]></title>
+    <link href="http://browniefed.com/blog/2015/10/11/react-native-how-to-make-facebook-reactions/"/>
+    <updated>2015-10-11T11:35:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/10/11/react-native-how-to-make-facebook-reactions</id>
+    <content type="html"><![CDATA[<p>Facebook reactions is a new liking system that Facebook is trialing on a limited basis. Why wait for them to roll it out when we can roll it out ourselves</p>
+
+<p>Thanks to <a href="http://www.engadget.com/2015/10/08/facebook-reactions/">Engadget</a> who created a gif of the animations from a youtube video. After a little slicing up and conversion from white to transparent we have a nice bunch of terrible animated gifs&hellip; but they&rsquo;re animated so deal with it. Like/Love aren&rsquo;t transparent since imagmagick was destroying the white in them.</p>
+
+<p><strong>This code will target .12 and above, running on .11 seemed to cause some slightly different layout issues. I&rsquo;ve fixed them on RNPlay, so just a heads up. The difference is add <code>height:50</code> to our <code>likeContainer</code> </strong></p>
+
+<p><strong>Update &ndash; Android:</strong></p>
+
+<p>Animated Gifs are coming to React Native Android in .13. Also Android does not support <code>overflow: visible</code> so in order to get android to work we would need to get creative. On open they sit within the <code>overflow: hidden</code> container, once slid in we&rsquo;d have to move them outside. Although they are gifs, so you&rsquo;d have to find a way to sync em up.</p>
+
+<p>Maybe 2 sets, one slides in, the other is rendered but hidden, then you toggle which is hidden and slide the other up. Fun stuff!</p>
+
+<h2>What are we building</h2>
+
+<p><img class="<a" src="href="http://i.imgur.com/dFLU8SI.gif">http://i.imgur.com/dFLU8SI.gif</a>" title="Neato" ></p>
+
+<!-- more -->
+
+
+<p></p>
+
+<h2>Concept</h2>
+
+<p>While holding down a button a pop up will show up, animated gifs will slide up from the bottom. While sliding and hovering over an item it will slide up slightly and scale up in size. On release of the finger, that item is selected, the images slide down and the pop up disappears.</p>
+
+<p>This doesn&rsquo;t sound too bad, there are a few slight issues we&rsquo;ll run into that I&rsquo;ll call out. The main one is just the border around the container. We get creative with the component structure so the images will animate over the top of the border and not underneath it.</p>
+
+<h2>Setup</h2>
+
+<p></p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var {
+  StyleSheet,
+  Text,
+  Image,
+  View,
+  PanResponder,
+  TouchableOpacity,
+  Animated
+} = React;</p>
+
+<p>var images = [
+  {id: &lsquo;like&rsquo;, img: &lsquo;<a href="http://i.imgur.com/LwCYmcM.gif">http://i.imgur.com/LwCYmcM.gif</a>&rsquo;},
+  {id: &lsquo;love&rsquo;, img: &lsquo;<a href="http://i.imgur.com/k5jMsaH.gif">http://i.imgur.com/k5jMsaH.gif</a>&rsquo;},
+  {id: &lsquo;haha&rsquo;, img: &lsquo;<a href="http://i.imgur.com/f93vCxM.gif">http://i.imgur.com/f93vCxM.gif</a>&rsquo;},
+  {id: &lsquo;yay&rsquo;, img: &lsquo;<a href="http://i.imgur.com/a44ke8c.gif">http://i.imgur.com/a44ke8c.gif</a>&rsquo;},
+  {id: &lsquo;wow&rsquo;, img: &lsquo;<a href="http://i.imgur.com/9xTkN93.gif">http://i.imgur.com/9xTkN93.gif</a>&rsquo;},
+  {id: &lsquo;sad&rsquo;, img: &lsquo;<a href="http://i.imgur.com/tFOrN5d.gif">http://i.imgur.com/tFOrN5d.gif</a>&rsquo;},
+  {id: &lsquo;angry&rsquo;, img: &lsquo;<a href="http://i.imgur.com/1MgcQg0.gif">http://i.imgur.com/1MgcQg0.gif</a>&rsquo;}
+]</p>
+
+<p>var App = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  selected: '',
+  open: false
+};
+</code></pre>
+
+<p>  },
+  componentWillMount: function() {</p>
+
+<pre><code>this._imgLayouts = {};
+this._imageAnimations = {};
+this._scaleAnimation = new Animated.Value(0);
+
+images.forEach((img) =&gt; {
+  this._imageAnimations[img.id] = {
+    position: new Animated.Value(55),
+    scale: new Animated.Value(1)
+  };
+});
+
+this._panResponder = PanResponder.create({
+  onStartShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onStartShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+});
+</code></pre>
+
+<p>  },</p>
+
+<p>  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;View
+      style={styles.center}
+      {...this._panResponder.panHandlers}
+    &gt;
+      &lt;Text&gt;Like&lt;/Text&gt;
+      &lt;Text&gt;You selected: {this.state.selected}&lt;/Text&gt;
+      &lt;Animated.View 
+        style={[styles.likeContainer, this.getLikeContainerStyle()]}
+      &gt;
+        &lt;View style={styles.borderContainer} /&gt;
+        &lt;View style={styles.imgContainer}&gt;
+          {this.getImages()}
+        &lt;/View&gt;
+      &lt;/Animated.View&gt;
+    &lt;/View&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>```</p>
+
+<p></p>
+
+<p>We setup our state, we have a <code>selected</code> which we will use to just display some selected text. Then we have an <code>open</code> which we set to false. I am not showing it yet, but we&rsquo;ll need to use <code>open</code> to dynamically control <code>overflow</code> for the container that holds our images so they can slide around correctly.</p>
+
+<p>In our <code>componentWillMount</code> we setup some objects and create some animations. We&rsquo;ll need the coordinates of each image for selection purposes, we&rsquo;ll also have a map of our image animations, and we&rsquo;ll setup <code>_scaleAnimation</code> which we&rsquo;ll use to scale up the container when a user presses down.</p>
+
+<p>Then we loop over each image, create a position, and scale animation for each. Why <code>55</code> and why not <code>ValueXY</code>? Well we are only animating the Y value so no need to have an extra animation. The <code>55</code> is our initial position, which we pass to <code>translateY</code> meaning, start this image <code>55</code> pixels down so we can eventually slide it up.</p>
+
+<p>Finally we&rsquo;ll create a PanResponder to handle users pressing.</p>
+
+<h2>Handle Press and Open</h2>
+
+<p>So we&rsquo;ll put our <code>panHandlers</code> on our wrapping view so our coordinates are correct relatively for the images. That looks like this</p>
+
+<p>```</p>
+
+<pre><code>   &lt;View
+      style={styles.center}
+      {...this._panResponder.panHandlers}
+    &gt;
+    ///Other views
+    &lt;/View&gt;
+</code></pre>
+
+<p>```</p>
+
+<p>Then we need to adjust our PanResponder to call an open function on grant. Grant being the first thing that gets called when the touch is allowed.</p>
+
+<p>```
+this._panResponder = PanResponder.create({</p>
+
+<pre><code>  onStartShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onStartShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onPanResponderGrant: this.open
+</code></pre>
+
+<p>})
+```</p>
+
+<p>Lets adjust our <code>Animated.View</code> container.</p>
+
+<p>```
+  getLikeContainerStyle: function() {</p>
+
+<pre><code>return {
+        transform: [{scaleY: this._scaleAnimation}],
+        overflow: this.state.open ? 'visible': 'hidden'
+      };
+</code></pre>
+
+<p>  },</p>
+
+<p>  //other render components
+  &lt;Animated.View</p>
+
+<pre><code>style={[styles.likeContainer, this.getLikeContainerStyle()]}
+</code></pre>
+
+<blockquote><pre><code>&lt;View style={styles.borderContainer} /&gt;
+&lt;View style={styles.imgContainer}&gt;
+  {this.getImages()}
+&lt;/View&gt;
+</code></pre>
+
+<p>  &lt;/Animated.View>
+```</p></blockquote>
+
+<p>Now our open function.</p>
+
+<p>```
+  open: function() {</p>
+
+<pre><code>Animated.parallel([
+  Animated.timing(this._scaleAnimation, {
+    duration: 100,
+    toValue: 1
+  }),
+  Animated.stagger(50, this.getImageAnimationArray(0))
+]).start(() =&gt; this.setState({open: true}));
+</code></pre>
+
+<p>  },
+  getImageAnimationArray: function(toValue) {</p>
+
+<pre><code>return images.map((img) =&gt; {
+  return Animated.timing(this._imageAnimations[img.id].position, {
+    duration: 200,
+    toValue: toValue
+  })
+});
+</code></pre>
+
+<p>  },
+<code>``
+We'll queue up some</code>parallel<code>animations so they run at the same time. The first is the initial scaling of the container. We'll do it over</code>100ms<code>, and go from 0 to 1.
+The next thing we'll do is use</code>Animated.stagger<code>, this will trigger an array of animations, but with a delay in between each one. That means we can easily slide up each image reaction separately with</code>50ms` inbetween. What a handy function.</p>
+
+<p>So we&rsquo;ll do a little forward thinking and create a <code>getImageAnimationArray</code> function because we&rsquo;ll have to do the exact opposite for the <code>close</code> so lets make a reusable function.</p>
+
+<p>Finally we&rsquo;ll <code>setState</code> AFTER the animation is complete. This will not cause a jitter in our animation. This also allows the container to hide the images to start so they slide up. Then after the container is open we set <code>overflow: visible</code> so we can scale and slide them up and they&rsquo;ll actually be visible. If we don&rsquo;t do this then the images won&rsquo;t be able visible when the user tries to select them.</p>
+
+<h2>Handle release and close</h2>
+
+<p>Now modify the <code>_panResponder</code> for the release to close it, we basically just do the exact opposite of open.</p>
+
+<p>```</p>
+
+<pre><code>  onPanResponderRelease: (evt, gestureState) =&gt; {
+     this.close()
+  }
+</code></pre>
+
+<p>```</p>
+
+<p>And our close function</p>
+
+<p>```
+  close: function(cb) {</p>
+
+<pre><code>this.setState({open: false}, () =&gt; {
+  Animated.stagger(100,[
+    Animated.parallel(this.getImageAnimationArray(55, 0).reverse() ),
+    Animated.timing(this._scaleAnimation, {
+      duration: 100,
+      toValue: 0
+    })
+  ]).start(cb);
+})
+</code></pre>
+
+<p>  },
+<code>``
+We need to do a setState to make the containers overflow hidden. This is tricky because it'll instantly cause anything selected to be hidden. So we'll need to account for this in our release function later. But at the moment, we set</code>open` to false.</p>
+
+<p>Rather than parallel we&rsquo;ll stagger our 2 animations. Our first will start and cause our reaction gifs to all slide down at the same time. Then <code>100ms</code> later we&rsquo;ll scale the container down to 0. This just adds a slight disappearing effect.</p>
+
+<h2>Calculate image positions</h2>
+
+<p>Before we can do image selections we need to know where our images coordinates are. Luckily we can do that with the <code>onLayout</code> callback.</p>
+
+<p></p>
+
+<p>```
+  getImages: function() {</p>
+
+<pre><code>return images.map((img) =&gt; {
+  return (
+    &lt;Animated.Image 
+      onLayout={this.handleLayoutPosition.bind(this, img.id)}
+      key={img.id} 
+      source={{uri: img.img}} 
+      style={[
+          styles.img,
+          {
+            transform: [
+              {scale: this._imageAnimations[img.id].scale},
+              {translateY: this._imageAnimations[img.id].position}
+            ]
+          }
+      ]} 
+    /&gt;
+  );
+})
+</code></pre>
+
+<p>  },
+```
+</p>
+
+<p>This is our image rendering function. It iterates over our images, passes in all necesary info and binds our <code>onLayout</code> function with the <code>image.id</code> which is just the reaction name. You can see here we also pass in our transform animations for <code>scale</code> and <code>translateY</code></p>
+
+<p>```
+  handleLayoutPosition: function(img, position) {</p>
+
+<pre><code>this._imgLayouts[img] = {
+  left: position.nativeEvent.layout.x,
+  right: position.nativeEvent.layout.x + position.nativeEvent.layout.width
+}
+</code></pre>
+
+<p>  },
+<code>``
+Here we setup a map, we'll set the</code>left<code>which is just the relative</code>x<code>coordinate, then setup our</code>right<code>which is</code>x + width`.</p>
+
+<h2>Add in hover abilities</h2>
+
+<p>```</p>
+
+<pre><code>  onPanResponderMove: (evt, gestureState) =&gt; {
+    var hoveredImg = this.getHoveredImg(Math.ceil(evt.nativeEvent.locationX));
+
+    if (hoveredImg &amp;&amp; this._hoveredImg !== hoveredImg) {
+      this.animateSelected(this._imageAnimations[hoveredImg])
+    }
+    if (this._hoveredImg !== hoveredImg &amp;&amp; this._hoveredImg) {
+      this.animateFromSelect(this._imageAnimations[this._hoveredImg]);
+    }
+
+    this._hoveredImg = hoveredImg;
+  },
+</code></pre>
+
+<p>```</p>
+
+<p>We just do some basic logic here. If we have a <code>hoveredImg</code> and it&rsquo;s different than before, then call the animate function to make the image slide and scale up.
+Also if we have a current <code>this._hoveredImg</code> and it&rsquo;s different then that means there is a new hovered image, so lets animate the previous image and scale it back down.</p>
+
+<p>```
+  animateSelected: function(imgAnimations) {</p>
+
+<pre><code>Animated.parallel([
+  Animated.timing(imgAnimations.position, {
+    duration: 150,
+    toValue: -30
+  }),
+  Animated.timing(imgAnimations.scale, {
+    duration: 150,
+    toValue: 1.8
+  })
+]).start();
+</code></pre>
+
+<p>  },
+  animateFromSelect: function(imgAnimations, cb) {</p>
+
+<pre><code>Animated.parallel([
+  Animated.timing(imgAnimations.position, {
+    duration: 50,
+    toValue: 0
+  }),
+  Animated.timing(imgAnimations.scale, {
+    duration: 50,
+    toValue: 1
+  })
+]).start(cb);
+</code></pre>
+
+<p>  },
+  getHoveredImg: function(x) {</p>
+
+<pre><code>return Object.keys(this._imgLayouts).find((key) =&gt; {
+  return x &gt;= this._imgLayouts[key].left &amp;&amp; x &lt;= this._imgLayouts[key].right;
+})
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>Nothing too much here to call out. Our <code>getHoveredImg</code> function runs through our layouts, and just checks if the <code>x</code> coordinate of the finger press is between the <code>left</code> and <code>right</code>. If it finds one it returns the reaction id.</p>
+
+<p>The <code>animateSelected</code> and <code>animatedFromSelect</code> both take one the image animation objects and applies different animations to each.</p>
+
+<h2>Add in selection text</h2>
+
+<p>```</p>
+
+<pre><code>  onPanResponderRelease: (evt, gestureState) =&gt; {
+    if (this._hoveredImg) {
+      this.animateFromSelect(this._imageAnimations[this._hoveredImg], this.close.bind(this, this.afterClose) )
+    } else {
+      this.close(this.afterClose);
+    }
+  }
+</code></pre>
+
+<p>```</p>
+
+<p>I had mentioned this before. On the release if we have a current selection, then we need to first animate the selected image back to it&rsquo;s original position, which we have <code>animateFromSelect</code> already. Then when that is complete the callback is called which is our close function, which has a callback to trigger after close.</p>
+
+<p>```
+  afterClose: function() {</p>
+
+<pre><code>if (this._hoveredImg) {
+  this.setState({
+    selected: this._hoveredImg
+  })
+}
+
+this._hoveredImg = '';
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>Our after close just sets some text of the hovered img and clears it. This may not be necessary for an actual app, but this is just so I can have some text to show a user they selected a reaction.</p>
+
+<h2>Weird setup and styles</h2>
+
+<p>I&rsquo;ll just point out some &ldquo;weird&rdquo; things I&rsquo;m doing to make things work correctly. Mainly rather than adding in the border on the <code>likeContainer</code> we need to add in 2 separate containers.</p>
+
+<p>Our element structure</p>
+
+<p>```
+&lt;Animated.View</p>
+
+<pre><code>        style={[styles.likeContainer, this.getLikeContainerStyle()]}
+      &gt;
+        &lt;View style={styles.borderContainer} /&gt;
+        &lt;View style={styles.imgContainer}&gt;
+          {this.getImages()}
+        &lt;/View&gt;
+      &lt;/Animated.View&gt;
+</code></pre>
+
+<p>```
+Our weird styling.</p>
+
+<p>```
+  likeContainer: {</p>
+
+<pre><code>position: 'absolute',
+left: -10,
+top: -30,
+padding: 5,
+flex: 1,
+backgroundColor: '#FFF',
+borderColor: 'transparent',
+borderWidth: 0,
+borderRadius: 20,
+</code></pre>
+
+<p>  },
+  borderContainer: {</p>
+
+<pre><code>backgroundColor: 'transparent',
+position: 'absolute',
+left: 0,
+right: 0,
+top: 0,
+bottom: 0,
+borderWidth: 1,
+borderColor: '#444',
+borderRadius: 20
+</code></pre>
+
+<p>  },
+  imgContainer: {</p>
+
+<pre><code>backgroundColor: 'transparent',
+flexDirection: 'row',
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>The <code>borderContainer</code> is absolutely positioned inside of the <code>likeContainer</code>. The <code>borderContainer</code> is just that, a bunch of border data.</p>
+
+<p>The <code>likeContainer</code> also has border radius, transparent border styling so that it is shaped perfectly for overflow when the images slide down.</p>
+
+<h2>DONE</h2>
+
+<p>And there we have it. This is by no means an exact replica. It needs some serious polish and also needs to add a delay before opening when the users presses. It&rsquo;s good enough for me though. So go forth and add reactions to your app!</p>
+
+<p>I didn&rsquo;t do anything crazy and assumed it would work on android. There a few issues with it so I&rsquo;m not sure exactly what&rsquo;s going on.</p>
+
+<h4>Check it out live on RNPlay <a href="https://rnplay.org/apps/lIVMng">https://rnplay.org/apps/lIVMng</a></h4>
+
+<p>As stated before there are minor tweaks from the code to make it work with react .11, not entirely certain why there are differences but there are.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/dFLU8SI.gif">http://i.imgur.com/dFLU8SI.gif</a>" title="Neato" ></p>
+
+<p>Full code here</p>
+
+<p></p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var {
+  StyleSheet,
+  Text,
+  Image,
+  View,
+  PanResponder,
+  TouchableOpacity,
+  Animated
+} = React;</p>
+
+<p>var images = [
+  {id: &lsquo;like&rsquo;, img: &lsquo;<a href="http://i.imgur.com/LwCYmcM.gif">http://i.imgur.com/LwCYmcM.gif</a>&rsquo;},
+  {id: &lsquo;love&rsquo;, img: &lsquo;<a href="http://i.imgur.com/k5jMsaH.gif">http://i.imgur.com/k5jMsaH.gif</a>&rsquo;},
+  {id: &lsquo;haha&rsquo;, img: &lsquo;<a href="http://i.imgur.com/f93vCxM.gif">http://i.imgur.com/f93vCxM.gif</a>&rsquo;},
+  {id: &lsquo;yay&rsquo;, img: &lsquo;<a href="http://i.imgur.com/a44ke8c.gif">http://i.imgur.com/a44ke8c.gif</a>&rsquo;},
+  {id: &lsquo;wow&rsquo;, img: &lsquo;<a href="http://i.imgur.com/9xTkN93.gif">http://i.imgur.com/9xTkN93.gif</a>&rsquo;},
+  {id: &lsquo;sad&rsquo;, img: &lsquo;<a href="http://i.imgur.com/tFOrN5d.gif">http://i.imgur.com/tFOrN5d.gif</a>&rsquo;},
+  {id: &lsquo;angry&rsquo;, img: &lsquo;<a href="http://i.imgur.com/1MgcQg0.gif">http://i.imgur.com/1MgcQg0.gif</a>&rsquo;}
+]</p>
+
+<p>var App = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  selected: '',
+  open: false
+};
+</code></pre>
+
+<p>  },
+  componentWillMount: function() {</p>
+
+<pre><code>this._imgLayouts = {};
+this._imageAnimations = {};
+this._hoveredImg = '';
+
+this._scaleAnimation = new Animated.Value(0);
+
+images.forEach((img) =&gt; {
+  this._imageAnimations[img.id] = {
+    position: new Animated.Value(55),
+    scale: new Animated.Value(1)
+  };
+})
+
+this._panResponder = PanResponder.create({
+  onStartShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onStartShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onPanResponderGrant: this.open,
+  onPanResponderMove: (evt, gestureState) =&gt; {
+    var hoveredImg = this.getHoveredImg(Math.ceil(evt.nativeEvent.locationX));
+
+    if (hoveredImg &amp;&amp; this._hoveredImg !== hoveredImg) {
+      this.animateSelected(this._imageAnimations[hoveredImg])
+    }
+    if (this._hoveredImg !== hoveredImg &amp;&amp; this._hoveredImg) {
+      this.animateFromSelect(this._imageAnimations[this._hoveredImg]);
+    }
+
+    this._hoveredImg = hoveredImg;
+  },
+  onPanResponderRelease: (evt, gestureState) =&gt; {
+    if (this._hoveredImg) {
+      this.animateFromSelect(this._imageAnimations[this._hoveredImg], this.close.bind(this, this.afterClose) )
+    } else {
+      this.close(this.afterClose);
+    }
+  }
+});
+</code></pre>
+
+<p>  },
+  afterClose: function() {</p>
+
+<pre><code>if (this._hoveredImg) {
+  this.setState({
+    selected: this._hoveredImg
+  })
+}
+
+this._hoveredImg = '';
+</code></pre>
+
+<p>  },
+  animateSelected: function(imgAnimations) {</p>
+
+<pre><code>Animated.parallel([
+  Animated.timing(imgAnimations.position, {
+    duration: 150,
+    toValue: -30
+  }),
+  Animated.timing(imgAnimations.scale, {
+    duration: 150,
+    toValue: 1.8
+  })
+]).start();
+</code></pre>
+
+<p>  },
+  animateFromSelect: function(imgAnimations, cb) {</p>
+
+<pre><code>Animated.parallel([
+  Animated.timing(imgAnimations.position, {
+    duration: 50,
+    toValue: 0
+  }),
+  Animated.timing(imgAnimations.scale, {
+    duration: 50,
+    toValue: 1
+  })
+]).start(cb);
+</code></pre>
+
+<p>  },
+  getHoveredImg: function(x) {</p>
+
+<pre><code>return Object.keys(this._imgLayouts).find((key) =&gt; {
+  return x &gt;= this._imgLayouts[key].left &amp;&amp; x &lt;= this._imgLayouts[key].right;
+})
+</code></pre>
+
+<p>  },</p>
+
+<p>  getImageAnimationArray: function(toValue) {</p>
+
+<pre><code>return images.map((img) =&gt; {
+  return Animated.timing(this._imageAnimations[img.id].position, {
+    duration: 200,
+    toValue: toValue
+  })
+});
+</code></pre>
+
+<p>  },
+  open: function() {</p>
+
+<pre><code>Animated.parallel([
+  Animated.timing(this._scaleAnimation, {
+    duration: 100,
+    toValue: 1
+  }),
+  Animated.stagger(50, this.getImageAnimationArray(0))
+]).start(() =&gt; this.setState({open: true}));
+</code></pre>
+
+<p>  },
+  close: function(cb) {</p>
+
+<pre><code>this.setState({open: false}, () =&gt; {
+  Animated.stagger(100,[
+    Animated.parallel(this.getImageAnimationArray(55, 0).reverse() ),
+    Animated.timing(this._scaleAnimation, {
+      duration: 100,
+      toValue: 0
+    })
+  ]).start(cb);
+})
+</code></pre>
+
+<p>  },
+  handleLayoutPosition: function(img, position) {</p>
+
+<pre><code>this._imgLayouts[img] = {
+  left: position.nativeEvent.layout.x,
+  right: position.nativeEvent.layout.x + position.nativeEvent.layout.width
+}
+</code></pre>
+
+<p>  },
+  getImages: function() {</p>
+
+<pre><code>return images.map((img) =&gt; {
+  return (
+    &lt;Animated.Image 
+      onLayout={this.handleLayoutPosition.bind(this, img.id)}
+      key={img.id} 
+      source={{uri: img.img}} 
+      style={[
+          styles.img,
+          {
+            transform: [
+              {scale: this._imageAnimations[img.id].scale},
+              {translateY: this._imageAnimations[img.id].position}
+            ]
+          }
+      ]} 
+    /&gt;
+  );
+})
+</code></pre>
+
+<p>  },
+  getLikeContainerStyle: function() {</p>
+
+<pre><code>return {
+        transform: [{scaleY: this._scaleAnimation}],
+        overflow: this.state.open ? 'visible': 'hidden',
+      };
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;View
+      style={styles.center}
+      {...this._panResponder.panHandlers}
+    &gt;
+      &lt;Text&gt;Like&lt;/Text&gt;
+      &lt;Text&gt;You selected: {this.state.selected}&lt;/Text&gt;
+      &lt;Animated.View 
+        style={[styles.likeContainer, this.getLikeContainerStyle()]}
+      &gt;
+        &lt;View style={styles.borderContainer} /&gt;
+        &lt;View style={styles.imgContainer}&gt;
+          {this.getImages()}
+        &lt;/View&gt;
+      &lt;/Animated.View&gt;
+    &lt;/View&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+</code></pre>
+
+<p>  },
+  center: {</p>
+
+<pre><code>position: 'absolute',
+left: 50,
+top: 300
+</code></pre>
+
+<p>  },
+  likeContainer: {</p>
+
+<pre><code>position: 'absolute',
+left: -10,
+top: -30,
+padding: 5,
+flex: 1,
+backgroundColor: '#FFF',
+borderColor: 'transparent',
+borderWidth: 0,
+borderRadius: 20,
+</code></pre>
+
+<p>  },
+  borderContainer: {</p>
+
+<pre><code>backgroundColor: 'transparent',
+position: 'absolute',
+left: 0,
+right: 0,
+top: 0,
+bottom: 0,
+borderWidth: 1,
+borderColor: '#444',
+borderRadius: 20
+</code></pre>
+
+<p>  },
+  imgContainer: {</p>
+
+<pre><code>backgroundColor: 'transparent',
+flexDirection: 'row',
+</code></pre>
+
+<p>  },
+  img: {</p>
+
+<pre><code>marginLeft: 5,
+marginRight: 5,
+width: 30,
+height: 30,
+overflow: 'visible'
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>module.exports = App;
+```</p>
+
+<p></p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: flexbox | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/flexbox/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React Native FlexboxFroggy]]></title>
+    <link href="http://browniefed.com/blog/2015/12/23/react-native-flexboxfroggy/"/>
+    <updated>2015-12-23T15:33:00-08:00</updated>
+    <id>http://browniefed.com/blog/2015/12/23/react-native-flexboxfroggy</id>
+    <content type="html"><![CDATA[<p>If you are in the React Native world and haven&rsquo;t heard about <a href="https://exponentjs.com/">Exponent</a> then you&rsquo;ve been living under a rock. It&rsquo;s being built by James Ide, Brent Vatne, and Charlie Cheever. All who have contributed significantly to the React Native community and ecosystem.</p>
+
+<p>Brent is holding a contest to win some awesome prizes, including tickets to the sold out ReactJS 2016 Conf. Check out the contest here <a href="https://gist.github.com/brentvatne/7d88f846417452355b18">https://gist.github.com/brentvatne/7d88f846417452355b18</a>.</p>
+
+<p>What does this have to do with flexbox? Well as my entry into the contest I converted <a href="http://flexboxfroggy.com/">http://flexboxfroggy.com/</a> to React Native.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/BuCjWBl.gif">http://i.imgur.com/BuCjWBl.gif</a>" title="CHEAT CODES" ></p>
+
+<p>Even adding animations was a breeze! One line of code <code>LayoutAnimation.spring()</code> easily makes all frogs spring into place!</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/cyyYZAS.gif">http://i.imgur.com/cyyYZAS.gif</a>" title="Hop on froggies" ></p>
+
+<p>You can check out the code here <a href="https://github.com/browniefed/flexboxfroggy">https://github.com/browniefed/flexboxfroggy</a></p>
+
+<p>Or if you have Exponent installed you can run it easily on your phone by just tapping this link <a href="http://exp.host/@browniefed/flexboxfroggy">http://exp.host/@browniefed/flexboxfroggy</a></p>
+
+<p>If you don&rsquo;t have Exponent installed I highly suggest you install it!</p>
+
+<p>That&rsquo;s all from me for now. Looking forward to getting back to blogging in 2016!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[React-Native layout examples]]></title>
+    <link href="http://browniefed.com/blog/2015/06/07/react-native-layout-examples/"/>
+    <updated>2015-06-07T21:37:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/06/07/react-native-layout-examples</id>
+    <content type="html"><![CDATA[<p>Flexbox layout takes a bit getting used to. It&rsquo;s surprisngly simple but after so many years of box model css layout it throws you for a loop.</p>
+
+<p>Some examples</p>
+
+<h2>Percentage height sections</h2>
+
+<p>These are seemingly simple to do in CSS. Specify <code>height: 50%</code> and you get a magical 50% height. Yeah I&rsquo;m over simplifying it but in general that&rsquo;s what you get. In flex it&rsquo;s different.</p>
+
+<p>This percentage based layout question was asked here <a href="https://github.com/facebook/react-native/issues/364">https://github.com/facebook/react-native/issues/364</a>.</p>
+
+<p>Laying out login screens may require significant white space. To accomplish % based layout we can use the <code>flex</code> property along with <code>flexDirection</code>.</p>
+
+<p>Say you want 3 sections. Top <code>50%</code>, then two <code>25%</code> sections.</p>
+
+<p>Our code would look something like this</p>
+
+<p>```
+var SampleApp = React.createClass({
+  render: function() {</p>
+
+<pre><code>  return (
+      &lt;View style={styles.container}&gt;
+          &lt;View style={styles.halfHeight} /&gt;
+          &lt;View style={styles.quarterHeight} /&gt;
+          &lt;View style={[styles.quarterHeight, {backgroundColor: '#CCC'}]} /&gt;
+      &lt;/View&gt;
+  )
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({</p>
+
+<pre><code>container: {
+    flex: 1,
+    flexDirection: 'column'
+},
+halfHeight: {
+    flex: .5,
+    backgroundColor: '#FF3366'
+},
+quarterHeight: {
+    flex: .25,
+    backgroundColor: '#000'
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<!-- more -->
+
+
+<p>This makes it look like percentages, however what actually is happening is just ratios.</p>
+
+<p>The ratios are easier to represent with non-decimals. Equivalent code to the above would look like.</p>
+
+<p>```
+var styles = StyleSheet.create({</p>
+
+<pre><code>container: {
+    flex: 1,
+    flexDirection: 'column'
+},
+halfHeight: {
+    flex: 2,
+    backgroundColor: '#FF3366'
+},
+quarterHeight: {
+    flex: 1,
+    backgroundColor: '#000'
+}
+</code></pre>
+
+<p>});</p>
+
+<p>```</p>
+
+<p>That&rsquo;s saying that the <code>halfHeight</code> container should take up twice as much space, and the <code>quarterHeight</code> should take up one amount of space.
+The actual numbers depend on screen size, and/or also derived from parent containers. So we can&rsquo;t attach specific heights.</p>
+
+<p>It just means &ldquo; <code>halfHeight</code> should take up 2 units of height where <code>quarterHeight</code> takes up 1 unit/half as much height as the <code>halfHeight</code> container&rdquo;.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/k4RI8Og.png">http://i.imgur.com/k4RI8Og.png</a>" title="Percentage based layout" ></p>
+
+<p>You can check out a live demo here <a href="https://rnplay.org/apps/MbQEbQ">https://rnplay.org/apps/MbQEbQ</a></p>
+
+<h2>React-Native Example Screens</h2>
+
+<p>Not being very good at flexbox I figured what better way than to create a bunch of layout examples to practice.
+That&rsquo;s when I saw <a href="http://www.invisionapp.com/do">http://www.invisionapp.com/do</a>. It has a bunch of beautiful layouts, so I am attempting to recreate some.</p>
+
+<p>You can check out the repo here <a href="https://github.com/browniefed/react-native-screens">https://github.com/browniefed/react-native-screens</a></p>
+
+<p>I&rsquo;ve made them all runnable on <code>rnplay.org</code>.</p>
+
+<h4>Example: Login1</h4>
+
+<p><a href="https://rnplay.org/apps/x7HRCA">https://rnplay.org/apps/x7HRCA</a></p>
+
+<p><img class="<a" src="href="https://i.imgur.com/ceB0t2Z.png">https://i.imgur.com/ceB0t2Z.png</a>" title="Login1 Example" ></p>
+
+<p>If you like this, feel free to contribute and download the screens from <a href="http://www.invisionapp.com/do">http://www.invisionapp.com/do</a>. I found the Sketch ones were the easiest to handle and export individual assets from.</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: mapping | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/mapping/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Create a map with React-Art]]></title>
+    <link href="http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art/"/>
+    <updated>2015-05-30T10:15:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art</id>
+    <content type="html"><![CDATA[<h3>Intro</h3>
+
+<p>Just Like the title states, we&rsquo;re going to make a map with <code>react-art</code>. When you think of maps many people jump straight to <code>leaflet</code>, <code>google maps</code>, or <code>mapbox</code>. Well one of the key things they are doing is just plotting map tiles.</p>
+
+<p>Map tiles are just images that can be stitched together and form a map. That is why whenever you drag on a map portions of it pop in in squares.</p>
+
+<p>Don&rsquo;t worry, I won&rsquo;t get deep into mapping terminology because I don&rsquo;t know it. If you want to learn checkout this post <a href="http://www.macwright.org/2012/05/15/how-web-maps-work.html">http://www.macwright.org/2012/05/15/how-web-maps-work.html</a></p>
+
+<p>All you&rsquo;ll need to know is <code>Latitude</code>, <code>Longitude</code>, and <code>Tile</code> aka (an image of a piece of a map).</p>
+
+<p>Our tilemap source will be the fabulous <a href="https://www.openstreetmap.org/">OpenStreetMap</a>. It&rsquo;s a community driven mapping solution. Check it out and contribute if you can!</p>
+
+<p>This was going to be a blog post about creating a map but I ended up turning it into a library.</p>
+
+<!-- more -->
+
+
+<h3>What I Built</h3>
+
+<p>I ended up writing up a library to show it off.</p>
+
+<p>Checkout <a href="https://github.com/browniefed/react-art-map">https://github.com/browniefed/react-art-map</a> for the library and examples.</p>
+
+<p>We use <a href="https://github.com/zacbarton/node-googlemaps-utils">https://github.com/zacbarton/node-googlemaps-utils</a> and
+<a href="https://github.com/gagan-bansal/map-the-tiles">https://github.com/gagan-bansal/map-the-tiles</a>.</p>
+
+<p>These 2 libraries are helper libraries.</p>
+
+<p><code>googlemaps-utils</code> takes a <code>width/height</code> and a central <code>lat/long</code> and gives us a bounding box which is just the <code>top/left</code> coordinate and the <code>bottom/right</code> coordinate.</p>
+
+<p>We then take that bounding box and convert it to meter points so we can generate a <a href="http://en.wikipedia.org/wiki/Mercator_projection">mercator projection</a>.</p>
+
+<p>The <code>map-the-tiles</code> takes those meter points and returns <code>x,y,z</code> points;</p>
+
+<p>Those <code>x,y,z</code> points get fed into the OSM url <code>http://{s}.tile.osm.org/{z}/{x}/{y}.png</code> and we get our tile images.</p>
+
+<p>We can then render them at their given <code>top/left</code> points w/ <code>react-art</code>.</p>
+
+<p>Ultimately this library was built with A LOT of googling and assembling some tools people already constructed.</p>
+
+<h3>Some Internals</h3>
+
+<p>Most of the logic is just in the <code>TileUtil</code>. There are likely much more efficient ways to do this however this is my first stab at it with my limited geo knowledge.</p>
+
+<p>Converts <code>lat/long</code> to meter points
+```</p>
+
+<pre><code>degrees2meters(lon,lat) {
+    var x = lon * 20037508.34 / 180;
+    var y = Math.log(Math.tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180);
+    y = y * 20037508.34 / 180;
+    return [x, y]
+}
+</code></pre>
+
+<p>```</p>
+
+<p>Converts meters to coordinates
+```</p>
+
+<pre><code>meters2degress(x,y) {
+    var lon = x *  180 / 20037508.34 ;
+    var lat = Number(180 / Math.PI * (2 * Math.atan(Math.exp(y * Math.PI / 180)) - Math.PI / 2));
+    return [lon, lat]
+}
+</code></pre>
+
+<p>```</p>
+
+<p>The main layout generator.</p>
+
+<p>```</p>
+
+<pre><code>getTileLayout(options) {
+    var layout = [];
+    var bounds = gmu.calcBounds(options.center[1], options.center[0], options.zoom, options.width, options.height); // GET COORDINATE BOUNDS
+
+    var topLeftMeters = TileUtil.degrees2meters(bounds.left, bounds.top),
+        bottomRightMeters = TileUtil.degrees2meters(bounds.right, bounds.bottom);
+
+    //Conver the coordinates each to meters
+
+    var tiler = new MapTheTiles(null, options.tileWidth); // Create a generic tiler based on our tile width
+
+    var layoutForBounds = {
+        top: topLeftMeters[1],
+        left: topLeftMeters[0],
+        right: bottomRightMeters[0],
+        bottom: bottomRightMeters[1]
+    };
+    //Pass in the meters for each point
+
+    var tiles = tiler.getTiles(layoutForBounds, options.zoom) // Get the x,y,z points for our zoom level
+
+    tiles.forEach(function(tile) {
+        var coordPoint = {
+            x: tile.X,
+            y: tile.Y,
+            z: tile.Z
+        },
+        coord = {
+            x: tile.left,
+            y: tile.top,
+            img: TileUtil.getTileUrl(options.tileSource, coordPoint, options.subdomains) //Just format the OSM tile resource
+        };
+
+        layout.push(coord);
+    }, this);
+
+    return layout;
+}
+</code></pre>
+
+<p>```</p>
+
+<p>This is how we render each tile.
+We have the <code>x/y</code> coordinates thanks to our tiler.</p>
+
+<p>We use <code>Paths.js</code> to create a generic rectangular path.
+This is so we can support <code>react-native</code> in the future since the shapes have yet to be created.</p>
+
+<p>Then we create a new fill with the tile image and set it to the width/height of the generic tile at <code>0,0</code> of the shape.</p>
+
+<p>This technically is a pattern for the background but because we set it to the exact <code>width/height</code> of the image it just renders the image once.</p>
+
+<p>```
+var rectanglePath = Rectangle({
+  top: 0,
+  left: 0,
+  right: 256,
+  bottom: 256
+}).path.print();
+///UP ABOVE</p>
+
+<pre><code>    return layout.map(function(tile) {
+        return (
+            &lt;Shape
+                d={rectanglePath}
+                x={tile.x}
+                y={tile.y}
+                fill={new Pattern(tile.img, this.props.tileWidth , this.props.tileWidth, 0, 0)}
+            /&gt;
+        )
+    }, this);
+</code></pre>
+
+<p>```</p>
+
+<h3>The Code</h3>
+
+<p>```
+var React = require(&lsquo;react&rsquo;);
+var ReactMap = require(&lsquo;react-art-map&rsquo;);
+var ReactArt = require(&lsquo;react-art&rsquo;),</p>
+
+<pre><code>Circle = require('react-art/shapes/circle');
+</code></pre>
+
+<p>var Map = ReactMap.Map;</p>
+
+<p>var viewportWidth = function() {</p>
+
+<pre><code>return  window.innerWidth - 100;
+</code></pre>
+
+<p>}
+var viewportHeight = function() {</p>
+
+<pre><code>return window.innerHeight - 100;
+</code></pre>
+
+<p>}</p>
+
+<p>var center = [</p>
+
+<pre><code>-122.668197,45.525292
+</code></pre>
+
+<p>],
+offset = 3;</p>
+
+<p>var Demo = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  center: center,
+  zoom: 15,
+  x: 100
+}
+</code></pre>
+
+<p>  },
+  componentDidMount: function() {</p>
+
+<pre><code>requestAnimationFrame(this.updateCircle);
+</code></pre>
+
+<p>  },
+  updateCircle: function() {</p>
+
+<pre><code>if (this.state.x &gt;= viewportWidth()) {
+    offset = -3;
+} else if ( this.state.x &lt;= 99) {
+    offset = 3;
+}
+
+this.state.x += offset;
+this.setState(this.state, function() {
+    requestAnimationFrame(this.updateCircle);
+});
+</code></pre>
+
+<p>  },
+  handleDrag: function(newCenter) {</p>
+
+<pre><code>this.setState({
+  center: newCenter
+});
+</code></pre>
+
+<p>  },
+  render: function () {</p>
+
+<pre><code>return (
+  &lt;div&gt;
+    &lt;Map
+        width={viewportWidth()}
+        height={viewportHeight()}
+        center={this.state.center}
+        zoom={this.state.zoom}
+        tileSource="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+        onDrag={this.handleDrag}
+    &gt;
+        &lt;Circle 
+            x={this.state.x}
+            y={100}
+            radius={30}
+            stroke="#000"
+            strokeWidth={5}
+        /&gt;
+    &lt;/Map&gt;
+  &lt;/div&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>module.exports = Demo;
+```</p>
+
+<h3>React Native?!?!?!</h3>
+
+<p>React Native has a map implementation but it doesn&rsquo;t allow for much flexibility. You can render pins but that is about it.</p>
+
+<p>With this library once the Pattern fill gets implemented you can render any map tile based service + any cool visualiztions on the map that you want.</p>
+
+<p>I&rsquo;ve logged an issue here <a href="https://github.com/facebook/react-native/issues/1462">https://github.com/facebook/react-native/issues/1462</a> so follow along for when it gets implemented.</p>
+
+<h3>Results</h3>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="PqWRvz" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/PqWRvz/'>PqWRvz</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+
+]]></content>
+  </entry>
+  
+</feed>

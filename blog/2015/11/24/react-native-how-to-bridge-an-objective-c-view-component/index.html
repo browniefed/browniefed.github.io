@@ -1,0 +1,1017 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="A blog of JavaScript techniques and tutorials. Including React, React Native, and anything else I feel like writing about." name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+
+
+    
+        <meta property="fb:app_id" content="1662675577336433" />
+        <meta property="og:title" content="React Native - How to Bridge an Objective-C View Component" />
+        <meta property="og:site_name" content="JavaScript Without Grammar" />
+        <meta property="og:url" content="http://browniefed.com/blog/2015/11/24/react-native-how-to-bridge-an-objective-c-view-component/" />
+        <meta property="og:description" content="" />
+        
+    
+
+        
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="browniefed" />
+        <meta property="twitter:url" content="http://browniefed.com/blog/2015/11/24/react-native-how-to-bridge-an-objective-c-view-component/" />
+        <meta property="twitter:title" content="React Native - How to Bridge an Objective-C View Component" />
+        <meta property="twitter:description" content="" />
+        <meta property="twitter:creator" content="browniefed" />
+        
+        
+
+
+		
+        <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
+
+		<title>React Native - How to Bridge an Objective-C View Component &mdash; JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.zclip.min.js"></script>
+
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+				
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="mailto:browniefed@gmail.com">Email</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF _layouts/post.html -->
+
+<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/11/24/react-native-how-to-bridge-an-objective-c-view-component/">React Native - How to Bridge an Objective-C View Component</a></h1>
+		<time>24 November 2015</time>
+	</header>
+	<div class="content">
+		
+            <div class="entry-content"><p>I am not an Objective-C developer so some of the things I say here may be wrong, so tell me if I&rsquo;m wrong!
+React Native is young enough that some cool existing native components need to still be bridged to take advantage of.
+There is plenty of information out there about bridging modules, and view components.</p>
+
+<p>Here are a fiew</p>
+
+<ul>
+<li><a href="http://moduscreate.com/leverage-existing-ios-views-react-native-app/">Leverage Existing iOS Views In Your React Native App</a></li>
+<li><a href="http://brentvatne.ca/react-native-view-component-1/">React Native View Components (&frac12;)</a></li>
+<li><a href="http://brentvatne.ca/react-native-view-component-2/">React Native View Components (2/2)</a></li>
+<li><a href="http://brentvatne.ca/packaging-react-native-component/">Packaging a React Native component</a></li>
+<li><a href="http://facebook.github.io/react-native/docs/native-components-ios.html#content">Native UI Components &ndash; React Native Documentation</a></li>
+</ul>
+
+
+<p>Some of these are more up to date and in depth and others lesser so.</p>
+
+<h2>What?</h2>
+
+<p><img src="http://i.imgur.com/GFisosN.gif" title="NyanNyan Needs Performance" ></p>
+
+<!-- more -->
+
+
+<h2>What are we bridging?</h2>
+
+<p>We are going to do a very basic bridge of <a href="https://github.com/Flipboard/FLAnimatedImage">FLAnimatedImage</a>.
+Basically it&rsquo;s a performant component to render animated gifs.</p>
+
+<p>Straight from their README.</p>
+
+<p>FLAnimatedImage is a performant animated GIF engine for iOS:</p>
+
+<ul>
+<li>Plays multiple GIFs simultaneously with a playback speed comparable to desktop browsers</li>
+<li>Honors variable frame delays</li>
+<li>Behaves gracefully under memory pressure</li>
+<li>Eliminates delays or blocking during the first playback loop</li>
+<li>Interprets the frame delays of fast GIFs the same way modern browsers do</li>
+</ul>
+
+
+<h2>Creating a Component</h2>
+
+<p>I tend to like to make my component as an application first and then I&rsquo;ll bust it out into a separate component. I already did that, so we&rsquo;ll just focus on the real process.</p>
+
+<p>To do that we&rsquo;ll create a library.</p>
+
+<p>In XCode go to <code>File &gt; New &gt; Project</code> and select <code>Static Library</code></p>
+
+<p>Like so</p>
+
+<p><img src="http://i.imgur.com/xFBkJfD.png" title="Stolen from Brent Vatne" ></p>
+
+<p>Save that somewhere and call it <code>RNFLAnimatedImage</code> so that you can follow along with the tutorial.</p>
+
+<h2>External Dependencies</h2>
+
+<p>In our case we are depending on the FLAnimatedImage library. We have a few different choices, using pods?, using Carthage?, or just copy and pasting.
+For the sake of this we&rsquo;re going to copy and paste. We&rsquo;ll get into this when the tutorial actually starts.</p>
+
+<p>I essentially cloned the repo, and copied over the necessary files. You then go through the usual process of adding a library to an XCode project.
+You can read about linking libraries here <a href="http://facebook.github.io/react-native/docs/linking-libraries-ios.html#content">http://facebook.github.io/react-native/docs/linking-libraries-ios.html#content</a>.</p>
+
+<p>Basically do this.</p>
+
+<p><img src="http://i.imgur.com/AfCMdHF.png" title="Find the FLAnimatedImage.xcodeporj" ></p>
+
+<p>Then do this</p>
+
+<p><img src="http://i.imgur.com/BySd9oD.png" title="Press + and add the framework" ></p>
+
+<h2>Manager vs View</h2>
+
+<p>The Manager is the orchestrator of this particular view we are bridging. It&rsquo;s essentially a singleton (there is just one of them) that when asked will produce a new view to use of whatever kind you define. In our case we have an <code>RNFLAnimatedImageManager</code> that when asked will create an <code>RNFLAnimateImage</code> which will create and setup our <code>FLAnimatedImage</code> Objective-C component.</p>
+
+<p>The Manager is also where we setup the module bridge, and declare what sort of properties we need, event callbacks, and additional constants to export if we need any.</p>
+
+<p>The View portion is just that, the View. This is what will be instantiated and hook into some lifecycle events so you can manipulate the Objective-C world.</p>
+
+<p>Each View will need to do different things during these lifecycle events, it&rsquo;s up to you to implement them and figure out what exactly needs to be handled for the component that you are bridging.</p>
+
+<h2>Life Cycles/Initializer in the Objective C World</h2>
+
+<p>The main life cycle we need to implement is <code>- (void)layoutSubviews</code>.
+The other non-lifecycle method that is important is <code>- (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher</code>.</p>
+
+<p>Additional life cycle calls are <code>- (void)insertReactSubview:(UIView *)view atIndex:(NSInteger)atIndex</code> and <code>- (void)removeReactSubview:(UIView *)subview</code> but we won&rsquo;t talk about those.</p>
+
+<p>The <code>layoutSubviews</code> method gives us an arbitrary hook to control the current view component. You can manipulate the view, add subviews, or add sublayers. In our case we&rsquo;ll add the FLAnimatedImage as a subview.</p>
+
+<p>The <code>initWithEventDispatcher</code> method allows us to handle initialization of the View and additionally save off our <code>eventDispatcher</code> which means we can send messages back to the JavaScript world.</p>
+
+<p>So when you see people sending back callback functions to the native world this is what is sending back the events. So things like <code>onLoad</code>, <code>onVideoProgress</code>, etc you would use this event dispatcher to send out a <code>onLoad</code> or <code>onVideoProgress</code> event name with a payload of data.</p>
+
+<h2>Specifying callbacks</h2>
+
+<p>In a manager file you would specify something like so</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>- (NSArray *) customDirectEventTypes {
+</span><span class='line'>  return @[
+</span><span class='line'>           @"onFrameChange"
+</span><span class='line'>          ];
+</span><span class='line'>}
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In our case we may want to listen for when the GIF frame index changes.</p>
+
+<p>We send stuff from Objective-C world to JavaScript like so</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  [_eventDispatcher sendInputEventWithName:@"onFrameChange" body:@{
+</span><span class='line'>                                                                   @"currentFrameIndex":[NSNumber numberWithUnsignedInteger:[object currentFrameIndex]],
+</span><span class='line'>                                                                   @"frameCount": [NSNumber numberWithUnsignedInteger:[_image frameCount]],
+</span><span class='line'>                                                                   @"target": self.reactTag
+</span><span class='line'>                                                                   }];</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then in our JavaScript world we can do this.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>      &lt;FLAnimatedImage 
+</span><span class='line'>        style= 
+</span><span class='line'>        src={this.state.url}
+</span><span class='line'>        resizeMode={this.state.resizeMode} 
+</span><span class='line'>        onFrameChange={(e) =&gt; console.log(e.nativeEvent.currentFrameIndex + '/' + e.nativeEvent.frameCount)}
+</span><span class='line'>      /&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Properties from ObjC to JavaScript</h2>
+
+<p>That looks something like</p>
+
+<p><code>RCTFLAnimatedImageManager.m</code></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>RCT_EXPORT_VIEW_PROPERTY(src, NSString);
+</span><span class='line'>RCT_EXPORT_VIEW_PROPERTY(contentMode, NSNumber);
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>RCTFLAnimatedImage.m</code></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>@property (nonatomic, assign) NSString *src;
+</span><span class='line'>@property (nonatomic, assign) NSNumber *contentMode;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the JavaScript world when we render our component whatever the <code>src</code> prop is will be put there.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>&lt;RNFlAnimatedImage src="http://someanimated.gif" resizeMode={1} /&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the JavaScript world we do need to define our <code>PropTypes</code> on the component.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  propTypes: {
+</span><span class='line'>    /*
+</span><span class='line'>      native only
+</span><span class='line'>    */
+</span><span class='line'>    contentMode: PropTypes.number,
+</span><span class='line'>    /*
+</span><span class='line'>
+</span><span class='line'>    */
+</span><span class='line'>    src: PropTypes.string,
+</span><span class='line'>    resizeMode: PropTypes.string,
+</span><span class='line'>    onFrameChange: PropTypes.func
+</span><span class='line'>  }
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Exporting Constants</h2>
+
+<p>Sometimes there are strings, numbers, enums, etc in the Objective-C world that you may want to use in the JavaScript world. To do this we use the <code>constantsToExport</code> method in our manager.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>- (NSDictionary *) constantsToExport {
+</span><span class='line'>  return @{
+</span><span class='line'>           @"ScaleAspectFit": @(UIViewContentModeScaleAspectFit),
+</span><span class='line'>           @"ScaleAspectFill": @(UIViewContentModeScaleAspectFill),
+</span><span class='line'>           @"ScaleToFill": @(UIViewContentModeScaleToFill)
+</span><span class='line'>          };
+</span><span class='line'>}
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We export some <code>NSIntegers</code> (converting them to <code>NSNumbers</code> with the <code>@</code>, thanks Google) and this will get put onto React Native <code>NativeModules</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>React.NativeModules.RNFLAnimatedImageManager;
+</span><span class='line'>/*
+</span><span class='line'>  {
+</span><span class='line'>    ScaleToFill: 0,
+</span><span class='line'>    ScaleAspectFit: 1,
+</span><span class='line'>    ScaleAspectFill: 2
+</span><span class='line'>  }
+</span><span class='line'>*/</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Stop?</h2>
+
+<p>Alright that was all a preface to show you the little bits and areas that you can bridge. Maybe you just needed syntax, maybe you wondering about it&rsquo;s capabilities. Either way if you got enough information then no need to go any further. However I encourage you to read on.</p>
+
+<h2>Tutorial Start</h2>
+
+<p>So we have the empty <code>RNFLAnimatedImage</code> project you created right? Go do it now if you haven&rsquo;t already.</p>
+
+<p>The first thing we are going to need to do is setup our <code>Header Search Paths</code> and add React to it.
+We&rsquo;ll need to add various locations to tell Objective-C to look for all the <code>.h</code> and <code>.m</code> files.</p>
+
+<p>add these 5</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$(inherited)
+</span><span class='line'>/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include
+</span><span class='line'>$(SRCROOT)/../../React
+</span><span class='line'>$(SRCROOT)/../react-native/React
+</span><span class='line'>$(SRCROOT)/node_modules/react-native/React</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It should look something like.</p>
+
+<p><img src="http://i.imgur.com/GFfRgNV.png" title="Header Search Paths for all the Reacts" ></p>
+
+<p><code>FLAnimatedImage</code> ships as a framework, I wasn&rsquo;t able to import the required <code>.h</code> and <code>.m</code> files until I told XCode where to look for <code>FLAnimatedImage</code>.
+So lets set that up, add <code>$(SRCROOT)/FLAnimatedImage</code> the <code>Framework Search Paths</code> right above <code>Header Search Paths</code></p>
+
+<p><img src="http://i.imgur.com/gkkZJ4d.png" title="I have no clue if this is correct" ></p>
+
+<h2>Add Manager Files</h2>
+
+<p>In creating this <code>RNFLAnimatedImage.m/.h</code> were created but lets create our manager files now.
+Just right click on the folder select &ldquo;New File&rdquo; and create a <code>.m</code> and name in <code>RNFLAnimatedImageManager.m</code> , same for the <code>.h</code></p>
+
+<p><img src="http://i.imgur.com/jEQdrce.png" title="Sponsored by H and M" ></p>
+
+<p>We need to add our new manager files to our compile source.</p>
+
+<p><img src="http://i.imgur.com/6Kzve8u.png" title="Compile sources, what are they good for" ></p>
+
+<h2>RNFLAnimatedImageManager.h</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#import "RCTViewManager.h"
+</span><span class='line'>
+</span><span class='line'>@interface RNFLAnimatedImageManager : RCTViewManager
+</span><span class='line'>
+</span><span class='line'>@end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That&rsquo;s it, we just have our <code>interface</code> we called <code>RNFLAnimatedImageManager</code> and inherit from <code>RCTViewManager</code> which is provided by React.</p>
+
+<h2>RNFLAnimatedImageManager.m</h2>
+
+<p>First we need to import some stuff</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#import &lt;Foundation/Foundation.h&gt;
+</span><span class='line'>#import "RCTBridge.h"
+</span><span class='line'>#import "RNFLAnimatedImageManager.h"
+</span><span class='line'>#import "RNFLAnimatedImage.h"
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We bring in the bridging mechanism from React, the <code>Manager.h</code> file, and additionally the <code>.h</code> for the view we&rsquo;re bridging.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>@implementation RNFLAnimatedImageManager
+</span><span class='line'>
+</span><span class='line'>RCT_EXPORT_MODULE();
+</span><span class='line'>
+</span><span class='line'>@synthesize bridge = _bridge;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Inside our implementation we call <code>RCT_EXPORT_MODULE()</code> that tells React we are exporting a module.</p>
+
+<p>The <code>@synthesize bridge</code> stuff is declaring that we want to just auto generate some getters and setters for our bridge.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>- (UIView *)view
+</span><span class='line'>{
+</span><span class='line'>  return [[RNFLAnimatedImage alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is called to create a new view. We are allocating our view <code>RNFLAnimatedImage</code> and initializing it with the <code>eventDispatcher</code> so we can communicate back to the JavaScript world.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>- (dispatch_queue_t)methodQueue
+</span><span class='line'>{
+</span><span class='line'>  return dispatch_get_main_queue();
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This has something to do with dispatching :). I think it says that when we dispatch it should go on the main queue?</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>RCT_EXPORT_VIEW_PROPERTY(src, NSString);
+</span><span class='line'>RCT_EXPORT_VIEW_PROPERTY(contentMode, NSNumber);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Define some properties to bridge.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>- (NSArray *) customDirectEventTypes {
+</span><span class='line'>  return @[
+</span><span class='line'>           @"onFrameChange"
+</span><span class='line'>          ];
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Define some function callback/events we can dispatch.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>- (NSDictionary *) constantsToExport {
+</span><span class='line'>  return @{
+</span><span class='line'>           @"ScaleAspectFit": @(UIViewContentModeScaleAspectFit),
+</span><span class='line'>           @"ScaleAspectFill": @(UIViewContentModeScaleAspectFill),
+</span><span class='line'>           @"ScaleToFill": @(UIViewContentModeScaleToFill)
+</span><span class='line'>          };
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>@end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Finally we define some constants to export and end our implementation.</p>
+
+<p>Link to the file on github <a href="https://github.com/browniefed/react-native-flanimatedimage/blob/master/RNFLAnimatedImage/RNFLAnimatedImage/RNFLAnimatedImageManager.m">https://github.com/browniefed/react-native-flanimatedimage/blob/master/RNFLAnimatedImage/RNFLAnimatedImage/RNFLAnimatedImageManager.m</a>.</p>
+
+<h2>RNFLAnimatedImage.h</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#import "RCTEventDispatcher.h"
+</span><span class='line'>#import "FLAnimatedImage/FLAnimatedImage.h"
+</span><span class='line'>
+</span><span class='line'>@class RCTEventDispatcher;
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>@interface RNFLAnimatedImage : UIView
+</span><span class='line'>
+</span><span class='line'>@property (nonatomic, assign) NSString *src;
+</span><span class='line'>@property (nonatomic, assign) NSNumber *contentMode;
+</span><span class='line'>
+</span><span class='line'>- (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher NS_DESIGNATED_INITIALIZER;
+</span><span class='line'>
+</span><span class='line'>@end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We import our event dispatcher, and tell the compiler that the class <code>RCTEventDispatcher</code> will be defined.
+We create our interface, give it the name <code>RNFLAniamtedImage</code> and inherit from the base <code>UIView</code>.</p>
+
+<p>We add our properties, don&rsquo;t worry about the <code>nonatomic</code> stuff, if you want to know go le google it.</p>
+
+<p>Finally we define our initWithEventDispatcher method that our <code>Manager</code> initialized with. The <code>NS_DESIGNATED_INITIALIZER</code> is to tell the compiler that this is our initializer vs the typical <code>init</code>.</p>
+
+<h2>RNFlAnimatedImage.m</h2>
+
+<p>Alright this will be where all of our bridging work comes into play. Read through the full source here <a href="https://github.com/browniefed/react-native-flanimatedimage/blob/master/RNFLAnimatedImage/RNFLAnimatedImage/RNFLAnimatedImage.m">https://github.com/browniefed/react-native-flanimatedimage/blob/master/RNFLAnimatedImage/RNFLAnimatedImage/RNFLAnimatedImage.m</a>.</p>
+
+<p>So first we need to import stuff and define our basic implementation</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#import &lt;Foundation/Foundation.h&gt;
+</span><span class='line'>#import "FLAnimatedImage/FLAnimatedImage.h"
+</span><span class='line'>
+</span><span class='line'>#import "RCTBridgeModule.h"
+</span><span class='line'>#import "RCTEventDispatcher.h"
+</span><span class='line'>#import "UIView+React.h"
+</span><span class='line'>
+</span><span class='line'>#import "RNFLAnimatedImage.h"
+</span><span class='line'>
+</span><span class='line'>@implementation RNFLAnimatedImage : UIView  {
+</span><span class='line'>
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>@end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Don&rsquo;t worry too much about what&rsquo;s getting imported. Most of them are just so React can do it&rsquo;s thing.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>@implementation RNFLAnimatedImage : UIView  {
+</span><span class='line'>
+</span><span class='line'>  RCTEventDispatcher *_eventDispatcher;
+</span><span class='line'>  FLAnimatedImage *_image;
+</span><span class='line'>  FLAnimatedImageView *_imageView;
+</span><span class='line'>  
+</span><span class='line'>}
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We now define our instance variables that we&rsquo;ll assign inside of this implementation. We setup our <code>eventDispatcher</code>, the <code>image</code> and <code>imageView</code> with their specific types.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>- (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher
+</span><span class='line'>{
+</span><span class='line'>  if ((self = [super init])) {
+</span><span class='line'>    _eventDispatcher = eventDispatcher;
+</span><span class='line'>    _imageView = [[FLAnimatedImageView alloc] init];
+</span><span class='line'>    
+</span><span class='line'>    [_imageView addObserver:self forKeyPath:@"currentFrameIndex" options:0 context:nil];
+</span><span class='line'>  }
+</span><span class='line'>    
+</span><span class='line'>    return self;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is our initializer that we had defined. It receives <code>eventDispatcher</code> as the only argument. We then save it off to the <code>eventDispatcher</code> variable we create up above. Then create a new <code>FLAnimatedImageView</code> and save that off. The <code>addObserver</code> we&rsquo;ll get into later, but this is going to allow us to asynchronously hook into the <code>currentFrameIndex</code> of our animated gif and call the callback.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#pragma mark - React View Management
+</span><span class='line'>
+</span><span class='line'>- (void)insertReactSubview:(UIView *)view atIndex:(NSInteger)atIndex
+</span><span class='line'>{
+</span><span class='line'>    RCTLogError(@"image cannot have any subviews");
+</span><span class='line'>    return;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>- (void)removeReactSubview:(UIView *)subview
+</span><span class='line'>{
+</span><span class='line'>    RCTLogError(@"image cannot have any subviews");
+</span><span class='line'>    return;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>- (void)layoutSubviews
+</span><span class='line'>{
+</span><span class='line'>  [super layoutSubviews];
+</span><span class='line'>  _imageView.frame = self.bounds;
+</span><span class='line'>  [self addSubview:_imageView];
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>These are the important React added lifecylce methods. The <code>insertReactSubview</code> and <code>removeReactSubview</code> is how we would go about allowing <code>children</code>.</p>
+
+<p>The <code>layoutSubviews</code> is the call that gives us the ability to add in our <code>FLAnimatedImageView</code> that we created into the <code>RNFLAnimatedImage</code> that we are creating. This method is going to be the one that is going to be mostly a custom implementation depending on what components you end up bridging.</p>
+
+<p>The other import thing to call out is <code>self.bounds</code> this is a <code>CGRect</code> that contains <code>x,y</code> and <code>width/height</code> that is going to be provided from the <code>style</code> that is defined in the JavaScript world!</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>- (void)setSrc:(NSString *)src
+</span><span class='line'>{
+</span><span class='line'>  if (![src isEqual:_src]) {
+</span><span class='line'>    _src = [src copy];
+</span><span class='line'>    [self reloadImage];
+</span><span class='line'>  }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>- (void)setContentMode:(NSNumber *)contentMode
+</span><span class='line'>{
+</span><span class='line'>  if(![contentMode isEqual:_contentMode]) {
+</span><span class='line'>    _contentMode = [contentMode copy];
+</span><span class='line'>    [self reloadImage];
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>These are setters that we hook into so that when a <code>setState</code> happens and a re-render is triggered in the JavaScript world these get called. We check if our <code>src</code> is different and or if our <code>contentMode</code> is different, if it is we set our instance variables to the new values and call <code>reloadImage</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>-(void)reloadImage {
+</span><span class='line'>  _image = [FLAnimatedImage animatedImageWithGIFData:[NSData dataWithContentsOfURL:[NSURL URLWithString:_src]]];
+</span><span class='line'>  _imageView.contentMode = [_contentMode integerValue];
+</span><span class='line'>  _imageView.animatedImage = _image;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Our reload image is more of a setup/modify image. We set our <code>image</code> to be the <code>FLAnimatedImage</code> with the gif data from a URL. We pass our <code>src</code> in there which comes from the bridged value from the JavaScript world.</p>
+
+<p>We setup our contentMode on the <code>imageView</code> then set our <code>imageView.animatedImage</code> to be the <code>image</code> of the url.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary&lt;NSString *,id&gt; *)change context:(void *)context {
+</span><span class='line'>  if (object == _imageView) {
+</span><span class='line'>    if ([keyPath isEqualToString:@"currentFrameIndex"]) {
+</span><span class='line'>      [_eventDispatcher sendInputEventWithName:@"onFrameChange" body:@{
+</span><span class='line'>                                                                       @"currentFrameIndex":[NSNumber numberWithUnsignedInteger:[object currentFrameIndex]],
+</span><span class='line'>                                                                       @"frameCount": [NSNumber numberWithUnsignedInteger:[_image frameCount]],
+</span><span class='line'>                                                                       @"target": self.reactTag
+</span><span class='line'>                                                                       }];
+</span><span class='line'>    }
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When observers get setup (like we did in the initializer) the <code>observerveValueForKeyPath</code> method will be called with the information about the thing that changed.
+In our case <code>object</code> was setup to be our <code>imageView</code> and the <code>keyPath</code> was <code>currentFrameIndex</code>.</p>
+
+<p>We do some checking to make sure that the <code>object</code> is in fact our <code>imageView</code>, and that the <code>keyPath</code> we are dealing with is the <code>currentFrameIndex</code>. If it is this when we send our event to be dispatched. It just so happens to be named <code>onFrameChange</code> and our <code>body</code> can be custom crafted and will be ultimately translated into JSON for us. We pass back the <code>currentFrameIndex</code> and the total <code>frameCount</code> as well as the React Component we are dealing with.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>- (void)removeFromSuperview
+</span><span class='line'>{
+</span><span class='line'>    
+</span><span class='line'>    [_imageView removeObserver:self forKeyPath:@"currentFrameIndex"];
+</span><span class='line'>    _eventDispatcher = nil;
+</span><span class='line'>    _image = nil;
+</span><span class='line'>    _imageView = nil;
+</span><span class='line'>    [super removeFromSuperview];
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Finally the <code>removeFromSuperview</code> function is called. This is the equivalence of <code>componentWillUnmount</code> in the React JavaScript world. Here we clean up the observer, as well as the other things we have created.</p>
+
+<p>You are now done with Objective-C! Check out the full source code here <a href="https://github.com/browniefed/react-native-flanimatedimage/blob/master/RNFLAnimatedImage/RNFLAnimatedImage/RNFLAnimatedImage.m">https://github.com/browniefed/react-native-flanimatedimage/blob/master/RNFLAnimatedImage/RNFLAnimatedImage/RNFLAnimatedImage.m</a>.</p>
+
+<h2>FLAnimatedImage.js</h2>
+
+<p>Now we are back in our JavaScript world. We&rsquo;ve done the hard part.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>var { requireNativeComponent, PropTypes, NativeModules, } = React;
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  ScaleToFill,
+</span><span class='line'>  ScaleAspectFit,
+</span><span class='line'>  ScaleAspectFill
+</span><span class='line'>} = NativeModules.RNFLAnimatedImageManager;
+</span><span class='line'>
+</span><span class='line'>var MODES = {
+</span><span class='line'>  'stretch': ScaleToFill,
+</span><span class='line'>  'contain': ScaleAspectFit,
+</span><span class='line'>  'cover': ScaleAspectFill
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>var FLAnimatedImage = React.createClass({
+</span><span class='line'>  propTypes: {
+</span><span class='line'>    /*
+</span><span class='line'>      native only
+</span><span class='line'>    */
+</span><span class='line'>    contentMode: PropTypes.number,
+</span><span class='line'>    /*
+</span><span class='line'>
+</span><span class='line'>    */
+</span><span class='line'>    src: PropTypes.string,
+</span><span class='line'>    resizeMode: PropTypes.string,
+</span><span class='line'>    onFrameChange: PropTypes.func
+</span><span class='line'>  },
+</span><span class='line'>  render() {
+</span><span class='line'>    var contentMode = MODES[this.props.resizeMode] || MODES.stretch;
+</span><span class='line'>    return (
+</span><span class='line'>            &lt;RNFLAnimatedImage 
+</span><span class='line'>                {...this.props} 
+</span><span class='line'>                contentMode={contentMode}
+</span><span class='line'>            /&gt;
+</span><span class='line'>          );
+</span><span class='line'>  },
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var RNFLAnimatedImage = requireNativeComponent('RNFLAnimatedImage', FLAnimatedImage);
+</span><span class='line'>
+</span><span class='line'>module.exports = FLAnimatedImage;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The important parts to call out is that all values being passed to the component/native world need to have a <code>PropType</code> specified! If you noticed something a bit weird. We create a class called <code>FLAnimatedImage</code> which we call to <code>requireNativeComponent</code> that creates <code>RNFLAnimatedImage</code> which then <code>FLAnimatedImage</code> renders. Weird cyclic thing, but ultimately it allows us to tell React what component our class is going to need to be rendered.</p>
+
+<p>The <code>MODES</code> thing is just so we can map a nice string the user can give us to one of the constants that we exported from our Objective-C world.</p>
+
+<h2>DONE!</h2>
+
+<p>Hey look you did it. We got through the weird brackted world of Objective-C. To use it we require it and pass in our props.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>      &lt;FLAnimatedImage 
+</span><span class='line'>        style={{flex: 1}} 
+</span><span class='line'>        src="http://raphaelschaad.com/static/nyan.gif"
+</span><span class='line'>        resizeMode="contain" 
+</span><span class='line'>        onFrameChange={(e) =&gt; console.log(e.nativeEvent.currentFrameIndex + '/' + e.nativeEvent.frameCount)}
+</span><span class='line'>      /&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Final Code</h2>
+
+<p>The code is all up on github, check the repo out here <a href="https://github.com/browniefed/react-native-flanimatedimage">https://github.com/browniefed/react-native-flanimatedimage</a> and the folder where the Objective-C code is at is right here <a href="https://github.com/browniefed/react-native-flanimatedimage/tree/master/RNFLAnimatedImage/RNFLAnimatedImage">https://github.com/browniefed/react-native-flanimatedimage/tree/master/RNFLAnimatedImage/RNFLAnimatedImage</a>.</p>
+
+<p>Now we have a bridge AnimatedGif component at our exposure.</p>
+
+<p><img src="http://i.imgur.com/GFisosN.gif" title="Now that is stuck in your head" ></p>
+</div>
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/bridging/'>bridging</a>, <a class='category' href='/blog/categories/objc/'>objc</a>, <a class='category' href='/blog/categories/objective-c/'>objective-c</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>, <a class='category' href='/blog/categories/view/'>view</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+
+<footer style="margin-top: 10px;">
+    <div id="post-author">
+	<div class="post-author-content" style="width: 70%; display: inline-block;">
+		<p style="font-size: 16px;">
+			If you ever want further explanation, want to see a particular type of tutorial, or to contact me for whatever reason you can drop me a line on twitter <a href="http://twitter.com/browniefed">@browniefed</a> or email me at <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a>
+		</p>
+	</div>
+</div>
+</footer>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+
+<!-- END OF _/layouts/post.html -->
+
+		
+			<footer>
+				Copyright &copy; 2016
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/11/24/react-native-how-to-bridge-an-objective-c-view-component/';
+        var disqus_url = 'http://browniefed.com/blog/2015/11/24/react-native-how-to-bridge-an-objective-c-view-component/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: function() {
+                    return $(this).next('code').text().split("\n").join("\r\n")
+                },
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+				}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/11/24/react-native-how-to-bridge-an-objective-c-view-component/';
+        var disqus_url = 'http://browniefed.com/blog/2015/11/24/react-native-how-to-bridge-an-objective-c-view-component/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->

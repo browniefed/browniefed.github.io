@@ -1,0 +1,419 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="A blog of JavaScript techniques and tutorials. Including React, React Native, and anything else I feel like writing about." name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+
+
+    
+        <meta property="fb:app_id" content="1662675577336433" />
+        <meta property="og:title" content="JavaScript Without Grammar" />
+        <meta property="og:site_name" content="JavaScript Without Grammar" />
+        <meta property="og:url" content="http://browniefed.com/blog/page/3/index.html" />
+        <meta property="og:description" content="" />
+        
+    
+
+        
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="browniefed" />
+        <meta property="twitter:url" content="http://browniefed.com/blog/page/3/index.html" />
+        <meta property="twitter:title" content="JavaScript Without Grammar" />
+        <meta property="twitter:description" content="" />
+        <meta property="twitter:creator" content="browniefed" />
+        
+        
+
+
+		
+        <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
+
+		<title>JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.zclip.min.js"></script>
+
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+				
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="mailto:browniefed@gmail.com">Email</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF index.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/10/10/react-native-pan-responder-inside-of-a-scrollview/">React Native - Pan Responder inside of a ScrollView</a></h1>
+		<time>10 October 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>Lets talk <code>PanResponder</code> in a <code>ScrollView</code>. This gets brought up frequently, so lets address it.</p>
+
+<h2>Scenario</h2>
+
+<p>You&rsquo;ve got a <code>PanResponder</code> in your <code>ScrollView</code>. When you scroll you want it to scroll, when you interact with the component with the <code>PanResponder</code> you want it to do <code>PanResponder</code> things.</p>
+
+<h2>What happens</h2>
+
+<p>Things start scrolling just fine. You attemp to drag, all goes swimmingly, then the <code>ScrollView</code> scrolls, your drag stops working and it just sits there stuck until you go re-interact with it. Yikes. You curse the react native gods and begrudgingly start learning Objective-C.</p>
+
+<h2>Janky</h2>
+
+<p><img src="http://i.imgur.com/2d8nB6u.gif" title="Screw it, lets just go native" ></p>
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2015/10/10/react-native-pan-responder-inside-of-a-scrollview/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/panresponder/'>panresponder</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>, <a class='category' href='/blog/categories/scrollview/'>scrollview</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/09/10/the-shapes-of-react-native/">The Shapes of React Native</a></h1>
+		<time>10 September 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><h1>Introduction</h1>
+
+<p>After drawing a bit of inspiration from <a href="https://css-tricks.com/examples/ShapesOfCSS/">The Shapes of CSS</a> I decided to see if I could remake some of these shapes with a subset of css. If you haven&rsquo;t been on css-tricks check them out, <a href="http://chriscoyier.net/">Chris Coyier</a> is fantastic!</p>
+
+<p>Of course we have access to <code>react-art</code> here so drawing shapes is pretty simple but my goal is to see if I can just use normal <code>Views</code> and all of the styles I have at my exposure to make as many shapes as I can off of the Shapes of CSS list.</p>
+
+<p>Some of these are obvious and some of them get a little crazy but most of them are all hacks in the first place!</p>
+
+<p>I&rsquo;m going on vacation for a month. So this shall be dubbed &ldquo;One of the more pointless blog posts on my blog written out of sheer tiredness&rdquo;.</p>
+
+<p><img src="http://i.imgur.com/cWR7FKh.gif" title="What am doing with my life" ></p>
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2015/09/10/the-shapes-of-react-native/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/css/'>css</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>, <a class='category' href='/blog/categories/shapes/'>shapes</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/09/07/react-native-periscope-hearts-animation/">React Native Periscope Hearts Animation</a></h1>
+		<time>07 September 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><h1>Introduction</h1>
+
+<p>I was contacted asking if it was possible to recreate the periscope heart animations in react-native. I was also linked to someone rebuilding the same effect in Framer.js, you can check out the linked video here <a href="https://www.youtube.com/watch?v=qFUXxqzZytU">https://www.youtube.com/watch?v=qFUXxqzZytU</a>.</p>
+
+<p>Periscope not only has an iPhone/Android app but it also has a web app with the same heart effect. I could take a look at the animations being done on it but we&rsquo;ll just eye ball it.</p>
+
+<h1>What we are building</h1>
+
+<p><img src="http://i.imgur.com/5JhgzQV.gif" title="Purple floating fading swaying rotating hearts" ></p>
+
+<h3>Live code: <a href="https://rnplay.org/apps/8VhSjw">https://rnplay.org/apps/8VhSjw</a></h3>
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2015/09/07/react-native-periscope-hearts-animation/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/animation/'>animation</a>, <a class='category' href='/blog/categories/hearts/'>hearts</a>, <a class='category' href='/blog/categories/periscope/'>periscope</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/08/31/react-native-youtube-animated-video-slide/">React Native Youtube Animated Video Slide</a></h1>
+		<time>31 August 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><h1>Introduciton</h1>
+
+<p>I was going to spend some time digging into <a href="https://github.com/ProjectSeptemberInc/gl-react-native">gl-react-native</a> when someone asked in the slack channel how to achieve youtube like video sliding navigation. Now I won&rsquo;t get into the navigation portion, just the animation part. The navigation portion can be solved by basically treating video routes as a modal. Thus they are always over the top of whatever the previous route was.</p>
+
+<h1>What are we building?</h1>
+
+<p>If you haven&rsquo;t seen it, YouTube allows you to drag the current playing video down to the bottom right corner and have it continue to play while you browse the rest of the app.</p>
+
+<p>Something like this.</p>
+
+<p><img src="http://i.imgur.com/gwbkw5f.gif" title="YouTube demo clone" ></p>
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2015/08/31/react-native-youtube-animated-video-slide/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/animated/'>animated</a>, <a class='category' href='/blog/categories/animation/'>animation</a>, <a class='category' href='/blog/categories/native/'>native</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>, <a class='category' href='/blog/categories/slider/'>slider</a>, <a class='category' href='/blog/categories/video/'>video</a>, <a class='category' href='/blog/categories/youtube/'>youtube</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/08/29/react-native-animated-with-react-art-firework-show/">React-Native Animated with React-Art - Firework Tap To Shoot</a></h1>
+		<time>29 August 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><h1>Introduction</h1>
+
+<p>This actually could be built with out react-art, but we&rsquo;ll use react-art just for good measure.
+What are we building? A firework show. Nothing fancy. Just tap on the screen and a firework will be shot to that point and explode.</p>
+
+<h1>What?</h1>
+
+<p>This is what we&rsquo;re building</p>
+
+<p><img src="http://i.imgur.com/Dj60a6e.gif" title="Firework Shooter" ></p>
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2015/08/29/react-native-animated-with-react-art-firework-show/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/animated/'>animated</a>, <a class='category' href='/blog/categories/animations/'>animations</a>, <a class='category' href='/blog/categories/firework/'>firework</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>, <a class='category' href='/blog/categories/shooter/'>shooter</a>, <a class='category' href='/blog/categories/tap/'>tap</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+	
+<div class="pagination">
+	
+		<a class="older" href="/blog/page/4/">Older</a>
+	
+	
+	<span class="total">3 of 8</span>
+	
+	
+		<a class="newer" href="/blog/page/2/">Newer</a>
+	
+</div>
+<!-- END OF index.html -->
+
+		
+			<footer>
+				Copyright &copy; 2016
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: function() {
+                    return $(this).next('code').text().split("\n").join("\r\n")
+                },
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+				}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->

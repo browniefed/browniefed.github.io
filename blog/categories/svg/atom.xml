@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: svg | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/svg/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React Art and Paths.js]]></title>
+    <link href="http://browniefed.com/blog/2015/05/27/react-art-and-paths-dot-js/"/>
+    <updated>2015-05-27T19:32:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/05/27/react-art-and-paths-dot-js</id>
+    <content type="html"><![CDATA[<h3>Intro</h3>
+
+<p><a href="https://github.com/andreaferretti/paths-js">Paths.js</a> is a cool library. It comes with 3 levels of generating paths.</p>
+
+<ul>
+<li>Low level which helps you generate paths/lines.</li>
+<li>Mid level which generates paths for shapes</li>
+<li>High level which takes a set of data and generates graphs</li>
+</ul>
+
+
+<p>All of these are great when working with <code>react-art</code> because it&rsquo;s just returning data. I&rsquo;ll say it once, and a million more but libraries that just generate data make it easy to traverse and render with <code>react-art</code>.</p>
+
+<!-- more -->
+
+
+<h3>Paths</h3>
+
+<h4>UPDATE:</h4>
+
+<p>Sebastian Markbage (the creator of ReactART and ART), informed me that <code>ReactART</code> itself has a <code>Path</code> implementation. I realized this but didn&rsquo;t think much of it.
+However per the discussion here <a href="https://discuss.reactjs.org/t/react-art-with-paths-js/492">https://discuss.reactjs.org/t/react-art-with-paths-js/492</a> the <code>ART</code> path is faster as it takes advantage of the current <code>mode</code> to create the most efficient path instead of taking a string and converting it back into native for instructions for canvas rendering.</p>
+
+<p>The <code>ReactART.Path</code> has similar methods. Check out the discuss thread for a link to the implementation to find out the supported methods. I&rsquo;m currently working on <code>ReactART</code> documentation so expect that soon.</p>
+
+<p>Example:</p>
+
+<p><code>
+var path = Path()
+  .moveto(10, 20)
+  .lineto(30, 50)
+  .lineto(25, 28)
+  .qcurveto(27, 30, 32, 27)
+  .closepath();
+</code></p>
+
+<p>This is can just be plugged right into <code>react-art</code> <code>Shape</code> element.</p>
+
+<p>Like so</p>
+
+<p>```
+var React = require(&lsquo;react&rsquo;),</p>
+
+<pre><code>ReactArt = require('react-art'),
+Surface = ReactArt.Surface,
+Shape = ReactArt.Shape,
+Path = require('paths-js/path');
+</code></pre>
+
+<p>var Demo = React.createClass({</p>
+
+<pre><code>getInitialState: function() {
+    return {
+        to: {
+            x: 30,
+            y: 50
+        }
+    }
+},
+getPath: function() {
+    var path = Path()
+                  .moveto(10, 20)
+                  .lineto(this.state.to.x, this.state.to.y)
+                  .lineto(25, 28)
+                  .qcurveto(27, 30, 32, 27)
+                  .closepath();
+
+    return path.print();
+},
+startAnimating: function() {
+
+    if (this.state.to.x === 100) {
+        this.addToPosition = -1;
+    } else if (this.state.to.x === 29) {
+        this.addToPosition = 1;
+    }
+
+    this.state.to.x += this.addToPosition;
+    this.state.to.y += this.addToPosition;
+
+    this.setState(this.state);
+},
+componentDidMount: function() {
+    this.addToPosition = 1;
+    setInterval(this.startAnimating, 17)
+},
+render: function() {
+    return (
+        &lt;div&gt;
+            &lt;Surface
+                width={500}
+                height={500}
+            &gt;
+                &lt;Shape d={this.getPath()} stroke="#000" strokeWidth={1} /&gt;
+            &lt;/Surface&gt;
+        &lt;/div&gt;
+    )
+}
+</code></pre>
+
+<p>});</p>
+
+<p>module.exports = Demo;
+```</p>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="VLmOOE" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/VLmOOE/'>VLmOOE</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+<h3>Simple Shapes</h3>
+
+<p>Now <code>react-art</code> already comes with a few different shapes but <code>paths.js</code> have a few built in as well, like <code>Rectangle</code> and <code>Bezier</code> curve.</p>
+
+<p><code>
+var rectangle = Rectangle({
+  top: 10,
+  bottom: 3,
+  left: -2,
+  right: 5
+});
+</code></p>
+
+<p>And how that looks is very similar to the previous example</p>
+
+<p>```
+var React = require(&lsquo;react&rsquo;),</p>
+
+<pre><code>ReactArt = require('react-art'),
+Surface = ReactArt.Surface,
+Group = ReactArt.Group,
+Shape = ReactArt.Shape,
+Rectangle = require('paths-js/rectangle'),
+Bezier = require('paths-js/bezier');
+</code></pre>
+
+<p>var Demo = React.createClass({</p>
+
+<pre><code>getPath: function() {
+    var rectangle = Rectangle({
+                  top: 10,
+                  bottom: 3,
+                  left: -2,
+                  right: 5
+                });
+
+    return rectangle.path.print();
+},
+getBez: function() {
+    var points = [[1, 50], [50, 100], [100, 3], [4, 0]];
+    var curve = Bezier({
+      points: points,
+      tension: 0.2
+    });
+
+    return curve.path.print();
+},
+render: function() {
+    return (
+        &lt;div&gt;
+            &lt;Surface
+                width={500}
+                height={500}
+            &gt;
+                &lt;Group x={100} y={100}&gt;
+                    &lt;Shape d={this.getPath()} stroke="#000" strokeWidth={1} /&gt;
+                &lt;/Group&gt;
+                &lt;Group x={200} y={200}&gt;
+                    &lt;Shape d={this.getBez()} stroke="#000" strokeWidth={1} /&gt;
+                &lt;/Group&gt;
+            &lt;/Surface&gt;
+        &lt;/div&gt;
+    )
+}
+</code></pre>
+
+<p>});</p>
+
+<p>module.exports = Demo;
+```</p>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="xGRNvW" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/xGRNvW/'>xGRNvW</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+<h3>Graphs</h3>
+
+<p>```
+var pie = Pie({
+  data: [</p>
+
+<pre><code>{ name: 'Italy', population: 59859996 },
+{ name: 'Mexico', population: 118395054 },
+{ name: 'France', population: 65806000 },
+{ name: 'Argentina', population: 40117096 },
+{ name: 'Japan', population: 127290000 }
+</code></pre>
+
+<p>  ],
+  accessor: function(x) { return x.population; },
+  compute: {</p>
+
+<pre><code>color: function(i) { return somePalette[i]; }
+</code></pre>
+
+<p>  },
+  center: [20, 15],
+  r: 30,
+  R: 50
+});
+```</p>
+
+<p>Some code of it in action</p>
+
+<p>```
+var React = require(&lsquo;react&rsquo;),</p>
+
+<pre><code>ReactArt = require('react-art'),
+Surface = ReactArt.Surface,
+Group = ReactArt.Group,
+Shape = ReactArt.Shape,
+Pie = require('paths-js/Pie');
+</code></pre>
+
+<p>var pie = Pie({
+  data: [</p>
+
+<pre><code>{ name: 'Italy', population: 59859996 },
+{ name: 'Mexico', population: 118395054 },
+{ name: 'France', population: 65806000 },
+{ name: 'Argentina', population: 40117096 },
+{ name: 'Japan', population: 127290000 }
+</code></pre>
+
+<p>  ],
+  accessor: function(x) { return x.population; },
+  compute: {</p>
+
+<pre><code>color: function(i) { return '#000'; }
+</code></pre>
+
+<p>  },
+  center: [20, 15],
+  r: 30,
+  R: 50
+});</p>
+
+<p>var Demo = React.createClass({</p>
+
+<pre><code>getPie: function() {
+    return pie.curves.map(function(shape) {
+        return (
+            &lt;Group&gt;
+                &lt;Text fill="#A6BD8A" font='bold 12px "Arial"' x={shape.sector.centroid[0] - 12} y={shape.sector.centroid[1]}&gt;{shape.item.name}&lt;/Text&gt;
+                &lt;Shape d={shape.sector.path.print()} stroke={shape.color} strokeWidth={1} /&gt;
+            &lt;/Group&gt;
+        )
+    })
+},
+render: function() {
+    return (
+        &lt;div&gt;
+            &lt;Surface
+                width={500}
+                height={500}
+            &gt;
+                &lt;Group x={50} y={45}&gt;
+                    {this.getPie()}
+                &lt;/Group&gt;
+            &lt;/Surface&gt;
+        &lt;/div&gt;
+    )
+}
+</code></pre>
+
+<p>});</p>
+
+<p>module.exports = Demo;
+```</p>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="waoLvB" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/waoLvB/'>waoLvB</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+<h3>Conclusion</h3>
+
+<p>These examples may look boring but they just show off a bit of the control you can have with <code>react-art</code> and a simple path generator.
+Not only that but because we aren&rsquo;t depending on the DOM in any case these examples should also work on <code>react-native</code>.
+Combined with some tweening you could make some very effective graphs that animate. That is a topic for another time.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[React Art Zooming and Dragging]]></title>
+    <link href="http://browniefed.com/blog/2015/05/20/react-art-zooming-and-dragging/"/>
+    <updated>2015-05-20T15:32:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/05/20/react-art-zooming-and-dragging</id>
+    <content type="html"><![CDATA[<p>React-art is awesome, you can easily embody the same concepts in React and your visualizations magically work.</p>
+
+<p>I personally have not done a ton of visualization, and the little I have done is mostly rendering graphs with D3.</p>
+
+<p>I&rsquo;ve been tasked with doing a dive for a difficult visualization. We ran into a scenario where we needed the ability to zoom and drag the canvas. D3 conveniently comes with zoom/drag behaviors. D3 integrates pretty well with react-art for doing a lot of the math/generating paths, however after watching <a href="https://www.youtube.com/watch?v=2ii1lEkIv1s">React.js Conf &ndash; Scalable Data Visualization</a> the things immediatley called out that D3 doesn&rsquo;t integrate with react-art are transitions and behaviors (zoom/drag).</p>
+
+<p>So immediately I&rsquo;m thinking about how to accomplish this. Do I need a global scaler that scales all of my coordinates for zooming? Do I need to manage a coordinate system and adjust all of my coordinates with the dragged X/Y offsets.</p>
+
+<p>I googled around, and a few people recommended using <code>canvasEl.getContext('2d').translate(x,y)</code>. I gave this a try with refs, that didn&rsquo;t work.</p>
+
+<p>It did lead me down the right path though. What if I was able to just utilize one global wrapper, and all of my other code could remain unchanged. The great thing about <code>Group</code> is that the coordinate system of the children gets reset, so <code>0,0</code> is now the <code>x,y</code> of the <code>Group</code></p>
+
+<p>Example:
+```
+<Group x={100} y={100}></p>
+
+<pre><code>&lt;Circle radius={10} stroke="#000" strokeWidth={3} x={20} y={20}/&gt;
+</code></pre>
+
+<p></Group>
+```</p>
+
+<!-- more -->
+
+
+<p>The coordinates of the circle on the whole canvas would actually be <code>120,120</code> but because of the group at <code>x = 100, y = 100</code> we just need to say <code>x = 20, y = 20</code>.</p>
+
+<p>Now that we know that our parent coordinate system effects our child coordinate systems lets prove our final theory that we can have one master parent to control zoom/drag.</p>
+
+<p>Lets start with a base renderer</p>
+
+<p>```
+//Assuming React, and react-art are included
+var ZoomDragCircle = React.createClass({</p>
+
+<pre><code>render: function() {
+    return (
+        &lt;Surface
+            width={viewportWidth}
+            height={viewportHeight}
+        &gt;
+        &lt;/Surface&gt; 
+    );
+}
+</code></pre>
+
+<p>})</p>
+
+<p>```</p>
+
+<p>We have a surface so the next lets get something rendering</p>
+
+<p>```
+var ZoomDragCircle = React.createClass({</p>
+
+<pre><code>render: function() {
+    return (
+        &lt;Surface
+            width={viewportWidth}
+            height={viewportHeight}
+        &gt;
+            &lt;Circle x={10} y={10} radius={5} fill="#000" /&gt;
+        &lt;/Surface&gt; 
+    );
+}
+</code></pre>
+
+<p>})</p>
+
+<p>```</p>
+
+<p>Lets add in our drag concept.</p>
+
+<p>```
+var ZoomDragCircle = React.createClass({</p>
+
+<pre><code>getInitialState: function() {
+    return {
+        x: 0,
+        y: 0
+    }
+},
+handleMouseDown: function() {
+    this.dragging = true;
+},
+handleMouseUp: function() {
+    this.dragging = false;
+},
+render: function() {
+    return (
+        &lt;div 
+                onMouseDown={this.handleMouseDown}
+                onMouseUp={this.handleMouseUp}
+        &gt;
+            &lt;Surface
+                width={viewportWidth}
+                height={viewportHeight}
+
+            &gt;
+                &lt;Group x={this.state.x} y={this.state.y}&gt;
+                    &lt;Circle x={10} y={10} radius={5} fill="#000" /&gt;
+                &lt;/Group&gt;
+            &lt;/Surface&gt; 
+        &lt;/div&gt;
+    );
+}
+</code></pre>
+
+<p>})</p>
+
+<p>```</p>
+
+<p>One thing you&rsquo;ll notice here is the wrapping div. The <code>react-art</code> <code>Surface</code> element doesn&rsquo;t have the <code>EventMixin</code> so it will not register mouse events. We could wrap our <code>Group</code> with another <code>Group</code> for dragging/zoom however an outer <code>div</code> is much easier for now.</p>
+
+<p>You also may notice that we have a slight issue. <code>onMouseUp</code> should be globally on the <code>document</code> since the <code>mouseup</code> event will only be fired if the <code>mouseup</code> happens on our wrapping div. For simplicity sake we&rsquo;ll keep it on the div.</p>
+
+<p>So we have a way to toggle whether we are dragging or not, and have the ability to adjust the <code>x,y</code> coords of a parent group. Lets actually implement drag.</p>
+
+<p>```
+var ZoomDragCircle = React.createClass({</p>
+
+<pre><code>getInitialState: function() {
+    return {
+        x: 0,
+        y: 0
+    }
+},
+componentDidMount: function() {
+    document.addEventListener('mousemove', this.handleMouseMove, false);
+},
+componentWillUnmount: function() {
+    //Don't forget to unlisten!
+    document.removeEventListener('mousemove', this.handleMouseMove, false);
+},
+handleMouseDown: function(e) {
+    this.dragging = true;
+    //Set coords
+      this.coords = {
+        x: e.pageX,
+        y: e.pageY
+      }
+},
+handleMouseUp: function() {
+    this.dragging = false;
+    this.coords = {};
+},
+handleMouseMove: function(e) {
+//If we are dragging
+  if (this.dragging) {
+      e.preventDefault();
+
+    //Get mouse change differential
+    var xDiff = this.coords.x - e.pageX,
+        yDiff = this.coords.y - e.pageY;
+
+    //Update to our new coordinates
+        this.coords.x = e.pageX;
+        this.coords.y = e.pageY;
+    //Adjust our x,y based upon the x/y diff from before
+    var x = this.state.x - xDiff,       
+        y = this.state.y - yDiff;
+
+    //Re-render
+    this.setState(this.state);  
+  }
+
+},
+render: function() {
+    return (
+        &lt;div 
+                onMouseDown={this.handleMouseDown}
+                onMouseUp={this.handleMouseUp}
+        &gt;
+            &lt;Surface
+                width={viewportWidth}
+                height={viewportHeight}
+
+            &gt;
+                &lt;Group x={this.state.x} y={this.state.y}&gt;
+                    &lt;Circle x={10} y={10} radius={5} fill="#000" /&gt;
+                &lt;/Group&gt;
+            &lt;/Surface&gt; 
+        &lt;/div&gt;
+    );
+}
+</code></pre>
+
+<p>})</p>
+
+<p>```</p>
+
+<p>Now if you spin this up you&rsquo;ll see we can drag around the canvas and our <code>Circle</code> will stay the same place.
+Lets do zoom now.</p>
+
+<p>To understand what we&rsquo;re about to do the Art library will translate our <code>x,y</code> coords to a <code>matrix</code> that is set on the <code>transform</code> attribute of the svg <code>g</code> element or in the canvas case translated to the appropriate coordinates.</p>
+
+<p>The <code>matrix</code> system can be read about here on <a href="https://developer.mozilla.org/en-US/docs/Web/API/SVGMatrix">MDN</a>. Ultimately it allows us to modify the coordinate system (<code>x,y</code>) and additionally the scale.</p>
+
+<p>Think of scale as a default multiplier times the size of stuff.</p>
+
+<p>So a scale of <code>1</code> means if something is a width of <code>10</code> then it would still be 10.
+But If we set our scale to <code>2</code> and the same width of <code>10</code> then <code>10*2 = 20</code>. The item would appear larger at 20 pixels.</p>
+
+<p>This is the rough idea behind scale, however we aren&rsquo;t adjusting widths the scale is actually effecting the <code>x,y</code> coordinates you are setting. You can define <code>scaleX</code> and <code>scaleY</code> to be different numbers causing your visual elements to appear blurred/skewed.</p>
+
+<p>```
+var ZoomDragCircle = React.createClass({</p>
+
+<pre><code>getInitialState: function() {
+    return {
+        x: 0,
+        y: 0,
+        scale: 1
+    }
+},
+componentDidMount: function() {
+    document.addEventListener('mousemove', this.handleMouseMove, false);
+},
+componentWillUnmount: function() {
+    //Don't forget to unlisten!
+    document.removeEventListener('mousemove', this.handleMouseMove, false);
+},
+handleMouseDown: function(e) {
+    this.dragging = true;
+    //Set coords
+      this.coords = {
+        x: e.pageX,
+        y: e.pageY
+      }
+},
+handleMouseUp: function() {
+    this.dragging = false;
+    this.coords = {};
+},
+handleMouseMove: function(e) {
+//If we are dragging
+  if (!this.dragging) {
+    return;
+  }
+      e.preventDefault();
+
+    //Get mouse change differential
+    var xDiff = this.coords.x - e.pageX,
+        yDiff = this.coords.y - e.pageY;
+
+    //Update to our new coordinates
+        this.coords.x = e.pageX;
+        this.coords.y = e.pageY;
+    //Adjust our x,y based upon the x/y diff from before
+    var x = this.state.x - xDiff,       
+        y = this.state.y - yDiff;
+
+    //Re-render
+    this.setState(this.state);  
+
+},
+//So we can handle the mousewheel returning -0 or 0
+isNegative: function (n) {
+  return ((n = +n) || 1 / n) &lt; 0;
+},
+handleMouseWheel: function(e) {
+  var ZOOM_STEP = .03;
+
+    //require the shift key to be pressed to scroll
+    if (!e.shiftKey) {
+        return;
+    }
+  e.preventDefault();
+  var direction = (this.isNegative(e.deltaX) &amp;&amp;  this.isNegative(e.deltaY) ) ? 'down' : 'up';
+
+  if (direction == 'up') {
+    this.state.scale += ZOOM_STEP;
+  } else {
+    this.state.scale -= ZOOM_STEP;
+  }
+
+  this.state.scale = this.state.scale &lt; 0 ? 0 : this.state.scale;
+
+  this.setState(this.state);
+},
+render: function() {
+    return (
+        &lt;div 
+            onMouseDown={this.handleMouseDown}
+            onMouseUp={this.handleMouseUp}
+            onWheel={this.handleMouseWheel}
+        &gt;
+            &lt;Surface
+                width={viewportWidth}
+                height={viewportHeight}
+
+            &gt;
+                &lt;Group 
+                    x={this.state.x} 
+                    y={this.state.y}
+                    scaleX={this.state.scale}
+                    scaleY={this.state.scale}
+                &gt;
+                    &lt;Circle x={10} y={10} radius={5} fill="#000" /&gt;
+                &lt;/Group&gt;
+            &lt;/Surface&gt; 
+        &lt;/div&gt;
+    );
+}
+</code></pre>
+
+<p>})</p>
+
+<p>```</p>
+
+<p>Full working demo, hold shift and use your mouse wheel/track pad to zoom or just grab and drag around.</p>
+
+<p data-height="624" data-theme-id="0" data-slug-hash="jPMMao" data-default-tab="result" data-user="browniefed" class='codepen'>See the Pen <a href='http://codepen.io/browniefed/pen/jPMMao/'>jPMMao</a> by Jason Brown (<a href='http://codepen.io/browniefed'>@browniefed</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+
+
+<script async src="http://browniefed.com//assets.codepen.io/assets/embed/ei.js"></script>
+
+
+<p>Now we should be able to zoom in/zoom out while holding shift key + using your scroll wheel.
+If you want a predictable scale you can add some <code>+</code> and <code>-</code> buttons somwhere and just increment <code>this.state.scale</code></p>
+
+<p>I&rsquo;m hoping to do more write ups and examples with react-art. The great thing is that you can render react-art with react-native. With appropriate abstractions you could possibly have the same visualizations on the web as you do on native.</p>
+]]></content>
+  </entry>
+  
+</feed>

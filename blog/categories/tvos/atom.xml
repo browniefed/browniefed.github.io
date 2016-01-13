@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: tvos | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/tvos/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React Native - Recreating the Apple TV Icons]]></title>
+    <link href="http://browniefed.com/blog/2015/10/23/react-native-recreating-the-apple-tv-icons/"/>
+    <updated>2015-10-23T20:53:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/10/23/react-native-recreating-the-apple-tv-icons</id>
+    <content type="html"><![CDATA[<p>I had attempted to recreate this in the past but could never come up with anything elegant. I saw this post not too long ago <a href="https://medium.com/@nashvail/recreating-the-apple-tv-icons-in-javascript-and-css-eec306d41617">Recreating the Apple TV icons in JavaScript and CSS</a> by <a href="https://twitter.com/NashVail">Nash Vail</a>.</p>
+
+<p>He then went on to create a <a href="https://github.com/nashvail/ATVIcons">jQuery plugin</a> to accomplish the effect. After reading the source and viewing the demos, it turns out re-making this in React Native is trivial.</p>
+
+<p>So read the article, check out the <a href="http://nashvail.me/ATVIcons/">live demo</a> here and then we&rsquo;ll continue on.</p>
+
+<h2>What are we building</h2>
+
+<p><img class="<a" src="href="http://i.imgur.com/3TLQtmE.gif">http://i.imgur.com/3TLQtmE.gif</a>" title="No 3D glasses required" ></p>
+
+<!-- more -->
+
+
+<h2>Setup</h2>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var {
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+  PanResponder,
+  Image,
+  Animated
+} = React;</p>
+
+<p>var width = 280;
+var height = 150;</p>
+
+<p>```</p>
+
+<p>Yes, Animated again. Can you believe I almost wrote this tutorial with out it? I had a <code>setState</code> implementation but I didn&rsquo;t take the lazy, non-performant way out, I built it with performance in mind! No thanks necessary, it would have weighed on my conscience had I released an animated tutorial using <code>setState</code>.</p>
+
+<p>The card we&rsquo;re animating is <code>280</code> by <code>150</code>. It&rsquo;ll play into our calculations. This could be made dynamic though.</p>
+
+<h2>Defaults</h2>
+
+<p>```
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  maxRotation: 12,
+  maxTranslation: 6,
+  perspective: 800
+};
+</code></pre>
+
+<p>  },
+<code>``
+In our</code>getInitialState<code>we'll set up some defaults. We'll set our</code>maxRotation<code>to 12, this means the card can only rotate a maximum of 12 degrees.</code>maxTranslation` is the same thing, it can only shift the card a maximum of 6.</p>
+
+<p>You can read more about <code>perspective</code> here <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/perspective">https://developer.mozilla.org/en-US/docs/Web/CSS/perspective</a>.</p>
+
+<p><code>
+The perspective CSS property determines the distance between the z=0 plane and the user in order to give to the 3D-positioned element some perspective
+</code></p>
+
+<h2>Borrowed Function</h2>
+
+<p><code>
+function calculatePercentage(offset, dimension) {
+  return ((-2 / dimension) * offset) + 1;
+}
+</code></p>
+
+<p>This is the magic formula. Based upon what we pass in here it will spit out a value between <code>-1</code> and <code>1</code>. We use this to multiply by our <code>maxRotation</code> or <code>maxTranslation</code> to get the degree to apply. We won&rsquo;t do the multiplication though, we&rsquo;ll let <code>Animated</code> take care of that.</p>
+
+<h2>PanResponder and Calculations</h2>
+
+<p>```
+  componentWillMount: function() {</p>
+
+<pre><code>this._animations = {
+  xRotationPercentage: new Animated.Value(0),
+  yRotationPercentage: new Animated.Value(0),
+  xTranslationPercentage: new Animated.Value(0),
+  yTranslationPercentage: new Animated.Value(0)
+}
+
+this._panResponder = PanResponder.create({
+  onStartShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onStartShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onPanResponderMove: (e, gestureState) =&gt; {
+    e.persist();
+    var {
+      locationX: x,
+      locationY: y
+    } = e.nativeEvent;
+
+    this._animations.xRotationPercentage.setValue(calculatePercentage(y, height));
+    this._animations.yRotationPercentage.setValue(calculatePercentage(x, width) * -1);
+    this._animations.xTranslationPercentage.setValue(calculatePercentage(x, width));
+    this._animations.yTranslationPercentage.setValue(calculatePercentage(y, height));
+  }
+})
+</code></pre>
+
+<p>  },
+<code>``
+Alright there is sort of a lot here but not really. We setup an object to hold our animations called</code>this._animations<code>. We then setup our</code>PanResponder<code>defaults, and of course the one we care about is</code>onPanResponderMove`.</p>
+
+<p>Here when it moves we get the <code>locationX</code> and <code>locationY</code> which is the <code>x/y</code> values relative to the <code>component</code> we attach it too.</p>
+
+<p>Finally we run our calculations and call <code>setValue</code> on each <code>Animated.Value</code>. This is basically what <code>Animated.event</code> is doing under the hood for us, but instead we are performing calculations and calling <code>setValue</code> ourselves.</p>
+
+<h2>Render-me-timbers</h2>
+
+<p>```
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;View style= {...this._panResponder.panHandlers}&gt;
+      &lt;Card  
+          style=
+          stackingFactor={1}
+          {...this.state}
+          {...this._animations}
+      &gt;
+        &lt;Card 
+          style=
+          stackingFactor={1.4}
+          {...this.state}
+          {...this._animations}
+        &gt;
+          &lt;Card
+            style= 
+            stackingFactor={1.8}
+            {...this.state}
+            {...this._animations}
+          /&gt;
+        &lt;/Card&gt;
+      &lt;/Card&gt;
+    &lt;/View&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+<code>``
+We'll get to the card component in a second. We attach our</code>PanResponder<code>we created to the outer wrap object. Then we nest each card. This is crucial otherwise our layer will 3D transform behind the red layer.
+So this is forcing the</code>Card` to sit in front of the previous card no matter what. I don&rsquo;t know if this is true, but it was happening to me and this is how I fixed it.</p>
+
+<p>We use a prop called <code>stackingFactor</code>. All this does is slightly amplify that cards movements more causing a slight offset and the 3D effect.</p>
+
+<p>```
+var Card = React.createClass({
+  componentWillMount: function() {</p>
+
+<p>  var translateMax = (this.props.maxTranslation * this.props.stackingFactor);
+  var rotateMax = this.props.maxRotation;</p>
+
+<pre><code>this._xRotation = this.props.xRotationPercentage.interpolate({
+  inputRange: [-1, 1],
+  outputRange: [ (rotateMax * -1) + 'deg', rotateMax + 'deg'],
+  extrapolate: 'clamp'
+});
+
+this._yRotation = this.props.yRotationPercentage.interpolate({
+  inputRange: [-1, 1],
+  outputRange: [ (rotateMax * -1) + 'deg', rotateMax + 'deg'],
+  extrapolate: 'clamp'
+});
+
+this._translateX = this.props.xTranslationPercentage.interpolate({
+  inputRange: [-1, 1],
+  outputRange: [(translateMax * -1), translateMax],
+  extrapolate: 'clamp'
+})
+
+this._translateY = this.props.yTranslationPercentage.interpolate({
+  inputRange: [-1, 1],
+  outputRange: [(translateMax * -1), translateMax],
+  extrapolate: 'clamp'
+})
+</code></pre>
+
+<p>  },</p>
+
+<p>  getTransform:function() {</p>
+
+<pre><code>return [
+  {perspective: this.props.perspective},
+  {rotateX: this._xRotation},
+  {rotateY: this._yRotation},
+  {translateX: this._translateX},
+  {translateY: this._translateY},
+]
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;Animated.View 
+    {...this.props} 
+    style={[this.props.style, {transform: this.getTransform()}]}
+  &gt;
+    {this.props.children}
+  &lt;/Animated.View&gt;
+)
+</code></pre>
+
+<p>  }
+})</p>
+
+<p>```</p>
+
+<p>That&rsquo;s a lot of <code>interpolate</code>! Well not really they&rsquo;re mostly all doing the same thing here. Remember when I said our calculations up above could return a percentage between <code>-1</code> and <code>1</code>.</p>
+
+<p>Well all we have to do is specify that as our <code>inputRange</code> and then our <code>outputRange</code> is just whatever our small <code>maxRotation</code> or <code>maxTranslation</code>. <code>Animated</code> will take care of all the multiplication for us! Thanks Animated!</p>
+
+<p>The <code>extrapolate: 'clamp'</code> is EXTREMELY important. Without it the values will go past their maximums. This can be accomplished since <code>locationX</code> and <code>locationY</code> could go beyond the <code>width</code> and <code>height</code> of the container. Long story short, <code>extrapolate: 'clamp'</code> your interpolations!</p>
+
+<p>You can see how the <code>translateMax</code> is affected when our <code>stackingFactor</code> is larger.</p>
+
+<p><code>
+  var translateMax = (this.props.maxTranslation * this.props.stackingFactor);
+</code></p>
+
+<p>Our <code>getTransform</code> just maps the appropriate animated value to it&rsquo;s transform. Also so our <code>Card</code> can be nested we have to specify <code>{this.props.children}</code>.</p>
+
+<h2>Look Ma' no setState</h2>
+
+<p>That&rsquo;s right. We&rsquo;ve used all <code>Animated</code> here. No diffs are happening to cause re-render, so our animations should be quite performant.</p>
+
+<h2>Done</h2>
+
+<p>This is currently only supported on iOS but appropriate support for Android is being added here <a href="https://github.com/facebook/react-native/pull/3522">https://github.com/facebook/react-native/pull/3522</a></p>
+
+<h3>As always live code <a href="https://rnplay.org/apps/qLNwNw">https://rnplay.org/apps/qLNwNw</a></h3>
+
+<p><img class="<a" src="href="http://i.imgur.com/3TLQtmE.gif">http://i.imgur.com/3TLQtmE.gif</a>" title="Cheaper than going to the movies" ></p>
+
+<h2>Full Code</h2>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);
+var {
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+  PanResponder,
+  Image,
+  Animated
+} = React;</p>
+
+<p>var width = 280;
+var height = 150;</p>
+
+<p>function calculatePercentage(offset, dimension) {
+  return ((-2 / dimension) * offset) + 1;
+}</p>
+
+<p>var AppleTV = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  maxRotation: 12,
+  maxTranslation: 6,
+  perspective: 800
+};
+</code></pre>
+
+<p>  },
+  componentWillMount: function() {</p>
+
+<pre><code>this._animations = {
+  xRotationPercentage: new Animated.Value(0),
+  yRotationPercentage: new Animated.Value(0),
+  xTranslationPercentage: new Animated.Value(0),
+  yTranslationPercentage: new Animated.Value(0)
+}
+
+this._panResponder = PanResponder.create({
+  onStartShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onStartShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponder: (evt, gestureState) =&gt; true,
+  onMoveShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+  onPanResponderMove: (e, gestureState) =&gt; {
+    e.persist();
+    var {
+      locationX: x,
+      locationY: y
+    } = e.nativeEvent;
+
+    this._animations.xRotationPercentage.setValue(calculatePercentage(y, height));
+    this._animations.yRotationPercentage.setValue(calculatePercentage(x, width) * -1);
+    this._animations.xTranslationPercentage.setValue(calculatePercentage(x, width));
+    this._animations.yTranslationPercentage.setValue(calculatePercentage(y, height));
+  }
+})
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;View style= {...this._panResponder.panHandlers}&gt;
+      &lt;Card  
+          style=
+          stackingFactor={1}
+          {...this.state}
+          {...this._animations}
+      &gt;
+        &lt;Card 
+          style=
+          stackingFactor={1.4}
+          {...this.state}
+          {...this._animations}
+        &gt;
+          &lt;Card
+            style= 
+            stackingFactor={1.8}
+            {...this.state}
+            {...this._animations}
+          /&gt;
+        &lt;/Card&gt;
+      &lt;/Card&gt;
+    &lt;/View&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var Card = React.createClass({
+  componentWillMount: function() {</p>
+
+<p>  var translateMax = (this.props.maxTranslation * this.props.stackingFactor);
+  var rotateMax = this.props.maxRotation;</p>
+
+<pre><code>this._xRotation = this.props.xRotationPercentage.interpolate({
+  inputRange: [-1, 1],
+  outputRange: [ (rotateMax * -1) + 'deg', rotateMax + 'deg'],
+  extrapolate: 'clamp'
+});
+
+this._yRotation = this.props.yRotationPercentage.interpolate({
+  inputRange: [-1, 1],
+  outputRange: [ (rotateMax * -1) + 'deg', rotateMax + 'deg'],
+  extrapolate: 'clamp'
+});
+
+this._translateX = this.props.xTranslationPercentage.interpolate({
+  inputRange: [-1, 1],
+  outputRange: [(translateMax * -1), translateMax],
+  extrapolate: 'clamp'
+})
+
+this._translateY = this.props.yTranslationPercentage.interpolate({
+  inputRange: [-1, 1],
+  outputRange: [(translateMax * -1), translateMax],
+  extrapolate: 'clamp'
+})
+</code></pre>
+
+<p>  },</p>
+
+<p>  getTransform:function() {</p>
+
+<pre><code>return [
+  {perspective: this.props.perspective},
+  {rotateX: this._xRotation},
+  {rotateY: this._yRotation},
+  {translateX: this._translateX},
+  {translateY: this._translateY},
+]
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+  &lt;Animated.View 
+    {...this.props} 
+    style={[this.props.style, {transform: this.getTransform()}]}
+  &gt;
+    {this.props.children}
+  &lt;/Animated.View&gt;
+)
+</code></pre>
+
+<p>  }
+})</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+justifyContent: 'center',
+alignItems: 'center'
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>AppRegistry.registerComponent(&lsquo;rn_dragtoshow&rsquo;, () => AppleTV);
+```</p>
+]]></content>
+  </entry>
+  
+</feed>

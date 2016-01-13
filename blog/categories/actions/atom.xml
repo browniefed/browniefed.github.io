@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: actions | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/actions/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React-native press and hold button actions]]></title>
+    <link href="http://browniefed.com/blog/2015/08/22/react-native-press-and-hold-button-actions/"/>
+    <updated>2015-08-22T11:55:00-07:00</updated>
+    <id>http://browniefed.com/blog/2015/08/22/react-native-press-and-hold-button-actions</id>
+    <content type="html"><![CDATA[<h1>Introduction</h1>
+
+<p>Another common interaction is the press and hold to fire an action. Sometimes it&rsquo;s delete, sometimes it&rsquo;s save, but whatever it is you want to provide feedback to your user. React Native ships with a few Touchable components like <code>TouchableOpacity</code>, <code>TouchableHighlight</code> and also <code>TouchableBounce</code> that provide feedback to users but we&rsquo;ll build a button that fills up over a set period of time then triggers an action.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/aVeaXMc.gif">http://i.imgur.com/aVeaXMc.gif</a>" title="Final Press And Hold" ></p>
+
+<!-- more -->
+
+
+<h1>Setup</h1>
+
+<p>Lets do some code setup.</p>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  Animated,
+  View,
+  Text,
+  TouchableWithoutFeedback
+} = React;</p>
+
+<p>var ACTION_TIMER = 400;
+var COLORS = [&lsquo;rgb(255,255,255)&rsquo;, &lsquo;rgb(111,235,62)&rsquo;];
+```</p>
+
+<p>We&rsquo;ll pull in the normal components from React Native and additionally setup some variables to use later. <code>ACTION_TIMER</code> will be how long the animation will take before it fires the action, the <code>COLORS</code> will be the start and end colors. This animtion will transition from white to a brightish green. Remember that animated interpolations do not work with hex.</p>
+
+<h1>Base Component With StyleSheet</h1>
+
+<p>```
+var AnimatedButtonPress = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    textComplete: ''
+};
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+   &lt;View style={styles.container}&gt;
+        &lt;TouchableWithoutFeedback&gt;
+            &lt;View style={styles.button} &gt;
+                &lt;Animated.View style={styles.bgFill} /&gt;
+                &lt;Text style={styles.text}&gt;Press And Hold Me&lt;/Text&gt;
+            &lt;/View&gt;
+        &lt;/TouchableWithoutFeedback&gt;
+        &lt;View&gt;
+            &lt;Text&gt;{this.state.textComplete}&lt;/Text&gt;
+        &lt;/View&gt;
+   &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+flexDirection: 'column',
+alignItems: 'center',
+justifyContent: 'center'
+</code></pre>
+
+<p>  },
+  button: {</p>
+
+<pre><code>padding: 10,
+borderWidth: 3,
+borderColor: '#111'
+</code></pre>
+
+<p>  },
+  text: {</p>
+
+<pre><code>backgroundColor: 'transparent',
+color: '#111'
+</code></pre>
+
+<p>  },
+  bgFill: {</p>
+
+<pre><code>position: 'absolute',
+top: 0,
+left: 0
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>To start out, for this to work we obviously don&rsquo;t need the <code>textComplete</code> but that&rsquo;s just going to be our visual feedback to let us know when the action completes.</p>
+
+<p>We setup a <code>TouchableWithoutFeedback</code> so we can get access to a few press handlers without directly using the <code>PanResponder</code>. Next we create a wrapping button view, add some text, and most importantly we create an <code>Animated.View</code>.</p>
+
+<p>We set it to be position absolute so it doesn&rsquo;t effect layout and sits behind the text, and set it to the <code>top: 0</code> and <code>left: 0</code> so it is position at the furthest top and left of the component. I&rsquo;ll explain later why we don&rsquo;t set <code>bottom:0</code> here as well.</p>
+
+<h1>Create The Animated</h1>
+
+<p>```
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    pressAction: new Animated.Value(0),
+    textComplete: ''
+};
+</code></pre>
+
+<p>  },
+  componentWillMount: function() {</p>
+
+<pre><code>this._value = 0;
+this.state.pressAction.addListener((v) =&gt; this._value = v.value);
+</code></pre>
+
+<p>  },
+<code>``
+UPDATE:</code>getAnimatedValue` is no longer accessable in the Animated API.
+We need to attach a listener so that we can save off the value to use later. This allows us to track the value of the animation so we can confirm the user has held it for an appropriate length of time.</p>
+
+<h1>Handle The Presses</h1>
+
+<p>```
+handlePressIn: function() {</p>
+
+<pre><code>Animated.timing(this.state.pressAction, {
+    duration: ACTION_TIMER,
+    toValue: 1
+}).start(this.animationActionComplete);
+</code></pre>
+
+<p>},
+handlePressOut: function() {</p>
+
+<pre><code>Animated.timing(this.state.pressAction, {
+    duration: this._value * ACTION_TIMER,
+    toValue: 0
+}).start();
+</code></pre>
+
+<p>},
+animationActionComplete: function() {</p>
+
+<pre><code>var message = '';
+if (this._value === 1) {
+    message = 'You held it long enough to fire the action!';
+}
+this.setState({
+    textComplete: message
+});
+</code></pre>
+
+<p>},
+render: function() {</p>
+
+<pre><code>return (
+   &lt;View style={styles.container}&gt;
+        &lt;TouchableWithoutFeedback 
+            onPressIn={this.handlePressIn} 
+            onPressOut={this.handlePressOut}
+        &gt;
+            &lt;View style={styles.button} &gt;
+                &lt;Animated.View style={styles.bgFill} /&gt;
+                &lt;Text style={styles.text}&gt;Press And Hold Me&lt;/Text&gt;
+            &lt;/View&gt;
+        &lt;/TouchableWithoutFeedback&gt;
+        &lt;View&gt;
+            &lt;Text&gt;{this.state.textComplete}&lt;/Text&gt;
+        &lt;/View&gt;
+   &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>Here we use the <code>onPressIn</code> and <code>onPressOut</code> callbacks. These will trigger timed animations. We&rsquo;ll use the <code>ACTION_TIMER</code> variable we setup at the top, and <code>onPressIn</code> we&rsquo;ll animate our <code>pressAction</code> animated value to <code>1</code> over <code>400ms</code>.</p>
+
+<p><code>onPressOut</code> we&rsquo;ll animate it from <code>1</code> back down to <code>0</code>. However if a user lifts their finger before the <code>400ms</code> threshold is reached then it will animated down from that value. For example holding it down for <code>200ms</code> would mean our <code>pressAction</code> animated value was at <code>.5</code> so it would then animated down from <code>.5</code> to <code>0</code> over <code>400ms</code>.</p>
+
+<p>Animating down over the full <code>400ms</code> is not ideal, so what we&rsquo;ll do is get the current animated value with <code>this._value</code> and multiply it times the full <code>ACTION_TIMER</code> which means out <code>.5</code> animated value would yield us the correct <code>200ms</code> to transition back to <code>0</code>.</p>
+
+<p>Finally we pass in a callback to our <code>start</code> of <code>handlePressIn</code> which if our <code>pressAction</code> animated value gets to <code>1</code> aka being compelte then we will tell the user their action happened.</p>
+
+<h1>Measure the button</h1>
+
+<p>Due to absolute layout we&rsquo;ll need to use specific widths and heights. That means we&rsquo;ll have to get the layout of the button so we know how much to fill.</p>
+
+<p>```
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    pressAction: new Animated.Value(0),
+    textComplete: '',
+    buttonWidth: 0,
+    buttonHeight: 0
+};
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>We&rsquo;ll setup the <code>buttonWidth</code> and <code>buttonHeight</code> on our initial state.</p>
+
+<p>```
+  getButtonWidthLayout: function(e) {</p>
+
+<pre><code>this.setState({
+    buttonWidth: e.nativeEvent.layout.width - 6,
+    buttonHeight: e.nativeEvent.layout.height - 6
+});
+</code></pre>
+
+<p>  },</p>
+
+<p>  render: function() {</p>
+
+<pre><code>return (
+   &lt;View style={styles.container}&gt;
+        &lt;TouchableWithoutFeedback 
+            onPressIn={this.handlePressIn} 
+            onPressOut={this.handlePressOut}
+        &gt;
+            &lt;View style={styles.button} onLayout={this.getButtonWidthLayout}&gt;
+                &lt;Animated.View style={styles.bgFill} /&gt;
+                &lt;Text style={styles.text}&gt;Press And Hold Me&lt;/Text&gt;
+            &lt;/View&gt;
+        &lt;/TouchableWithoutFeedback&gt;
+        &lt;View&gt;
+            &lt;Text&gt;{this.state.textComplete}&lt;/Text&gt;
+        &lt;/View&gt;
+   &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>We&rsquo;ll use the <code>onLayout</code> callback for views and set the state of our buttons width and height. Why can&rsquo;t we use <code>bottom: 0</code>? Well because of the padding we set on the button it would only show the animated background where the text ends, so we&rsquo;ll explicitily set the height.</p>
+
+<p>Why the <code>-6</code>? Well the same things happens for <code>top: 0</code> and <code>left: 0</code>. It will sit inside the border, so if we animated to the full width and set the full height then it would extend the progress bar past the borders which we don&rsquo;t want.</p>
+
+<h1>Aniamte The Background and Width of our Fill</h1>
+
+<p>```
+  getProgressStyles: function() {</p>
+
+<pre><code>var width = this.state.pressAction.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, this.state.buttonWidth]
+});
+var bgColor = this.state.pressAction.interpolate({
+    inputRange: [0, 1],
+    outputRange: COLORS
+})
+return {
+    width: width,
+    height: this.state.buttonHeight,
+    backgroundColor: bgColor
+}
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+   &lt;View style={styles.container}&gt;
+        &lt;TouchableWithoutFeedback 
+            onPressIn={this.handlePressIn} 
+            onPressOut={this.handlePressOut}
+        &gt;
+            &lt;View style={styles.button} onLayout={this.getButtonWidthLayout}&gt;
+                &lt;Animated.View style={[styles.bgFill, this.getProgressStyles()]} /&gt;
+                &lt;Text style={styles.text}&gt;Press And Hold Me&lt;/Text&gt;
+            &lt;/View&gt;
+        &lt;/TouchableWithoutFeedback&gt;
+        &lt;View&gt;
+            &lt;Text&gt;{this.state.textComplete}&lt;/Text&gt;
+        &lt;/View&gt;
+   &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+<code>``
+We use the array syntax for style to combine our pre-set styles and our generated styles. We call</code>getProgressStyles<code>to return a new object with our dynamic styling. In our</code>getProgressStyles<code>we'll use the</code>interpolate<code>function on our</code>pressAction` animated value to setup animated values.</p>
+
+<p>So for the width we&rsquo;ll take an input of <code>[0,1]</code> and it will interpolate from <code>0</code> to the width of our button that we set in the <code>getButtonWidthLayout</code>.</p>
+
+<p>Same thing goes for the <code>bgColor</code> interpolation. It takes the same <code>[0,1]</code> inputRange and interpolates to the <code>rgb</code> colors we setup in the top.</p>
+
+<p>Finally we return our new style object with our animated values, and also the heigth of the button (minus the 6 border pixels).</p>
+
+<h1>Final</h1>
+
+<p>And just like that you have the ability to press and hold a button and execute an action when it&rsquo;s done, all while providing feedback to the user.</p>
+
+<p>As always checkout the live code <a href="https://rnplay.org/apps/umzv6g">https://rnplay.org/apps/umzv6g</a>.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/aVeaXMc.gif">http://i.imgur.com/aVeaXMc.gif</a>" title="Final Press And Hold" ></p>
+
+<h1>Final Code</h1>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  Animated,
+  View,
+  Text,
+  TouchableWithoutFeedback
+} = React;</p>
+
+<p>var ACTION_TIMER = 400;
+var COLORS = [&lsquo;rgb(255,255,255)&rsquo;, &lsquo;rgb(111,235,62)&rsquo;];</p>
+
+<p>var AnimatedButtonPress = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+    pressAction: new Animated.Value(0),
+    textComplete: '',
+    buttonWidth: 0,
+    buttonHeight: 0
+};
+</code></pre>
+
+<p>  },
+  componentWillMount: function() {</p>
+
+<pre><code>this._value = 0;
+this.state.pressAction.addListener((v) =&gt; this._value = v.value);
+</code></pre>
+
+<p>  },
+  handlePressIn: function() {</p>
+
+<pre><code>Animated.timing(this.state.pressAction, {
+    duration: ACTION_TIMER,
+    toValue: 1
+}).start(this.animationActionComplete);
+</code></pre>
+
+<p>  },
+  handlePressOut: function() {</p>
+
+<pre><code>Animated.timing(this.state.pressAction, {
+        duration: this._value * ACTION_TIMER,
+        toValue: 0
+}).start();
+</code></pre>
+
+<p>  },
+  animationActionComplete: function() {</p>
+
+<pre><code>var message = '';
+if (this._value === 1) {
+    message = 'You held it long enough to fire the action!';
+}
+this.setState({
+    textComplete: message
+});
+</code></pre>
+
+<p>  },
+  getButtonWidthLayout: function(e) {</p>
+
+<pre><code>this.setState({
+    buttonWidth: e.nativeEvent.layout.width - 6,
+    buttonHeight: e.nativeEvent.layout.height - 6
+});
+</code></pre>
+
+<p>  },
+  getProgressStyles: function() {</p>
+
+<pre><code>var width = this.state.pressAction.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, this.state.buttonWidth]
+});
+var bgColor = this.state.pressAction.interpolate({
+    inputRange: [0, 1],
+    outputRange: COLORS
+})
+return {
+    width: width,
+    height: this.state.buttonHeight,
+    backgroundColor: bgColor
+}
+</code></pre>
+
+<p>  },
+  render: function() {</p>
+
+<pre><code>return (
+   &lt;View style={styles.container}&gt;
+        &lt;TouchableWithoutFeedback 
+            onPressIn={this.handlePressIn} 
+            onPressOut={this.handlePressOut}
+        &gt;
+            &lt;View style={styles.button} onLayout={this.getButtonWidthLayout}&gt;
+                &lt;Animated.View style={[styles.bgFill, this.getProgressStyles()]} /&gt;
+                &lt;Text style={styles.text}&gt;Press And Hold Me&lt;/Text&gt;
+            &lt;/View&gt;
+        &lt;/TouchableWithoutFeedback&gt;
+        &lt;View&gt;
+            &lt;Text&gt;{this.state.textComplete}&lt;/Text&gt;
+        &lt;/View&gt;
+   &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>var styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1,
+flexDirection: 'column',
+alignItems: 'center',
+justifyContent: 'center'
+</code></pre>
+
+<p>  },
+  button: {</p>
+
+<pre><code>padding: 10,
+borderWidth: 3,
+borderColor: '#111'
+</code></pre>
+
+<p>  },
+  text: {</p>
+
+<pre><code>backgroundColor: 'transparent',
+color: '#111'
+</code></pre>
+
+<p>  },
+  bgFill: {</p>
+
+<pre><code>position: 'absolute',
+top: 0,
+left: 0
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>AppRegistry.registerComponent(&lsquo;SampleApp&rsquo;, () => AnimatedButtonPress);</p>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>

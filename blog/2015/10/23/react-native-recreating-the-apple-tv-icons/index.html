@@ -1,0 +1,852 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="A blog of JavaScript techniques and tutorials. Including React, React Native, and anything else I feel like writing about." name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+
+
+    
+        <meta property="fb:app_id" content="1662675577336433" />
+        <meta property="og:title" content="React Native - Recreating the Apple TV Icons" />
+        <meta property="og:site_name" content="JavaScript Without Grammar" />
+        <meta property="og:url" content="http://browniefed.com/blog/2015/10/23/react-native-recreating-the-apple-tv-icons/" />
+        <meta property="og:description" content="" />
+        <meta property="og:image" content="http://i.imgur.com/cfptS31.png" />
+    
+
+        
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:site" content="browniefed" />
+        <meta property="twitter:url" content="http://browniefed.com/blog/2015/10/23/react-native-recreating-the-apple-tv-icons/" />
+        <meta property="twitter:title" content="React Native - Recreating the Apple TV Icons" />
+        <meta property="twitter:description" content="" />
+        <meta property="twitter:creator" content="browniefed" />
+        <meta property="twitter:image:src" content="http://i.imgur.com/cfptS31.png" />
+        
+
+
+		
+        <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
+
+		<title>React Native - Recreating the Apple TV Icons &mdash; JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.zclip.min.js"></script>
+
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+				
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="mailto:browniefed@gmail.com">Email</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF _layouts/post.html -->
+
+<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2015/10/23/react-native-recreating-the-apple-tv-icons/">React Native - Recreating the Apple TV Icons</a></h1>
+		<time>23 October 2015</time>
+	</header>
+	<div class="content">
+		
+            <div class="entry-content"><p>I had attempted to recreate this in the past but could never come up with anything elegant. I saw this post not too long ago <a href="https://medium.com/@nashvail/recreating-the-apple-tv-icons-in-javascript-and-css-eec306d41617">Recreating the Apple TV icons in JavaScript and CSS</a> by <a href="https://twitter.com/NashVail">Nash Vail</a>.</p>
+
+<p>He then went on to create a <a href="https://github.com/nashvail/ATVIcons">jQuery plugin</a> to accomplish the effect. After reading the source and viewing the demos, it turns out re-making this in React Native is trivial.</p>
+
+<p>So read the article, check out the <a href="http://nashvail.me/ATVIcons/">live demo</a> here and then we&rsquo;ll continue on.</p>
+
+<h2>What are we building</h2>
+
+<p><img src="http://i.imgur.com/3TLQtmE.gif" title="No 3D glasses required" ></p>
+
+<!-- more -->
+
+
+<h2>Setup</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>var {
+</span><span class='line'>  AppRegistry,
+</span><span class='line'>  StyleSheet,
+</span><span class='line'>  Text,
+</span><span class='line'>  View,
+</span><span class='line'>  PanResponder,
+</span><span class='line'>  Image,
+</span><span class='line'>  Animated
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>var width = 280;
+</span><span class='line'>var height = 150;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Yes, Animated again. Can you believe I almost wrote this tutorial with out it? I had a <code>setState</code> implementation but I didn&rsquo;t take the lazy, non-performant way out, I built it with performance in mind! No thanks necessary, it would have weighed on my conscience had I released an animated tutorial using <code>setState</code>.</p>
+
+<p>The card we&rsquo;re animating is <code>280</code> by <code>150</code>. It&rsquo;ll play into our calculations. This could be made dynamic though.</p>
+
+<h2>Defaults</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>      maxRotation: 12,
+</span><span class='line'>      maxTranslation: 6,
+</span><span class='line'>      perspective: 800
+</span><span class='line'>    };
+</span><span class='line'>  },</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In our <code>getInitialState</code> we&rsquo;ll set up some defaults. We&rsquo;ll set our <code>maxRotation</code> to 12, this means the card can only rotate a maximum of 12 degrees. <code>maxTranslation</code> is the same thing, it can only shift the card a maximum of 6.</p>
+
+<p>You can read more about <code>perspective</code> here <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/perspective">https://developer.mozilla.org/en-US/docs/Web/CSS/perspective</a>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>The perspective CSS property determines the distance between the z=0 plane and the user in order to give to the 3D-positioned element some perspective</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Borrowed Function</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>function calculatePercentage(offset, dimension) {
+</span><span class='line'>  return ((-2 / dimension) * offset) + 1;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is the magic formula. Based upon what we pass in here it will spit out a value between <code>-1</code> and <code>1</code>. We use this to multiply by our <code>maxRotation</code> or <code>maxTranslation</code> to get the degree to apply. We won&rsquo;t do the multiplication though, we&rsquo;ll let <code>Animated</code> take care of that.</p>
+
+<h2>PanResponder and Calculations</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  componentWillMount: function() {
+</span><span class='line'>    this._animations = {
+</span><span class='line'>      xRotationPercentage: new Animated.Value(0),
+</span><span class='line'>      yRotationPercentage: new Animated.Value(0),
+</span><span class='line'>      xTranslationPercentage: new Animated.Value(0),
+</span><span class='line'>      yTranslationPercentage: new Animated.Value(0)
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    this._panResponder = PanResponder.create({
+</span><span class='line'>      onStartShouldSetPanResponder: (evt, gestureState) =&gt; true,
+</span><span class='line'>      onStartShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+</span><span class='line'>      onMoveShouldSetPanResponder: (evt, gestureState) =&gt; true,
+</span><span class='line'>      onMoveShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+</span><span class='line'>      onPanResponderMove: (e, gestureState) =&gt; {
+</span><span class='line'>        e.persist();
+</span><span class='line'>        var {
+</span><span class='line'>          locationX: x,
+</span><span class='line'>          locationY: y
+</span><span class='line'>        } = e.nativeEvent;
+</span><span class='line'>
+</span><span class='line'>        this._animations.xRotationPercentage.setValue(calculatePercentage(y, height));
+</span><span class='line'>        this._animations.yRotationPercentage.setValue(calculatePercentage(x, width) * -1);
+</span><span class='line'>        this._animations.xTranslationPercentage.setValue(calculatePercentage(x, width));
+</span><span class='line'>        this._animations.yTranslationPercentage.setValue(calculatePercentage(y, height));
+</span><span class='line'>      }
+</span><span class='line'>    })
+</span><span class='line'>  },</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Alright there is sort of a lot here but not really. We setup an object to hold our animations called <code>this._animations</code>. We then setup our <code>PanResponder</code> defaults, and of course the one we care about is <code>onPanResponderMove</code>.</p>
+
+<p>Here when it moves we get the <code>locationX</code> and <code>locationY</code> which is the <code>x/y</code> values relative to the <code>component</code> we attach it too.</p>
+
+<p>Finally we run our calculations and call <code>setValue</code> on each <code>Animated.Value</code>. This is basically what <code>Animated.event</code> is doing under the hood for us, but instead we are performing calculations and calling <code>setValue</code> ourselves.</p>
+
+<h2>Render-me-timbers</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;View style= {...this._panResponder.panHandlers}&gt;
+</span><span class='line'>          &lt;Card  
+</span><span class='line'>              style=
+</span><span class='line'>              stackingFactor={1}
+</span><span class='line'>              {...this.state}
+</span><span class='line'>              {...this._animations}
+</span><span class='line'>          &gt;
+</span><span class='line'>            &lt;Card 
+</span><span class='line'>              style=
+</span><span class='line'>              stackingFactor={1.4}
+</span><span class='line'>              {...this.state}
+</span><span class='line'>              {...this._animations}
+</span><span class='line'>            &gt;
+</span><span class='line'>              &lt;Card
+</span><span class='line'>                style= 
+</span><span class='line'>                stackingFactor={1.8}
+</span><span class='line'>                {...this.state}
+</span><span class='line'>                {...this._animations}
+</span><span class='line'>              /&gt;
+</span><span class='line'>            &lt;/Card&gt;
+</span><span class='line'>          &lt;/Card&gt;
+</span><span class='line'>        &lt;/View&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&rsquo;ll get to the card component in a second. We attach our <code>PanResponder</code> we created to the outer wrap object. Then we nest each card. This is crucial otherwise our layer will 3D transform behind the red layer.
+So this is forcing the <code>Card</code> to sit in front of the previous card no matter what. I don&rsquo;t know if this is true, but it was happening to me and this is how I fixed it.</p>
+
+<p>We use a prop called <code>stackingFactor</code>. All this does is slightly amplify that cards movements more causing a slight offset and the 3D effect.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var Card = React.createClass({
+</span><span class='line'>  componentWillMount: function() {
+</span><span class='line'>
+</span><span class='line'>  var translateMax = (this.props.maxTranslation * this.props.stackingFactor);
+</span><span class='line'>  var rotateMax = this.props.maxRotation;
+</span><span class='line'>
+</span><span class='line'>    this._xRotation = this.props.xRotationPercentage.interpolate({
+</span><span class='line'>      inputRange: [-1, 1],
+</span><span class='line'>      outputRange: [ (rotateMax * -1) + 'deg', rotateMax + 'deg'],
+</span><span class='line'>      extrapolate: 'clamp'
+</span><span class='line'>    });
+</span><span class='line'>
+</span><span class='line'>    this._yRotation = this.props.yRotationPercentage.interpolate({
+</span><span class='line'>      inputRange: [-1, 1],
+</span><span class='line'>      outputRange: [ (rotateMax * -1) + 'deg', rotateMax + 'deg'],
+</span><span class='line'>      extrapolate: 'clamp'
+</span><span class='line'>    });
+</span><span class='line'>
+</span><span class='line'>    this._translateX = this.props.xTranslationPercentage.interpolate({
+</span><span class='line'>      inputRange: [-1, 1],
+</span><span class='line'>      outputRange: [(translateMax * -1), translateMax],
+</span><span class='line'>      extrapolate: 'clamp'
+</span><span class='line'>    })
+</span><span class='line'>
+</span><span class='line'>    this._translateY = this.props.yTranslationPercentage.interpolate({
+</span><span class='line'>      inputRange: [-1, 1],
+</span><span class='line'>      outputRange: [(translateMax * -1), translateMax],
+</span><span class='line'>      extrapolate: 'clamp'
+</span><span class='line'>    })
+</span><span class='line'>
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  getTransform:function() {
+</span><span class='line'>    return [
+</span><span class='line'>      {perspective: this.props.perspective},
+</span><span class='line'>      {rotateX: this._xRotation},
+</span><span class='line'>      {rotateY: this._yRotation},
+</span><span class='line'>      {translateX: this._translateX},
+</span><span class='line'>      {translateY: this._translateY},
+</span><span class='line'>    ]
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;Animated.View 
+</span><span class='line'>        {...this.props} 
+</span><span class='line'>        style={[this.props.style, {transform: this.getTransform()}]}
+</span><span class='line'>      &gt;
+</span><span class='line'>        {this.props.children}
+</span><span class='line'>      &lt;/Animated.View&gt;
+</span><span class='line'>    )
+</span><span class='line'>  }
+</span><span class='line'>})
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That&rsquo;s a lot of <code>interpolate</code>! Well not really they&rsquo;re mostly all doing the same thing here. Remember when I said our calculations up above could return a percentage between <code>-1</code> and <code>1</code>.</p>
+
+<p>Well all we have to do is specify that as our <code>inputRange</code> and then our <code>outputRange</code> is just whatever our small <code>maxRotation</code> or <code>maxTranslation</code>. <code>Animated</code> will take care of all the multiplication for us! Thanks Animated!</p>
+
+<p>The <code>extrapolate: 'clamp'</code> is EXTREMELY important. Without it the values will go past their maximums. This can be accomplished since <code>locationX</code> and <code>locationY</code> could go beyond the <code>width</code> and <code>height</code> of the container. Long story short, <code>extrapolate: 'clamp'</code> your interpolations!</p>
+
+<p>You can see how the <code>translateMax</code> is affected when our <code>stackingFactor</code> is larger.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  var translateMax = (this.props.maxTranslation * this.props.stackingFactor);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Our <code>getTransform</code> just maps the appropriate animated value to it&rsquo;s transform. Also so our <code>Card</code> can be nested we have to specify <code>{this.props.children}</code>.</p>
+
+<h2>Look Ma&#8217; no setState</h2>
+
+<p>That&rsquo;s right. We&rsquo;ve used all <code>Animated</code> here. No diffs are happening to cause re-render, so our animations should be quite performant.</p>
+
+<h2>Done</h2>
+
+<p>This is currently only supported on iOS but appropriate support for Android is being added here <a href="https://github.com/facebook/react-native/pull/3522">https://github.com/facebook/react-native/pull/3522</a></p>
+
+<h3>As always live code <a href="https://rnplay.org/apps/qLNwNw">https://rnplay.org/apps/qLNwNw</a></h3>
+
+<p><img src="http://i.imgur.com/3TLQtmE.gif" title="Cheaper than going to the movies" ></p>
+
+<h2>Full Code</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>var {
+</span><span class='line'>  AppRegistry,
+</span><span class='line'>  StyleSheet,
+</span><span class='line'>  Text,
+</span><span class='line'>  View,
+</span><span class='line'>  PanResponder,
+</span><span class='line'>  Image,
+</span><span class='line'>  Animated
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>var width = 280;
+</span><span class='line'>var height = 150;
+</span><span class='line'>
+</span><span class='line'>function calculatePercentage(offset, dimension) {
+</span><span class='line'>  return ((-2 / dimension) * offset) + 1;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>var AppleTV = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>      maxRotation: 12,
+</span><span class='line'>      maxTranslation: 6,
+</span><span class='line'>      perspective: 800
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  componentWillMount: function() {
+</span><span class='line'>    this._animations = {
+</span><span class='line'>      xRotationPercentage: new Animated.Value(0),
+</span><span class='line'>      yRotationPercentage: new Animated.Value(0),
+</span><span class='line'>      xTranslationPercentage: new Animated.Value(0),
+</span><span class='line'>      yTranslationPercentage: new Animated.Value(0)
+</span><span class='line'>    }
+</span><span class='line'>
+</span><span class='line'>    this._panResponder = PanResponder.create({
+</span><span class='line'>      onStartShouldSetPanResponder: (evt, gestureState) =&gt; true,
+</span><span class='line'>      onStartShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+</span><span class='line'>      onMoveShouldSetPanResponder: (evt, gestureState) =&gt; true,
+</span><span class='line'>      onMoveShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
+</span><span class='line'>      onPanResponderMove: (e, gestureState) =&gt; {
+</span><span class='line'>        e.persist();
+</span><span class='line'>        var {
+</span><span class='line'>          locationX: x,
+</span><span class='line'>          locationY: y
+</span><span class='line'>        } = e.nativeEvent;
+</span><span class='line'>
+</span><span class='line'>        this._animations.xRotationPercentage.setValue(calculatePercentage(y, height));
+</span><span class='line'>        this._animations.yRotationPercentage.setValue(calculatePercentage(x, width) * -1);
+</span><span class='line'>        this._animations.xTranslationPercentage.setValue(calculatePercentage(x, width));
+</span><span class='line'>        this._animations.yTranslationPercentage.setValue(calculatePercentage(y, height));
+</span><span class='line'>      }
+</span><span class='line'>    })
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;View style= {...this._panResponder.panHandlers}&gt;
+</span><span class='line'>          &lt;Card  
+</span><span class='line'>              style=
+</span><span class='line'>              stackingFactor={1}
+</span><span class='line'>              {...this.state}
+</span><span class='line'>              {...this._animations}
+</span><span class='line'>          &gt;
+</span><span class='line'>            &lt;Card 
+</span><span class='line'>              style=
+</span><span class='line'>              stackingFactor={1.4}
+</span><span class='line'>              {...this.state}
+</span><span class='line'>              {...this._animations}
+</span><span class='line'>            &gt;
+</span><span class='line'>              &lt;Card
+</span><span class='line'>                style= 
+</span><span class='line'>                stackingFactor={1.8}
+</span><span class='line'>                {...this.state}
+</span><span class='line'>                {...this._animations}
+</span><span class='line'>              /&gt;
+</span><span class='line'>            &lt;/Card&gt;
+</span><span class='line'>          &lt;/Card&gt;
+</span><span class='line'>        &lt;/View&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>var Card = React.createClass({
+</span><span class='line'>  componentWillMount: function() {
+</span><span class='line'>
+</span><span class='line'>  var translateMax = (this.props.maxTranslation * this.props.stackingFactor);
+</span><span class='line'>  var rotateMax = this.props.maxRotation;
+</span><span class='line'>
+</span><span class='line'>    this._xRotation = this.props.xRotationPercentage.interpolate({
+</span><span class='line'>      inputRange: [-1, 1],
+</span><span class='line'>      outputRange: [ (rotateMax * -1) + 'deg', rotateMax + 'deg'],
+</span><span class='line'>      extrapolate: 'clamp'
+</span><span class='line'>    });
+</span><span class='line'>
+</span><span class='line'>    this._yRotation = this.props.yRotationPercentage.interpolate({
+</span><span class='line'>      inputRange: [-1, 1],
+</span><span class='line'>      outputRange: [ (rotateMax * -1) + 'deg', rotateMax + 'deg'],
+</span><span class='line'>      extrapolate: 'clamp'
+</span><span class='line'>    });
+</span><span class='line'>
+</span><span class='line'>    this._translateX = this.props.xTranslationPercentage.interpolate({
+</span><span class='line'>      inputRange: [-1, 1],
+</span><span class='line'>      outputRange: [(translateMax * -1), translateMax],
+</span><span class='line'>      extrapolate: 'clamp'
+</span><span class='line'>    })
+</span><span class='line'>
+</span><span class='line'>    this._translateY = this.props.yTranslationPercentage.interpolate({
+</span><span class='line'>      inputRange: [-1, 1],
+</span><span class='line'>      outputRange: [(translateMax * -1), translateMax],
+</span><span class='line'>      extrapolate: 'clamp'
+</span><span class='line'>    })
+</span><span class='line'>
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  getTransform:function() {
+</span><span class='line'>    return [
+</span><span class='line'>      {perspective: this.props.perspective},
+</span><span class='line'>      {rotateX: this._xRotation},
+</span><span class='line'>      {rotateY: this._yRotation},
+</span><span class='line'>      {translateX: this._translateX},
+</span><span class='line'>      {translateY: this._translateY},
+</span><span class='line'>    ]
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;Animated.View 
+</span><span class='line'>        {...this.props} 
+</span><span class='line'>        style={[this.props.style, {transform: this.getTransform()}]}
+</span><span class='line'>      &gt;
+</span><span class='line'>        {this.props.children}
+</span><span class='line'>      &lt;/Animated.View&gt;
+</span><span class='line'>    )
+</span><span class='line'>  }
+</span><span class='line'>})
+</span><span class='line'>
+</span><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>  container: {
+</span><span class='line'>    flex: 1,
+</span><span class='line'>    justifyContent: 'center',
+</span><span class='line'>    alignItems: 'center'
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>AppRegistry.registerComponent('rn_dragtoshow', () =&gt; AppleTV);</span></code></pre></td></tr></table></div></figure>
+
+</div>
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/apple/'>apple</a>, <a class='category' href='/blog/categories/icons/'>icons</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>, <a class='category' href='/blog/categories/tv/'>tv</a>, <a class='category' href='/blog/categories/tvos/'>tvos</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+
+<footer style="margin-top: 10px;">
+    <div id="post-author">
+	<div class="post-author-content" style="width: 70%; display: inline-block;">
+		<p style="font-size: 16px;">
+			If you ever want further explanation, want to see a particular type of tutorial, or to contact me for whatever reason you can drop me a line on twitter <a href="http://twitter.com/browniefed">@browniefed</a> or email me at <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a>
+		</p>
+	</div>
+</div>
+</footer>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+
+<!-- END OF _/layouts/post.html -->
+
+		
+			<footer>
+				Copyright &copy; 2016
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/10/23/react-native-recreating-the-apple-tv-icons/';
+        var disqus_url = 'http://browniefed.com/blog/2015/10/23/react-native-recreating-the-apple-tv-icons/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: function() {
+                    return $(this).next('code').text().split("\n").join("\r\n")
+                },
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+				}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2015/10/23/react-native-recreating-the-apple-tv-icons/';
+        var disqus_url = 'http://browniefed.com/blog/2015/10/23/react-native-recreating-the-apple-tv-icons/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->

@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: exploding | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/exploding/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-13T09:25:20-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[React Native - How to create Twitter exploding hearts]]></title>
+    <link href="http://browniefed.com/blog/2015/11/07/react-native-how-to-create-twitter-exploding-hearts/"/>
+    <updated>2015-11-07T08:55:00-08:00</updated>
+    <id>http://browniefed.com/blog/2015/11/07/react-native-how-to-create-twitter-exploding-hearts</id>
+    <content type="html"><![CDATA[<p>So we&rsquo;re going to build this exploding heart, except just know Twitter kind of cheated. Not really but they used an image and played each frame adjusting <code>background-position</code> so it looked animated. Okay not cheated they used a really smart technique but what&rsquo;s the fun in doing that when we can build it for real!</p>
+
+<p>I&rsquo;ve already built a Firework concept here <a href="http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/">http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/</a> and about Hearts here <a href="http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation/">http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation/</a> now we just need to bring them together.</p>
+
+<p>For the record this is what theirs looks like here <a href="http://i.imgur.com/3a8PiSY.png">http://i.imgur.com/3a8PiSY.png</a></p>
+
+<h2>What are we building</h2>
+
+<p><img class="<a" src="href="http://i.imgur.com/lMOxqIL.gif">http://i.imgur.com/lMOxqIL.gif</a>" title="So not lazy like Twitter" ></p>
+
+<!-- more -->
+
+
+<h2>Concept</h2>
+
+<p>Rather than iterating over 28 separate image frames what we&rsquo;re going to do instead is make some pseudo-keyframe-animations. We&rsquo;ll use <code>Animated</code> of course. We&rsquo;ll define our range from <code>0</code> to <code>28</code>. Meaning we&rsquo;ll have 28 frames to deal with.</p>
+
+<p>This makes the math easy, because we can walk through each frame, and describe what the animation should look like for each frame.</p>
+
+<p>We could create separate animated values for each property and coordinate the animation with <code>Animated.sequence</code> and <code>Animated.parallel</code> but I prefer interpolation. YMMV</p>
+
+<h2>Setup</h2>
+
+<p>```
+var React = require(&lsquo;react-native&rsquo;);</p>
+
+<p>var {
+  AppRegistry,
+  StyleSheet,
+  View,
+  Dimensions,
+  TouchableWithoutFeedback,
+  Animated
+} = React;</p>
+
+<p>var Art = require(&lsquo;ReactNativeART&rsquo;);</p>
+
+<p>var {
+  Surface,
+  Group,
+  Shape,
+  Path
+} = Art;</p>
+
+<p>var AnimatedShape = Animated.createAnimatedComponent(Shape);</p>
+
+<p>var {
+  width: deviceWidth,
+  height: deviceHeight
+} = Dimensions.get(&lsquo;window&rsquo;);</p>
+
+<p><code>``
+We'll need to setup</code>ReactNativeArt` in XCode, you can check out how to do that <a href="http://browniefed.com/blog/2015/05/03/getting-react-art-running-on-react-native/">here</a>.</p>
+
+<p>Things to call out here is we are creating a custom animated view, called <code>AnimatedShape</code>. We pass in the <code>art</code> <code>Shape</code> component into <code>Animated.createAnimatedComponent</code>. This allows us to use <code>Animated</code> values in any component.</p>
+
+<h2>More Setup</h2>
+
+<p>```
+var HEART_SVG = &ldquo;M130.4-0.8c25.4 0 46 20.6 46 46.1 0 13.1-5.5 24.9-14.2 33.3L88 153.6 12.5 77.3c-7.9-8.3-12.8-19.6-12.8-31.9 0-25.5 20.6-46.1 46-46.2 19.1 0 35.5 11.7 42.4 28.4C94.9 11 111.3-0.8 130.4-0.8&rdquo;
+var HEART_COLOR = &lsquo;rgb(226,38,77,1)&rsquo;;
+var GRAY_HEART_COLOR = &ldquo;rgb(204,204,204,1)&rdquo;;</p>
+
+<p>var FILL_COLORS = [
+  &lsquo;rgba(221,70,136,1)&rsquo;,
+  &lsquo;rgba(212,106,191,1)&rsquo;,
+  &lsquo;rgba(204,142,245,1)&rsquo;,
+  &lsquo;rgba(204,142,245,1)&rsquo;,
+  &lsquo;rgba(204,142,245,1)&rsquo;,
+  &lsquo;rgba(0,0,0,0)&rsquo;
+];</p>
+
+<p>var PARTICLE_COLORS = [
+  &lsquo;rgb(158, 202, 250)&rsquo;,
+  &lsquo;rgb(161, 235, 206)&rsquo;,
+  &lsquo;rgb(208, 148, 246)&rsquo;,
+  &lsquo;rgb(244, 141, 166)&rsquo;,
+  &lsquo;rgb(234, 171, 104)&rsquo;,
+  &lsquo;rgb(170, 163, 186)&rsquo;
+]
+```</p>
+
+<p>More setup here. We create our heart SVG path to render, and setup a bunch of colors that we will use in our animations later. We need to set stuff up as <code>rgb</code> or <code>rgba</code> so that <code>Animated</code> can interpolate it correctly as at the moment it cannot do hex values.</p>
+
+<p>```</p>
+
+<p>function getXYParticle(total, i, radius) {
+  var angle = ( (2*Math.PI) / total ) * i;</p>
+
+<p>  var x = Math.round((radius<em>2) * Math.cos(angle &ndash; (Math.PI/2)));
+  var y = Math.round((radius</em>2) * Math.sin(angle &ndash; (Math.PI/2)));
+  return {</p>
+
+<pre><code>x: x,
+y: y
+</code></pre>
+
+<p>  }
+}</p>
+
+<p>function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max &ndash; min)) + min;
+}</p>
+
+<p>function shuffleArray(array) {</p>
+
+<pre><code>for (var i = array.length - 1; i &gt; 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+}
+return array;
+</code></pre>
+
+<p>}</p>
+
+<p><code>``
+Yes more setup.</code>getXYParticle` is a function I&rsquo;ve modified from the fireworks particle blog post I wrote. This essentially distributes a random number of particles around a circle. This is what we will use for the little particles that blow up.</p>
+
+<p>The <code>getRandomInt</code> is pretty self explanatory, but it just returns a random number and we&rsquo;ll use it to create some variance.</p>
+
+<p><code>shuffleArray</code> also just shuffles things in an array, we&rsquo;ll use this to achieve random color effects later.</p>
+
+<h2>Blank Canvas</h2>
+
+<p>```
+var ExplodingHearts = React.createClass({
+  getInitialState: function() {</p>
+
+<pre><code>return {
+  animation: new Animated.Value(0) 
+};
+</code></pre>
+
+<p>  },
+  explode: function() {</p>
+
+<pre><code>Animated.timing(this.state.animation, {
+  duration: 1500,
+  toValue: 28
+}).start(() =&gt; {
+  this.state.animation.setValue(0);
+  this.forceUpdate();
+}.bind(this));
+</code></pre>
+
+<p>  },</p>
+
+<p>  render: function() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;TouchableWithoutFeedback onPress={this.explode} style={styles.container}&gt; 
+      &lt;View&gt;
+        &lt;Surface width={deviceWidth} height={deviceHeight}&gt;
+        &lt;/Surface&gt;
+      &lt;/View&gt;
+    &lt;/TouchableWithoutFeedback&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+});</p>
+
+<p>```</p>
+
+<p>We setup a blank canvas. We need to create our initial <code>animation</code> value so we just do a <code>new Animated.Value(0)</code> in our <code>getInitialState</code>.</p>
+
+<p>We setup a <code>TouchableWithoutFeedback</code> for the ability to use <code>onPress</code> to trigger our animation. We then setup our <code>ART</code> <code>Surface</code> to fill the screen.</p>
+
+<p>Why are we using ART for this? Well it&rsquo;ll make our rendering and animations very efficient, we could use a bunch of <code>Views</code> for this demo but on a large scale with lots of graphics work you should use <code>ART</code></p>
+
+<p>Our <code>explode</code> function kicks off our animation and we do it over 1.5 seconds. We will animate to 28 because that is how many &ldquo;frames&rdquo; we have.</p>
+
+<p>Don&rsquo;t worry about the callback, that&rsquo;s just to reset the animation when it is done, and also the <code>forceUpdate</code> re-renders so we get new random values on each subsequent trigger.</p>
+
+<h2>Render A Heart</h2>
+
+<p>```
+<Surface width={deviceWidth} height={deviceHeight}></p>
+
+<pre><code>&lt;AnimatedShape
+  d={HEART_SVG}
+  x={0}
+  y={0}
+  scale={1}
+  fill={GRAY_HEART_COLOR}
+/&gt;
+</code></pre>
+
+<p></Surface>
+```</p>
+
+<p>We just render a heart, pass in our SVG path, put it at the top left <code>0,0</code> coordinates. Scale is set to 1 and we fill it with our <code>GRAY_HEART_COLOR</code> we setup above.</p>
+
+<h2>Talking Keyframes and Animations</h2>
+
+<p>Before we dive in I want to explain what is about to happen. The original Twitter exploding has 28 frames. Our animation will start at <code>0</code>, and that is our default state. So we&rsquo;ll need to set everything up to default when we start <code>0</code> (initial render).</p>
+
+<p>Then anytime from <code>1</code> to <code>28</code> we will need to design our values so that they produce the correct frame animation.</p>
+
+<p><code>Animated</code> provides a way to interpolate. What that means is given a value, we want it to go through a formula and spit out another value. <code>Animated</code> does this via ranges, which can at times be a little inflexible and we have to hack around it&rsquo;s shortcomings to get desired effects.</p>
+
+<p>All (well almost all) our animations will be interpolating from the single <code>this.state.animation</code> that we created earlier. This just makes it easy to comprehend and layout your animation frames. Because you can then specify that something happens at frame <code>10</code> instead of dividing <code>1/28</code> and say start at <code>0.03571428571</code>.</p>
+
+<h2>Scale it up</h2>
+
+<p>```
+render: function() {</p>
+
+<pre><code>var heart_scale = this.state.animation.interpolate({
+  inputRange: [0, .01, 6, 10, 12, 18, 28],
+  outputRange: [1, 0, .1, 1, 1.2, 1, 1],
+  extrapolate: 'clamp'
+});
+
+var heart_fill = this.state.animation.interpolate({
+  inputRange: [0, 2],
+  outputRange: [GRAY_HEART_COLOR, HEART_COLOR],
+  extrapolate: 'clamp'
+})
+
+var heart_x = heart_scale.interpolate({
+  inputRange: [0, 1],
+  outputRange: [90, 0],
+})
+
+var heart_y = heart_scale.interpolate({
+  inputRange: [0, 1],
+  outputRange: [75, 0],
+})
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Alright there is a lot going on. Lets break it down.</p>
+
+<p>```</p>
+
+<pre><code>var heart_scale = this.state.animation.interpolate({
+  inputRange: [0, .01, 6, 10, 12, 18],
+  outputRange: [1, 0, .1, 1, 1.2, 1],
+  extrapolate: 'clamp'
+});
+</code></pre>
+
+<p><code>``
+We</code>interpolate<code>on the</code>this.state.animation<code>and give it an</code>inputRange<code>and</code>outputRange` array. These must have the same amount of array values.</p>
+
+<p>I talked about some weird things with <code>Animated</code> and setting up defaults. Well <code>inputRange: [0, .01], outputRange: [1, 0]</code> is the first example.</p>
+
+<p>At 0 we want it to be fully scaled, so output at 1. However as soon as the animation is triggered we want it to be at 0. If we only specified <code>0, 1</code> as the inputRange, it would have the heart scale down from 1 to 0. So specifying the scale inputRange at <code>0 =&gt; .01</code> means it&rsquo;ll basically disappear.</p>
+
+<p>It&rsquo;s essentially a way to make an animation not a whole frame, and or happen virtually immediately.</p>
+
+<p>There is a slight spring in the heart. So from frame <code>10</code> to <code>12</code> it will spring up fast to <code>1.2</code> scale, and then slowly fall back from <code>1.2</code> to <code>1</code> from frames <code>12</code> to <code>18</code>.</p>
+
+<p><code>extrapolate: 'clamp'</code> IS EXTREMELY IMPORTANT HERE. If we want it to just stay the same once it hits frame 18 and not do anything else until the end we must add the clamp. Otherwise it will continue to animate at the current stepping value, so it would scale down below 1 and we don&rsquo;t want that.</p>
+
+<p>```</p>
+
+<pre><code>var heart_fill = this.state.animation.interpolate({
+  inputRange: [0, 2],
+  outputRange: [GRAY_HEART_COLOR, HEART_COLOR],
+  extrapolate: 'clamp'
+})
+</code></pre>
+
+<p><code>``
+We have the heart hidden after frame</code>1<code>, so what this animation says is at</code>0` , inital render, be gray. Anytime from frame 2 and out be red, and always be read.</p>
+
+<p>```</p>
+
+<pre><code>var heart_x = heart_scale.interpolate({
+  inputRange: [0, 1],
+  outputRange: [90, 0],
+})
+
+var heart_y = heart_scale.interpolate({
+  inputRange: [0, 1],
+  outputRange: [75, 0],
+})
+</code></pre>
+
+<p>```</p>
+
+<p>This is the one part where we don&rsquo;t want to base things on the key frame. Because there is no <code>transform-origin</code> like there is in CSS, the default scale will scale out to the top left.
+That isn&rsquo;t what we want.</p>
+
+<p>So to scale out to the center we need to animate the x/y while scaling, so we interpolate off the interpolate for scale. Remember we default our scale up above to 1, so we are reversing stuff here saying when the scale is scaling down from 0 to 1 adjust to 90 for x and 75 for y.</p>
+
+<p>The 90/75 just has to deal with the current surface center.</p>
+
+<p>```</p>
+
+<pre><code>return (
+    &lt;Surface width={deviceWidth} height={deviceHeight}&gt;
+        &lt;AnimatedShape
+          d={HEART_SVG}
+          x={heart_x}
+          y={heart_y}
+          scale={heart_scale}
+          fill={heart_fill}
+        /&gt;
+    &lt;/Surface&gt;
+
+)
+</code></pre>
+
+<p>```</p>
+
+<p>We use our <code>AnimatedShape</code> and pass in the animated values we created. A lot of things I explain up above are the basic concepts through out this tutorial so I wont' explain them again.</p>
+
+<h2>Add a Circle</h2>
+
+<p>```
+var AnimatedCircle = React.createClass({displayName: &ldquo;Circle&rdquo;,
+  render: function() {</p>
+
+<pre><code>var radius = this.props.radius;
+var path = Path().moveTo(0, -radius)
+    .arc(0, radius * 2, radius)
+    .arc(0, radius * -2, radius)
+    .close();
+return React.createElement(AnimatedShape, React.__spread({},  this.props, {d: path}));
+</code></pre>
+
+<p>  }
+});
+```</p>
+
+<p>This is taken from previous firework demos and default ReactART, but I&rsquo;ve converted it to use our <code>AnimatedShape</code> we created up above.</p>
+
+<p>```
+<Surface width={deviceWidth} height={deviceHeight}>
+  <Group x={100} y={200}></p>
+
+<pre><code>&lt;AnimatedShape
+  d={HEART_SVG}
+  x={heart_x}
+  y={heart_y}
+  scale={heart_scale}
+  fill={heart_fill}
+/&gt;
+&lt;AnimatedCircle
+  x={90}
+  y={75}
+  radius={150}
+  scale={1}
+  strokeWidth={3}
+  fill="#000"
+  opacity={1}
+/&gt;
+</code></pre>
+
+<p>  </Group>
+</Surface>
+```</p>
+
+<p>We render an arbitrary circle, at <code>90</code> and <code>75</code> which is the center of our current surface.</p>
+
+<h2>Blow that Circle Up</h2>
+
+<p>```</p>
+
+<pre><code>var circle_scale = this.state.animation.interpolate({
+  inputRange: [0, 1, 4],
+  outputRange: [0, .3, 1],
+  extrapolate: 'clamp'
+});
+
+var circle_stroke_width = this.state.animation.interpolate({
+  inputRange: [0, 5.99, 6, 7, 10],
+  outputRange: [0, 0, 15, 8, 0],
+  extrapolate: 'clamp'
+});
+
+var circle_fill_colors = this.state.animation.interpolate({
+  inputRange: [1, 2, 3, 4, 4.99, 5],
+  outputRange: FILL_COLORS,
+  extrapolate: 'clamp'
+})
+
+var circle_opacity = this.state.animation.interpolate({
+  inputRange: [1,9.99, 10],
+  outputRange: [1, 1, 0],
+  extrapolate: 'clamp'
+})
+</code></pre>
+
+<p>```</p>
+
+<p>Alright so we scale up, based on the image we scale up to <code>.3</code> in a single frame, then over the course of 3 frames we scale up our circle to a scale of 1.</p>
+
+<p>Our stroke width also changes however we won&rsquo;t always render it. We only need it for a few frames starting at frame 6. So we will specify that the stroke width stays at <code>0</code> from <code>0</code> to frame <code>5.99</code>.</p>
+
+<p>Then over the course of 1 frame it goes to 15 which I chose at random, down to 8, and eventually 0 by frame 10.</p>
+
+<p>We specify a range of colors in the array I talked about in setup. The weird part is that we have to specify the final color a few times before setting the fill to transparent. The reason is that if we specify just the transparent color the purple color will fade out to transparent but we want it to completely disappear and just show the stroke.</p>
+
+<p>So we have to coordinate stroke frames appearing with the fill color disappearing.</p>
+
+<p>Finally our opacity stays 1 until frame 9.99 (the end of our circle stroke) then we kill it on frame 10.</p>
+
+<p>```</p>
+
+<pre><code>&lt;AnimatedCircle
+  x={89}
+  y={75}
+  radius={150}
+  scale={circle_scale}
+  strokeWidth={circle_stroke_width}
+  stroke={FILL_COLORS[2]}
+  fill={circle_fill_colors}
+  opacity={circle_opacity}
+/&gt;
+</code></pre>
+
+<p>```
+We put those in and because our stroke color is always the same we just reference our fill colors.</p>
+
+<h2>Bunch of Circles Blowing Up</h2>
+
+<p>```
+<Surface width={deviceWidth} height={deviceHeight}>
+  <Group x={100} y={200}></p>
+
+<pre><code>&lt;AnimatedShape
+  d={HEART_SVG}
+  x={heart_x}
+  y={heart_y}
+  scale={heart_scale}
+  fill={heart_fill}
+/&gt;
+&lt;AnimatedCircle
+  x={90}
+  y={75}
+  radius={150}
+  scale={circle_scale}
+  strokeWidth={circle_stroke_width}
+  stroke={FILL_COLORS[2]}
+  fill={circle_fill_colors}
+  opacity={circle_opacity}
+/&gt;
+
+{this.getSmallExplosions(150, {x:90, y:75})}
+</code></pre>
+
+<p>  </Group>
+</Surface>
+```</p>
+
+<p>Alright now we setup our final piece. Calling <code>getSmallExplosions</code> with some data. In our case the radius of our circle and the central coordinates.</p>
+
+<p>```
+  getSmallExplosions: function(radius, offset) {</p>
+
+<pre><code>return [0,1,2,3,4,5,6].map((v, i, t) =&gt; {
+
+  var scaleOut = this.state.animation.interpolate({
+    inputRange: [0, 5.99, 6, 13.99, 14, 21],
+    outputRange: [0, 0, 1, 1, 1, 0],
+    extrapolate: 'clamp'
+  });
+
+  var moveUp = this.state.animation.interpolate({
+    inputRange: [0, 5.99, 14],
+    outputRange: [0, 0, -15],
+    extrapolate: 'clamp'
+  });
+
+  var moveDown = this.state.animation.interpolate({
+    inputRange: [0, 5.99, 14],
+    outputRange: [0, 0, 15],
+    extrapolate: 'clamp'
+  });
+
+  var color_top_particle = this.state.animation.interpolate({
+    inputRange: [6, 8, 10, 12, 17, 21],
+    outputRange: shuffleArray(PARTICLE_COLORS)
+  })
+
+  var color_bottom_particle = this.state.animation.interpolate({
+    inputRange: [6, 8, 10, 12, 17, 21],
+    outputRange: shuffleArray(PARTICLE_COLORS)
+  })
+
+  var position = getXYParticle(7, i, radius)
+
+  return (
+    &lt;Group 
+      x={position.x + offset.x } 
+      y={position.y + offset.y} 
+      rotation={getRandomInt(0, 40) * i}
+    &gt;
+      &lt;AnimatedCircle 
+        x={moveUp}
+        y={moveUp}
+        radius={15} 
+        scale={scaleOut} 
+        fill={color_top_particle} 
+      /&gt;
+      &lt;AnimatedCircle 
+        x={moveDown}
+        y={moveDown}
+        radius={8} 
+        scale={scaleOut} 
+        fill={color_bottom_particle} 
+      /&gt;
+    &lt;/Group&gt;
+  )
+}, this)
+</code></pre>
+
+<p>  },
+```</p>
+
+<p>Not going to explain this one too indepth or I&rsquo;ll keep repeating myself. We create a bunch of animations for each particle but add some randomness into the mix. We call <code>shuffleArray</code> on our <code>PARTICLE_COLORS</code> so over the course of the frames it is active it&rsquo;ll animate to random colors for each particle.</p>
+
+<p>Also we add a bit of <code>rotation</code> to the group, so when we animate the particles up/down they&rsquo;ll go in all different directions.</p>
+
+<h2>Done</h2>
+
+<p>Now you too can add a new interaction that all of your users will despise! No this isn&rsquo;t a perfect replica of the the Twiter animation because I added color variance and some random rotation to the small exploding/shrinking circles.</p>
+
+<p><img class="<a" src="href="http://i.imgur.com/lMOxqIL.gif">http://i.imgur.com/lMOxqIL.gif</a>" title="That is hot" ></p>
+
+<h3>Interactive Demo at <a href="https://rnplay.org/apps/nJjHdw">https://rnplay.org/apps/nJjHdw</a></h3>
+
+<p>I&rsquo;m not posting the full code, this is a long one. Just check it out on RNPlay.</p>
+]]></content>
+  </entry>
+  
+</feed>
