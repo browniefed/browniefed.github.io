@@ -4,7 +4,7 @@
   <title><![CDATA[Category: webpack, | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/webpack/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T13:31:13-08:00</updated>
+  <updated>2016-01-31T14:58:07-08:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -61,6 +61,8 @@ We fire up our test, create it, babel compiles, but oh no, <code>MyCss</code> is
 <p>Yeah that&rsquo;s not actual code, but you get the point. Our <a href="https://github.com/istarkov/babel-plugin-webpack-loaders">Babel Plugin Webpack Loaders</a> processed all our imports for us and away we go.</p>
 
 <p>What does the setup look like for that?</p>
+
+<h2>Setup</h2>
 
 <p>I created a new <code>runtime.webpack.config.js</code> file. They even provide you with a basic one, I realized that after the fact. <a href="https://raw.githubusercontent.com/istarkov/babel-plugin-webpack-loaders/master/examples_webpack_configs/run.webpack.config.js">runtime.webpack.config.js</a></p>
 
