@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: babel | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/babel/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-01-31T13:31:13-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[CSS Modules, Webpack and Testing]]></title>
+    <link href="http://browniefed.com/blog/2016/01/31/css-modules-webpack-and-testing/"/>
+    <updated>2016-01-31T12:58:00-08:00</updated>
+    <id>http://browniefed.com/blog/2016/01/31/css-modules-webpack-and-testing</id>
+    <content type="html"><![CDATA[<h2>The Problem</h2>
+
+<p>When getting into some basic React testing with CSS Modules I ran into one issue. How the hell do I test them?</p>
+
+<p>You may see the issue that I faced requiring a <code>.css</code> file, if you don&rsquo;t let me show you.</p>
+
+<p>```
+import React from &ldquo;react&rdquo;;
+import MyCss from &ldquo;./somecss.css&rdquo;;
+import classnames from &ldquo;classnames&rdquo;;</p>
+
+<p>const MyComponent = ({disabled}) => <div className={classnames(MyCss.container, {[MyCss.disabled]: disabled})} /></p>
+
+<p>export default MyComponent;
+```</p>
+
+<p>So there isn&rsquo;t really much to test here, but lets say we wanted to make sure that a <code>div</code> had the disabled class when it was given a disabled prop.
+We fire up our test, create it, babel compiles, but oh no, <code>MyCss</code> is undefined, or an empty object. Well duh, we&rsquo;re using Webpack to process our CSS.</p>
+
+<p>For that matter we could use something to mock the import right? Yeah you could but lets introduce something even more awesome so we don&rsquo;t have to create custom mocks.</p>
+
+<h2>Babel Plugin Webpack Loaders Awesomeness</h2>
+
+<p><a href="https://github.com/istarkov/babel-plugin-webpack-loaders">Babel Plugin Webpack Loaders</a> allows us to run our tests and process all requires through our typical webpack loaders.</p>
+
+<!-- more -->
+
+
+<p>So when we&rsquo;re writing our tests to check out if <code>MyComponent</code> will have the disabled class we can just <code>import</code> the file into our test and know that it&rsquo;ll actually provide the processed CSS Modules!</p>
+
+<p>```
+//Test Imports of React, Addons for shallow rendering, teaspoon, maybe enzyme?</p>
+
+<p>import MyCss from &ldquo;./somecss.css&rdquo;;</p>
+
+<p>//Do some shallow rendering of <MyComponent disabled={true} /></p>
+
+<p>expect(renderedOutput.className).toHaveClass(MyCss.disabled);
+```</p>
+
+<p>Yeah that&rsquo;s not actual code, but you get the point. Our <a href="https://github.com/istarkov/babel-plugin-webpack-loaders">Babel Plugin Webpack Loaders</a> processed all our imports for us and away we go.</p>
+
+<p>What does the setup look like for that?</p>
+
+<p>I created a new <code>runtime.webpack.config.js</code> file. They even provide you with a basic one, I realized that after the fact. <a href="https://raw.githubusercontent.com/istarkov/babel-plugin-webpack-loaders/master/examples_webpack_configs/run.webpack.config.js">runtime.webpack.config.js</a></p>
+
+<p>```
+module.exports = {
+  output: {</p>
+
+<pre><code>// YOU NEED TO SET libraryTarget: 'commonjs2'
+libraryTarget: 'commonjs2',
+</code></pre>
+
+<p>  },
+  module: {</p>
+
+<pre><code>loaders: [
+  {
+    test: /\.css$/,
+    loaders: [
+      'style-loader',
+      'css-loader?modules&amp;importLoaders=1&amp;localIdentName=[name]__[local]--[hash:base64:5]',
+      'postcss-loader',
+    ],
+  },
+],
+</code></pre>
+
+<p>  },
+};
+```</p>
+
+<p>Created my <code>.babelrc</code> file and added in the plugin like so
+```
+{
+  &ldquo;presets&rdquo;: [</p>
+
+<pre><code>"es2015",
+"react"
+</code></pre>
+
+<p>  ],
+  &ldquo;plugins&rdquo;: [</p>
+
+<pre><code>"transform-object-rest-spread"
+</code></pre>
+
+<p>  ],
+  &ldquo;env&rdquo;: {</p>
+
+<pre><code>"test": {
+  "plugins": [
+    [
+      "babel-plugin-webpack-loaders",
+      {
+        "config": "./runtime.webpack.config.js",
+        "verbose": false
+      }
+    ]
+  ]
+}
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>You can see we only use this plugin when we set our node environment variable to <code>test</code>.</p>
+
+<p>Then for our test running we&rsquo;ll use <code>mocha</code> so we&rsquo;ll need to set that up like so</p>
+
+<p><code>
+scripts: {
+  test: "BABEL_DISABLE_CACHE=1 NODE_ENV=test mocha --compilers js:babel-register --recursive"
+}
+</code></p>
+
+<p>Or however you have your testing setup. Moral of the story is set the <code>NODE_ENV</code> to <code>test</code>, do your <code>Babel</code> stuff for testing, and let the magic happen!</p>
+
+<p>Of course this focuses on <code>css-modules</code> specifically but all your Webpack plugins will run so test at will!</p>
+
+<p>Also check out <a href="https://github.com/nkbt/react-component-template">react-component-template</a> by <a href="https://github.com/nkbt">nkbt</a>. A great base for creating a custom react component, using tape for testing, as well as <code>babel-plugin-webpack-loaders</code> to process tests.</p>
+
+<h2>Words of warning</h2>
+
+<p>Just create a new Webpack config, or a configuration that outputs your app to <code>libraryTarget</code> correctly. I opted for a new Webpack config but mine is fairly simple at the moment.</p>
+
+<p>Also if you ever get <code>ModuleBuildError: Module build failed: TypeError: Cannot read property 'toString' of undefined</code> that means you have some bad CSS. I should have read a little bit more, was getting issues with <code>parser</code> in PostCSS and had left off a closing <code>}</code>.</p>
+
+<p>A CSS linter, and or a PostCSS linter probably would have caught this? I don&rsquo;t know, just know that I spent too much time being very confused when it was just human error causing the problem.</p>
+]]></content>
+  </entry>
+  
+</feed>

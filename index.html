@@ -77,6 +77,76 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
+		<h1><a href="/blog/2016/01/31/css-modules-webpack-and-testing/">CSS Modules, Webpack and Testing</a></h1>
+		<time>31 January 2016</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><h2>The Problem</h2>
+
+<p>When getting into some basic React testing with CSS Modules I ran into one issue. How the hell do I test them?</p>
+
+<p>You may see the issue that I faced requiring a <code>.css</code> file, if you don&rsquo;t let me show you.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>import React from "react";
+</span><span class='line'>import MyCss from "./somecss.css";
+</span><span class='line'>import classnames from "classnames";
+</span><span class='line'>
+</span><span class='line'>const MyComponent = ({disabled}) =&gt; &lt;div className={classnames(MyCss.container, {[MyCss.disabled]: disabled})} /&gt;
+</span><span class='line'>
+</span><span class='line'>export default MyComponent;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So there isn&rsquo;t really much to test here, but lets say we wanted to make sure that a <code>div</code> had the disabled class when it was given a disabled prop.
+We fire up our test, create it, babel compiles, but oh no, <code>MyCss</code> is undefined, or an empty object. Well duh, we&rsquo;re using Webpack to process our CSS.</p>
+
+<p>For that matter we could use something to mock the import right? Yeah you could but lets introduce something even more awesome so we don&rsquo;t have to create custom mocks.</p>
+
+<h2>Babel Plugin Webpack Loaders Awesomeness</h2>
+
+<p><a href="https://github.com/istarkov/babel-plugin-webpack-loaders">Babel Plugin Webpack Loaders</a> allows us to run our tests and process all requires through our typical webpack loaders.</p>
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/2016/01/31/css-modules-webpack-and-testing/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/babel/'>babel</a>, <a class='category' href='/blog/categories/css/'>css</a>, <a class='category' href='/blog/categories/css-modules/'>css-modules,</a>, <a class='category' href='/blog/categories/modules/'>modules,</a>, <a class='category' href='/blog/categories/react/'>react,</a>, <a class='category' href='/blog/categories/testing/'>testing,</a>, <a class='category' href='/blog/categories/webpack/'>webpack,</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
 		<h1><a href="/blog/2015/12/23/react-native-flexboxfroggy/">React Native FlexboxFroggy</a></h1>
 		<time>23 December 2015</time>
 	</header>
@@ -282,62 +352,13 @@ There is plenty of information out there about bridging modules, and view compon
 <!-- END OF _includes/article.html -->
 
 	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/2015/11/07/react-native-how-to-create-twitter-exploding-hearts/">React Native - How to create Twitter exploding hearts</a></h1>
-		<time>07 November 2015</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><p>So we&rsquo;re going to build this exploding heart, except just know Twitter kind of cheated. Not really but they used an image and played each frame adjusting <code>background-position</code> so it looked animated. Okay not cheated they used a really smart technique but what&rsquo;s the fun in doing that when we can build it for real!</p>
-
-<p>I&rsquo;ve already built a Firework concept here <a href="http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/">http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/</a> and about Hearts here <a href="http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation/">http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation/</a> now we just need to bring them together.</p>
-
-<p>For the record this is what theirs looks like here <a href="http://i.imgur.com/3a8PiSY.png">http://i.imgur.com/3a8PiSY.png</a></p>
-
-<h2>What are we building</h2>
-
-<p><img src="http://i.imgur.com/lMOxqIL.gif" title="So not lazy like Twitter" ></p>
-
-</div>
-          
-          
-            <a rel="full-article" href="/blog/2015/11/07/react-native-how-to-create-twitter-exploding-hearts/">Read on &rarr;</a>
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/animations/'>animations</a>, <a class='category' href='/blog/categories/exploding/'>exploding</a>, <a class='category' href='/blog/categories/heart/'>heart</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>, <a class='category' href='/blog/categories/twitter/'>twitter</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
 	
 <div class="pagination">
 	
 		<a class="older" href="/blog/page/2/">Older</a>
 	
 	
-	<span class="total">1 of 8</span>
+	<span class="total">1 of 9</span>
 	
 	
 </div>

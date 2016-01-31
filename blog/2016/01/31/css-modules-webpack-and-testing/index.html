@@ -1,0 +1,376 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="A blog of JavaScript techniques and tutorials. Including React, React Native, and anything else I feel like writing about." name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+
+
+    
+        <meta property="fb:app_id" content="1662675577336433" />
+        <meta property="og:title" content="CSS Modules, Webpack and Testing" />
+        <meta property="og:site_name" content="JavaScript Without Grammar" />
+        <meta property="og:url" content="http://browniefed.com/blog/2016/01/31/css-modules-webpack-and-testing/" />
+        <meta property="og:description" content="" />
+        
+    
+
+        
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="browniefed" />
+        <meta property="twitter:url" content="http://browniefed.com/blog/2016/01/31/css-modules-webpack-and-testing/" />
+        <meta property="twitter:title" content="CSS Modules, Webpack and Testing" />
+        <meta property="twitter:description" content="" />
+        <meta property="twitter:creator" content="browniefed" />
+        
+        
+
+
+		
+        <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
+
+		<title>CSS Modules, Webpack and Testing &mdash; JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.zclip.min.js"></script>
+
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+				
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="mailto:browniefed@gmail.com">Email</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF _layouts/post.html -->
+
+<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/2016/01/31/css-modules-webpack-and-testing/">CSS Modules, Webpack and Testing</a></h1>
+		<time>31 January 2016</time>
+	</header>
+	<div class="content">
+		
+            <div class="entry-content"><h2>The Problem</h2>
+
+<p>When getting into some basic React testing with CSS Modules I ran into one issue. How the hell do I test them?</p>
+
+<p>You may see the issue that I faced requiring a <code>.css</code> file, if you don&rsquo;t let me show you.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>import React from "react";
+</span><span class='line'>import MyCss from "./somecss.css";
+</span><span class='line'>import classnames from "classnames";
+</span><span class='line'>
+</span><span class='line'>const MyComponent = ({disabled}) =&gt; &lt;div className={classnames(MyCss.container, {[MyCss.disabled]: disabled})} /&gt;
+</span><span class='line'>
+</span><span class='line'>export default MyComponent;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So there isn&rsquo;t really much to test here, but lets say we wanted to make sure that a <code>div</code> had the disabled class when it was given a disabled prop.
+We fire up our test, create it, babel compiles, but oh no, <code>MyCss</code> is undefined, or an empty object. Well duh, we&rsquo;re using Webpack to process our CSS.</p>
+
+<p>For that matter we could use something to mock the import right? Yeah you could but lets introduce something even more awesome so we don&rsquo;t have to create custom mocks.</p>
+
+<h2>Babel Plugin Webpack Loaders Awesomeness</h2>
+
+<p><a href="https://github.com/istarkov/babel-plugin-webpack-loaders">Babel Plugin Webpack Loaders</a> allows us to run our tests and process all requires through our typical webpack loaders.</p>
+
+<!-- more -->
+
+
+<p>So when we&rsquo;re writing our tests to check out if <code>MyComponent</code> will have the disabled class we can just <code>import</code> the file into our test and know that it&rsquo;ll actually provide the processed CSS Modules!</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>//Test Imports of React, Addons for shallow rendering, teaspoon, maybe enzyme?
+</span><span class='line'>
+</span><span class='line'>import MyCss from "./somecss.css";
+</span><span class='line'>
+</span><span class='line'>//Do some shallow rendering of &lt;MyComponent disabled={true} /&gt;
+</span><span class='line'>
+</span><span class='line'>expect(renderedOutput.className).toHaveClass(MyCss.disabled);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Yeah that&rsquo;s not actual code, but you get the point. Our <a href="https://github.com/istarkov/babel-plugin-webpack-loaders">Babel Plugin Webpack Loaders</a> processed all our imports for us and away we go.</p>
+
+<p>What does the setup look like for that?</p>
+
+<p>I created a new <code>runtime.webpack.config.js</code> file. They even provide you with a basic one, I realized that after the fact. <a href="https://raw.githubusercontent.com/istarkov/babel-plugin-webpack-loaders/master/examples_webpack_configs/run.webpack.config.js">runtime.webpack.config.js</a></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>module.exports = {
+</span><span class='line'>  output: {
+</span><span class='line'>    // YOU NEED TO SET libraryTarget: 'commonjs2'
+</span><span class='line'>    libraryTarget: 'commonjs2',
+</span><span class='line'>  },
+</span><span class='line'>  module: {
+</span><span class='line'>    loaders: [
+</span><span class='line'>      {
+</span><span class='line'>        test: /\.css$/,
+</span><span class='line'>        loaders: [
+</span><span class='line'>          'style-loader',
+</span><span class='line'>          'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]--[hash:base64:5]',
+</span><span class='line'>          'postcss-loader',
+</span><span class='line'>        ],
+</span><span class='line'>      },
+</span><span class='line'>    ],
+</span><span class='line'>  },
+</span><span class='line'>};</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Created my <code>.babelrc</code> file and added in the plugin like so</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>  "presets": [
+</span><span class='line'>    "es2015",
+</span><span class='line'>    "react"
+</span><span class='line'>  ],
+</span><span class='line'>  "plugins": [
+</span><span class='line'>    "transform-object-rest-spread"
+</span><span class='line'>  ],
+</span><span class='line'>  "env": {
+</span><span class='line'>    "test": {
+</span><span class='line'>      "plugins": [
+</span><span class='line'>        [
+</span><span class='line'>          "babel-plugin-webpack-loaders",
+</span><span class='line'>          {
+</span><span class='line'>            "config": "./runtime.webpack.config.js",
+</span><span class='line'>            "verbose": false
+</span><span class='line'>          }
+</span><span class='line'>        ]
+</span><span class='line'>      ]
+</span><span class='line'>    }
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can see we only use this plugin when we set our node environment variable to <code>test</code>.</p>
+
+<p>Then for our test running we&rsquo;ll use <code>mocha</code> so we&rsquo;ll need to set that up like so</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>scripts: {
+</span><span class='line'>  test: "BABEL_DISABLE_CACHE=1 NODE_ENV=test mocha --compilers js:babel-register --recursive"
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Or however you have your testing setup. Moral of the story is set the <code>NODE_ENV</code> to <code>test</code>, do your <code>Babel</code> stuff for testing, and let the magic happen!</p>
+
+<p>Of course this focuses on <code>css-modules</code> specifically but all your Webpack plugins will run so test at will!</p>
+
+<p>Also check out <a href="https://github.com/nkbt/react-component-template">react-component-template</a> by <a href="https://github.com/nkbt">nkbt</a>. A great base for creating a custom react component, using tape for testing, as well as <code>babel-plugin-webpack-loaders</code> to process tests.</p>
+
+<h2>Words of warning</h2>
+
+<p>Just create a new Webpack config, or a configuration that outputs your app to <code>libraryTarget</code> correctly. I opted for a new Webpack config but mine is fairly simple at the moment.</p>
+
+<p>Also if you ever get <code>ModuleBuildError: Module build failed: TypeError: Cannot read property 'toString' of undefined</code> that means you have some bad CSS. I should have read a little bit more, was getting issues with <code>parser</code> in PostCSS and had left off a closing <code>}</code>.</p>
+
+<p>A CSS linter, and or a PostCSS linter probably would have caught this? I don&rsquo;t know, just know that I spent too much time being very confused when it was just human error causing the problem.</p>
+</div>
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/babel/'>babel</a>, <a class='category' href='/blog/categories/css/'>css</a>, <a class='category' href='/blog/categories/css-modules/'>css-modules,</a>, <a class='category' href='/blog/categories/modules/'>modules,</a>, <a class='category' href='/blog/categories/react/'>react,</a>, <a class='category' href='/blog/categories/testing/'>testing,</a>, <a class='category' href='/blog/categories/webpack/'>webpack,</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+
+<footer style="margin-top: 10px;">
+    <div id="post-author">
+	<div class="post-author-content" style="width: 70%; display: inline-block;">
+		<p style="font-size: 16px;">
+			If you ever want further explanation, want to see a particular type of tutorial, or to contact me for whatever reason you can drop me a line on twitter <a href="http://twitter.com/browniefed">@browniefed</a> or email me at <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a>
+		</p>
+	</div>
+</div>
+</footer>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+
+<!-- END OF _/layouts/post.html -->
+
+		
+			<footer>
+				Copyright &copy; 2016
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2016/01/31/css-modules-webpack-and-testing/';
+        var disqus_url = 'http://browniefed.com/blog/2016/01/31/css-modules-webpack-and-testing/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: function() {
+                    return $(this).next('code').text().split("\n").join("\r\n")
+                },
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+				}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/2016/01/31/css-modules-webpack-and-testing/';
+        var disqus_url = 'http://browniefed.com/blog/2016/01/31/css-modules-webpack-and-testing/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->

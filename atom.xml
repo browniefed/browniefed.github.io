@@ -4,7 +4,7 @@
 	<title><![CDATA[JavaScript Without Grammar]]></title>
 	<link href="http://browniefed.com/atom.xml" rel="self"/>
 	<link href="http://browniefed.com/"/>
-	<updated>2016-01-13T09:30:07-08:00</updated>
+	<updated>2016-01-31T13:31:13-08:00</updated>
 	<id>http://browniefed.com/</id>
 	<author>
 		<name><![CDATA[Jason Brown]]></name>
@@ -12,6 +12,192 @@
 	</author>
 	<generator uri="http://octopress.org/">Octopress</generator>
 
+	
+	<entry>
+		
+			<title type="html"><![CDATA[CSS Modules, Webpack and Testing]]></title>
+		
+		<link href="http://browniefed.com/blog/2016/01/31/css-modules-webpack-and-testing/"/>
+		<updated>2016-01-31T12:58:00-08:00</updated>
+		<id>http://browniefed.com/blog/2016/01/31/css-modules-webpack-and-testing</id>
+		<content type="html">
+			<![CDATA[
+				
+					<p></p>
+				
+			]]>
+			<![CDATA[<h2>The Problem</h2>
+
+<p>When getting into some basic React testing with CSS Modules I ran into one issue. How the hell do I test them?</p>
+
+<p>You may see the issue that I faced requiring a <code>.css</code> file, if you don&rsquo;t let me show you.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>import React from "react";
+</span><span class='line'>import MyCss from "./somecss.css";
+</span><span class='line'>import classnames from "classnames";
+</span><span class='line'>
+</span><span class='line'>const MyComponent = ({disabled}) =&gt; &lt;div className={classnames(MyCss.container, {[MyCss.disabled]: disabled})} /&gt;
+</span><span class='line'>
+</span><span class='line'>export default MyComponent;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So there isn&rsquo;t really much to test here, but lets say we wanted to make sure that a <code>div</code> had the disabled class when it was given a disabled prop.
+We fire up our test, create it, babel compiles, but oh no, <code>MyCss</code> is undefined, or an empty object. Well duh, we&rsquo;re using Webpack to process our CSS.</p>
+
+<p>For that matter we could use something to mock the import right? Yeah you could but lets introduce something even more awesome so we don&rsquo;t have to create custom mocks.</p>
+
+<h2>Babel Plugin Webpack Loaders Awesomeness</h2>
+
+<p><a href="https://github.com/istarkov/babel-plugin-webpack-loaders">Babel Plugin Webpack Loaders</a> allows us to run our tests and process all requires through our typical webpack loaders.</p>
+
+<!-- more -->
+
+
+<p>So when we&rsquo;re writing our tests to check out if <code>MyComponent</code> will have the disabled class we can just <code>import</code> the file into our test and know that it&rsquo;ll actually provide the processed CSS Modules!</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>//Test Imports of React, Addons for shallow rendering, teaspoon, maybe enzyme?
+</span><span class='line'>
+</span><span class='line'>import MyCss from "./somecss.css";
+</span><span class='line'>
+</span><span class='line'>//Do some shallow rendering of &lt;MyComponent disabled={true} /&gt;
+</span><span class='line'>
+</span><span class='line'>expect(renderedOutput.className).toHaveClass(MyCss.disabled);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Yeah that&rsquo;s not actual code, but you get the point. Our <a href="https://github.com/istarkov/babel-plugin-webpack-loaders">Babel Plugin Webpack Loaders</a> processed all our imports for us and away we go.</p>
+
+<p>What does the setup look like for that?</p>
+
+<p>I created a new <code>runtime.webpack.config.js</code> file. They even provide you with a basic one, I realized that after the fact. <a href="https://raw.githubusercontent.com/istarkov/babel-plugin-webpack-loaders/master/examples_webpack_configs/run.webpack.config.js">runtime.webpack.config.js</a></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>module.exports = {
+</span><span class='line'>  output: {
+</span><span class='line'>    // YOU NEED TO SET libraryTarget: 'commonjs2'
+</span><span class='line'>    libraryTarget: 'commonjs2',
+</span><span class='line'>  },
+</span><span class='line'>  module: {
+</span><span class='line'>    loaders: [
+</span><span class='line'>      {
+</span><span class='line'>        test: /\.css$/,
+</span><span class='line'>        loaders: [
+</span><span class='line'>          'style-loader',
+</span><span class='line'>          'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]--[hash:base64:5]',
+</span><span class='line'>          'postcss-loader',
+</span><span class='line'>        ],
+</span><span class='line'>      },
+</span><span class='line'>    ],
+</span><span class='line'>  },
+</span><span class='line'>};</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Created my <code>.babelrc</code> file and added in the plugin like so</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>  "presets": [
+</span><span class='line'>    "es2015",
+</span><span class='line'>    "react"
+</span><span class='line'>  ],
+</span><span class='line'>  "plugins": [
+</span><span class='line'>    "transform-object-rest-spread"
+</span><span class='line'>  ],
+</span><span class='line'>  "env": {
+</span><span class='line'>    "test": {
+</span><span class='line'>      "plugins": [
+</span><span class='line'>        [
+</span><span class='line'>          "babel-plugin-webpack-loaders",
+</span><span class='line'>          {
+</span><span class='line'>            "config": "./runtime.webpack.config.js",
+</span><span class='line'>            "verbose": false
+</span><span class='line'>          }
+</span><span class='line'>        ]
+</span><span class='line'>      ]
+</span><span class='line'>    }
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can see we only use this plugin when we set our node environment variable to <code>test</code>.</p>
+
+<p>Then for our test running we&rsquo;ll use <code>mocha</code> so we&rsquo;ll need to set that up like so</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>scripts: {
+</span><span class='line'>  test: "BABEL_DISABLE_CACHE=1 NODE_ENV=test mocha --compilers js:babel-register --recursive"
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Or however you have your testing setup. Moral of the story is set the <code>NODE_ENV</code> to <code>test</code>, do your <code>Babel</code> stuff for testing, and let the magic happen!</p>
+
+<p>Of course this focuses on <code>css-modules</code> specifically but all your Webpack plugins will run so test at will!</p>
+
+<p>Also check out <a href="https://github.com/nkbt/react-component-template">react-component-template</a> by <a href="https://github.com/nkbt">nkbt</a>. A great base for creating a custom react component, using tape for testing, as well as <code>babel-plugin-webpack-loaders</code> to process tests.</p>
+
+<h2>Words of warning</h2>
+
+<p>Just create a new Webpack config, or a configuration that outputs your app to <code>libraryTarget</code> correctly. I opted for a new Webpack config but mine is fairly simple at the moment.</p>
+
+<p>Also if you ever get <code>ModuleBuildError: Module build failed: TypeError: Cannot read property 'toString' of undefined</code> that means you have some bad CSS. I should have read a little bit more, was getting issues with <code>parser</code> in PostCSS and had left off a closing <code>}</code>.</p>
+
+<p>A CSS linter, and or a PostCSS linter probably would have caught this? I don&rsquo;t know, just know that I spent too much time being very confused when it was just human error causing the problem.</p>
+]]>
+		</content>
+	</entry>
 	
 	<entry>
 		
@@ -15140,159 +15326,6 @@ The <code>sequence</code> call is one of the means of composing animations. Ther
 </span><span class='line'>AppRegistry.registerComponent('AnimatedSquare', () =&gt; AnimatedSquare);
 </span></code></pre></td></tr></table></div></figure>
 
-]]>
-		</content>
-	</entry>
-	
-	<entry>
-		
-			<title type="html"><![CDATA[React-Native layout examples]]></title>
-		
-		<link href="http://browniefed.com/blog/2015/06/07/react-native-layout-examples/"/>
-		<updated>2015-06-07T21:37:00-07:00</updated>
-		<id>http://browniefed.com/blog/2015/06/07/react-native-layout-examples</id>
-		<content type="html">
-			<![CDATA[
-				
-					<p></p>
-				
-			]]>
-			<![CDATA[<p>Flexbox layout takes a bit getting used to. It&rsquo;s surprisngly simple but after so many years of box model css layout it throws you for a loop.</p>
-
-<p>Some examples</p>
-
-<h2>Percentage height sections</h2>
-
-<p>These are seemingly simple to do in CSS. Specify <code>height: 50%</code> and you get a magical 50% height. Yeah I&rsquo;m over simplifying it but in general that&rsquo;s what you get. In flex it&rsquo;s different.</p>
-
-<p>This percentage based layout question was asked here <a href="https://github.com/facebook/react-native/issues/364">https://github.com/facebook/react-native/issues/364</a>.</p>
-
-<p>Laying out login screens may require significant white space. To accomplish % based layout we can use the <code>flex</code> property along with <code>flexDirection</code>.</p>
-
-<p>Say you want 3 sections. Top <code>50%</code>, then two <code>25%</code> sections.</p>
-
-<p>Our code would look something like this</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var SampleApp = React.createClass({
-</span><span class='line'>  render: function() {
-</span><span class='line'>      return (
-</span><span class='line'>          &lt;View style={styles.container}&gt;
-</span><span class='line'>              &lt;View style={styles.halfHeight} /&gt;
-</span><span class='line'>              &lt;View style={styles.quarterHeight} /&gt;
-</span><span class='line'>              &lt;View style={[styles.quarterHeight, {backgroundColor: '#CCC'}]} /&gt;
-</span><span class='line'>          &lt;/View&gt;
-</span><span class='line'>      )
-</span><span class='line'>  }
-</span><span class='line'>});
-</span><span class='line'>
-</span><span class='line'>var styles = StyleSheet.create({
-</span><span class='line'>    container: {
-</span><span class='line'>        flex: 1,
-</span><span class='line'>        flexDirection: 'column'
-</span><span class='line'>    },
-</span><span class='line'>    halfHeight: {
-</span><span class='line'>        flex: .5,
-</span><span class='line'>        backgroundColor: '#FF3366'
-</span><span class='line'>    },
-</span><span class='line'>    quarterHeight: {
-</span><span class='line'>        flex: .25,
-</span><span class='line'>        backgroundColor: '#000'
-</span><span class='line'>    }
-</span><span class='line'>});
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<!-- more -->
-
-
-<p>This makes it look like percentages, however what actually is happening is just ratios.</p>
-
-<p>The ratios are easier to represent with non-decimals. Equivalent code to the above would look like.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var styles = StyleSheet.create({
-</span><span class='line'>    container: {
-</span><span class='line'>        flex: 1,
-</span><span class='line'>        flexDirection: 'column'
-</span><span class='line'>    },
-</span><span class='line'>    halfHeight: {
-</span><span class='line'>        flex: 2,
-</span><span class='line'>        backgroundColor: '#FF3366'
-</span><span class='line'>    },
-</span><span class='line'>    quarterHeight: {
-</span><span class='line'>        flex: 1,
-</span><span class='line'>        backgroundColor: '#000'
-</span><span class='line'>    }
-</span><span class='line'>});
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>That&rsquo;s saying that the <code>halfHeight</code> container should take up twice as much space, and the <code>quarterHeight</code> should take up one amount of space.
-The actual numbers depend on screen size, and/or also derived from parent containers. So we can&rsquo;t attach specific heights.</p>
-
-<p>It just means &ldquo; <code>halfHeight</code> should take up 2 units of height where <code>quarterHeight</code> takes up 1 unit/half as much height as the <code>halfHeight</code> container&rdquo;.</p>
-
-<p><img src="http://i.imgur.com/k4RI8Og.png" title="Percentage based layout" ></p>
-
-<p>You can check out a live demo here <a href="https://rnplay.org/apps/MbQEbQ">https://rnplay.org/apps/MbQEbQ</a></p>
-
-<h2>React-Native Example Screens</h2>
-
-<p>Not being very good at flexbox I figured what better way than to create a bunch of layout examples to practice.
-That&rsquo;s when I saw <a href="http://www.invisionapp.com/do">http://www.invisionapp.com/do</a>. It has a bunch of beautiful layouts, so I am attempting to recreate some.</p>
-
-<p>You can check out the repo here <a href="https://github.com/browniefed/react-native-screens">https://github.com/browniefed/react-native-screens</a></p>
-
-<p>I&rsquo;ve made them all runnable on <code>rnplay.org</code>.</p>
-
-<h4>Example: Login1</h4>
-
-<p><a href="https://rnplay.org/apps/x7HRCA">https://rnplay.org/apps/x7HRCA</a></p>
-
-<p><img src="https://i.imgur.com/ceB0t2Z.png" title="Login1 Example" ></p>
-
-<p>If you like this, feel free to contribute and download the screens from <a href="http://www.invisionapp.com/do">http://www.invisionapp.com/do</a>. I found the Sketch ones were the easiest to handle and export individual assets from.</p>
 ]]>
 		</content>
 	</entry>
