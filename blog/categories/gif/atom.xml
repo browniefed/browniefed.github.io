@@ -4,7 +4,7 @@
   <title><![CDATA[Category: gif | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/gif/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Native - How to make Facebook Reactions]]></title>
-    <link href="http://browniefed.com/blog/2015/10/11/react-native-how-to-make-facebook-reactions/"/>
+    <link href="http://browniefed.com/blog/react-native-how-to-make-facebook-reactions/"/>
     <updated>2015-10-11T11:35:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/10/11/react-native-how-to-make-facebook-reactions</id>
+    <id>http://browniefed.com/blog/react-native-how-to-make-facebook-reactions</id>
     <content type="html"><![CDATA[<p>Facebook reactions is a new liking system that Facebook is trialing on a limited basis. Why wait for them to roll it out when we can roll it out ourselves</p>
 
 <p>Thanks to <a href="http://www.engadget.com/2015/10/08/facebook-reactions/">Engadget</a> who created a gif of the animations from a youtube video. After a little slicing up and conversion from white to transparent we have a nice bunch of terrible animated gifs&hellip; but they&rsquo;re animated so deal with it. Like/Love aren&rsquo;t transparent since imagmagick was destroying the white in them.</p>

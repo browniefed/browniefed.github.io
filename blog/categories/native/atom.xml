@@ -4,7 +4,7 @@
   <title><![CDATA[Category: native | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/native/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Native Youtube Animated Video Slide]]></title>
-    <link href="http://browniefed.com/blog/2015/08/31/react-native-youtube-animated-video-slide/"/>
+    <link href="http://browniefed.com/blog/react-native-youtube-animated-video-slide/"/>
     <updated>2015-08-31T08:58:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/08/31/react-native-youtube-animated-video-slide</id>
+    <id>http://browniefed.com/blog/react-native-youtube-animated-video-slide</id>
     <content type="html"><![CDATA[<h1>Introduciton</h1>
 
 <p>I was going to spend some time digging into <a href="https://github.com/ProjectSeptemberInc/gl-react-native">gl-react-native</a> when someone asked in the slack channel how to achieve youtube like video sliding navigation. Now I won&rsquo;t get into the navigation portion, just the animation part. The navigation portion can be solved by basically treating video routes as a modal. Thus they are always over the top of whatever the previous route was.</p>
@@ -541,9 +541,9 @@ height: videoHeight
   
   <entry>
     <title type="html"><![CDATA[React Native and Socket.io]]></title>
-    <link href="http://browniefed.com/blog/2015/05/16/react-native-and-socket-dot-io/"/>
+    <link href="http://browniefed.com/blog/react-native-and-socket-dot-io/"/>
     <updated>2015-05-16T19:35:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/05/16/react-native-and-socket-dot-io</id>
+    <id>http://browniefed.com/blog/react-native-and-socket-dot-io</id>
     <content type="html"><![CDATA[<p>React Native finally supports Websockets. Which is awesome, however there is one gotcha with socket.io.</p>
 
 <p>1) <code>npm install socket.io-client</code>. This will just pull down the socket.io javascript client</p>

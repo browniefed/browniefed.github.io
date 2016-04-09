@@ -4,7 +4,7 @@
   <title><![CDATA[Category: tinder | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/tinder/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React-native Animated API with PanResponder]]></title>
-    <link href="http://browniefed.com/blog/2015/08/15/react-native-animated-api-with-panresponder/"/>
+    <link href="http://browniefed.com/blog/react-native-animated-api-with-panresponder/"/>
     <updated>2015-08-15T14:17:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/08/15/react-native-animated-api-with-panresponder</id>
+    <id>http://browniefed.com/blog/react-native-animated-api-with-panresponder</id>
     <content type="html"><![CDATA[<h1>Introduction</h1>
 
 <p>The previous example was a very basic one, just moving a box around the screen. But you&rsquo;ll likely want to do something by touch. Dragging, dropping, flicking, all those good mobile interactions. I previously covered how to make Tinder cards but I didn&rsquo;t add any true animations in. With the new Animated API you can make an even better Tinder card demo. And that&rsquo;s what <a href="https://twitter.com/notbrent">Brent</a> did.</p>
@@ -394,9 +394,9 @@ backgroundColor: 'blue'
   
   <entry>
     <title type="html"><![CDATA[React-Native Tinder like cards]]></title>
-    <link href="http://browniefed.com/blog/2015/06/06/react-native-tinder-like-cards/"/>
+    <link href="http://browniefed.com/blog/react-native-tinder-like-cards/"/>
     <updated>2015-06-06T19:33:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/06/06/react-native-tinder-like-cards</id>
+    <id>http://browniefed.com/blog/react-native-tinder-like-cards</id>
     <content type="html"><![CDATA[<h1>CHECK OUT ====> <a href="https://github.com/brentvatne/react-native-animated-demo-tinder">https://github.com/brentvatne/react-native-animated-demo-tinder</a> for a better demo with the new Animated API!!!</h1>
 
 <h2>Intro</h2>

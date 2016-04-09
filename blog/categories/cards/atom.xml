@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cards | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/cards/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React-Native Tinder like cards]]></title>
-    <link href="http://browniefed.com/blog/2015/06/06/react-native-tinder-like-cards/"/>
+    <link href="http://browniefed.com/blog/react-native-tinder-like-cards/"/>
     <updated>2015-06-06T19:33:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/06/06/react-native-tinder-like-cards</id>
+    <id>http://browniefed.com/blog/react-native-tinder-like-cards</id>
     <content type="html"><![CDATA[<h1>CHECK OUT ====> <a href="https://github.com/brentvatne/react-native-animated-demo-tinder">https://github.com/brentvatne/react-native-animated-demo-tinder</a> for a better demo with the new Animated API!!!</h1>
 
 <h2>Intro</h2>

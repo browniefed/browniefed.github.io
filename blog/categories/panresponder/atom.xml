@@ -4,7 +4,7 @@
   <title><![CDATA[Category: panresponder | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/panresponder/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Native - Pan Responder inside of a ScrollView]]></title>
-    <link href="http://browniefed.com/blog/2015/10/10/react-native-pan-responder-inside-of-a-scrollview/"/>
+    <link href="http://browniefed.com/blog/react-native-pan-responder-inside-of-a-scrollview/"/>
     <updated>2015-10-10T06:59:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/10/10/react-native-pan-responder-inside-of-a-scrollview</id>
+    <id>http://browniefed.com/blog/react-native-pan-responder-inside-of-a-scrollview</id>
     <content type="html"><![CDATA[<p>Lets talk <code>PanResponder</code> in a <code>ScrollView</code>. This gets brought up frequently, so lets address it.</p>
 
 <h2>Scenario</h2>

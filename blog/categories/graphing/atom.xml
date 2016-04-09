@@ -4,7 +4,7 @@
   <title><![CDATA[Category: graphing | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/graphing/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Art and Paths.js]]></title>
-    <link href="http://browniefed.com/blog/2015/05/27/react-art-and-paths-dot-js/"/>
+    <link href="http://browniefed.com/blog/react-art-and-paths-dot-js/"/>
     <updated>2015-05-27T19:32:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/05/27/react-art-and-paths-dot-js</id>
+    <id>http://browniefed.com/blog/react-art-and-paths-dot-js</id>
     <content type="html"><![CDATA[<h3>Intro</h3>
 
 <p><a href="https://github.com/andreaferretti/paths-js">Paths.js</a> is a cool library. It comes with 3 levels of generating paths.</p>

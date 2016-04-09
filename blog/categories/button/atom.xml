@@ -4,7 +4,7 @@
   <title><![CDATA[Category: button | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/button/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React-native press and hold button actions]]></title>
-    <link href="http://browniefed.com/blog/2015/08/22/react-native-press-and-hold-button-actions/"/>
+    <link href="http://browniefed.com/blog/react-native-press-and-hold-button-actions/"/>
     <updated>2015-08-22T11:55:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/08/22/react-native-press-and-hold-button-actions</id>
+    <id>http://browniefed.com/blog/react-native-press-and-hold-button-actions</id>
     <content type="html"><![CDATA[<h1>Introduction</h1>
 
 <p>Another common interaction is the press and hold to fire an action. Sometimes it&rsquo;s delete, sometimes it&rsquo;s save, but whatever it is you want to provide feedback to your user. React Native ships with a few Touchable components like <code>TouchableOpacity</code>, <code>TouchableHighlight</code> and also <code>TouchableBounce</code> that provide feedback to users but we&rsquo;ll build a button that fills up over a set period of time then triggers an action.</p>

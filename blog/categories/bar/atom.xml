@@ -4,7 +4,7 @@
   <title><![CDATA[Category: bar | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/bar/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React-Art and Bar Charts]]></title>
-    <link href="http://browniefed.com/blog/2015/05/29/react-art-and-bar-charts/"/>
+    <link href="http://browniefed.com/blog/react-art-and-bar-charts/"/>
     <updated>2015-05-29T08:53:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/05/29/react-art-and-bar-charts</id>
+    <id>http://browniefed.com/blog/react-art-and-bar-charts</id>
     <content type="html"><![CDATA[<h3>Introduction</h3>
 
 <p>I&rsquo;ve shown in the past how to utilize <code>react-art</code> and other libraries to do animations, and render arbitrary things. So now lets bring it all together, lets render a simple bar chart.</p>

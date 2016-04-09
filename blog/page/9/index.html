@@ -77,7 +77,69 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
-		<h1><a href="/blog/2013/11/12/hey-its-a-post/">hey it&#8217;s a post</a></h1>
+		<h1><a href="/blog/meteor-and-realtime-transit-mapping-part-1/">Meteor and Realtime Transit Mapping - Part 1</a></h1>
+		<time>16 November 2013</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><h1>Overview</h1>
+
+<p>The point of this series is to help people build out realtime transit maps for other cities.
+This will focus on Portland, OR and their transit system TriMet. They give us access to a wealth of information but all we really need is route numbers that make sense and latitude/longitude to make a map. I have built one for Kansas City, MO but they have their data hidden. Don&rsquo;t be afraid to dig around on your own transit website to find hidden APIs.</p>
+
+<p>Finally we chose MeteorJS because the whole system is built on realtime applications. Code can be run on both the client/server which is AWESOME! It pretends to be lo-latency, meaning it&rsquo;ll save the data in client side minimongo databases and not wait for the server to return &ldquo;yeah we saved&rdquo;. It also somehow magically invalidates the data correctly. It&rsquo;s just a framework that works and I can&rsquo;t wait for the 1.0 release.</p>
+
+<p>As always all code is open sourced. Check out the final project here
+<a href="https://github.com/browniefed/livemet">https://github.com/browniefed/livemet</a></p>
+
+<h1>Setup</h1>
+
+<h2>APIs</h2>
+
+<p>Go to <a href="http://developer.trimet.org/registration/">http://developer.trimet.org/registration/</a> and get an API key.
+The documentation we care about is here <a href="http://developer.trimet.org/ws_docs/">http://developer.trimet.org/ws_docs/</a></p>
+
+<h2>Meteor</h2>
+
+<p>Currently on Mac/Linux are officially supported and Windows has an unofficial installer. But you can&rsquo;t use Meteorite on Windows which you want meteorite!
+To install simple go here and follow the instrutions(2 steps!) <a href="http://docs.meteor.com/">http://docs.meteor.com/</a>
+Step 2 being creating a meteor project</p>
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/meteor-and-realtime-transit-mapping-part-1/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/maps/'>maps</a>, <a class='category' href='/blog/categories/meteor/'>meteor</a>, <a class='category' href='/blog/categories/meteor-dot-js/'>meteor.js</a>, <a class='category' href='/blog/categories/relatime/'>relatime</a>, <a class='category' href='/blog/categories/transit/'>transit</a>, <a class='category' href='/blog/categories/trimet/'>trimet</a>, <a class='category' href='/blog/categories/websockets/'>websockets</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/hey-its-a-post/">hey it&#8217;s a post</a></h1>
 		<time>12 November 2013</time>
 	</header>
 	<div class="content">

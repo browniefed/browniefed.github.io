@@ -4,7 +4,7 @@
   <title><![CDATA[Category: objective-c | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/objective-c/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Native - How to Bridge an Objective-C View Component]]></title>
-    <link href="http://browniefed.com/blog/2015/11/24/react-native-how-to-bridge-an-objective-c-view-component/"/>
+    <link href="http://browniefed.com/blog/react-native-how-to-bridge-an-objective-c-view-component/"/>
     <updated>2015-11-24T14:15:00-08:00</updated>
-    <id>http://browniefed.com/blog/2015/11/24/react-native-how-to-bridge-an-objective-c-view-component</id>
+    <id>http://browniefed.com/blog/react-native-how-to-bridge-an-objective-c-view-component</id>
     <content type="html"><![CDATA[<p>I am not an Objective-C developer so some of the things I say here may be wrong, so tell me if I&rsquo;m wrong!
 React Native is young enough that some cool existing native components need to still be bridged to take advantage of.
 There is plenty of information out there about bridging modules, and view components.</p>

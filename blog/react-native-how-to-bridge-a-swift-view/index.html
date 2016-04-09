@@ -1,0 +1,630 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="A blog of JavaScript techniques and tutorials. Including React, React Native, and anything else I feel like writing about." name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+
+
+    
+        <meta property="fb:app_id" content="1662675577336433" />
+        <meta property="og:title" content="React Native - How to bridge a Swift View" />
+        <meta property="og:site_name" content="JavaScript Without Grammar" />
+        <meta property="og:url" content="http://browniefed.com/blog/react-native-how-to-bridge-a-swift-view/" />
+        <meta property="og:description" content="" />
+        <meta property="og:image" content="http://i.imgur.com/TsOMRom.png" />
+    
+
+        
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:site" content="browniefed" />
+        <meta property="twitter:url" content="http://browniefed.com/blog/react-native-how-to-bridge-a-swift-view/" />
+        <meta property="twitter:title" content="React Native - How to bridge a Swift View" />
+        <meta property="twitter:description" content="" />
+        <meta property="twitter:creator" content="browniefed" />
+        <meta property="twitter:image:src" content="http://i.imgur.com/TsOMRom.png" />
+        
+
+
+		
+        <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
+
+		<title>React Native - How to bridge a Swift View &mdash; JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.zclip.min.js"></script>
+
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+				
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="mailto:browniefed@gmail.com">Email</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF _layouts/post.html -->
+
+<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/react-native-how-to-bridge-a-swift-view/">React Native - How to bridge a Swift View</a></h1>
+		<time>28 November 2015</time>
+	</header>
+	<div class="content">
+		
+            <div class="entry-content"><p>So in my previous article we bridged an Objective-C View component, I learned a lot, and also learned that I did a few unnecessary things. No worry though, we&rsquo;ll learn from that and make improvements in our Swift bridging.</p>
+
+<p>First off want to give a thanks to <a href="https://twitter.com/tony_xiao">Tony Xiao</a>. He&rsquo;s been a great help in sharing code and giving explanations to a Swift and native development novice like myself. Also <a href="https://twitter.com/realasa">Asa Miller</a> for writing some of the original code and always collaborating on whatever we&rsquo;re both working on.</p>
+
+<h2>What</h2>
+
+<p><img src="http://i.imgur.com/TsOMRom.png" title="Gradients, are those still a thing?" ></p>
+
+<p>We&rsquo;re going to bridge <a href="https://github.com/soffes/GradientView">https://github.com/soffes/GradientView</a>. Looks pretty nifty. Now we could also just use ReactART for this but we won&rsquo;t.</p>
+
+<!-- more -->
+
+
+<h2>Why Swift?</h2>
+
+<p>It looks more like JavaScript, it&rsquo;s nicer to read (aka less brackets), and seemingly easier to write? I don&rsquo;t know, they say it&rsquo;s the next big thing.</p>
+
+<h2>Why Not Swift?</h2>
+
+<p>Well it can&rsquo;t be turned into a static library&hellip; wut? It seemingly can&rsquo;t be converted into one of those nice <code>.xcodeproj</code> files with a <code>.a</code> that we can easily link. However it can be converted into an <code>.xcodeproj</code> with a <code>.framework</code> we can link, not sure what the difference is but whatever. We&rsquo;ll still go about bridging. We could have also used Pods here, but once again the point of this post is about bridging and not Pods. I&rsquo;ll focus on those later.</p>
+
+<h2>Create a Project</h2>
+
+<p>I won&rsquo;t walk us through bundling up anything into a library, I&rsquo;ll just walk you through developing and integrating a Swift library.</p>
+
+<p>So go ahead and fire off a <code>react-native init GradientTest</code> to create an empty project.</p>
+
+<p>Once that is done open up the project <code>ios/GradientTest.xcodeproj</code> in XCode.</p>
+
+<h2>Add GradientView</h2>
+
+<p>Now lets pull in the <code>GradientView</code> library I had mentioned up above. I pulled it down and just put it in a <code>GradientView</code> folder in the <code>ios</code> directory.</p>
+
+<p>Directory structure looks something like</p>
+
+<p><img src="http://i.imgur.com/wzIGDYk.png" title="Aint nothin but a directory structure img" ></p>
+
+<p>We&rsquo;ll go through the same general process of linking the library as always.</p>
+
+<p>Right click, select <code>Add Files to GradientTest</code> and find the <code>GradientView.xcodeproj</code> that we just pulled down.</p>
+
+<p>When we go to link the library in <code>Build Phases</code> like normal it will actually be <code>GradientView.framework</code> that we are going to link. Should look something like so.</p>
+
+<p><img src="http://i.imgur.com/6EIs7Vu.png" title="It is all magic to me" ></p>
+
+<p>We&rsquo;ll still get some issues so lets go add <code>$(SRCROOT)/GradientView</code> recursive to the <code>Framework Search Paths</code>
+Should look something like</p>
+
+<p><img src="http://i.imgur.com/bWs3LuJ.png" title="I wish XCode was more magical" ></p>
+
+<h2>Create our Manager and Bridging Header</h2>
+
+<p>We&rsquo;re going to first start off by creating a new <code>.swift</code> file. Simply do that by right clicking on our <code>GradientTest</code> folder, select <code>New file</code> and click on the swift selection and click create.</p>
+
+<p>We&rsquo;ll call this file <code>RNGradientViewManager</code>.</p>
+
+<p><strong> CREATE THE BRIDGING HEADER</strong></p>
+
+<p><img src="http://i.imgur.com/99mUsRS.png" title="Bridge across troubled code" ></p>
+
+<p>This is super important. Our briding header file will be named <code>GradientTest-Bridging-Header.h</code>. This allows us to bridge the React View Manager (Objective-C) code into the Swift world.</p>
+
+<p>Or as you can read in the file</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>//
+</span><span class='line'>//  Use this file to import your target's public headers that you would like to expose to Swift.
+</span><span class='line'>//
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>All we need to do is add our <code>RCTViewManager.h</code> import. So our <code>GradientTest-Bridging-Header.h</code> should just be this</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>//
+</span><span class='line'>//  Use this file to import your target's public headers that you would like to expose to Swift.
+</span><span class='line'>//
+</span><span class='line'>
+</span><span class='line'>#import "RCTViewManager.h"</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Add The Manager Code</h2>
+
+<p>Okay now we need to add our Manager code, if you&rsquo;ve read my previous tutorial before on bridging Objective-C, I&rsquo;ve stated that the Manager is just a singleton View producer. Just because it is in swift is no different.</p>
+
+<p><code>RNLinearGradientManager.swift</code></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>import Foundation
+</span><span class='line'>
+</span><span class='line'>@objc(RNLinearGradient)
+</span><span class='line'>class RNGradientViewManager : RCTViewManager {
+</span><span class='line'>  override func view() -&gt; UIView! {
+</span><span class='line'>    return UIView(); // We'll change this later
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We create an override for the <code>view</code> function, this is what React will call to produce the new view. Thanks to our bridging header we get access to <code>RCTViewManager</code> and create a class called <code>RNGradientViewManager</code>.</p>
+
+<p>The important thing to call out here is the <code>@objc(RNLinearGradientSwift)</code> line. This is an arbitrary name I made up, but what it says is to tell XCode and the compiler to expose the class <code>RNGradientViewManager</code> to the Objective-C world and call it <code>RNLinearGradientSwift</code>.</p>
+
+<h2>The Objective-C React Native Part</h2>
+
+<p>Well at some point we have to dive into a little Objective-C. We&rsquo;ll create a new class and call it <code>RNLinearGradient</code></p>
+
+<p><img src="http://i.imgur.com/fcBMyIS.png" title="How do you say cocoa" ></p>
+
+<p>Then we&rsquo;ll subclass it off of <code>RCTView</code></p>
+
+<p><img src="http://i.imgur.com/57Vcf0j.png" title="Generate code so I do not have to" ></p>
+
+<p>That will create 2 files.</p>
+
+<p><code>RNLinearGradient.h</code>
+<code>RNLinearGradient.m</code></p>
+
+<p>This is where we will tell React Native about what we need and what to call our stuff in the JavaScript world.</p>
+
+<h4>First our <code>RNLinearGradient.m</code> file.</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#import "RNLinearGradient.h"
+</span><span class='line'>#import "RCTViewManager.h"
+</span><span class='line'>
+</span><span class='line'>@interface RCT_EXTERN_MODULE(RNLinearGradientSwift, RCTViewManager)
+</span><span class='line'>
+</span><span class='line'>RCT_EXPORT_VIEW_PROPERTY(locations, NSArray);
+</span><span class='line'>RCT_EXPORT_VIEW_PROPERTY(colors, NSArray);
+</span><span class='line'>
+</span><span class='line'>@end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We import our <code>RNLinearGradient.h</code> file we will get ot in a second, as well as our <code>RCTViewManager.h</code></p>
+
+<p>See there is our Manager we created and called <code>RNLinearGradientSwift</code>.</p>
+
+<p>We create a new interface and call <code>RCT_EXTERN_MODULE</code> which will tell the JavaScript world about our module called <code>RNLinearGradientSwift</code>.</p>
+
+<p>We&rsquo;ll also export 2 view properties. These are specific to <code>GradientView</code>. Both will be <code>NSArray</code> and take an array of colors and locations to create the gradient.</p>
+
+<h4>Now our <code>RNLinearGradient.h</code> file.</h4>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#import "RCTView.h"
+</span><span class='line'>
+</span><span class='line'>@interface RNLinearGradient : RCTView
+</span><span class='line'>
+</span><span class='line'>@property (nonatomic, assign) NSArray *locations;
+</span><span class='line'>@property (nonatomic, assign) NSArray *colors;
+</span><span class='line'>@end
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We import <code>RCTView</code> from React code, and then define our 2 properties.</p>
+
+<p>Defining these properties here in this file tells React what properties to apply to the View that gets returned from our <code>view</code> function call in our <code>RNGradientViewManager</code>.</p>
+
+<h2>Back to Swift</h2>
+
+<p>Alright now we are back to swift. We&rsquo;ll go ahead and create a new swift file that will be the view that gets returned from the <code>view</code> function in our <code>RNGradientViewManager</code>.</p>
+
+<p>Create a swift file called <code>RNGradientView</code></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>import Foundation
+</span><span class='line'>import GradientView
+</span><span class='line'>
+</span><span class='line'>@objc(RNGradientView)
+</span><span class='line'>class RNGradientView : GradientView {
+</span><span class='line'>  required init?(coder aDecoder: NSCoder) {
+</span><span class='line'>    fatalError("init(coder:) has not been implemented")
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&rsquo;ll import our <code>GradientView</code> library, and we&rsquo;ll create a class that inherits from it. Previously in my Objective-C tutorial we implemented the <code>addSubviews</code> call however here we&rsquo;ll implement things a bit different and have the view that gets returned the actual <code>GradientView</code>.</p>
+
+<p>The whole <code>required init?(coder aDecoder: NSCoder)</code> part was autogenerated by XCode, it&rsquo;s all magic to me.</p>
+
+<p>Now lets add an init for the frame. The frame is the <code>CGRect</code> that we get given. It tells us our origin <code>x,y</code> and also the size <code>width,height</code> of our view.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>@objc(RNGradientView)
+</span><span class='line'>class RNGradientView : GradientView {
+</span><span class='line'>  
+</span><span class='line'>  override init(frame: CGRect) {
+</span><span class='line'>    super.init(frame: frame);
+</span><span class='line'>    self.frame = frame;
+</span><span class='line'>  }
+</span><span class='line'>  
+</span><span class='line'>  required init?(coder aDecoder: NSCoder) {
+</span><span class='line'>    fatalError("init(coder:) has not been implemented")
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We call <code>super.init</code> with our frame, and then also assign <code>self.frame = frame</code>. Remember because we inherited from <code>GradientView</code> the <code>self</code> basically refers to <code>GradientView</code> so when we want to manipulate the <code>GradientView</code> we simply manipulate our <code>self</code>.</p>
+
+<p>Lets add some setters now. We defined 2 different properties up above <code>locations</code> and <code>colors</code>. We now need to create our setters so we can receive the values and set them.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>@objc(RNGradientView)
+</span><span class='line'>class RNGradientView : GradientView {
+</span><span class='line'>  
+</span><span class='line'>  override init(frame: CGRect) {
+</span><span class='line'>    super.init(frame: frame);
+</span><span class='line'>    self.frame = frame;
+</span><span class='line'>  }
+</span><span class='line'>  
+</span><span class='line'>  required init?(coder aDecoder: NSCoder) {
+</span><span class='line'>    fatalError("init(coder:) has not been implemented")
+</span><span class='line'>  }
+</span><span class='line'>  
+</span><span class='line'>  func setLocations(locations: NSArray) {
+</span><span class='line'>    self.locations = locations.map({ return $0 as! CGFloat});
+</span><span class='line'>  }
+</span><span class='line'>  
+</span><span class='line'>  func setColors(colors: NSArray) {
+</span><span class='line'>    self.colors = colors.map({return RCTConvert.UIColor($0)})
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Our <code>locations</code> is an <code>NSArray</code> of various values, they are sent over from the JavaScript world like so.</p>
+
+<p><code>&lt;LinearGradient locations={[0.2, 1]} /&gt;</code>, however they will be a mix of <code>doubles</code> and <code>integers</code> but we want everything as a <code>CGFloat</code> which is what <code>GradientView</code> is expecting.</p>
+
+<p>From a JavaScript world you may be used to functional programming, we <code>map</code> over the array which will return a new array. Then we cast whatever values <code>double</code> or <code>integer</code>, etc as <code>CGFloat</code> and set that on <code>self.locations</code>.</p>
+
+<p>Then for <code>colors</code> we&rsquo;ll do something similar. However in our JavaScript world we use the handy <code>processColors</code> provided to use by React. Which will process arbitrary <code>hex</code>, <code>rgb</code>, color names, and others into a value that can easily be passed over the bridge.</p>
+
+<p>The JavaScript code could look something like <code>&lt;LinearGradient colors={['red', 'rgb(255,100,50)']} /&gt;</code>.</p>
+
+<p>We take advantage of the <code>RCTConvert</code> from React which gives us a bunch of handy ways to convert arbitrary values into other values. In our case <code>GradientView</code> expects <code>UIColor</code>s in the shape of an array. So we can once again <code>map</code> over our array of values and pass them into <code>RCTConvert.UIColor</code>.</p>
+
+<h2>Fix Our Manager</h2>
+
+<p>Remember we just left our Manager to return a boring ole <code>UIView</code>, lets go fix it up to return our <code>RNGradientView</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>import Foundation
+</span><span class='line'>
+</span><span class='line'>@objc(RNLinearGradientSwift)
+</span><span class='line'>class RNGradientViewManager : RCTViewManager {
+</span><span class='line'>  override func view() -&gt; UIView! {
+</span><span class='line'>    return RNGradientView();
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That sure was hard :)</p>
+
+<h2>JavaScript code</h2>
+
+<p>We will need to write some JavaScript code but it should be pretty harmless.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>import React, { requireNativeComponent, processColor } from 'react-native';
+</span><span class='line'>let RNLinearGradient = requireNativeComponent('RNLinearGradientSwift', LinearGradient);
+</span><span class='line'>
+</span><span class='line'>class LinearGradient extends React.Component {
+</span><span class='line'>  render() {
+</span><span class='line'>    let { colors, ...otherProps } = this.props;
+</span><span class='line'>    return &lt;RNLinearGradient {...otherProps} colors={processColor(colors)} /&gt;;
+</span><span class='line'>  }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>LinearGradient.propTypes = {
+</span><span class='line'>  colors: React.PropTypes.array.isRequired,
+</span><span class='line'>  locations: React.PropTypes.array,
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>export default LinearGradient;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We bring in <code>React</code>, and our <code>requireNativeComponent</code> as well as <code>processColor</code> from React Native.</p>
+
+<p>We create our <code>RNLinearGradient</code> component that we render, and as you can see once again there is our <code>RNLinearGradientSwift</code> that was externalized in our <code>RNGradientViewManager</code> as <code>RNLinearGradientSwift</code>.</p>
+
+<p>We specify our <code>propTypes</code> as arrays.</p>
+
+<p>Then we can pull of <code>colors</code> from <code>this.props</code>, and we call <code>processColor</code> with the array which will automatically map over and return a new array of all processed colors that will work nicely with the <code>RCTConvert.UIColor</code> call.</p>
+
+<h2>HOW DO I USE THIS THING?</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>    &lt;LinearGradient 
+</span><span class='line'>      style={styles.gradient} 
+</span><span class='line'>      locations={[0, 1.0]} 
+</span><span class='line'>      colors={['#5ED2A0', '#339CB1']}
+</span><span class='line'>    /&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To use we simply define some values. <code>locations</code> at <code>[0,1]</code> will specify the first color at 0 position and the second color at the end which is 1.
+This can take more than just 2 colors and locations, it will take any number of colors and locations.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>    &lt;LinearGradient 
+</span><span class='line'>      style={styles.gradient} 
+</span><span class='line'>      locations={[0, .5, 1.0]} 
+</span><span class='line'>      colors={['#5ED2A0', 'red', '#339CB1']}
+</span><span class='line'>    /&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Our gradient style is just postioned absolutely so it is basically covering the background as a gradient.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  gradient: {
+</span><span class='line'>    position: 'absolute',
+</span><span class='line'>    top: 0,
+</span><span class='line'>    left: 0,
+</span><span class='line'>    bottom: 0,
+</span><span class='line'>    right: 0,
+</span><span class='line'>  }</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>DONE</h2>
+
+<p>Awesome, we&rsquo;re done! You can check the full code up here <a href="https://github.com/asamiller/react-native-gradient">https://github.com/asamiller/react-native-gradient</a>. Yes it&rsquo;s not on my github repo, it&rsquo;s on a friends repo which we collaborated on together. Deal with it.</p>
+
+<p><img src="http://i.imgur.com/TsOMRom.png" title="Gradients are neatoooo" ></p>
+</div>
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/bridge/'>bridge</a>, <a class='category' href='/blog/categories/gradient/'>gradient</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>, <a class='category' href='/blog/categories/swift/'>swift</a>, <a class='category' href='/blog/categories/swift-view-component/'>swift-view-component</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+
+<footer style="margin-top: 10px;">
+    <div id="post-author">
+	<div class="post-author-content" style="width: 70%; display: inline-block;">
+		<p style="font-size: 16px;">
+			If you ever want further explanation, want to see a particular type of tutorial, or to contact me for whatever reason you can drop me a line on twitter <a href="http://twitter.com/browniefed">@browniefed</a> or email me at <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a>
+		</p>
+	</div>
+</div>
+</footer>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+
+<!-- END OF _/layouts/post.html -->
+
+		
+			<footer>
+				Copyright &copy; 2016
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/react-native-how-to-bridge-a-swift-view/';
+        var disqus_url = 'http://browniefed.com/blog/react-native-how-to-bridge-a-swift-view/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: function() {
+                    return $(this).next('code').text().split("\n").join("\r\n")
+                },
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+				}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/react-native-how-to-bridge-a-swift-view/';
+        var disqus_url = 'http://browniefed.com/blog/react-native-how-to-bridge-a-swift-view/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->

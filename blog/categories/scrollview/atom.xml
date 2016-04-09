@@ -4,7 +4,7 @@
   <title><![CDATA[Category: scrollview | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/scrollview/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Native - Pan Responder inside of a ScrollView]]></title>
-    <link href="http://browniefed.com/blog/2015/10/10/react-native-pan-responder-inside-of-a-scrollview/"/>
+    <link href="http://browniefed.com/blog/react-native-pan-responder-inside-of-a-scrollview/"/>
     <updated>2015-10-10T06:59:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/10/10/react-native-pan-responder-inside-of-a-scrollview</id>
+    <id>http://browniefed.com/blog/react-native-pan-responder-inside-of-a-scrollview</id>
     <content type="html"><![CDATA[<p>Lets talk <code>PanResponder</code> in a <code>ScrollView</code>. This gets brought up frequently, so lets address it.</p>
 
 <h2>Scenario</h2>
@@ -127,9 +127,9 @@ var {
   
   <entry>
     <title type="html"><![CDATA[React-native Animated ScrollView Row Swipe Actions]]></title>
-    <link href="http://browniefed.com/blog/2015/08/01/react-native-animated-listview-row-swipe/"/>
+    <link href="http://browniefed.com/blog/react-native-animated-listview-row-swipe/"/>
     <updated>2015-08-01T16:17:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/08/01/react-native-animated-listview-row-swipe</id>
+    <id>http://browniefed.com/blog/react-native-animated-listview-row-swipe</id>
     <content type="html"><![CDATA[<h1>Introduction</h1>
 
 <p>Have you ever wanted to swipe a row in a scroll view to take some sort of action. Swipe left to delete, swipe right to archive, swipe to do whatever. Well previously without the Animated API that wasn&rsquo;t necessarily hard it was just inefficient due to having to use <code>setState</code> causing a lot of diffs.</p>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: css-layout | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/css-layout/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[CSS-Layout and React-Art]]></title>
-    <link href="http://browniefed.com/blog/2015/06/01/css-layout-and-react-art/"/>
+    <link href="http://browniefed.com/blog/css-layout-and-react-art/"/>
     <updated>2015-06-01T10:29:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/06/01/css-layout-and-react-art</id>
+    <id>http://browniefed.com/blog/css-layout-and-react-art</id>
     <content type="html"><![CDATA[<h3>Intro</h3>
 
 <p>If you&rsquo;ve used <code>react-native</code> before then you may know that &ldquo;css&rdquo; you&rsquo;re writing isn&rsquo;t actually CSS. It&rsquo;s a descriptor for a layout engine. That layout engine is <a href="https://github.com/facebook/css-layout">css-layout</a> which was created by <a href="https://twitter.com/Vjeux">@vjeux</a> and compiled to Java/Objective-C.</p>

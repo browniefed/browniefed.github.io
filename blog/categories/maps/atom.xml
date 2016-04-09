@@ -4,7 +4,7 @@
   <title><![CDATA[Category: maps | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/maps/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Meteor and Realtime Transit Mapping - Part 1]]></title>
-    <link href="http://browniefed.com/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/"/>
+    <link href="http://browniefed.com/blog/meteor-and-realtime-transit-mapping-part-1/"/>
     <updated>2013-11-16T09:00:00-08:00</updated>
-    <id>http://browniefed.com/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1</id>
+    <id>http://browniefed.com/blog/meteor-and-realtime-transit-mapping-part-1</id>
     <content type="html"><![CDATA[<h1>Overview</h1>
 
 <p>The point of this series is to help people build out realtime transit maps for other cities.

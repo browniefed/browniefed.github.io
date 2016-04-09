@@ -4,7 +4,7 @@
   <title><![CDATA[Category: shapes | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/shapes/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[The Shapes of React Native]]></title>
-    <link href="http://browniefed.com/blog/2015/09/10/the-shapes-of-react-native/"/>
+    <link href="http://browniefed.com/blog/the-shapes-of-react-native/"/>
     <updated>2015-09-10T08:21:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/09/10/the-shapes-of-react-native</id>
+    <id>http://browniefed.com/blog/the-shapes-of-react-native</id>
     <content type="html"><![CDATA[<h1>Introduction</h1>
 
 <p>After drawing a bit of inspiration from <a href="https://css-tricks.com/examples/ShapesOfCSS/">The Shapes of CSS</a> I decided to see if I could remake some of these shapes with a subset of css. If you haven&rsquo;t been on css-tricks check them out, <a href="http://chriscoyier.net/">Chris Coyier</a> is fantastic!</p>

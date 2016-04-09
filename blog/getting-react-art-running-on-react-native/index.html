@@ -1,0 +1,611 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="A blog of JavaScript techniques and tutorials. Including React, React Native, and anything else I feel like writing about." name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+
+
+    
+        <meta property="fb:app_id" content="1662675577336433" />
+        <meta property="og:title" content="Getting react-art running on react-native" />
+        <meta property="og:site_name" content="JavaScript Without Grammar" />
+        <meta property="og:url" content="http://browniefed.com/blog/getting-react-art-running-on-react-native/" />
+        <meta property="og:description" content="" />
+        
+    
+
+        
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="browniefed" />
+        <meta property="twitter:url" content="http://browniefed.com/blog/getting-react-art-running-on-react-native/" />
+        <meta property="twitter:title" content="Getting react-art running on react-native" />
+        <meta property="twitter:description" content="" />
+        <meta property="twitter:creator" content="browniefed" />
+        
+        
+
+
+		
+        <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
+
+		<title>Getting react-art running on react-native &mdash; JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.zclip.min.js"></script>
+
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+				
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="mailto:browniefed@gmail.com">Email</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF _layouts/post.html -->
+
+<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/getting-react-art-running-on-react-native/">Getting react-art running on react-native</a></h1>
+		<time>03 May 2015</time>
+	</header>
+	<div class="content">
+		
+            <div class="entry-content"><p>I hadn&rsquo;t realized that the react-art native rendering stuff had landed in into the react-native core.
+So I figured I&rsquo;d try and get in running. I am an XCode noob so I&rsquo;ll be sure and be descriptive.</p>
+
+<p>First off lets set up a react-native project. (Assuming you have react-native cli installed);</p>
+
+<p><code>react-native init react_art_demo</code></p>
+
+<p>The current released version of <code>react-native</code> doesn&rsquo;t have the ART libs in it so in our <code>node_modules</code> folder we can delete the <code>react-native</code> in there and do a git clone of master <code>git clone https://github.com/facebook/react-native.git</code></p>
+
+<p>We will also need the <code>art</code> lib itself installed. So <code>cd</code> to the root of <code>react_art_demo</code>.
+Then run <code>npm install art</code></p>
+
+<p>Once we have the master repo of <code>react-native</code>, and <code>art</code> installed we can open up our <code>react_art_demo</code> project in XCode.</p>
+
+<p>We will need to do 2 things.</p>
+
+<ul>
+<li>Add the <code>ART.xcodeproj</code> to XCode</li>
+<li>Link the binary</li>
+</ul>
+
+
+<!-- more -->
+
+
+<p>To add ART.xcodeproj find the file located in <code>react-native/Libraries/ART/ART.xcodeproj</code> and just drag it over to the <code>Libraries</code> section in XCode.
+That should look like so</p>
+
+<p><img src="http://i.imgur.com/TWeDUTa.png" title="Add ART.xcodeproj to Libraries" ></p>
+
+<p>Next we&rsquo;ll link the binary.</p>
+
+<p>With the root <code>react_art_demo</code> project selected on the left, select <code>Build Phases</code> from the center view.
+There will be a section called &ldquo;Link Binary With Libraries&rdquo;, expand it, press the + and select <code>libART.a</code></p>
+
+<p>Like so</p>
+
+<p><img src="http://i.imgur.com/lIMZkfh.png" title="Link binary" ></p>
+
+<p>Just as a warning, I didn&rsquo;t link the binary and got a few &ldquo;No manager class found for view with module name&rdquo; errors.</p>
+
+<p>Now go forth and write your <code>react-art</code>. I always like to get the <code>vector-widget</code> example running so to do that here is the code.</p>
+
+<p><code>index.ios.js</code></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/**
+</span><span class='line'> * Sample React Native App
+</span><span class='line'> * https://github.com/facebook/react-native
+</span><span class='line'> */
+</span><span class='line'>'use strict';
+</span><span class='line'>
+</span><span class='line'>var React = require('react-native');
+</span><span class='line'>var {
+</span><span class='line'>  AppRegistry,
+</span><span class='line'>  StyleSheet,
+</span><span class='line'>  Text,
+</span><span class='line'>  View,
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>var VectorWidget = require('./VectorWidget');
+</span><span class='line'>
+</span><span class='line'>var react_art_demo = React.createClass({
+</span><span class='line'>
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;VectorWidget style={styles.vector}/&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>  container: {
+</span><span class='line'>    flex: 1,
+</span><span class='line'>    alignItems: 'center',
+</span><span class='line'>    backgroundColor: '#FFF',
+</span><span class='line'>  },
+</span><span class='line'>  vector: {
+</span><span class='line'>    width: 100,
+</span><span class='line'>    height: 100
+</span><span class='line'>  },
+</span><span class='line'>  welcome: {
+</span><span class='line'>    fontSize: 20,
+</span><span class='line'>    textAlign: 'center',
+</span><span class='line'>    margin: 10,
+</span><span class='line'>  },
+</span><span class='line'>  instructions: {
+</span><span class='line'>    color: '#333333',
+</span><span class='line'>    marginBottom: 5,
+</span><span class='line'>    marginTop: 100
+</span><span class='line'>  },
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>AppRegistry.registerComponent('react_art_demo', () =&gt; react_art_demo);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And your <code>VectorWidget.js</code> file</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/**
+</span><span class='line'> * Copyright 2013 Facebook, Inc.
+</span><span class='line'> * All rights reserved.
+</span><span class='line'> *
+</span><span class='line'> * This source code is licensed under the BSD-style license found in the
+</span><span class='line'> * LICENSE file in the root directory of this source tree. An additional grant
+</span><span class='line'> * of patent rights can be found in the PATENTS file in the same directory.
+</span><span class='line'> */
+</span><span class='line'>"use strict";
+</span><span class='line'>
+</span><span class='line'>var React = require('react-native');
+</span><span class='line'>var ReactART = require('ReactNativeART');
+</span><span class='line'>var {
+</span><span class='line'>    Art,
+</span><span class='line'>    TouchableWithoutFeedback
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>    Group,
+</span><span class='line'>    Shape,
+</span><span class='line'>    Surface,
+</span><span class='line'>    Transform
+</span><span class='line'>} = ReactArt;
+</span><span class='line'>
+</span><span class='line'>var MOUSE_UP_DRAG = 0.978;
+</span><span class='line'>var MOUSE_DOWN_DRAG = 0.9;
+</span><span class='line'>var MAX_VEL = 11;
+</span><span class='line'>var CLICK_ACCEL = 3;
+</span><span class='line'>var BASE_VEL = 0.15;
+</span><span class='line'>
+</span><span class='line'>/**
+</span><span class='line'> * An animated SVG component.
+</span><span class='line'> */
+</span><span class='line'>var VectorWidget = React.createClass({
+</span><span class='line'>  /**
+</span><span class='line'>   * Initialize state members.
+</span><span class='line'>   */
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {degrees: 0, velocity: 0, drag: MOUSE_UP_DRAG};
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  /**
+</span><span class='line'>   * When the component is mounted into the document - this is similar to a
+</span><span class='line'>   * constructor, but invoked when the instance is actually mounted into the
+</span><span class='line'>   * document. Here's, we'll just set up an animation loop that invokes our
+</span><span class='line'>   * method. Binding of `this.onTick` is not needed because all React methods
+</span><span class='line'>   * are automatically bound before being mounted.
+</span><span class='line'>   */
+</span><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    this._interval = window.setInterval(this.onTick, 20);
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  componentWillUnmount: function() {
+</span><span class='line'>    window.clearInterval(this._interval);
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  onTick: function() {
+</span><span class='line'>    var nextDegrees = this.state.degrees + BASE_VEL + this.state.velocity;
+</span><span class='line'>    var nextVelocity = this.state.velocity * this.state.drag;
+</span><span class='line'>    this.setState({degrees: nextDegrees, velocity: nextVelocity});
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  /**
+</span><span class='line'>   * This is the "main" method for any component. The React API allows you to
+</span><span class='line'>   * describe the structure of your UI component at *any* point in time.
+</span><span class='line'>   */
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;Surface
+</span><span class='line'>        width={700}
+</span><span class='line'>        height={700}
+</span><span class='line'>      &gt;
+</span><span class='line'>        {this.renderGraphic(this.state.degrees)}
+</span><span class='line'>      &lt;/Surface&gt;
+</span><span class='line'>    );
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  /**
+</span><span class='line'>   * Better SVG support for React coming soon.
+</span><span class='line'>   */
+</span><span class='line'>  renderGraphic: function(rotation) {
+</span><span class='line'>
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;Group
+</span><span class='line'>      &gt;
+</span><span class='line'>        &lt;Group x={210} y={135}&gt;
+</span><span class='line'>          &lt;Shape fill="rgba(0,0,0,0.1)" d={BORDER_PATH} /&gt;
+</span><span class='line'>          &lt;Shape fill="#7BC7BA" d={BG_PATH} /&gt;
+</span><span class='line'>          &lt;Shape fill="#DCDCDC" d={BAR_PATH} /&gt;
+</span><span class='line'>          &lt;Shape fill="#D97B76" d={RED_DOT_PATH} /&gt;
+</span><span class='line'>          &lt;Shape fill="#DBBB79" d={YELLOW_DOT_PATH} /&gt;
+</span><span class='line'>          &lt;Shape fill="#A6BD8A" d={GREEN_DOT_PATH} /&gt;
+</span><span class='line'>          &lt;Group x={55} y={29}&gt;
+</span><span class='line'>            &lt;Group rotation={rotation} originX={84} originY={89}&gt;
+</span><span class='line'>              &lt;Shape fill="#FFFFFF" d={CENTER_DOT_PATH} /&gt;
+</span><span class='line'>              &lt;Group&gt;
+</span><span class='line'>                &lt;Shape d={RING_ONE_PATH} stroke="#FFFFFF" strokeWidth={8} /&gt;
+</span><span class='line'>                &lt;Shape d={RING_TWO_PATH} transform={RING_TWO_ROTATE} stroke="#FFFFFF" strokeWidth={8} /&gt;
+</span><span class='line'>                &lt;Shape d={RING_THREE_PATH} transform={RING_THREE_ROTATE} stroke="#FFFFFF" strokeWidth={8} /&gt;
+</span><span class='line'>              &lt;/Group&gt;
+</span><span class='line'>            &lt;/Group&gt;
+</span><span class='line'>          &lt;/Group&gt;
+</span><span class='line'>        &lt;/Group&gt;
+</span><span class='line'>      &lt;/Group&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var BORDER_PATH = "M3.00191459,4 C1.34400294,4 0,5.34785514 0,7.00550479 L0,220.994495 C0,222.65439 1.34239483,224 3.00191459,224 L276.998085,224 C278.655997,224 280,222.652145 280,220.994495 L280,7.00550479 C280,5.34561033 278.657605,4 276.998085,4 L3.00191459,4 Z M3.00191459,4";
+</span><span class='line'>var BG_PATH = "M3.00191459,1 C1.34400294,1 0,2.34785514 0,4.00550479 L0,217.994495 C0,219.65439 1.34239483,221 3.00191459,221 L276.998085,221 C278.655997,221 280,219.652145 280,217.994495 L280,4.00550479 C280,2.34561033 278.657605,1 276.998085,1 L3.00191459,1 Z M3.00191459,1";
+</span><span class='line'>var BAR_PATH = "M3.00191459,0 C1.34400294,0 0,1.34559019 0,3.00878799 L0,21 C0,21 0,21 0,21 L280,21 C280,21 280,21 280,21 L280,3.00878799 C280,1.34708027 278.657605,0 276.998085,0 L3.00191459,0 Z M3.00191459,0";
+</span><span class='line'>var RED_DOT_PATH = "M12.5,17 C16.0898511,17 19,14.0898511 19,10.5 C19,6.91014895 16.0898511,4 12.5,4 C8.91014895,4 6,6.91014895 6,10.5 C6,14.0898511 8.91014895,17 12.5,17 Z M12.5,17";
+</span><span class='line'>var YELLOW_DOT_PATH = "M31.5,17 C35.0898511,17 38,14.0898511 38,10.5 C38,6.91014895 35.0898511,4 31.5,4 C27.9101489,4 25,6.91014895 25,10.5 C25,14.0898511 27.9101489,17 31.5,17 Z M31.5,17";
+</span><span class='line'>var GREEN_DOT_PATH = "M50.5,17 C54.0898511,17 57,14.0898511 57,10.5 C57,6.91014895 54.0898511,4 50.5,4 C46.9101489,4 44,6.91014895 44,10.5 C44,14.0898511 46.9101489,17 50.5,17 Z M50.5,17";
+</span><span class='line'>var CENTER_DOT_PATH = "M84,105 C92.8365564,105 100,97.8365564 100,89 C100,80.1634436 92.8365564,73 84,73 C75.1634436,73 68,80.1634436 68,89 C68,97.8365564 75.1634436,105 84,105 Z M84,105";
+</span><span class='line'>var RING_ONE_PATH = "M84,121 C130.391921,121 168,106.673113 168,89 C168,71.3268871 130.391921,57 84,57 C37.6080787,57 0,71.3268871 0,89 C0,106.673113 37.6080787,121 84,121 Z M84,121";
+</span><span class='line'>var RING_TWO_PATH = "M84,121 C130.391921,121 168,106.673113 168,89 C168,71.3268871 130.391921,57 84,57 C37.6080787,57 0,71.3268871 0,89 C0,106.673113 37.6080787,121 84,121 Z M84,121";
+</span><span class='line'>var RING_THREE_PATH = "M84,121 C130.391921,121 168,106.673113 168,89 C168,71.3268871 130.391921,57 84,57 C37.6080787,57 0,71.3268871 0,89 C0,106.673113 37.6080787,121 84,121 Z M84,121";
+</span><span class='line'>var RING_TWO_ROTATE = new Transform().translate(84.000000, 89.000000).rotate(-240.000000).translate(-84.000000, -89.000000);
+</span><span class='line'>var RING_THREE_ROTATE = new Transform().translate(84.000000, 89.000000).rotate(-300.000000).translate(-84.000000, -89.000000);
+</span><span class='line'>
+</span><span class='line'>module.exports = VectorWidget;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You may notice that I removed the <code>mouseDown/mouseUp</code> stuff.
+I tried getting it work very briefly with <code>onPress</code> and <code>TouchableWithoutFeedback</code> but I couldn&rsquo;t get it working.
+If you get it figured out let me know.</p>
+
+<h2>Conclusion</h2>
+
+<p>That&rsquo;s it, you can now render your react-art code natively. Enjoy</p>
+
+<p><img src="http://i.imgur.com/AXbsaTB.png" title="Final result" ></p>
+</div>
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+
+<footer style="margin-top: 10px;">
+    <div id="post-author">
+	<div class="post-author-content" style="width: 70%; display: inline-block;">
+		<p style="font-size: 16px;">
+			If you ever want further explanation, want to see a particular type of tutorial, or to contact me for whatever reason you can drop me a line on twitter <a href="http://twitter.com/browniefed">@browniefed</a> or email me at <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a>
+		</p>
+	</div>
+</div>
+</footer>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+
+<!-- END OF _/layouts/post.html -->
+
+		
+			<footer>
+				Copyright &copy; 2016
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/getting-react-art-running-on-react-native/';
+        var disqus_url = 'http://browniefed.com/blog/getting-react-art-running-on-react-native/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: function() {
+                    return $(this).next('code').text().split("\n").join("\r\n")
+                },
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+				}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/getting-react-art-running-on-react-native/';
+        var disqus_url = 'http://browniefed.com/blog/getting-react-art-running-on-react-native/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: tv | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/tv/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Native - Recreating the Apple TV Icons]]></title>
-    <link href="http://browniefed.com/blog/2015/10/23/react-native-recreating-the-apple-tv-icons/"/>
+    <link href="http://browniefed.com/blog/react-native-recreating-the-apple-tv-icons/"/>
     <updated>2015-10-23T20:53:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/10/23/react-native-recreating-the-apple-tv-icons</id>
+    <id>http://browniefed.com/blog/react-native-recreating-the-apple-tv-icons</id>
     <content type="html"><![CDATA[<p>I had attempted to recreate this in the past but could never come up with anything elegant. I saw this post not too long ago <a href="https://medium.com/@nashvail/recreating-the-apple-tv-icons-in-javascript-and-css-eec306d41617">Recreating the Apple TV icons in JavaScript and CSS</a> by <a href="https://twitter.com/NashVail">Nash Vail</a>.</p>
 
 <p>He then went on to create a <a href="https://github.com/nashvail/ATVIcons">jQuery plugin</a> to accomplish the effect. After reading the source and viewing the demos, it turns out re-making this in React Native is trivial.</p>

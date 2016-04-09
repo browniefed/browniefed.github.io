@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Ractive | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/ractive/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Ractive.JS Components for Speed and Flexibility]]></title>
-    <link href="http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/"/>
+    <link href="http://browniefed.com/blog/ractive-dot-js-components-for-speed-and-flexibility/"/>
     <updated>2014-04-27T08:35:00-07:00</updated>
-    <id>http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility</id>
+    <id>http://browniefed.com/blog/ractive-dot-js-components-for-speed-and-flexibility</id>
     <content type="html"><![CDATA[<p>Components in Ractive are crucial if you want to build a flexible application. Hopefully this changes in the future with partials living on the data object and various init options accepting functions rather than static objects. The main purpose of Components is to have reusable template pieces that you can drop in and work the same all over your application. Some examples might be a grid component that accepts rows and columns as it&rsquo;s data, maybe it&rsquo;s as simple as a checkbox that has some styling a particular way. Components will help you build consistency through out your application however you should know when to use a partial and when to use a component.</p>
 
 <p>If you&rsquo;re coming from the Angular world components are much like directives. However since there is no controller concept, or model concept in Ractive there are less headaches in getting components to work with scope and all that jazz.</p>

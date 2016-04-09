@@ -4,7 +4,7 @@
   <title><![CDATA[Category: file | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/file/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[PhantomJS Creating &amp; Connecting to Server]]></title>
-    <link href="http://browniefed.com/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/"/>
+    <link href="http://browniefed.com/blog/phantomjs-creating-and-connecting-to-server/"/>
     <updated>2014-06-15T16:37:00-07:00</updated>
-    <id>http://browniefed.com/blog/2014/06/15/phantomjs-creating-and-connecting-to-server</id>
+    <id>http://browniefed.com/blog/phantomjs-creating-and-connecting-to-server</id>
     <content type="html"><![CDATA[<p>At my work we are a Java shop. So spinning up a server is quite a process. Additionally our static front end files are spread out across the system and we use RequireJS (ugh) to wrangle everything. Then in order to test we were running a selenium test to hit the test_runner page and wait for mocha to run and the tests. This is so unbelievably slow and quite hectic when it comes to managing relative paths of our config.</p>
 
 <p>So to make things simpler I decided it&rsquo;d be in my best interest to use PhatonmJS. I decided to spin up a server using <code>var server = require('webserver').create();</code> and manage the requests and just route and serve up all the correct files. I thought this would work however I ran into a snag. Here is some sample code below</p>

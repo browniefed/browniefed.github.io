@@ -4,7 +4,7 @@
   <title><![CDATA[Category: nonrte | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/nonrte/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[NonRTE - Part 1]]></title>
-    <link href="http://browniefed.com/blog/2014/05/01/nonrte-part-1/"/>
+    <link href="http://browniefed.com/blog/nonrte-part-1/"/>
     <updated>2014-05-01T06:26:00-07:00</updated>
-    <id>http://browniefed.com/blog/2014/05/01/nonrte-part-1</id>
+    <id>http://browniefed.com/blog/nonrte-part-1</id>
     <content type="html"><![CDATA[<p>Once again stealing from antimatter I think writing about what you&rsquo;re currently building or have built is a good way to gain some clarity and also provide some value in explaining the topic. I&rsquo;ll be talking about NonRTE a non-contenteditable rich text editor for developers. One similar and the only one I know of is google docs. There are others that aren&rsquo;t rich text editors and are IDEs like codemirror and a few others that do not use contenteditbale. I personally don&rsquo;t know of any RTEs that are open source that developers can use and build with but I could be wrong so do ping me if that isn&rsquo;t the case.</p>
 
 <p>Something that has always boggled my mind was how heavily people have relied on contenteditable. Managing the different ways that contenteditbale is implemented on every browser and versions of those browsers is a nightmare. There is a portion of code in most RTE libraries that change how everything works just for one particular browser. This is insane to me due to the world we live in now with NPM, github, and the open source world at our finger tips. We have amazing templating libraries, HTML parsers, two-way data bindings, word to HTML libraries, excel expression parsers and executors, and everything compiles to JavaScript despite this insane amount of open source code we still use contenteditable.</p>

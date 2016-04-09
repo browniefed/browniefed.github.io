@@ -4,7 +4,7 @@
   <title><![CDATA[Category: hearts | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/hearts/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Native Periscope Hearts Animation]]></title>
-    <link href="http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation/"/>
+    <link href="http://browniefed.com/blog/react-native-periscope-hearts-animation/"/>
     <updated>2015-09-07T11:02:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation</id>
+    <id>http://browniefed.com/blog/react-native-periscope-hearts-animation</id>
     <content type="html"><![CDATA[<h1>Introduction</h1>
 
 <p>I was contacted asking if it was possible to recreate the periscope heart animations in react-native. I was also linked to someone rebuilding the same effect in Framer.js, you can check out the linked video here <a href="https://www.youtube.com/watch?v=qFUXxqzZytU">https://www.youtube.com/watch?v=qFUXxqzZytU</a>.</p>

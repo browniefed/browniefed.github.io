@@ -4,7 +4,7 @@
   <title><![CDATA[Category: dragging | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/dragging/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Art Zooming and Dragging]]></title>
-    <link href="http://browniefed.com/blog/2015/05/20/react-art-zooming-and-dragging/"/>
+    <link href="http://browniefed.com/blog/react-art-zooming-and-dragging/"/>
     <updated>2015-05-20T15:32:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/05/20/react-art-zooming-and-dragging</id>
+    <id>http://browniefed.com/blog/react-art-zooming-and-dragging</id>
     <content type="html"><![CDATA[<p>React-art is awesome, you can easily embody the same concepts in React and your visualizations magically work.</p>
 
 <p>I personally have not done a ton of visualization, and the little I have done is mostly rendering graphs with D3.</p>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: heart | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/heart/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Native - How to create Twitter exploding hearts]]></title>
-    <link href="http://browniefed.com/blog/2015/11/07/react-native-how-to-create-twitter-exploding-hearts/"/>
+    <link href="http://browniefed.com/blog/react-native-how-to-create-twitter-exploding-hearts/"/>
     <updated>2015-11-07T08:55:00-08:00</updated>
-    <id>http://browniefed.com/blog/2015/11/07/react-native-how-to-create-twitter-exploding-hearts</id>
+    <id>http://browniefed.com/blog/react-native-how-to-create-twitter-exploding-hearts</id>
     <content type="html"><![CDATA[<p>So we&rsquo;re going to build this exploding heart, except just know Twitter kind of cheated. Not really but they used an image and played each frame adjusting <code>background-position</code> so it looked animated. Okay not cheated they used a really smart technique but what&rsquo;s the fun in doing that when we can build it for real!</p>
 
 <p>I&rsquo;ve already built a Firework concept here <a href="http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/">http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/</a> and about Hearts here <a href="http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation/">http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation/</a> now we just need to bring them together.</p>

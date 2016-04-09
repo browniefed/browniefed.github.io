@@ -4,7 +4,7 @@
   <title><![CDATA[Category: firework | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/firework/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React-Native Animated with React-Art - Firework Tap To Shoot]]></title>
-    <link href="http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/"/>
+    <link href="http://browniefed.com/blog/react-native-animated-with-react-art-firework-show/"/>
     <updated>2015-08-29T22:12:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show</id>
+    <id>http://browniefed.com/blog/react-native-animated-with-react-art-firework-show</id>
     <content type="html"><![CDATA[<h1>Introduction</h1>
 
 <p>This actually could be built with out react-art, but we&rsquo;ll use react-art just for good measure.

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: modal | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/modal/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Native - Easy Overlay Modal with Navigator]]></title>
-    <link href="http://browniefed.com/blog/2015/10/18/react-native-easy-overlay-modal-with-navigator/"/>
+    <link href="http://browniefed.com/blog/react-native-easy-overlay-modal-with-navigator/"/>
     <updated>2015-10-18T01:43:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/10/18/react-native-easy-overlay-modal-with-navigator</id>
+    <id>http://browniefed.com/blog/react-native-easy-overlay-modal-with-navigator</id>
     <content type="html"><![CDATA[<p>It pays to have the <code>Navigator</code> at the root of your application. This allows you to tunnel back and render something at the root. In our case a custom Modal overlay component. You can pass anything on the route object, and anytime you render the same component at the same place it will just re-render that same component. So lets use the power of React to solve our problems.</p>
 
 <h2>What are we making</h2>

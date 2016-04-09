@@ -4,7 +4,7 @@
   <title><![CDATA[Category: tiles | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/tiles/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Create a map with React-Art]]></title>
-    <link href="http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art/"/>
+    <link href="http://browniefed.com/blog/create-a-map-with-react-art/"/>
     <updated>2015-05-30T10:15:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art</id>
+    <id>http://browniefed.com/blog/create-a-map-with-react-art</id>
     <content type="html"><![CDATA[<h3>Intro</h3>
 
 <p>Just Like the title states, we&rsquo;re going to make a map with <code>react-art</code>. When you think of maps many people jump straight to <code>leaflet</code>, <code>google maps</code>, or <code>mapbox</code>. Well one of the key things they are doing is just plotting map tiles.</p>

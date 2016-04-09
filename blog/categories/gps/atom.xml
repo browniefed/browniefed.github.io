@@ -4,7 +4,7 @@
   <title><![CDATA[Category: gps | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/gps/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Phonegap 3.4 GeoLocation]]></title>
-    <link href="http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation/"/>
+    <link href="http://browniefed.com/blog/phonegap-3-dot-4-geolocation/"/>
     <updated>2014-06-07T08:28:00-07:00</updated>
-    <id>http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation</id>
+    <id>http://browniefed.com/blog/phonegap-3-dot-4-geolocation</id>
     <content type="html"><![CDATA[<p>It doesn&rsquo;t appear to be just me but PhoneGap can be incredibly difficult to use. Simply because any information pertaining to the most current version of phonegap is so fragmented. A google search will reveal virtually nothing about the error messages you&rsquo;re receiving and how to remedy them for current versions.</p>
 
 <p>For example, I was attempting to use the GeoLocation API. Could care less about the extreme accuracy. After attempting to use it I was getting an Error Code 2 , failed to start geolocation service. Well maybe that was my fault for enabling <code>enableHighAccuracy</code> but wait you have to enableHighAccuracy for older versions of android otherwise it won&rsquo;t work. Or was that only for older versions of the geolocation plugin which then got deprecated in some versions of android in favor of the native browser geolocation API because it provides better and faster GPS locations. In the end the fault was all mine, I had simply forgotten to include the plugin in my <code>config.xml</code></p>

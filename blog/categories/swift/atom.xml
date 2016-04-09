@@ -4,7 +4,7 @@
   <title><![CDATA[Category: swift | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/swift/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Native - How to bridge a Swift View]]></title>
-    <link href="http://browniefed.com/blog/2015/11/28/react-native-how-to-bridge-a-swift-view/"/>
+    <link href="http://browniefed.com/blog/react-native-how-to-bridge-a-swift-view/"/>
     <updated>2015-11-28T11:09:00-08:00</updated>
-    <id>http://browniefed.com/blog/2015/11/28/react-native-how-to-bridge-a-swift-view</id>
+    <id>http://browniefed.com/blog/react-native-how-to-bridge-a-swift-view</id>
     <content type="html"><![CDATA[<p>So in my previous article we bridged an Objective-C View component, I learned a lot, and also learned that I did a few unnecessary things. No worry though, we&rsquo;ll learn from that and make improvements in our Swift bridging.</p>
 
 <p>First off want to give a thanks to <a href="https://twitter.com/tony_xiao">Tony Xiao</a>. He&rsquo;s been a great help in sharing code and giving explanations to a Swift and native development novice like myself. Also <a href="https://twitter.com/realasa">Asa Miller</a> for writing some of the original code and always collaborating on whatever we&rsquo;re both working on.</p>

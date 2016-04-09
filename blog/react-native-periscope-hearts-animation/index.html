@@ -1,0 +1,1370 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="A blog of JavaScript techniques and tutorials. Including React, React Native, and anything else I feel like writing about." name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+
+
+    
+        <meta property="fb:app_id" content="1662675577336433" />
+        <meta property="og:title" content="React Native Periscope Hearts Animation" />
+        <meta property="og:site_name" content="JavaScript Without Grammar" />
+        <meta property="og:url" content="http://browniefed.com/blog/react-native-periscope-hearts-animation/" />
+        <meta property="og:description" content="" />
+        
+    
+
+        
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="browniefed" />
+        <meta property="twitter:url" content="http://browniefed.com/blog/react-native-periscope-hearts-animation/" />
+        <meta property="twitter:title" content="React Native Periscope Hearts Animation" />
+        <meta property="twitter:description" content="" />
+        <meta property="twitter:creator" content="browniefed" />
+        
+        
+
+
+		
+        <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
+
+		<title>React Native Periscope Hearts Animation &mdash; JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.zclip.min.js"></script>
+
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+				
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="mailto:browniefed@gmail.com">Email</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF _layouts/post.html -->
+
+<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/react-native-periscope-hearts-animation/">React Native Periscope Hearts Animation</a></h1>
+		<time>07 September 2015</time>
+	</header>
+	<div class="content">
+		
+            <div class="entry-content"><h1>Introduction</h1>
+
+<p>I was contacted asking if it was possible to recreate the periscope heart animations in react-native. I was also linked to someone rebuilding the same effect in Framer.js, you can check out the linked video here <a href="https://www.youtube.com/watch?v=qFUXxqzZytU">https://www.youtube.com/watch?v=qFUXxqzZytU</a>.</p>
+
+<p>Periscope not only has an iPhone/Android app but it also has a web app with the same heart effect. I could take a look at the animations being done on it but we&rsquo;ll just eye ball it.</p>
+
+<h1>What we are building</h1>
+
+<p><img src="http://i.imgur.com/5JhgzQV.gif" title="Purple floating fading swaying rotating hearts" ></p>
+
+<h3>Live code: <a href="https://rnplay.org/apps/8VhSjw">https://rnplay.org/apps/8VhSjw</a></h3>
+
+<!-- more -->
+
+
+<h1>What it looks like on Periscope</h1>
+
+<p>If you don&rsquo;t know what I&rsquo;m talking about, the heart animation looks like this.</p>
+
+<p><img src="http://i.imgur.com/sEJf9Md.gif" title="Periscope hearts" ></p>
+
+<h1>Break Down</h1>
+
+<p>In order to replicate the animation we have to break it down into it&rsquo;s parts.</p>
+
+<ul>
+<li>Heart appears and scales up then quickly scales back down. Animation <code>Scale 0 =&gt; Scale 1.2 =&gt; Scale 1</code></li>
+<li>Heart moves upwards with a slight sway to the left then back to the right. <code>X/Y from 0 =&gt; deviceHeight/2</code></li>
+<li>Slight rotation of the heart through out each sway <code>rotate -15deg =&gt; 0 =&gt; 15deg</code></li>
+<li>Heart opacity fades out over entire animation <code>opacity 1 =&gt; 0</code></li>
+</ul>
+
+
+<p>We likely won&rsquo;t need <code>Animated</code> values for all of these, the goal of Animating is to attempt to interpolate other values from one <code>Animated.Value</code>. In our case that one constant is the <code>X/Y</code> values. All of the other animations are dependent on where the heart is currently located.</p>
+
+<p>The opacity is derived from the <code>X/Y</code> that it can be an interpolated value. The scale could be interpolated too, with 3 small input ranges, and output ranges of <code>[0, 1.2, 1]</code>. The rotation can also be interpolated based upon the <code>X</code> value. Even the X can be interpolated based upon the Y if we determine that we want 2 sways to happen before the animation is complete.</p>
+
+<h1>Make the Heart</h1>
+
+<p>Now we have to decide how to make the heart. One option is to use an <code>&lt;Image /&gt;</code> however this means I have to open up an image editor and I&rsquo;m a developer, not a designer! If you haven&rsquo;t seen <a href="https://css-tricks.com/examples/ShapesOfCSS/">The Shapes of CSS</a> I recommend checking it out. For basics shapes CSS will work great, and in our case a heart is a simple shape.</p>
+
+<p>It&rsquo;s composed of 2 objects overlayed on top of each other. Two squares, with top left / top right border radiuses and then drop them on top of each other.</p>
+
+<p>Apart they look like this</p>
+
+<p><img src="http://i.imgur.com/mUu1Yt8.png" title="Two squares not slammed together" ></p>
+
+<p>Then together we get a heart!</p>
+
+<p><img src="http://i.imgur.com/o8WOlDU.png" title="Now it's a heart" ></p>
+
+<p>This also gives us control over the color more easily, the sizing, and anything else you can do with a simple view.</p>
+
+<h1>Setup</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>var Dimensions = require('Dimensions');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  width: deviceWidth,
+</span><span class='line'>  height: deviceHeight
+</span><span class='line'>} = Dimensions.get('window');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  AppRegistry,
+</span><span class='line'>  StyleSheet,
+</span><span class='line'>  View,
+</span><span class='line'>  Animated,
+</span><span class='line'>  TouchableWithoutFeedback
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>var ANIMATION_END_Y = Math.ceil(deviceHeight * .5);
+</span><span class='line'>var NEGATIVE_END_Y = ANIMATION_END_Y * -1;
+</span><span class='line'>var startCount = 1;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We&rsquo;ll bring in the necessary includes. The <code>ANIMATION_END_Y</code> and the reverse <code>NEGATIVE_END_Y</code> will become apparent as what they are later. Due to some interpolation we&rsquo;ll need to do some trickery to make our animation interpolations make more sense.</p>
+
+<h1>Create The Heart</h1>
+
+<p>As we showed before the heart is 2 pieces. These pieces will have to be absolutely positioned so lets creating a wrapping view, and 2 pieces. We&rsquo;ll style each piece <code>leftHeart</code> and <code>rightHeat</code>. Then setup some styles.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var Heart = React.createClass({
+</span><span class='line'>    render: function() {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;View {...this.props} style={[styles.heart, this.props.style]}&gt;
+</span><span class='line'>                &lt;View style={styles.leftHeart} /&gt;
+</span><span class='line'>                &lt;View style={styles.rightHeart} /&gt;
+</span><span class='line'>            &lt;/View&gt;
+</span><span class='line'>        )
+</span><span class='line'>    }
+</span><span class='line'>})
+</span><span class='line'>
+</span><span class='line'>//Styles
+</span><span class='line'>
+</span><span class='line'>  heart: {
+</span><span class='line'>    width: 50,
+</span><span class='line'>    height: 50
+</span><span class='line'>  },
+</span><span class='line'>  heartShape: {
+</span><span class='line'>    width: 30,
+</span><span class='line'>    height: 45,
+</span><span class='line'>    position: 'absolute',
+</span><span class='line'>    top: 0,
+</span><span class='line'>    borderTopLeftRadius: 15,
+</span><span class='line'>    borderTopRightRadius: 15,
+</span><span class='line'>    backgroundColor: '#6427d1',
+</span><span class='line'>  },
+</span><span class='line'>  leftHeart: {
+</span><span class='line'>    transform: [
+</span><span class='line'>        {rotate: '-45deg'}
+</span><span class='line'>    ],
+</span><span class='line'>    left: 5
+</span><span class='line'>  },
+</span><span class='line'>  rightHeart: {
+</span><span class='line'>    transform: [
+</span><span class='line'>        {rotate: '45deg'}
+</span><span class='line'>    ],
+</span><span class='line'>    right: 5
+</span><span class='line'>  }
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We set a width and height on the wrapping heart so it takes up space. We move all default styling into <code>heartShape</code> style and give it a nice purple color. Then we just adjust each left and right heart. The <code>leftHeart</code> piece will be on the left side, and rotated <code>-45deg</code> aka <code>45deg</code> towards the left, and the right will be the reverse.</p>
+
+<h1>Setup Base Rendering</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var HeartFloater = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {};
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;Animated.View style={styles.heartWrap}&gt;
+</span><span class='line'>          &lt;Heart /&gt;
+</span><span class='line'>        &lt;/Animated.View&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>  container: {
+</span><span class='line'>    flex: 1
+</span><span class='line'>  },
+</span><span class='line'>  heartWrap: {
+</span><span class='line'>      position: 'absolute',
+</span><span class='line'>      bottom: 50,
+</span><span class='line'>      right: (deviceWidth/2) - 25
+</span><span class='line'>  },
+</span><span class='line'>  heart: {
+</span><span class='line'>    width: 50,
+</span><span class='line'>    height: 50
+</span><span class='line'>  },
+</span><span class='line'>  heartShape: {
+</span><span class='line'>    width: 30,
+</span><span class='line'>    height: 45,
+</span><span class='line'>    position: 'absolute',
+</span><span class='line'>    top: 0,
+</span><span class='line'>    borderTopLeftRadius: 15,
+</span><span class='line'>    borderTopRightRadius: 15,
+</span><span class='line'>    backgroundColor: '#6427d1',
+</span><span class='line'>  },
+</span><span class='line'>  leftHeart: {
+</span><span class='line'>    transform: [
+</span><span class='line'>        {rotate: '-45deg'}
+</span><span class='line'>    ],
+</span><span class='line'>    left: 5
+</span><span class='line'>  },
+</span><span class='line'>  rightHeart: {
+</span><span class='line'>    transform: [
+</span><span class='line'>        {rotate: '45deg'}
+</span><span class='line'>    ],
+</span><span class='line'>    right: 5
+</span><span class='line'>  }
+</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nothing much to call out here, except we add a new <code>heartWrap</code> class. We&rsquo;ll leave the heart be a static heart and then just animate a wrapper. The <code>heartWrap</code> is positioned absolutely and centered.</p>
+
+<h1>Move the Heart</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var HeartFloater = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>      position: new Animated.Value(0)
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    Animated.timing(this.state.position, {
+</span><span class='line'>      duration: 2000,
+</span><span class='line'>      toValue: NEGATIVE_END_Y
+</span><span class='line'>    }).start();
+</span><span class='line'>
+</span><span class='line'>  },
+</span><span class='line'>  getHeartAnimationStyle: function() {
+</span><span class='line'>    return {
+</span><span class='line'>      transform: [
+</span><span class='line'>        {translateY: this.state.position},
+</span><span class='line'>      ]
+</span><span class='line'>    }
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;Animated.View style={[styles.heartWrap, this.getHeartAnimationStyle()]}&gt;
+</span><span class='line'>          &lt;Heart /&gt;
+</span><span class='line'>        &lt;/Animated.View&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We only setup a basic <code>Animated.Value</code> instead of an <code>Animated.ValueXY</code> because we will interpolate all the necessary effects and even the <code>X</code> position from the <code>Y</code> value.</p>
+
+<p>We kick off an animation when the component mounts to animate the heart from <code>0</code> to negative half <code>deviceHeight</code>. We do this since translateY moves up when it is negative, and moves down when it is positive. We do this animation for 2 seconds.</p>
+
+<h1>Fade the Heart</h1>
+
+<p>Now this is where we are going to get a little tricky with interpolation.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  componentWillMount: function() {
+</span><span class='line'>    this._yAnimation = this.state.position.interpolate({
+</span><span class='line'>      inputRange: [NEGATIVE_END_Y, 0],
+</span><span class='line'>      outputRange: [ANIMATION_END_Y, 0]
+</span><span class='line'>    });
+</span><span class='line'>
+</span><span class='line'>    this._opacityAnimation = this._yAnimation.interpolate({
+</span><span class='line'>      inputRange: [0, ANIMATION_END_Y],
+</span><span class='line'>      outputRange: [1, 0]
+</span><span class='line'>    })
+</span><span class='line'>
+</span><span class='line'>  },
+</span><span class='line'>
+</span><span class='line'>  getHeartAnimationStyle: function() {
+</span><span class='line'>    return {
+</span><span class='line'>      transform: [
+</span><span class='line'>        {translateY: this.state.position},
+</span><span class='line'>      ],
+</span><span class='line'>      opacity: this._opacityAnimation
+</span><span class='line'>    }
+</span><span class='line'>  },</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can interpolate on an interpolated value. So we&rsquo;ll map our negative values, directly to positive values and also flip the step scale.</p>
+
+<p>Our animation would typically go from <code>0</code> to <code>-300</code> but our new <code>_yAnimation</code> will flip that and stay we are animation goes from <code>0</code> to <code>300</code>.</p>
+
+<p>This allows our animations like <code>opacity</code> to make more sense. We can interpolate on our <code>this._yAnimation</code> and specify <code>[0, ANIMATION_END_Y]</code> is tied to the opacity values <code>[1,0]</code>. So <code>0</code> aka the start is at <code>opacity</code> of <code>1</code> and moves to <code>0</code> which is tied to the <code>ANIMATION_END_Y</code> (roughly 300 depending on your device).</p>
+
+<p>Then we pass the interpolated opacity value in <code>opacity</code>.</p>
+
+<h1>Scale the Heart</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>this._scaleAnimation = this._yAnimation.interpolate({
+</span><span class='line'>  inputRange: [0, 15, 30],
+</span><span class='line'>  outputRange: [0, 1.2, 1],
+</span><span class='line'>  extrapolate: 'clamp'
+</span><span class='line'>})
+</span><span class='line'>
+</span><span class='line'>getHeartAnimationStyle: function() {
+</span><span class='line'>return {
+</span><span class='line'>  transform: [
+</span><span class='line'>    {translateY: this.state.position},
+</span><span class='line'>    {scale: this._scaleAnimation}
+</span><span class='line'>  ],
+</span><span class='line'>  opacity: this._opacityAnimation
+</span><span class='line'>}
+</span><span class='line'>  },</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now we&rsquo;ll add another animation below the other that will handle the scale. Because our now interpolated value runs positively we can just define pixel scale steps. So <code>0</code> maps to <code>0</code> so on creation the heart doesn&rsquo;t exist. The heart will quickly scale from <code>0</code> to <code>1.2x</code> it&rsquo;s size over the first <code>15</code> pixels it travels, then from <code>15</code> to <code>30</code> pixels it&rsquo;ll scale back down from <code>1.2</code> to <code>1</code>.</p>
+
+<p>This gives us a quick little pulse of the heart. We must add the <code>extrapolate: clamp</code> otherwise the heart will start scaling down and eventually go negative causing the heart to flip.</p>
+
+<h1>Rotate/Sway the Heart</h1>
+
+<p>Almost done! Now lets make it sway a little bit. This one is a little difficult to fine tune, but I errored on the less dramtic side of things.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>this._xAnimation = this._yAnimation.interpolate({
+</span><span class='line'>  inputRange: [0, ANIMATION_END_Y/2, ANIMATION_END_Y],
+</span><span class='line'>  outputRange: [0, 15, 0]
+</span><span class='line'>})
+</span><span class='line'>
+</span><span class='line'>this._rotateAnimation = this._yAnimation.interpolate({
+</span><span class='line'>  inputRange: [0, ANIMATION_END_Y/4, ANIMATION_END_Y/3, ANIMATION_END_Y/2, ANIMATION_END_Y],
+</span><span class='line'>  outputRange: ['0deg', '-2deg', '0deg', '2deg', '0deg']
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>getHeartAnimationStyle: function() {
+</span><span class='line'>  return {
+</span><span class='line'>    transform: [
+</span><span class='line'>      {translateY: this.state.position},
+</span><span class='line'>      {translateX: this._xAnimation},
+</span><span class='line'>      {scale: this._scaleAnimation},
+</span><span class='line'>      {rotate: this._rotateAnimation}
+</span><span class='line'>    ],
+</span><span class='line'>    opacity: this._opacityAnimation
+</span><span class='line'>  }
+</span><span class='line'>},</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This causes one sway to happen for <code>15</code> pixels then come back to the center. There are three rotations that happen that will make it look like it&rsquo;s wobbling a bit more.</p>
+
+<p>The <code>_xAnimation</code> input range is from <code>0</code> to half the animation, to the end. Since our value of the <code>_xAnimation</code> interpolation is the end value of the animation we don&rsquo;t need to <code>extrapolate: clamp</code> here.</p>
+
+<p>The <code>_rotateAnimation</code> takes <code>5</code> different steps. We just divide by each step. We start at <code>0</code>, then divide by 4 for quarter of the height animation, then a third of animation, half of the animation, then finally rotate back to 0 to finish the animation off. I pulled these out of thin air, and it looks okay but could use some fine tuning.</p>
+
+<h1>Make AnimatedHeart component</h1>
+
+<p>Now lets make it show a bunch of hearts when we press down. Each press should put another heart onto an array, and when the heart is done animating we should remove it.</p>
+
+<p>First move all the code to an <code>AnimatedHeart</code> like so.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var AnimatedHeart = React.createClass({
+</span><span class='line'>  getDefaultProps: function() {
+</span><span class='line'>    return {
+</span><span class='line'>      onComplete: function() {}
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>      position: new Animated.Value(0)
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  componentWillMount: function() {
+</span><span class='line'>    this._yAnimation = this.state.position.interpolate({
+</span><span class='line'>      inputRange: [NEGATIVE_END_Y, 0],
+</span><span class='line'>      outputRange: [ANIMATION_END_Y, 0]
+</span><span class='line'>    });
+</span><span class='line'>
+</span><span class='line'>    this._opacityAnimation = this._yAnimation.interpolate({
+</span><span class='line'>      inputRange: [0, ANIMATION_END_Y],
+</span><span class='line'>      outputRange: [1, 0]
+</span><span class='line'>    });
+</span><span class='line'>
+</span><span class='line'>    this._scaleAnimation = this._yAnimation.interpolate({
+</span><span class='line'>      inputRange: [0, 15, 30],
+</span><span class='line'>      outputRange: [0, 1.2, 1],
+</span><span class='line'>      extrapolate: 'clamp'
+</span><span class='line'>    });
+</span><span class='line'>
+</span><span class='line'>    this._xAnimation = this._yAnimation.interpolate({
+</span><span class='line'>      inputRange: [0, ANIMATION_END_Y/2, ANIMATION_END_Y],
+</span><span class='line'>      outputRange: [0, 15, 0]
+</span><span class='line'>    })
+</span><span class='line'>
+</span><span class='line'>    this._rotateAnimation = this._yAnimation.interpolate({
+</span><span class='line'>      inputRange: [0, ANIMATION_END_Y/4, ANIMATION_END_Y/3, ANIMATION_END_Y/2, ANIMATION_END_Y],
+</span><span class='line'>      outputRange: ['0deg', '-2deg', '0deg', '2deg', '0deg']
+</span><span class='line'>    });
+</span><span class='line'>  },
+</span><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    Animated.timing(this.state.position, {
+</span><span class='line'>      duration: 2000,
+</span><span class='line'>      toValue: NEGATIVE_END_Y
+</span><span class='line'>    }).start(this.props.onComplete);
+</span><span class='line'>  },
+</span><span class='line'>  getHeartAnimationStyle: function() {
+</span><span class='line'>    return {
+</span><span class='line'>      transform: [
+</span><span class='line'>        {translateY: this.state.position},
+</span><span class='line'>        {translateX: this._xAnimation},
+</span><span class='line'>        {scale: this._scaleAnimation},
+</span><span class='line'>        {rotate: this._rotateAnimation}
+</span><span class='line'>      ],
+</span><span class='line'>      opacity: this._opacityAnimation
+</span><span class='line'>    }
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>        &lt;Animated.View style={[styles.heartWrap, this.getHeartAnimationStyle(), this.props.style]}&gt;
+</span><span class='line'>          &lt;Heart /&gt;
+</span><span class='line'>        &lt;/Animated.View&gt;
+</span><span class='line'>    )
+</span><span class='line'>  }
+</span><span class='line'>})</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We modified a few things. We adjusted our <code>style</code> to include <code>this.props.style</code>.
+Also we added a callback when the animation is finished.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    Animated.timing(this.state.position, {
+</span><span class='line'>      duration: 2000,
+</span><span class='line'>      toValue: NEGATIVE_END_Y
+</span><span class='line'>    }).start(this.props.onComplete);
+</span><span class='line'>  },</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Add AnimatedHeart on press</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+</span><span class='line'>function getRandomNumber(min, max) {
+</span><span class='line'>  return Math.random() * (max - min) + min;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>var HeartFloater = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>      hearts: [] 
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  addHeart: function() {
+</span><span class='line'>    startCount += 1;
+</span><span class='line'>    this.state.hearts.push({
+</span><span class='line'>      id: startCount,
+</span><span class='line'>      right: getRandomNumber(50, 150)
+</span><span class='line'>    });
+</span><span class='line'>    this.setState(this.state);
+</span><span class='line'>  },
+</span><span class='line'>  removeHeart: function(v) {
+</span><span class='line'>    var index = this.state.hearts.findIndex(function(heart) { return heart.id === v});
+</span><span class='line'>    this.state.hearts.splice(index, 1);
+</span><span class='line'>    this.setState(this.state);
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;TouchableWithoutFeedback style={styles.container} onPress={this.addHeart}&gt;
+</span><span class='line'>          &lt;View style={styles.container}&gt;
+</span><span class='line'>            {
+</span><span class='line'>              this.state.hearts.map(function(v, i) {
+</span><span class='line'>                return (
+</span><span class='line'>                    &lt;AnimatedHeart 
+</span><span class='line'>                      key={v.id}
+</span><span class='line'>                      onComplete={this.removeHeart.bind(this, v.id)}
+</span><span class='line'>                      style=
+</span><span class='line'>                    /&gt;
+</span><span class='line'>                ) 
+</span><span class='line'>              }, this)
+</span><span class='line'>            }
+</span><span class='line'>          &lt;/View&gt;
+</span><span class='line'>        &lt;/TouchableWithoutFeedback&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Our HeartFloater, now has a hearts array to hold our hearts for state. We&rsquo;ve adjusted our <code>render</code> to use <code>TouchableWithoutFeedback</code> to call <code>addHeart</code> on press.</p>
+
+<p>Each press will increase our <code>startCount</code> which we use as an id generator. Also we add a random <code>right</code> style. a</p>
+
+<p>Our render just loops over each heart, and renders the <code>AnimatedHeart</code> with a <code>key</code> which is essential for performance, an <code>onComplete</code> which is called when our animation is finished, and the right style we randomly generated.</p>
+
+<p>On complete we call remove. Which finds the index of the heart, splices it, and sets state.</p>
+
+<h1>Fix Background Colors and Styles</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  heartWrap: {
+</span><span class='line'>      position: 'absolute',
+</span><span class='line'>      bottom: 30,
+</span><span class='line'>      backgroundColor: 'transparent'
+</span><span class='line'>  },
+</span><span class='line'>  heart: {
+</span><span class='line'>    width: 50,
+</span><span class='line'>    height: 50,
+</span><span class='line'>    backgroundColor: 'transparent'
+</span><span class='line'>  },</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Without setting the background to transparent the background will be white causing one heart to clip another. This will prevent that.</p>
+
+<p>We also removed the <code>right</code> position since we generate random positions between <code>50</code> and <code>150</code>.</p>
+
+<h1>Final</h1>
+
+<p>Thank you to Anthony Webb for the submission. As always check out the live code on RNPlay.</p>
+
+<h3>Live code: <a href="https://rnplay.org/apps/8VhSjw">https://rnplay.org/apps/8VhSjw</a></h3>
+
+<p>If you any other inquiries do let me know and I&rsquo;ll show you how to build them.</p>
+
+<p><img src="http://i.imgur.com/5JhgzQV.gif" title="Purple floating fading swaying rotating hearts" ></p>
+
+<h1>Final Code</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+<span class='line-number'>152</span>
+<span class='line-number'>153</span>
+<span class='line-number'>154</span>
+<span class='line-number'>155</span>
+<span class='line-number'>156</span>
+<span class='line-number'>157</span>
+<span class='line-number'>158</span>
+<span class='line-number'>159</span>
+<span class='line-number'>160</span>
+<span class='line-number'>161</span>
+<span class='line-number'>162</span>
+<span class='line-number'>163</span>
+<span class='line-number'>164</span>
+<span class='line-number'>165</span>
+<span class='line-number'>166</span>
+<span class='line-number'>167</span>
+<span class='line-number'>168</span>
+<span class='line-number'>169</span>
+<span class='line-number'>170</span>
+<span class='line-number'>171</span>
+<span class='line-number'>172</span>
+<span class='line-number'>173</span>
+<span class='line-number'>174</span>
+<span class='line-number'>175</span>
+<span class='line-number'>176</span>
+<span class='line-number'>177</span>
+<span class='line-number'>178</span>
+<span class='line-number'>179</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>var Dimensions = require('Dimensions');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  width: deviceWidth,
+</span><span class='line'>  height: deviceHeight
+</span><span class='line'>} = Dimensions.get('window');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  AppRegistry,
+</span><span class='line'>  StyleSheet,
+</span><span class='line'>  View,
+</span><span class='line'>  Animated,
+</span><span class='line'>  TouchableWithoutFeedback
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>var ANIMATION_END_Y = Math.ceil(deviceHeight * .5);
+</span><span class='line'>var NEGATIVE_END_Y = ANIMATION_END_Y * -1;
+</span><span class='line'>var startCount = 1;
+</span><span class='line'>
+</span><span class='line'>function getRandomNumber(min, max) {
+</span><span class='line'>  return Math.random() * (max - min) + min;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>var Heart = React.createClass({
+</span><span class='line'>    render: function() {
+</span><span class='line'>        return (
+</span><span class='line'>            &lt;View {...this.props} style={[styles.heart, this.props.style]}&gt;
+</span><span class='line'>                &lt;View style={[styles.leftHeart, styles.heartShape]} /&gt;
+</span><span class='line'>                &lt;View style={[styles.rightHeart, styles.heartShape]} /&gt;
+</span><span class='line'>            &lt;/View&gt;
+</span><span class='line'>        )
+</span><span class='line'>    }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var AnimatedHeart = React.createClass({
+</span><span class='line'>  getDefaultProps: function() {
+</span><span class='line'>    return {
+</span><span class='line'>      onComplete: function() {}
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>      position: new Animated.Value(0)
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  componentWillMount: function() {
+</span><span class='line'>    this._yAnimation = this.state.position.interpolate({
+</span><span class='line'>      inputRange: [NEGATIVE_END_Y, 0],
+</span><span class='line'>      outputRange: [ANIMATION_END_Y, 0]
+</span><span class='line'>    });
+</span><span class='line'>
+</span><span class='line'>    this._opacityAnimation = this._yAnimation.interpolate({
+</span><span class='line'>      inputRange: [0, ANIMATION_END_Y],
+</span><span class='line'>      outputRange: [1, 0]
+</span><span class='line'>    });
+</span><span class='line'>
+</span><span class='line'>    this._scaleAnimation = this._yAnimation.interpolate({
+</span><span class='line'>      inputRange: [0, 15, 30],
+</span><span class='line'>      outputRange: [0, 1.2, 1],
+</span><span class='line'>      extrapolate: 'clamp'
+</span><span class='line'>    });
+</span><span class='line'>
+</span><span class='line'>    this._xAnimation = this._yAnimation.interpolate({
+</span><span class='line'>      inputRange: [0, ANIMATION_END_Y/2, ANIMATION_END_Y],
+</span><span class='line'>      outputRange: [0, 15, 0]
+</span><span class='line'>    })
+</span><span class='line'>
+</span><span class='line'>    this._rotateAnimation = this._yAnimation.interpolate({
+</span><span class='line'>      inputRange: [0, ANIMATION_END_Y/4, ANIMATION_END_Y/3, ANIMATION_END_Y/2, ANIMATION_END_Y],
+</span><span class='line'>      outputRange: ['0deg', '-2deg', '0deg', '2deg', '0deg']
+</span><span class='line'>    });
+</span><span class='line'>  },
+</span><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    Animated.timing(this.state.position, {
+</span><span class='line'>      duration: 2000,
+</span><span class='line'>      toValue: NEGATIVE_END_Y
+</span><span class='line'>    }).start(this.props.onComplete);
+</span><span class='line'>  },
+</span><span class='line'>  getHeartAnimationStyle: function() {
+</span><span class='line'>    return {
+</span><span class='line'>      transform: [
+</span><span class='line'>        {translateY: this.state.position},
+</span><span class='line'>        {translateX: this._xAnimation},
+</span><span class='line'>        {scale: this._scaleAnimation},
+</span><span class='line'>        {rotate: this._rotateAnimation}
+</span><span class='line'>      ],
+</span><span class='line'>      opacity: this._opacityAnimation
+</span><span class='line'>    }
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>        &lt;Animated.View style={[styles.heartWrap, this.getHeartAnimationStyle(), this.props.style]}&gt;
+</span><span class='line'>          &lt;Heart /&gt;
+</span><span class='line'>        &lt;/Animated.View&gt;
+</span><span class='line'>    )
+</span><span class='line'>  }
+</span><span class='line'>})
+</span><span class='line'>
+</span><span class='line'>var HeartFloater = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>      hearts: [] 
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  addHeart: function() {
+</span><span class='line'>    startCount += 1;
+</span><span class='line'>    this.state.hearts.push({
+</span><span class='line'>      id: startCount,
+</span><span class='line'>      right: getRandomNumber(50, 150)
+</span><span class='line'>    });
+</span><span class='line'>    this.setState(this.state);
+</span><span class='line'>  },
+</span><span class='line'>  removeHeart: function(v) {
+</span><span class='line'>    var index = this.state.hearts.findIndex(function(heart) { return heart.id === v});
+</span><span class='line'>    this.state.hearts.splice(index, 1);
+</span><span class='line'>    this.setState(this.state);
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;TouchableWithoutFeedback style={styles.container} onPress={this.addHeart}&gt;
+</span><span class='line'>          &lt;View style={styles.container}&gt;
+</span><span class='line'>            {
+</span><span class='line'>              this.state.hearts.map(function(v, i) {
+</span><span class='line'>                return (
+</span><span class='line'>                    &lt;AnimatedHeart 
+</span><span class='line'>                      key={v.id}
+</span><span class='line'>                      onComplete={this.removeHeart.bind(this, v.id)}
+</span><span class='line'>                      style=
+</span><span class='line'>                    /&gt;
+</span><span class='line'>                ) 
+</span><span class='line'>              }, this)
+</span><span class='line'>            }
+</span><span class='line'>          &lt;/View&gt;
+</span><span class='line'>        &lt;/TouchableWithoutFeedback&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>  container: {
+</span><span class='line'>    flex: 1
+</span><span class='line'>  },
+</span><span class='line'>  heartWrap: {
+</span><span class='line'>      position: 'absolute',
+</span><span class='line'>      bottom: 30,
+</span><span class='line'>      backgroundColor: 'transparent'
+</span><span class='line'>  },
+</span><span class='line'>  heart: {
+</span><span class='line'>    width: 50,
+</span><span class='line'>    height: 50,
+</span><span class='line'>    backgroundColor: 'transparent'
+</span><span class='line'>  },
+</span><span class='line'>  heartShape: {
+</span><span class='line'>    width: 30,
+</span><span class='line'>    height: 45,
+</span><span class='line'>    position: 'absolute',
+</span><span class='line'>    top: 0,
+</span><span class='line'>    borderTopLeftRadius: 15,
+</span><span class='line'>    borderTopRightRadius: 15,
+</span><span class='line'>    backgroundColor: '#6427d1',
+</span><span class='line'>  },
+</span><span class='line'>  leftHeart: {
+</span><span class='line'>    transform: [
+</span><span class='line'>        {rotate: '-45deg'}
+</span><span class='line'>    ],
+</span><span class='line'>    left: 5
+</span><span class='line'>  },
+</span><span class='line'>  rightHeart: {
+</span><span class='line'>    transform: [
+</span><span class='line'>        {rotate: '45deg'}
+</span><span class='line'>    ],
+</span><span class='line'>    right: 5
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>AppRegistry.registerComponent('animate_slide', () =&gt; HeartFloater);
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/animation/'>animation</a>, <a class='category' href='/blog/categories/hearts/'>hearts</a>, <a class='category' href='/blog/categories/periscope/'>periscope</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+
+<footer style="margin-top: 10px;">
+    <div id="post-author">
+	<div class="post-author-content" style="width: 70%; display: inline-block;">
+		<p style="font-size: 16px;">
+			If you ever want further explanation, want to see a particular type of tutorial, or to contact me for whatever reason you can drop me a line on twitter <a href="http://twitter.com/browniefed">@browniefed</a> or email me at <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a>
+		</p>
+	</div>
+</div>
+</footer>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+
+<!-- END OF _/layouts/post.html -->
+
+		
+			<footer>
+				Copyright &copy; 2016
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/react-native-periscope-hearts-animation/';
+        var disqus_url = 'http://browniefed.com/blog/react-native-periscope-hearts-animation/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: function() {
+                    return $(this).next('code').text().split("\n").join("\r\n")
+                },
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+				}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/react-native-periscope-hearts-animation/';
+        var disqus_url = 'http://browniefed.com/blog/react-native-periscope-hearts-animation/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->

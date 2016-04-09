@@ -4,7 +4,7 @@
   <title><![CDATA[Category: shifty | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/shifty/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Animating with React Art and Shifty.js]]></title>
-    <link href="http://browniefed.com/blog/2015/05/26/animating-with-react-art-and-shifty-dot-js/"/>
+    <link href="http://browniefed.com/blog/animating-with-react-art-and-shifty-dot-js/"/>
     <updated>2015-05-26T10:38:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/05/26/animating-with-react-art-and-shifty-dot-js</id>
+    <id>http://browniefed.com/blog/animating-with-react-art-and-shifty-dot-js</id>
     <content type="html"><![CDATA[<p>Having little experience with D3 animations I&rsquo;m not sure if it is easy to do animations with D3.
 However the great thing about <code>react</code> and <code>react-art</code> is that in order to animate you follow the same pattern you do for any other rendering, just <code>setState</code>.</p>
 

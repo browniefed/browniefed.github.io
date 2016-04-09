@@ -4,7 +4,7 @@
   <title><![CDATA[Category: exponent | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/exponent/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Native FlexboxFroggy]]></title>
-    <link href="http://browniefed.com/blog/2015/12/23/react-native-flexboxfroggy/"/>
+    <link href="http://browniefed.com/blog/react-native-flexboxfroggy/"/>
     <updated>2015-12-23T15:33:00-08:00</updated>
-    <id>http://browniefed.com/blog/2015/12/23/react-native-flexboxfroggy</id>
+    <id>http://browniefed.com/blog/react-native-flexboxfroggy</id>
     <content type="html"><![CDATA[<p>If you are in the React Native world and haven&rsquo;t heard about <a href="https://exponentjs.com/">Exponent</a> then you&rsquo;ve been living under a rock. It&rsquo;s being built by James Ide, Brent Vatne, and Charlie Cheever. All who have contributed significantly to the React Native community and ecosystem.</p>
 
 <p>Brent is holding a contest to win some awesome prizes, including tickets to the sold out ReactJS 2016 Conf. Check out the contest here <a href="https://gist.github.com/brentvatne/7d88f846417452355b18">https://gist.github.com/brentvatne/7d88f846417452355b18</a>.</p>

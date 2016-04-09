@@ -1,202 +1,174 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://browniefed.com/blog/2013/11/12/hey-its-a-post/</loc>
+        <loc>http://browniefed.com/blog/hey-its-a-post/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2013/11/16/meteor-and-realtime-transit-mapping-part-1/
-        </loc>
+        <loc>http://browniefed.com/blog/meteor-and-realtime-transit-mapping-part-1/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2014/02/17/ractive-dot-js-next-generation-dom-manipulation/
-        </loc>
+        <loc>http://browniefed.com/blog/ractive-dot-js-next-generation-dom-manipulation/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2014/04/26/progress-report/</loc>
+        <loc>http://browniefed.com/blog/progress-report/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2014/04/27/ractive-dot-js-components-for-speed-and-flexibility/
-        </loc>
+        <loc>http://browniefed.com/blog/ractive-dot-js-components-for-speed-and-flexibility/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2014/05/01/nonrte-part-1/</loc>
+        <loc>http://browniefed.com/blog/nonrte-part-1/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2014/06/01/socket-dot-io-on-android-plus-phonegap/</loc>
+        <loc>http://browniefed.com/blog/socket-dot-io-on-android-plus-phonegap/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2014/06/07/phonegap-3-dot-4-geolocation/</loc>
+        <loc>http://browniefed.com/blog/phonegap-3-dot-4-geolocation/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2014/06/15/phantomjs-creating-and-connecting-to-server/
-        </loc>
+        <loc>http://browniefed.com/blog/phantomjs-creating-and-connecting-to-server/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2014/12/24/webpack-and-compass/</loc>
+        <loc>http://browniefed.com/blog/webpack-and-compass/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/05/02/react/</loc>
+        <loc>http://browniefed.com/blog/react/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2015/05/03/getting-react-art-running-on-react-native/
-        </loc>
+        <loc>http://browniefed.com/blog/getting-react-art-running-on-react-native/</loc>
         <lastmod>2016-01-13T09:29:40-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/05/16/react-native-and-socket-dot-io/</loc>
+        <loc>http://browniefed.com/blog/react-native-and-socket-dot-io/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/05/20/react-art-zooming-and-dragging/</loc>
+        <loc>http://browniefed.com/blog/react-art-zooming-and-dragging/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2015/05/26/animating-with-react-art-and-shifty-dot-js/
-        </loc>
+        <loc>http://browniefed.com/blog/animating-with-react-art-and-shifty-dot-js/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/05/27/react-art-and-paths-dot-js/</loc>
+        <loc>http://browniefed.com/blog/react-art-and-paths-dot-js/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/05/29/react-art-and-bar-charts/</loc>
+        <loc>http://browniefed.com/blog/react-art-and-bar-charts/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art/</loc>
+        <loc>http://browniefed.com/blog/create-a-map-with-react-art/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/06/01/css-layout-and-react-art/</loc>
+        <loc>http://browniefed.com/blog/css-layout-and-react-art/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/06/06/react-native-tinder-like-cards/</loc>
+        <loc>http://browniefed.com/blog/react-native-tinder-like-cards/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/06/07/react-native-layout-examples/</loc>
+        <loc>http://browniefed.com/blog/react-native-layout-examples/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/07/26/react-native-animated-api-basic-example/</loc>
+        <loc>http://browniefed.com/blog/react-native-animated-api-basic-example/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/08/01/react-native-animated-listview-row-swipe/</loc>
+        <loc>http://browniefed.com/blog/react-native-animated-listview-row-swipe/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2015/08/15/react-native-animated-api-with-panresponder/
-        </loc>
+        <loc>http://browniefed.com/blog/react-native-animated-api-with-panresponder/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2015/08/22/react-native-press-and-hold-button-actions/
-        </loc>
+        <loc>http://browniefed.com/blog/react-native-press-and-hold-button-actions/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/
-        </loc>
+        <loc>http://browniefed.com/blog/react-native-animated-with-react-art-firework-show/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2015/08/31/react-native-youtube-animated-video-slide/
-        </loc>
+        <loc>http://browniefed.com/blog/react-native-youtube-animated-video-slide/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation/</loc>
+        <loc>http://browniefed.com/blog/react-native-periscope-hearts-animation/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/09/10/the-shapes-of-react-native/</loc>
+        <loc>http://browniefed.com/blog/the-shapes-of-react-native/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2015/10/10/react-native-pan-responder-inside-of-a-scrollview/
-        </loc>
+        <loc>http://browniefed.com/blog/react-native-pan-responder-inside-of-a-scrollview/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2015/10/11/react-native-how-to-make-facebook-reactions/
-        </loc>
+        <loc>http://browniefed.com/blog/react-native-how-to-make-facebook-reactions/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2015/10/14/react-native-morphing-svg-paths-with-react-art/
-        </loc>
+        <loc>http://browniefed.com/blog/react-native-morphing-svg-paths-with-react-art/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2015/10/18/react-native-easy-overlay-modal-with-navigator/
-        </loc>
+        <loc>http://browniefed.com/blog/react-native-easy-overlay-modal-with-navigator/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2015/10/23/react-native-recreating-the-apple-tv-icons/
-        </loc>
+        <loc>http://browniefed.com/blog/react-native-recreating-the-apple-tv-icons/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/11/02/react-native-how-to-make-instagram/</loc>
+        <loc>http://browniefed.com/blog/react-native-how-to-make-instagram/</loc>
         <lastmod>2016-01-08T10:05:43-08:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://browniefed.com/blog/2015/11/07/react-native-how-to-create-twitter-exploding-hearts/
-        </loc>
+        <loc>http://browniefed.com/blog/react-native-how-to-create-twitter-exploding-hearts/</loc>
         <lastmod>2015-11-13T19:31:02-08:00</lastmod>
     </url>
     <url>
         <loc>
-            http://browniefed.com/blog/2015/11/24/react-native-how-to-bridge-an-objective-c-view-component/
+            http://browniefed.com/blog/react-native-how-to-bridge-an-objective-c-view-component/
         </loc>
         <lastmod>2015-11-26T19:53:50-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/11/28/react-native-how-to-bridge-a-swift-view/</loc>
+        <loc>http://browniefed.com/blog/react-native-how-to-bridge-a-swift-view/</loc>
         <lastmod>2015-11-28T12:26:05-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/12/23/react-native-animated-book/</loc>
+        <loc>http://browniefed.com/blog/react-native-animated-book/</loc>
         <lastmod>2015-12-23T15:33:36-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2015/12/23/react-native-flexboxfroggy/</loc>
+        <loc>http://browniefed.com/blog/react-native-flexboxfroggy/</loc>
         <lastmod>2015-12-23T15:40:40-08:00</lastmod>
     </url>
     <url>
-        <loc>http://browniefed.com/blog/2016/01/31/css-modules-webpack-and-testing/</loc>
+        <loc>http://browniefed.com/blog/css-modules-webpack-and-testing/</loc>
         <lastmod>2016-01-31T14:58:02-08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://browniefed.com/blog/create-a-weather-app-with-react-native/</loc>
+        <lastmod>2016-02-06T12:45:20-08:00</lastmod>
     </url>
     <url>
         <loc>http://browniefed.com/about/</loc>
@@ -204,11 +176,11 @@
     </url>
     <url>
         <loc>http://browniefed.com/blog/archives/</loc>
-        <lastmod>2016-01-31T14:58:02-08:00</lastmod>
+        <lastmod>2016-02-06T12:45:20-08:00</lastmod>
     </url>
     <url>
         <loc>http://browniefed.com/</loc>
-        <lastmod>2016-01-31T14:58:02-08:00</lastmod>
+        <lastmod>2016-02-06T12:45:20-08:00</lastmod>
     </url>
     <url>
         <loc>http://browniefed.com/robots.txt</loc>

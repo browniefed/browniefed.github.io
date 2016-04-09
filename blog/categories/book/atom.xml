@@ -4,7 +4,7 @@
   <title><![CDATA[Category: book | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/book/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Native Animated Book]]></title>
-    <link href="http://browniefed.com/blog/2015/12/23/react-native-animated-book/"/>
+    <link href="http://browniefed.com/blog/react-native-animated-book/"/>
     <updated>2015-12-23T15:31:00-08:00</updated>
-    <id>http://browniefed.com/blog/2015/12/23/react-native-animated-book</id>
+    <id>http://browniefed.com/blog/react-native-animated-book</id>
     <content type="html"><![CDATA[<p>So I wrote a book of sorts on React Native animations. Mostly covering the animated API, and soon much much more. Check it out here <a href="http://browniefed.com/react-native-animation-book/">http://browniefed.com/react-native-animation-book/</a>.</p>
 
 <p>I cover the API, and walk through basic animation examples, and soon advanced topics. Learn to create a fun dragging, spinning square.</p>

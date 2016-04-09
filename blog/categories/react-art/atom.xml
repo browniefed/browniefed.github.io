@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react-art | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/react-art/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Native - How to create Twitter exploding hearts]]></title>
-    <link href="http://browniefed.com/blog/2015/11/07/react-native-how-to-create-twitter-exploding-hearts/"/>
+    <link href="http://browniefed.com/blog/react-native-how-to-create-twitter-exploding-hearts/"/>
     <updated>2015-11-07T08:55:00-08:00</updated>
-    <id>http://browniefed.com/blog/2015/11/07/react-native-how-to-create-twitter-exploding-hearts</id>
+    <id>http://browniefed.com/blog/react-native-how-to-create-twitter-exploding-hearts</id>
     <content type="html"><![CDATA[<p>So we&rsquo;re going to build this exploding heart, except just know Twitter kind of cheated. Not really but they used an image and played each frame adjusting <code>background-position</code> so it looked animated. Okay not cheated they used a really smart technique but what&rsquo;s the fun in doing that when we can build it for real!</p>
 
 <p>I&rsquo;ve already built a Firework concept here <a href="http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/">http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/</a> and about Hearts here <a href="http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation/">http://browniefed.com/blog/2015/09/07/react-native-periscope-hearts-animation/</a> now we just need to bring them together.</p>
@@ -556,9 +556,9 @@ We put those in and because our stroke color is always the same we just referenc
   
   <entry>
     <title type="html"><![CDATA[React Native - Morphing SVG Paths with React Art]]></title>
-    <link href="http://browniefed.com/blog/2015/10/14/react-native-morphing-svg-paths-with-react-art/"/>
+    <link href="http://browniefed.com/blog/react-native-morphing-svg-paths-with-react-art/"/>
     <updated>2015-10-14T20:37:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/10/14/react-native-morphing-svg-paths-with-react-art</id>
+    <id>http://browniefed.com/blog/react-native-morphing-svg-paths-with-react-art</id>
     <content type="html"><![CDATA[<p>More paths, more React Art, and more animations. What else have you come to expect of me. A question was posed on Reactiflux about morphing one path to another with React Art. Of course I took this as a &ldquo;challenge&rdquo;.</p>
 
 <p>I say &ldquo;challenge&rdquo; because it took all of a few moments to check out the ART repo and see the <a href="https://github.com/sebmarkbage/art/blob/master/demos/morph/morph.js">Morph Demo</a> which links to <code>art/morph/path</code>. That&rsquo;s of course what this all about, morphing a path. Sebastian Markbåge has thought of everything.</p>
@@ -888,9 +888,9 @@ this.setState({
   
   <entry>
     <title type="html"><![CDATA[React-Native Animated with React-Art - Firework Tap To Shoot]]></title>
-    <link href="http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show/"/>
+    <link href="http://browniefed.com/blog/react-native-animated-with-react-art-firework-show/"/>
     <updated>2015-08-29T22:12:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/08/29/react-native-animated-with-react-art-firework-show</id>
+    <id>http://browniefed.com/blog/react-native-animated-with-react-art-firework-show</id>
     <content type="html"><![CDATA[<h1>Introduction</h1>
 
 <p>This actually could be built with out react-art, but we&rsquo;ll use react-art just for good measure.
@@ -1797,9 +1797,9 @@ return React.createElement(AnimatedShape, React.__spread({},  this.props, {d: pa
   
   <entry>
     <title type="html"><![CDATA[CSS-Layout and React-Art]]></title>
-    <link href="http://browniefed.com/blog/2015/06/01/css-layout-and-react-art/"/>
+    <link href="http://browniefed.com/blog/css-layout-and-react-art/"/>
     <updated>2015-06-01T10:29:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/06/01/css-layout-and-react-art</id>
+    <id>http://browniefed.com/blog/css-layout-and-react-art</id>
     <content type="html"><![CDATA[<h3>Intro</h3>
 
 <p>If you&rsquo;ve used <code>react-native</code> before then you may know that &ldquo;css&rdquo; you&rsquo;re writing isn&rsquo;t actually CSS. It&rsquo;s a descriptor for a layout engine. That layout engine is <a href="https://github.com/facebook/css-layout">css-layout</a> which was created by <a href="https://twitter.com/Vjeux">@vjeux</a> and compiled to Java/Objective-C.</p>
@@ -2223,9 +2223,9 @@ return props;
   
   <entry>
     <title type="html"><![CDATA[Create a map with React-Art]]></title>
-    <link href="http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art/"/>
+    <link href="http://browniefed.com/blog/create-a-map-with-react-art/"/>
     <updated>2015-05-30T10:15:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/05/30/create-a-map-with-react-art</id>
+    <id>http://browniefed.com/blog/create-a-map-with-react-art</id>
     <content type="html"><![CDATA[<h3>Intro</h3>
 
 <p>Just Like the title states, we&rsquo;re going to make a map with <code>react-art</code>. When you think of maps many people jump straight to <code>leaflet</code>, <code>google maps</code>, or <code>mapbox</code>. Well one of the key things they are doing is just plotting map tiles.</p>

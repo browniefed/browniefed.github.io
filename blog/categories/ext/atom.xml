@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ext | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/ext/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React, Higher Order Components, and Legacy Applications]]></title>
-    <link href="http://browniefed.com/blog/2015/05/02/react/"/>
+    <link href="http://browniefed.com/blog/react/"/>
     <updated>2015-05-02T12:08:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/05/02/react</id>
+    <id>http://browniefed.com/blog/react</id>
     <content type="html"><![CDATA[<p>At work we embarked on an ambitious task of converting our legacy application (ExtJS 3.4) over to React.
 Now obviously rewriting an application that has been built over the course of 7 years could not just be simply re-written. We had to be very strategic about it.</p>
 

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: paths | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/paths/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-01-31T14:58:07-08:00</updated>
+  <updated>2016-04-09T10:50:56-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[React Native - Morphing SVG Paths with React Art]]></title>
-    <link href="http://browniefed.com/blog/2015/10/14/react-native-morphing-svg-paths-with-react-art/"/>
+    <link href="http://browniefed.com/blog/react-native-morphing-svg-paths-with-react-art/"/>
     <updated>2015-10-14T20:37:00-07:00</updated>
-    <id>http://browniefed.com/blog/2015/10/14/react-native-morphing-svg-paths-with-react-art</id>
+    <id>http://browniefed.com/blog/react-native-morphing-svg-paths-with-react-art</id>
     <content type="html"><![CDATA[<p>More paths, more React Art, and more animations. What else have you come to expect of me. A question was posed on Reactiflux about morphing one path to another with React Art. Of course I took this as a &ldquo;challenge&rdquo;.</p>
 
 <p>I say &ldquo;challenge&rdquo; because it took all of a few moments to check out the ART repo and see the <a href="https://github.com/sebmarkbage/art/blob/master/demos/morph/morph.js">Morph Demo</a> which links to <code>art/morph/path</code>. That&rsquo;s of course what this all about, morphing a path. Sebastian Markbåge has thought of everything.</p>
