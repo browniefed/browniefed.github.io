@@ -77,67 +77,6 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
-		<h1><a href="/blog/getting-react-art-running-on-react-native/">Getting react-art running on react-native</a></h1>
-		<time>03 May 2015</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><p>I hadn&rsquo;t realized that the react-art native rendering stuff had landed in into the react-native core.
-So I figured I&rsquo;d try and get in running. I am an XCode noob so I&rsquo;ll be sure and be descriptive.</p>
-
-<p>First off lets set up a react-native project. (Assuming you have react-native cli installed);</p>
-
-<p><code>react-native init react_art_demo</code></p>
-
-<p>The current released version of <code>react-native</code> doesn&rsquo;t have the ART libs in it so in our <code>node_modules</code> folder we can delete the <code>react-native</code> in there and do a git clone of master <code>git clone https://github.com/facebook/react-native.git</code></p>
-
-<p>We will also need the <code>art</code> lib itself installed. So <code>cd</code> to the root of <code>react_art_demo</code>.
-Then run <code>npm install art</code></p>
-
-<p>Once we have the master repo of <code>react-native</code>, and <code>art</code> installed we can open up our <code>react_art_demo</code> project in XCode.</p>
-
-<p>We will need to do 2 things.</p>
-
-<ul>
-<li>Add the <code>ART.xcodeproj</code> to XCode</li>
-<li>Link the binary</li>
-</ul>
-
-
-</div>
-          
-          
-            <a rel="full-article" href="/blog/getting-react-art-running-on-react-native/">Read on &rarr;</a>
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
 		<h1><a href="/blog/react/">React, Higher Order Components, and Legacy Applications</a></h1>
 		<time>02 May 2015</time>
 	</header>
@@ -390,6 +329,56 @@ If that isn&rsquo;t the case we&rsquo;ll need <code>webpack</code>, <code>raw-lo
 			Tagged under
 		
     <a class='category' href='/blog/categories/3-dot-4/'>3.4</a>, <a class='category' href='/blog/categories/documentation/'>documentation</a>, <a class='category' href='/blog/categories/geolocation/'>geolocation</a>, <a class='category' href='/blog/categories/gps/'>gps</a>, <a class='category' href='/blog/categories/phonegap/'>phonegap</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/socket-dot-io-on-android-plus-phonegap/">Socket.io on Android + Phonegap</a></h1>
+		<time>01 June 2014</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>WebSockets are wonderful, they are one of the cheapest ways to get realtime communications into your web app. They&rsquo;re also a great way to get realtime communications into your mobile application. AJAX is great but wasn&rsquo;t applicable to my needs. Developing PDXLiveBus app required the server to handle all requests to TriMets servers and use AJAX to request the state of particular buses/routes was less realtime than I wanted. I could go more in depth about my usage and experience but the main point of this post is to prevent some table flipping.</p>
+
+<p>I had it all working in browser however it was not working when I did my phonegap serve. It just would not connect, nor even error out ( I don&rsquo;t think I waited long enough). I had been using <a href="https://github.com/mkuklis/phonegap-websocket">https://github.com/mkuklis/phonegap-websocket</a>, which Android WebView (what phonegap utilizes) doesn&rsquo;t support WebSockets until Android KitKat (4.4). I think this is a tremendous oversight, but I digress. I attempted various things to get <code>phonegap-websocket</code> to work but I just couldn&rsquo;t.</p>
+
+<p>The real problem wasn&rsquo;t with <code>phonegap-websocket</code> it was with my own server code. I had allowed CORS for the <code>restify</code> REST API I had setup but had forgotten to allow CORS for Socket.IO. It all came down to this single line of code.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>io.set( 'origins', '*:*' );</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Yeah not the most secure but then again I don&rsquo;t think I have a choice since everything is being served from phones and not a particular domain. Also I&rsquo;m dealing with public transportation vehicle location which doesn&rsquo;t necessarily needing extreme security.</p>
+
+<p>So if you can&rsquo;t get Socket.IO to work on your Android Phonegap app, add <code>phonegap-websocket</code> and make sure you have allowed CORS on your server.</p>
+</div>
+          
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/android/'>android</a>, <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/mobile/'>mobile</a>, <a class='category' href='/blog/categories/phonegap/'>phonegap</a>, <a class='category' href='/blog/categories/socket-dot-io/'>socket.io</a>, <a class='category' href='/blog/categories/websocket/'>websocket</a>, <a class='category' href='/blog/categories/websockets/'>websockets</a>, <a class='category' href='/blog/categories/webview/'>webview</a>
 	
 
 

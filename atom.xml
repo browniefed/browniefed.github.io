@@ -4,7 +4,7 @@
 	<title><![CDATA[JavaScript Without Grammar]]></title>
 	<link href="http://browniefed.com/atom.xml" rel="self"/>
 	<link href="http://browniefed.com/"/>
-	<updated>2016-04-09T10:50:56-07:00</updated>
+	<updated>2016-04-09T22:53:12-07:00</updated>
 	<id>http://browniefed.com/</id>
 	<author>
 		<name><![CDATA[Jason Brown]]></name>
@@ -12,42 +12,6 @@
 	</author>
 	<generator uri="http://octopress.org/">Octopress</generator>
 
-	
-	<entry>
-		
-			<title type="html"><![CDATA[Create a Weather App with React Native]]></title>
-		
-		<link href="http://browniefed.com/blog/create-a-weather-app-with-react-native/"/>
-		<updated>2016-02-06T12:00:00-08:00</updated>
-		<id>http://browniefed.com/blog/create-a-weather-app-with-react-native</id>
-		<content type="html">
-			<![CDATA[
-				
-					<p></p>
-				
-			]]>
-			<![CDATA[<h2>Intro</h2>
-
-<p>Weather apps are hot, and always heavily and over designed. Turns out you can just look outside&hellip; I digress. There is apparently an app called DarkSky that people rant and rave about, and they have an API they use called forecast.io. You can check out the API docs here <a href="https://developer.forecast.io/">https://developer.forecast.io/</a>.</p>
-
-<p>We&rsquo;ll use forecast.io, so sign up for a developer account, and get your API key.</p>
-
-<p>The development of this app was originally intended for a Chicktech workshop. I decided to turn it into a blog post as well just in case anyone wants to follow along.</p>
-
-<p>You can look at all the code here <a href="https://github.com/browniefed/forecast">https://github.com/browniefed/forecast</a>. Each commit is an evolution of the previous code base and each line is commented.</p>
-
-<p>It doesn&rsquo;t implement any data flow like redux because that&rsquo;d be overkill. This will work for both iOS and Android. We will focus on some slight React basics, but I am assuming you know a little JavaScript and have hopefully done a little React.</p>
-
-<p>Also checkout <a href="https://github.com/catalinmiron/react-native-weather-app">https://github.com/catalinmiron/react-native-weather-app</a> which uses a weather icon font!</p>
-
-<h2>Setup</h2>
-
-<p>Hopefully you have Android/iOS running for React Native and can at least get a basic project working. If you don&rsquo;t then follow the instructions here <a href="http://facebook.github.io/react-native/docs/getting-started.html">http://facebook.github.io/react-native/docs/getting-started.html</a>.</p>
-
-<h2>Start</h2>
-]]>
-		</content>
-	</entry>
 	
 	<entry>
 		
@@ -14879,6 +14843,490 @@ Back to point 1, we have to set the height specifically here.</p>
 </span><span class='line'>});
 </span><span class='line'>
 </span><span class='line'>AppRegistry.registerComponent('AnimatedFlick', () =&gt; AnimatedFlick);</span></code></pre></td></tr></table></div></figure>
+
+]]>
+		</content>
+	</entry>
+	
+	<entry>
+		
+			<title type="html"><![CDATA[React-native Animated API Basic Example]]></title>
+		
+		<link href="http://browniefed.com/blog/react-native-animated-api-basic-example/"/>
+		<updated>2015-07-26T11:51:00-07:00</updated>
+		<id>http://browniefed.com/blog/react-native-animated-api-basic-example</id>
+		<content type="html">
+			<![CDATA[
+				
+					<p></p>
+				
+			]]>
+			<![CDATA[<h1>Introduction</h1>
+
+<p>Animations are finally solved in React? That&rsquo;s a bold claim, but lets explore the new Animated API in <code>react-native</code>. This won&rsquo;t apply to React for the web, however there is also <a href="https://github.com/chenglou/react-motion">react-motion</a> also released at <code>react-europe</code>.</p>
+
+<p><img src="http://i.imgur.com/JlX4nV0.gif" title="Final Animation Result" ></p>
+
+<!-- more -->
+
+
+<h1>Resources</h1>
+
+<ul>
+<li><a href="https://www.youtube.com/watch?v=1tavDv5hXpo">Cheng Lou &ndash; The State of Animation in React at react-europe 2015</a></li>
+<li><a href="https://github.com/chenglou/react-motion">react-motion &ndash; Github</a></li>
+<li><a href="https://facebook.github.io/react-native/docs/animations.html#content">React Native Animation API</a></li>
+<li><a href="https://www.youtube.com/watch?v=xDlfrcM6YBk">Spencer Ahrens &ndash; React Native: Building Fluid User Experiences at react-europe 2015</a></li>
+</ul>
+
+
+<h1>How It Works</h1>
+
+<p>The Animated API does not depend on calling <code>setState</code>, it is accomplished by calling <code>setNativeProps</code>. The Animated API exports a few components <code>Animated.View</code>, <code>Animated.Text</code>, and <code>Animated.Image</code>. The Animated API will adjust the components in the native Objective-C world. This will bypass the diff and reconciliation in the JS world so you get fluent, and performance animatons. Ultimately all you need to know is that it will interpolate numbers and update the native view components.</p>
+
+<h1>Cool Examples</h1>
+
+<ul>
+<li><a href="https://github.com/brentvatne/react-native-animated-demo-tinder">https://github.com/brentvatne/react-native-animated-demo-tinder</a></li>
+<li><a href="https://github.com/facebook/react-native/tree/master/Examples/UIExplorer/AnimationExample">UIExplorer Animated example</a></li>
+</ul>
+
+
+<h1>Simple Move Around the Screen Example</h1>
+
+<p>We are just going to move a square around the edges of the screen.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;--&lt;           
+</span><span class='line'>|  |          
+</span><span class='line'>V--^         </span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Setup</h1>
+
+<p>Dependencies</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>var Dimensions = require('Dimensions');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  width,
+</span><span class='line'>  height
+</span><span class='line'>} = Dimensions.get('window');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  AppRegistry,
+</span><span class='line'>  StyleSheet,
+</span><span class='line'>  View,
+</span><span class='line'>  Animated
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>var SQUARE_DIMENSIONS = 30;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Styles</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>  container: {
+</span><span class='line'>    flex: 1
+</span><span class='line'>  },
+</span><span class='line'>  square: {
+</span><span class='line'>    width: SQUARE_DIMENSIONS,
+</span><span class='line'>    height: SQUARE_DIMENSIONS,
+</span><span class='line'>    backgroundColor: 'blue'
+</span><span class='line'>  } 
+</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Basic Code</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>var AnimatedSquare = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>        pan: new Animated.ValueXY()
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  getStyle: function() {
+</span><span class='line'>    return [
+</span><span class='line'>              styles.square, 
+</span><span class='line'>              {
+</span><span class='line'>                transform: this.state.pan.getTranslateTransform()
+</span><span class='line'>              }
+</span><span class='line'>            ];
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;Animated.View style={this.getStyle()} /&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Few things to call out here.</p>
+
+<p>Notice our state that is created is an instantiation of <code>Animated.ValueXY</code>. This will save us some code, and let the <code>Animated</code> API take care of interpolating both our X, and Y values.</p>
+
+<p>Our <code>getStyle</code> will return an array, our base <code>square</code> class and a <code>transform</code>. Once again we&rsquo;ll use a the <code>getTranslateTransform</code> helper from the <code>Animated</code> API to return the appropriate structure for the transform style.</p>
+
+<p>It returns <code>[{ translateX: xValue}, {translateY: yValue}]</code>, where <code>xValue</code> and <code>yValue</code> are the interpolated values from the <code>Animated.ValueXY</code> we set on our <code>pan</code> state variable.</p>
+
+<p>Finally we will use the <code>Animated.View</code> which is a convenience element to say &ldquo;Hey React this is going to be an animated thing&rdquo;.</p>
+
+<h1>Move It</h1>
+
+<p>We&rsquo;re now going to move it from the top corner. <code>x = 0, y = 0</code> to the bottom left corner <code>x = 0, y = (phoneHeight - square Height)</code>.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var SPRING_CONFIG = {tension: 2, friction: 3}; //Soft spring
+</span><span class='line'>
+</span><span class='line'>//...
+</span><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    Animated.spring(this.state.pan, {
+</span><span class='line'>          ...SPRING_CONFIG,
+</span><span class='line'>          toValue: {x: 0, y: height - SQUARE_DIMENSIONS}                        // return to start
+</span><span class='line'>    }).start();
+</span><span class='line'>  },</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So on mount we&rsquo;ll start a spring. This will animate the <code>this.state.pan</code> to the bottom left corner like we want it to.</p>
+
+<p>We&rsquo;ll also setup the <code>SPRING_CONFIG</code> with a soft spring, not much tension or friction. So it&rsquo;ll get to the corner and just bounce a little bit and stay there.</p>
+
+<h1>Move It, Move It, and Move It again</h1>
+
+<p>We can queue up sequences of animations. These will happen one after the other.
+The <code>sequence</code> call is one of the means of composing animations. There is also <code>parallel</code> which allows for declaration of animations to happen at the same time.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    Animated.sequence([
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>            ...SPRING_CONFIG,
+</span><span class='line'>            toValue: {x: 0, y: height - SQUARE_DIMENSIONS} //animate to bottom left
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>          ...SPRING_CONFIG,
+</span><span class='line'>          toValue: {x: width - SQUARE_DIMENSIONS, y: height - SQUARE_DIMENSIONS} // animated to bottom right
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>            ...SPRING_CONFIG,
+</span><span class='line'>            toValue: {x: width - SQUARE_DIMENSIONS, y: 0} //animate to top right
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>          ...SPRING_CONFIG,
+</span><span class='line'>          toValue: {x: 0, y: 0} // return to start
+</span><span class='line'>      })
+</span><span class='line'>    ]).start();
+</span><span class='line'>  }</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We define 4 spring configrations like discussed before. The comments in the code explain each movement.</p>
+
+<h1>Move and Repeat</h1>
+
+<p>The call to <code>start</code> takes a callback. This callback will be invoked once the animation is completed. In our case the animation is complete once we get back to the start. We can then restart the animation.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    this.startAndRepeat();
+</span><span class='line'>  },
+</span><span class='line'>  startAndRepeat: function() {
+</span><span class='line'>    this.triggerAnimation(this.startAndRepeat);
+</span><span class='line'>  },
+</span><span class='line'>  triggerAnimation: function(cb) {
+</span><span class='line'>    Animated.sequence([
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>            ...SPRING_CONFIG,
+</span><span class='line'>            toValue: {x: 0, y: height - SQUARE_DIMENSIONS} //animate to bottom left
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>          ...SPRING_CONFIG,
+</span><span class='line'>          toValue: {x: width - SQUARE_DIMENSIONS, y: height - SQUARE_DIMENSIONS} // animated to bottom right
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>            ...SPRING_CONFIG,
+</span><span class='line'>            toValue: {x: width - SQUARE_DIMENSIONS, y: 0} //animate to top right
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>          ...SPRING_CONFIG,
+</span><span class='line'>          toValue: {x: 0, y: 0} // return to start
+</span><span class='line'>      })
+</span><span class='line'>    ]).start(cb);
+</span><span class='line'>  }</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We just make a call that triggers the animation and calls itself on complete.</p>
+
+<h1>Full/Live Code</h1>
+
+<h2><a href="https://rnplay.org/apps/QlPJ2Q">https://rnplay.org/apps/QlPJ2Q</a></h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>var Dimensions = require('Dimensions');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  width,
+</span><span class='line'>  height
+</span><span class='line'>} = Dimensions.get('window');
+</span><span class='line'>
+</span><span class='line'>var {
+</span><span class='line'>  AppRegistry,
+</span><span class='line'>  StyleSheet,
+</span><span class='line'>  View,
+</span><span class='line'>  Animated
+</span><span class='line'>} = React;
+</span><span class='line'>
+</span><span class='line'>var SQUARE_DIMENSIONS = 30;
+</span><span class='line'>var SPRING_CONFIG = {tension: 2, friction: 3}; //Soft spring
+</span><span class='line'>
+</span><span class='line'>var AnimatedSquare = React.createClass({
+</span><span class='line'>  getInitialState: function() {
+</span><span class='line'>    return {
+</span><span class='line'>        pan: new Animated.ValueXY()
+</span><span class='line'>    };
+</span><span class='line'>  },
+</span><span class='line'>  componentDidMount: function() {
+</span><span class='line'>    this.startAndRepeat();
+</span><span class='line'>  },
+</span><span class='line'>  startAndRepeat: function() {
+</span><span class='line'>    this.triggerAnimation(this.startAndRepeat);
+</span><span class='line'>  },
+</span><span class='line'>  triggerAnimation: function(cb) {
+</span><span class='line'>    Animated.sequence([
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>            ...SPRING_CONFIG,
+</span><span class='line'>            toValue: {x: 0, y: height - SQUARE_DIMENSIONS} //animate to bottom left
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>          ...SPRING_CONFIG,
+</span><span class='line'>          toValue: {x: width - SQUARE_DIMENSIONS, y: height - SQUARE_DIMENSIONS} // animated to bottom right
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>            ...SPRING_CONFIG,
+</span><span class='line'>            toValue: {x: width - SQUARE_DIMENSIONS, y: 0} //animate to top right
+</span><span class='line'>      }),
+</span><span class='line'>      Animated.spring(this.state.pan, {
+</span><span class='line'>          ...SPRING_CONFIG,
+</span><span class='line'>          toValue: {x: 0, y: 0} // return to start
+</span><span class='line'>      })
+</span><span class='line'>    ]).start(cb);
+</span><span class='line'>  },
+</span><span class='line'>  getStyle: function() {
+</span><span class='line'>    return [
+</span><span class='line'>              styles.square, 
+</span><span class='line'>              {
+</span><span class='line'>                transform: this.state.pan.getTranslateTransform()
+</span><span class='line'>              }
+</span><span class='line'>            ];
+</span><span class='line'>  },
+</span><span class='line'>  render: function() {
+</span><span class='line'>    return (
+</span><span class='line'>      &lt;View style={styles.container}&gt;
+</span><span class='line'>        &lt;Animated.View style={this.getStyle()} /&gt;
+</span><span class='line'>      &lt;/View&gt;
+</span><span class='line'>    );
+</span><span class='line'>  }
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>var styles = StyleSheet.create({
+</span><span class='line'>  container: {
+</span><span class='line'>    flex: 1
+</span><span class='line'>  },
+</span><span class='line'>  square: {
+</span><span class='line'>    width: SQUARE_DIMENSIONS,
+</span><span class='line'>    height: SQUARE_DIMENSIONS,
+</span><span class='line'>    backgroundColor: 'blue'
+</span><span class='line'>  } 
+</span><span class='line'>});
+</span><span class='line'>
+</span><span class='line'>AppRegistry.registerComponent('AnimatedSquare', () =&gt; AnimatedSquare);
+</span></code></pre></td></tr></table></div></figure>
 
 ]]>
 		</content>
