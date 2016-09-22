@@ -12,9 +12,9 @@
 
     
         <meta property="fb:app_id" content="1662675577336433" />
-        <meta property="og:title" content="JavaScript Without Grammar" />
+        <meta property="og:title" content="React Native - Maintain Touchable Items with a Parent PanResponder" />
         <meta property="og:site_name" content="JavaScript Without Grammar" />
-        <meta property="og:url" content="http://browniefed.com/index.html" />
+        <meta property="og:url" content="http://browniefed.com/blog/react-native-maintain-touchable-items-with-a-parent-panresponder/" />
         <meta property="og:description" content="" />
         
     
@@ -22,8 +22,8 @@
         
         <meta property="twitter:card" content="summary" />
         <meta property="twitter:site" content="browniefed" />
-        <meta property="twitter:url" content="http://browniefed.com/index.html" />
-        <meta property="twitter:title" content="JavaScript Without Grammar" />
+        <meta property="twitter:url" content="http://browniefed.com/blog/react-native-maintain-touchable-items-with-a-parent-panresponder/" />
+        <meta property="twitter:title" content="React Native - Maintain Touchable Items with a Parent PanResponder" />
         <meta property="twitter:description" content="" />
         <meta property="twitter:creator" content="browniefed" />
         
@@ -33,7 +33,7 @@
 		
         <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
 
-		<title>JavaScript Without Grammar</title>
+		<title>React Native - Maintain Touchable Items with a Parent PanResponder &mdash; JavaScript Without Grammar</title>
 		
 		<!-- Styles -->
 		<link href="/stylesheets/main.css" rel="stylesheet">
@@ -70,11 +70,9 @@
 								</div> <!-- // .navi -->
 			</header>
 		
-				<!-- START OF index.html -->
+				<!-- START OF _layouts/post.html -->
 
-	
-		
-		<!-- START OF _includes/article.html -->
+<!-- START OF _includes/article.html -->
 <article>
 	<header>
 		<h1><a href="/blog/react-native-maintain-touchable-items-with-a-parent-panresponder/">React Native - Maintain Touchable Items with a Parent PanResponder</a></h1>
@@ -82,7 +80,7 @@
 	</header>
 	<div class="content">
 		
-          <div class="entry-content"><h2>What Are We Building</h2>
+            <div class="entry-content"><h2>What Are We Building</h2>
 
 <p><img src="http://i.imgur.com/r1eZgLn.gif" title="The most boring app ever" ></p>
 
@@ -470,8 +468,6 @@ You could position things off screen then drag them on screen by triggering an <
 
 <p><img src="http://i.imgur.com/r1eZgLn.gif" title="Now we both have built the most boring app ever" ></p>
 </div>
-          
-          
         
 	</div>
 	<div>
@@ -496,237 +492,25 @@ You could position things off screen then drag them on screen by triggering an <
 </article>
 <!-- END OF _includes/article.html -->
 
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/css-modules-webpack-and-testing/">CSS Modules, Webpack and Testing</a></h1>
-		<time>31 January 2016</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><h2>The Problem</h2>
 
-<p>When getting into some basic React testing with CSS Modules I ran into one issue. How the hell do I test them?</p>
-
-<p>You may see the issue that I faced requiring a <code>.css</code> file, if you don&rsquo;t let me show you.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>import React from "react";
-</span><span class='line'>import MyCss from "./somecss.css";
-</span><span class='line'>import classnames from "classnames";
-</span><span class='line'>
-</span><span class='line'>const MyComponent = ({disabled}) =&gt; &lt;div className={classnames(MyCss.container, {[MyCss.disabled]: disabled})} /&gt;
-</span><span class='line'>
-</span><span class='line'>export default MyComponent;</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So there isn&rsquo;t really much to test here, but lets say we wanted to make sure that a <code>div</code> had the disabled class when it was given a disabled prop.
-We fire up our test, create it, babel compiles, but oh no, <code>MyCss</code> is undefined, or an empty object. Well duh, we&rsquo;re using Webpack to process our CSS.</p>
-
-<p>For that matter we could use something to mock the import right? Yeah you could but lets introduce something even more awesome so we don&rsquo;t have to create custom mocks.</p>
-
-<h2>Babel Plugin Webpack Loaders Awesomeness</h2>
-
-<p><a href="https://github.com/istarkov/babel-plugin-webpack-loaders">Babel Plugin Webpack Loaders</a> allows us to run our tests and process all requires through our typical webpack loaders.</p>
-
+<footer style="margin-top: 10px;">
+    <div id="post-author">
+	<div class="post-author-content" style="width: 70%; display: inline-block;">
+		<p style="font-size: 16px;">
+			If you ever want further explanation, want to see a particular type of tutorial, or to contact me for whatever reason you can drop me a line on twitter <a href="http://twitter.com/browniefed">@browniefed</a> or email me at <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a>
+		</p>
+	</div>
 </div>
-          
-          
-            <a rel="full-article" href="/blog/css-modules-webpack-and-testing/">Read on &rarr;</a>
-          
-        
-	</div>
-	<div>
-    	
+</footer>
 
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/babel/'>babel</a>, <a class='category' href='/blog/categories/css/'>css</a>, <a class='category' href='/blog/categories/css-modules/'>css-modules,</a>, <a class='category' href='/blog/categories/modules/'>modules,</a>, <a class='category' href='/blog/categories/react/'>react,</a>, <a class='category' href='/blog/categories/testing/'>testing,</a>, <a class='category' href='/blog/categories/webpack/'>webpack,</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/react-native-flexboxfroggy/">React Native FlexboxFroggy</a></h1>
-		<time>23 December 2015</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><p>If you are in the React Native world and haven&rsquo;t heard about <a href="https://exponentjs.com/">Exponent</a> then you&rsquo;ve been living under a rock. It&rsquo;s being built by James Ide, Brent Vatne, and Charlie Cheever. All who have contributed significantly to the React Native community and ecosystem.</p>
-
-<p>Brent is holding a contest to win some awesome prizes, including tickets to the sold out ReactJS 2016 Conf. Check out the contest here <a href="https://gist.github.com/brentvatne/7d88f846417452355b18">https://gist.github.com/brentvatne/7d88f846417452355b18</a>.</p>
-
-<p>What does this have to do with flexbox? Well as my entry into the contest I converted <a href="http://flexboxfroggy.com/">http://flexboxfroggy.com/</a> to React Native.</p>
-
-<p><img src="http://i.imgur.com/BuCjWBl.gif" title="CHEAT CODES" ></p>
-
-<p>Even adding animations was a breeze! One line of code <code>LayoutAnimation.spring()</code> easily makes all frogs spring into place!</p>
-
-<p><img src="http://i.imgur.com/cyyYZAS.gif" title="Hop on froggies" ></p>
-
-<p>You can check out the code here <a href="https://github.com/browniefed/flexboxfroggy">https://github.com/browniefed/flexboxfroggy</a></p>
-
-<p>Or if you have Exponent installed you can run it easily on your phone by just tapping this link <a href="http://exp.host/@browniefed/flexboxfroggy">http://exp.host/@browniefed/flexboxfroggy</a></p>
-
-<p>If you don&rsquo;t have Exponent installed I highly suggest you install it!</p>
-
-<p>That&rsquo;s all from me for now. Looking forward to getting back to blogging in 2016!</p>
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
-          
-          
-        
-	</div>
-	<div>
-    	
+  </section>
 
 
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/exponent/'>exponent</a>, <a class='category' href='/blog/categories/flexbox/'>flexbox</a>, <a class='category' href='/blog/categories/flexboxfroggy/'>flexboxfroggy</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/react-native-animated-book/">React Native Animated Book</a></h1>
-		<time>23 December 2015</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><p>So I wrote a book of sorts on React Native animations. Mostly covering the animated API, and soon much much more. Check it out here <a href="http://browniefed.com/react-native-animation-book/">http://browniefed.com/react-native-animation-book/</a>.</p>
-
-<p>I cover the API, and walk through basic animation examples, and soon advanced topics. Learn to create a fun dragging, spinning square.</p>
-
-<p><img src="http://browniefed.com/react-native-animation-book/images/SimpleDragAnimation.gif" title="DragNSpin" ></p>
-
-<p>This is just a quick update :)</p>
-</div>
-          
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/animated/'>animated</a>, <a class='category' href='/blog/categories/animation/'>animation</a>, <a class='category' href='/blog/categories/book/'>book</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/react-native-how-to-bridge-a-swift-view/">React Native - How to bridge a Swift View</a></h1>
-		<time>28 November 2015</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><p>So in my previous article we bridged an Objective-C View component, I learned a lot, and also learned that I did a few unnecessary things. No worry though, we&rsquo;ll learn from that and make improvements in our Swift bridging.</p>
-
-<p>First off want to give a thanks to <a href="https://twitter.com/tony_xiao">Tony Xiao</a>. He&rsquo;s been a great help in sharing code and giving explanations to a Swift and native development novice like myself. Also <a href="https://twitter.com/realasa">Asa Miller</a> for writing some of the original code and always collaborating on whatever we&rsquo;re both working on.</p>
-
-<h2>What</h2>
-
-<p><img src="http://i.imgur.com/TsOMRom.png" title="Gradients, are those still a thing?" ></p>
-
-<p>We&rsquo;re going to bridge <a href="https://github.com/soffes/GradientView">https://github.com/soffes/GradientView</a>. Looks pretty nifty. Now we could also just use ReactART for this but we won&rsquo;t.</p>
-
-</div>
-          
-          
-            <a rel="full-article" href="/blog/react-native-how-to-bridge-a-swift-view/">Read on &rarr;</a>
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/bridge/'>bridge</a>, <a class='category' href='/blog/categories/gradient/'>gradient</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>, <a class='category' href='/blog/categories/swift/'>swift</a>, <a class='category' href='/blog/categories/swift-view-component/'>swift-view-component</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-	
-<div class="pagination">
-	
-		<a class="older" href="/blog/page/2/">Older</a>
-	
-	
-	<span class="total">1 of 9</span>
-	
-	
-</div>
-<!-- END OF index.html -->
+<!-- END OF _/layouts/post.html -->
 
 		
 			<footer>
@@ -744,7 +528,10 @@ We fire up our test, create it, babel compiles, but oh no, <code>MyCss</code> is
       var disqus_shortname = 'browniefedblog';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/react-native-maintain-touchable-items-with-a-parent-panresponder/';
+        var disqus_url = 'http://browniefed.com/blog/react-native-maintain-touchable-items-with-a-parent-panresponder/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -790,7 +577,10 @@ We fire up our test, create it, babel compiles, but oh no, <code>MyCss</code> is
       var disqus_shortname = 'browniefedblog';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/react-native-maintain-touchable-items-with-a-parent-panresponder/';
+        var disqus_url = 'http://browniefed.com/blog/react-native-maintain-touchable-items-with-a-parent-panresponder/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

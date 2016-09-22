@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: native | JavaScript Without Grammar]]></title>
+  <title><![CDATA[Category: Native | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/native/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-04-09T22:53:12-07:00</updated>
+  <updated>2016-09-21T21:38:08-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -14,553 +14,320 @@
 
   
   <entry>
-    <title type="html"><![CDATA[React Native Youtube Animated Video Slide]]></title>
-    <link href="http://browniefed.com/blog/react-native-youtube-animated-video-slide/"/>
-    <updated>2015-08-31T08:58:00-07:00</updated>
-    <id>http://browniefed.com/blog/react-native-youtube-animated-video-slide</id>
-    <content type="html"><![CDATA[<h1>Introduciton</h1>
+    <title type="html"><![CDATA[React Native - Maintain Touchable Items with a Parent PanResponder]]></title>
+    <link href="http://browniefed.com/blog/react-native-maintain-touchable-items-with-a-parent-panresponder/"/>
+    <updated>2016-09-21T15:25:00-07:00</updated>
+    <id>http://browniefed.com/blog/react-native-maintain-touchable-items-with-a-parent-panresponder</id>
+    <content type="html"><![CDATA[<h2>What Are We Building</h2>
 
-<p>I was going to spend some time digging into <a href="https://github.com/ProjectSeptemberInc/gl-react-native">gl-react-native</a> when someone asked in the slack channel how to achieve youtube like video sliding navigation. Now I won&rsquo;t get into the navigation portion, just the animation part. The navigation portion can be solved by basically treating video routes as a modal. Thus they are always over the top of whatever the previous route was.</p>
+<p><img class="<a" src="href="http://i.imgur.com/r1eZgLn.gif">http://i.imgur.com/r1eZgLn.gif</a>" title="The most boring app ever" ></p>
 
-<h1>What are we building?</h1>
+<h2>Intro</h2>
 
-<p>If you haven&rsquo;t seen it, YouTube allows you to drag the current playing video down to the bottom right corner and have it continue to play while you browse the rest of the app.</p>
+<p>One of the issues I&rsquo;ve noticed with PanResponder is that people assume it is an all or nothing.
+By that I mean adding a PanResponder in a parent view means it will steal all of your touches and <code>Touchable</code> items won&rsquo;t be touchable any longer.</p>
 
-<p>Something like this.</p>
+<p>You may be running into this because you copy and pasted it from here the documentation here <a href="https://facebook.github.io/react-native/docs/panresponder.html">https://facebook.github.io/react-native/docs/panresponder.html</a> and it includes a capture phase returning true.
+(I copy and paste this all the time).
+We&rsquo;ll talk about the capture phase next.</p>
 
-<p><img class="<a" src="href="http://i.imgur.com/gwbkw5f.gif">http://i.imgur.com/gwbkw5f.gif</a>" title="YouTube demo clone" ></p>
+<p>This is far from the case. As always, React Native internal code is all built on the same components you are using so be sure and always read that code.
+Navigation is one example that uses a top level PanResponder and only deals with touches on the outer edge of the screen.</p>
 
-<!-- more -->
+<p>Real internal react native example code for <a href="https://github.com/facebook/react-native/blob/a2fb703bbb988038323c55b29b40e8f5ff52966d/Libraries/CustomComponents/NavigationExperimental/NavigationCardStackPanResponder.js#L97">NavigationExperimental here</a></p>
 
+<h2>Example code</h2>
 
-<h1>Setup</h1>
+<p>You can grab the full code in this repo here.</p>
 
-<p>React native doesn&rsquo;t have a <code>Video</code> component but Brent Vatne created a fantastic video component called <a href="https://github.com/brentvatne/react-native-video">react-native-video</a>. This allows you to use videos added to your app bundle, or external video urls.</p>
+<p><a href="https://github.com/browniefed/react-native-parent-panresponder-touch">https://github.com/browniefed/react-native-parent-panresponder-touch</a></p>
 
-<p>So unlike a normal project you will need to run <code>npm install react-native-video --save</code>. Then follow the instructions on the <code>README</code> in <code>react-native-video</code> on how to add the library in XCode.</p>
+<h2>General PanResponder</h2>
 
-<p>```
-var React = require(&lsquo;react-native&rsquo;);
-var Video = require(&lsquo;react-native-video&rsquo;);</p>
+<p>The React Native folk built the gesture responding system very similar to the web. The gesture system has a capture phase, just like the web.
+If you didn&rsquo;t know about the capture system on the web, there is one. The events go from a capture phase and back up through the bubble phase.
+You may have heard of &ldquo;event bubbling&rdquo; where the event starts at the inner most child then moves up each element.
+However before that the <code>capture</code> phase triggered and traversed from the top down to the element you clicked.</p>
 
-<p>var Dimensions = require(&lsquo;Dimensions&rsquo;);
-var {width: deviceWidth, height: deviceHeight} = Dimensions.get(&lsquo;window&rsquo;);</p>
+<p><code>top =&gt; #random_parent =&gt; #random_child2 =&gt; thing you clicked =&gt; #random_child2 =&gt; #random_parent =&gt; top</code></p>
 
-<p>var videoWidth = deviceWidth,</p>
+<p>The capture phase in React Native has two phases per PanResponder. It has <code>onStartShouldSetResponderCapture</code> and <code>onMoveShouldSetResponderCapture</code>.
+The <code>onStartShouldSetResponderCapture</code> is called on the beginning touch, and <code>onMoveShouldSetResponderCapture</code> is called on every time you move your finger.</p>
 
-<pre><code>videoHeight = Math.round((deviceWidth/16)*9);
+<p>After the caputre phase the bottom level touched view will then move back up the chain.
+The <code>onStartShouldSetResponder</code> function will be called on initial press, then <code>onMoveShouldSetResponder</code> will be called each movement of the finger.</p>
+
+<p>At any point that a capture phase, or non capture phase returns <code>true</code> that <code>PanResponder</code> will receive the gesture.
+In that case <code>onResponderGrant</code> will be called, then <code>onResponderMove</code>, then eventually when the user removes their finger <code>onResponderRelease</code>.</p>
+
+<p>Now do remember the capture and bubble phase are happening on <strong>EACH</strong> finger movement.
+So that means if a parent view returns true in <code>onMoveShouldSetResponderCapture</code> phase then the touch will be taken away from the other active <code>PanResponder</code></p>
+
+<p>When that happens <code>onResponderTerminationRequest</code> is called on the active <code>PanResponder</code> if it returns true then <code>onResponderTerminate</code> is called.
+Basically you said &ldquo;Sure whatever else wants the gesture they can have it&rdquo;.</p>
+
+<p>Finally when the OS steals the gesture (like when you swipe down the notification center), the <code>onResponderTerminationRequest</code> function is called.</p>
+
+<p>All of these are generally setup to just return <code>true</code> for you so that the generally appropriate actions are taken.</p>
+
+<h2>PanResponder Best Practices</h2>
+
+<p>All of that being said. Don&rsquo;t use the <code>capture</code> phase, you will rarely ever use it much like the web.
+Stick to the function calls without <code>capture</code>.</p>
+
+<p>When you need something, you need to decide <code>do I want to do it on the first press</code> or <code>do I want to do it on every movement</code>.
+So that means you return true from <code>onStartShouldSetResponder</code> or <code>onMoveShouldSetResponder</code></p>
+
+<p>Mostly the reason you don&rsquo;t ever use these is as the default says &ldquo;The deepest element gets focus&rdquo;. Aka a button you pressed gets pressed, typically that&rsquo;s what you want.</p>
+
+<h2>What the hell does this mean?</h2>
+
+<p>It means
+```
+<SpecialViewToDoThings></p>
+
+<pre><code>&lt;SomeCrazyScrollView&gt;
+    &lt;TouchableOpacity&gt;
+        &lt;Text&gt;Look a button&lt;/Text&gt;
+    &lt;/TouchableOpacity&gt;
+&lt;/SomeCrazyScrollView&gt;
 </code></pre>
 
-<p>var {
-  AppRegistry,
-  StyleSheet,
-  View,
-  Text,
-  Animated,
-  PanResponder,
-  ScrollView
-} = React;</p>
-
-<p>var AnimatedVideo = Animated.createAnimatedComponent(Video);
-var AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);</p>
-
-<p>```</p>
-
-<p>So a few things to call out here.</p>
-
-<p>We pull in dimensions of the screen and name them <code>deviceHeight</code> and <code>deviceWidth</code>. This is so we can calculate <code>videoWidth</code> and <code>videoHeight</code>. We use a simple calculation to create a video that is in the <code>16:9</code> aspect ratio.</p>
-
-<p>Then we use <code>createAnimatedComponent</code> to create an animated <code>ScrollView</code> and <code>AnimatedVideo</code> element.</p>
-
-<h1>Basic Component</h1>
-
-<p></p>
-
-<p>```
-var YoutubeVideoSlide = React.createClass({
-  getInitialState: function() {</p>
-
-<pre><code>return {
-  scale: new Animated.Value(1),
-  position: new Animated.ValueXY(),
-};
-</code></pre>
-
-<p>  },
-  render: function() {</p>
-
-<pre><code>return (
-  &lt;View style={styles.container}&gt;
-          &lt;AnimatedVideo 
-              source={{uri: "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"}}
-              style={styles.videoSizing}
-              rate={1}
-              paused={false}
-              volume={1}
-              resizeMode={'stretch'}
-              repeat={true} 
-          /&gt;
-        &lt;AnimatedScrollView style={styles.container}&gt;
-          &lt;View style={styles.comment}&gt;
-            &lt;Text&gt;Video Comment&lt;/Text&gt;
-          &lt;/View&gt;
-        &lt;/AnimatedScrollView&gt;
-  &lt;/View&gt;
-);
-</code></pre>
-
-<p>  }
-});</p>
-
-<p>var styles = StyleSheet.create({
-  container: {</p>
-
-<pre><code>flex: 1
-</code></pre>
-
-<p>  },
-  videoSizing: {</p>
-
-<pre><code>width: videoWidth,
-height: videoHeight
-</code></pre>
-
-<p>  },
-  comment: {</p>
-
-<pre><code>height: 100
-</code></pre>
-
-<p>  }
-});</p>
-
-<p>```</p>
-
-<p></p>
-
-<p>We setup <code>flex:1</code> on the <code>View</code> so that the <code>ScrollView</code> will size correctly. We set the <code>width</code> and <code>height</code> on the <code>AnimatedVideo</code> to our <code>16:9</code> ratio. In the state we setup the initial scale to <code>1</code>, and an <code>X,Y</code> position for the moving video.</p>
-
-<h1>Setup the PanResponder</h1>
-
-<p>```</p>
-
-<pre><code>this._panResponder = PanResponder.create({
-  onStartShouldSetPanResponder: (evt, gestureState) =&gt; true,
-  onStartShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
-  onMoveShouldSetPanResponder: (evt, gestureState) =&gt; true,
-  onMoveShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
-  onPanResponderMove: Animated.event([
-      null, 
-      {
-          dy: this.state.position.y
-      }
-  ])
-});
-</code></pre>
-
-<p>```</p>
-
-<p>We&rsquo;ll do the normal &ldquo;say yes to allowing us to touch things&rdquo;, and then we&rsquo;ll setup an <code>Animated.event</code>. This is a helper function to traverse the arguments from <code>onPanResponderMove</code> and update an Animated value.</p>
-
-<p><code>onPanResponderMove</code> gets called with an <code>event</code> as the first argument, and <code>gestureState</code> as the second. The <code>null</code> tells <code>Animated.event</code> to ignore the first argument, but to grab the <code>dy</code> from the <code>gestureState</code> and update the <code>y</code> value on our <code>Animated.ValueXY</code> we created.</p>
-
-<h1>Interpolate and Animate</h1>
-
-<p>```</p>
-
-<pre><code>this._scale = this.state.position.y.interpolate({
-  inputRange: [0, deviceHeight ],
-  outputRange: [1, .71],
-  extrapolate: 'clamp'
-});
-
-this._translateY = this.state.position.y.interpolate({
-  inputRange: [0, deviceHeight],
-  outputRange: [0, deviceHeight],
-  extrapolate: 'clamp'
-});
-
-this.state.position.y.addListener((value) =&gt; {
-  this._y = value.value;
-  var scaleValue = this._scale.__getAnimatedValue();
-  var currentVideoWidth = scaleValue * videoWidth;
-  var buffer = ((videoWidth - currentVideoWidth)/2);
-  this.state.position.x.setValue(buffer);
-}.bind(this));
-
-this._opacity = this.state.position.y.interpolate({
-  inputRange: [0, deviceHeight ],
-  outputRange: [1, .1]
-});
-</code></pre>
-
-<p>```</p>
-
-<p>Now we need to setup a few more things in the <code>componentWillMount</code>. The <code>this._scale</code> will be set on a scale transform. This is directly tied to the <code>y</code> position of us dragging. So we setup an interpolate, which goes from <code>0</code> to the <code>deviceHeight</code> and map that to an output range of <code>1</code> to <code>.71</code>. The <code>.71</code> was a trial and error number, I&rsquo;m sure there is math to calculate this but I guessed till I got it right.</p>
-
-<p>The <code>clamp</code> is to say that this value cannot go above or below these values.</p>
-
-<p>You may be wondering why we setup <code>translateY</code> when the <code>inputRange</code> and <code>outputRange</code> are exactly the same. The <code>clamp</code> is the key part. This means that if a user tries to slide the video up it will not grow in scale, or slide the video upwards. It can only go down.</p>
-
-<p>We setup the listener so we can keep track of our <code>y</code> value, we&rsquo;ll get into that later. We&rsquo;ll use <code>__getAnimatedValue</code> to get the current scale. <strong>THIS WILL NOT WORK IN .11-rc</strong> and above. You cannot currently listen on interpolated values, and we need the interpolated value for our math.</p>
-
-<p>We get the original <code>videoWidth</code> and multiply it times the scale value so we can get the current <code>videoWidth</code>. We subtract the <code>currentVideoWidth</code> from the <code>videoWidth</code> and divide it by <code>2</code> to get the current buffer. That buffer is the space between the right side of the video and the current scaled video. If we don&rsquo;t do this then the X/Y scaling on the video will just squish it to the middle of the screen. What we want to do is have it slide down the right side of the screen.</p>
-
-<p>Finally we setup the opacity, this is for the <code>scrollView</code> to slowly fade as we swipe down.</p>
-
-<h1>Setup the styling</h1>
-
-<p>```
-  getScalePosition: function() {</p>
-
-<pre><code>return {
-  transform: [
-    {scale: this._scale},
-    {translateX: this.state.position.x},
-    {translateY: this._translateY}
-  ]
-}
-</code></pre>
-
-<p>  },
-  getScrollOffset: function() {</p>
-
-<pre><code>return {
-  transform: [
-    {translateY: this._translateY},
-  ],
-  opacity: this._opacity
-}
-</code></pre>
-
-<p>  },</p>
-
-<pre><code>&lt;AnimatedVideo 
-  {...this._panResponder.panHandlers}
-  source=
-  style={[styles.videoSizing, this.getScalePosition()]}
-  rate={this.state.rate}
-  paused={this.state.paused}
-  volume={this.state.volume}
-  muted={this.state.muted}
-  resizeMode={this.state.resizeMode}
-  repeat={true}
-/&gt;
-&lt;AnimatedScrollView style={[styles.container, this.getScrollOffset()]}&gt;
-&lt;/AnimatedScrollView&gt;
-</code></pre>
-
-<p>```</p>
-
-<p>Here we set default styling, and then make our calls to get the style objects with our animated values. For our video scale position we pass our <code>this._scale</code> to <code>scale</code> to transform both <code>scaleX</code>, and <code>scaleY</code>. We pass in our position x, and our <code>this._translateY</code> that is clamped.</p>
-
-<p>For our <code>ScrollView</code> , we setup <code>translateY</code>, and pass in the opacity we created.</p>
-
-<h1>Set Offset and Animate the Release</h1>
-
-<p>```</p>
-
-<pre><code>this._panResponder = PanResponder.create({
-  onStartShouldSetPanResponder: (evt, gestureState) =&gt; true,
-  onStartShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
-  onMoveShouldSetPanResponder: (evt, gestureState) =&gt; true,
-  onMoveShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
-  onPanResponderGrant: function() {
-    this.state.position.y.setOffset(this._y)
-  }.bind(this),
-  onPanResponderMove: Animated.event([
-      null, 
-      {
-          dy: this.state.position.y
-      }
-  ]),
-  onPanResponderRelease: (e, gestureState) =&gt; {
-    this.state.position.flattenOffset();
-
-    if (gestureState.dy &gt;= 40) {
-      Animated.timing(this.state.position.y, {
-        duration: 200,
-        toValue: deviceHeight
-      }).start();
-    } else {
-      Animated.timing(this.state.position.y, {
-        duration: 200,
-        toValue: 0
-      }).start();
-    }
-
-  }.bind(this)
-});
-</code></pre>
-
-<p>```</p>
-
-<p>When I said we&rsquo;d get to why we kept track of the <code>y</code> this is why. This is so we can set the offset of the initial press and prevent the video from jumping. It will work for sliding down, but with <code>dy</code> it is always the delta. So on the slide up from the bottom it would immediately jump to the top, and we don&rsquo;t want that.</p>
-
-<p>```</p>
-
-<pre><code>  onPanResponderGrant: function() {
-    this.state.position.y.setOffset(this._y)
-  }.bind(this),
-</code></pre>
-
-<p>```
-This code sets the initial offset when you first touch to whatever the current y value is.</p>
-
-<p>```</p>
-
-<pre><code>  onPanResponderRelease: (e, gestureState) =&gt; {
-    this.state.position.flattenOffset();
-
-    if (gestureState.dy &gt;= 100) {
-      Animated.timing(this.state.position.y, {
-        duration: 200,
-        toValue: deviceHeight
-      }).start();
-    } else {
-      Animated.timing(this.state.position.y, {
-        duration: 200,
-        toValue: 0
-      }).start();
-    }
-
-  }.bind(this)
-</code></pre>
-
-<p>```</p>
-
-<p>On release we flatten the offset. Which just squashes the current value and offset together.
-If the user has moved greater than <code>100</code> pixels then we&rsquo;ll animate the video to the bottom of the screen. If not we&rsquo;ll animate it back to the top.</p>
-
-<h1>Final</h1>
-
-<p>As always check it out on RNPlay at <a href="https://rnplay.org/apps/Cp_SSA">https://rnplay.org/apps/Cp_SSA</a>.
-The video source comes from <a href="http://camendesign.com/code/video_for_everybody/test.html">http://camendesign.com/code/video_for_everybody/test.html</a>. It&rsquo;s a wonderfully open sourced mp4 video that we can link to test out.</p>
-
-<h1>Full Code</h1>
-
-<p></p>
-
-<p>```
-var React = require(&lsquo;react-native&rsquo;);
-var Dimensions = require(&lsquo;Dimensions&rsquo;);
-var {width: deviceWidth, height: deviceHeight} = Dimensions.get(&lsquo;window&rsquo;);
-var Video = require(&lsquo;react-native-video&rsquo;);</p>
-
-<p>var videoWidth = deviceWidth,</p>
-
-<pre><code>videoHeight = Math.round((deviceWidth/16)*9);
-</code></pre>
-
-<p>var {
-  AppRegistry,
-  StyleSheet,
-  View,
-  Text,
-  Animated,
-  PanResponder,
-  ScrollView
-} = React;</p>
-
-<p>var AnimatedVideo = Animated.createAnimatedComponent(Video);
-var AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);</p>
-
-<p>var YoutubeVideoSlide = React.createClass({
-  getInitialState: function() {</p>
-
-<pre><code>return {
-  rate: 1,
-  volume: 1,
-  muted: true,
-  resizeMode: 'stretch',
-  duration: 0.0,
-  currentTime: 0.0,
-  scale: new Animated.Value(1),
-  position: new Animated.ValueXY(),
-
-};
-</code></pre>
-
-<p>  },
-  _y: 0,
-  componentWillMount: function() {</p>
-
-<pre><code>this._panResponder = PanResponder.create({
-  onStartShouldSetPanResponder: (evt, gestureState) =&gt; true,
-  onStartShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
-  onMoveShouldSetPanResponder: (evt, gestureState) =&gt; true,
-  onMoveShouldSetPanResponderCapture: (evt, gestureState) =&gt; true,
-  onPanResponderGrant: function() {
-    this.state.position.y.setOffset(this._y)
-  }.bind(this),
-  onPanResponderMove: Animated.event([
-      null, 
-      {
-          dy: this.state.position.y
-      }
-  ]),
-  onPanResponderRelease: (e, gestureState) =&gt; {
-    this.state.position.flattenOffset();
-
-    if (gestureState.dy &gt;= 100) {
-      Animated.timing(this.state.position.y, {
-        duration: 200,
-        toValue: deviceHeight
-      }).start();
-    } else {
-      Animated.timing(this.state.position.y, {
-        duration: 200,
-        toValue: 0
-      }).start();
-    }
-
-  }.bind(this)
-});
-
-this._scale = this.state.position.y.interpolate({
-  inputRange: [0, deviceHeight ],
-  outputRange: [1, .71],
-  extrapolate: 'clamp'
-});
-
-this._translateY = this.state.position.y.interpolate({
-  inputRange: [0, deviceHeight],
-  outputRange: [0, deviceHeight],
-  extrapolate: 'clamp'
-});
-
-this.state.position.y.addListener((value) =&gt; {
-  this._y = value.value;
-  var scaleValue = this._scale.__getAnimatedValue();
-  var currentVideoWidth = scaleValue * videoWidth;
-  var buffer = ((videoWidth - currentVideoWidth)/2);
-  this.state.position.x.setValue(buffer);
-}.bind(this));
-
-this._opacity = this.state.position.y.interpolate({
-  inputRange: [0, deviceHeight ],
-  outputRange: [1, .1]
-});
-</code></pre>
-
-<p>  },
-  getScalePosition: function() {</p>
-
-<pre><code>return {
-  transform: [
-    {scale: this._scale},
-    {translateX: this.state.position.x},
-    {translateY: this._translateY}
-  ]
-}
-</code></pre>
-
-<p>  },
-  getScrollOffset: function() {</p>
-
-<pre><code>return {
-  transform: [
-    {translateY: this._translateY},
-  ],
-  opacity: this._opacity
-}
-</code></pre>
-
-<p>  },
-  render: function() {</p>
-
-<pre><code>return (
-  &lt;View style={styles.container}&gt;
-          &lt;AnimatedVideo 
-              {...this._panResponder.panHandlers}
-              source={{uri: "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"}}
-              style={[styles.videoSizing, this.getScalePosition()]}
-              rate={this.state.rate}
-              paused={this.state.paused}
-              volume={this.state.volume}
-              muted={this.state.muted}
-              resizeMode={this.state.resizeMode}
-              repeat={true} 
-          /&gt;
-        &lt;AnimatedScrollView style={[styles.container, this.getScrollOffset()]}&gt;
-          &lt;View style={styles.comment}&gt;
-            &lt;Text&gt;Video Comment&lt;/Text&gt;
-          &lt;/View&gt;
-          &lt;View style={styles.comment}&gt;
-            &lt;Text&gt;Video Comment&lt;/Text&gt;
-          &lt;/View&gt;
-          &lt;View style={styles.comment}&gt;
-            &lt;Text&gt;Video Comment&lt;/Text&gt;
-          &lt;/View&gt;
-          &lt;View style={styles.comment}&gt;
-            &lt;Text&gt;Video Comment&lt;/Text&gt;
-          &lt;/View&gt;
-          &lt;View style={styles.comment}&gt;
-            &lt;Text&gt;Video Comment&lt;/Text&gt;
-          &lt;/View&gt;
-          &lt;View style={styles.comment}&gt;
-            &lt;Text&gt;Video Comment&lt;/Text&gt;
-          &lt;/View&gt;
-          &lt;View style={styles.comment}&gt;
-            &lt;Text&gt;Video Comment&lt;/Text&gt;
-          &lt;/View&gt;
-        &lt;/AnimatedScrollView&gt;
-  &lt;/View&gt;
-);
-</code></pre>
-
-<p>  }
-});</p>
-
-<p>var styles = StyleSheet.create({
-  container: {</p>
-
-<pre><code>flex: 1
-</code></pre>
-
-<p>  },
-  videoSizing: {</p>
-
-<pre><code>width: videoWidth,
-height: videoHeight
-</code></pre>
-
-<p>  },
-  comment: {</p>
-
-<pre><code>height: 100
-</code></pre>
-
-<p>  }
-});</p>
-
-<p>```
-</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[React Native and Socket.io]]></title>
-    <link href="http://browniefed.com/blog/react-native-and-socket-dot-io/"/>
-    <updated>2015-05-16T19:35:00-07:00</updated>
-    <id>http://browniefed.com/blog/react-native-and-socket-dot-io</id>
-    <content type="html"><![CDATA[<p>React Native finally supports Websockets. Which is awesome, however there is one gotcha with socket.io.</p>
-
-<p>1) <code>npm install socket.io-client</code>. This will just pull down the socket.io javascript client</p>
-
-<p>2) Everything works great but there is one issue that <code>window.navigator.userAgent</code> doesn&rsquo;t exist. Socket.IO checks to deal with some browser incosistencies but we don&rsquo;t care. So all we have to do is create it. However make sure you require <code>react-native</code> first!</p>
-
-<p>Just like so</p>
-
-<p>```
-var React = require(&lsquo;react-native&rsquo;);</p>
-
-<p>window.navigator.userAgent = &ldquo;react-native&rdquo;;</p>
-
-<p>var io = require(&lsquo;socket.io-client/socket.io&rsquo;);
+<p></SpecialViewToDoThings>
 ```</p>
 
-<p>Now you can do as you please with your new glorious websockets.</p>
+<p>Without <code>capture</code> phases, <code>TouchableOpacity</code> <code>onPress</code> will get the touch.
+With a <code>capture</code> phase returning true <code>SpecialViewToDoThings</code> will get touch.
+<code>SomeCrazyScrollView</code> will get the scroll when someone doesn&rsquo;t press a <code>TouchableOpacity</code> and <code>SpecialViewToDoThings</code> doesn&rsquo;t return true from a capture phase.</p>
+
+<h2>WHY DIDN&rsquo;T THEY SAY ANY OF THIS!?!?!?</h2>
+
+<p>Oh don&rsquo;t worry, none of this information is new, it&rsquo;s in the docs <a href="https://facebook.github.io/react-native/docs/gesture-responder-system.html">https://facebook.github.io/react-native/docs/gesture-responder-system.html</a></p>
+
+<p>Still not clear? Lets do some code. This will just show you how to make internal touchable things and still capture touches with a parent <code>PanResponder</code>.</p>
+
+<h2>Create a PanResponder</h2>
+
+<p>First we need to create a <code>PanResponder</code>. If you look at the documentation you&rsquo;ll notice many of the functions are not necessary, and or default to returning true.
+So we&rsquo;ll</p>
+
+<p>```
+componentWillMount() {</p>
+
+<pre><code>this._panResponder = PanResponder.create({
+    onMoveShouldSetPanResponder:(evt, gestureState) =&gt; true,
+    onPanResponderMove: (evt, gestureState) =&gt; {
+        // DO JUNK HERE
+    }
+});
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>All the available stuff</h2>
+
+<p>I won&rsquo;t type it all out. It&rsquo;s all in the documentation <a href="https://facebook.github.io/react-native/docs/panresponder.html">https://facebook.github.io/react-native/docs/panresponder.html</a></p>
+
+<h2>Create a simple view</h2>
+
+<p>We start by creating  a <code>View</code> with some styles and setup some state for the button.
+```
+class PanResponderTest extends Component {
+  constructor(props) {</p>
+
+<pre><code>super(props)
+
+this.state = {
+  zone: "Still Touchable"
+}
+
+this.onPress = this.onPress.bind(this);
+</code></pre>
+
+<p>  }</p>
+
+<p>  onPress() {</p>
+
+<pre><code>this.setState({
+  zone: "I got touched with a parent pan responder"
+})
+</code></pre>
+
+<p>  }</p>
+
+<p>  render() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container}&gt;
+    &lt;View style={styles.zone1} /&gt;
+    &lt;View style={styles.center}&gt;
+      &lt;TouchableOpacity onPress={this.onPress}&gt;
+        &lt;Text&gt;{this.state.zone}&lt;/Text&gt;
+      &lt;/TouchableOpacity&gt;
+    &lt;/View&gt;
+    &lt;View style={styles.zone2} /&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+}
+<code>``
+We create a top level container (which will receive the</code>PanResponder<code>). 2 zones, one red, and one blue. These will be special zones for touch registering.
+Then finally a</code>TouchableOpacity<code>button. This will simulate some internal item you want pressed while having an external</code>PanResponder`.</p>
+
+<p>```
+const styles = StyleSheet.create({
+  container: {</p>
+
+<pre><code>flex: 1
+</code></pre>
+
+<p>  },
+  center: {</p>
+
+<pre><code>flex: 1,
+alignItems: "center",
+justifyContent: "center" 
+</code></pre>
+
+<p>  },
+  zone1: {</p>
+
+<pre><code>top: 40,
+left: 0,
+right: 0,
+height: 50,
+position: 'absolute',
+backgroundColor: "red"
+</code></pre>
+
+<p>  },
+  zone2: {</p>
+
+<pre><code>left: 0,
+right: 0,
+bottom: 0,
+height: 50,
+position: 'absolute',
+backgroundColor: "blue"
+</code></pre>
+
+<p>  }
+});
+```
+We will center the button, and put our special zones at the top and bottom.</p>
+
+<p><code>TouchableOpacity</code> uses <code>PanResponder</code> to detect touches, so it will play into the bubble and capture phases.
+The zones have no <code>PanResponder</code> gestures registered so it won&rsquo;t play into the capture and bubble phases.</p>
+
+<h2>Limit it to region</h2>
+
+<p>This line <code>onMoveShouldSetPanResponder:(evt, gestureState) =&gt; true</code> always returns true so the element will always accept.
+Also we aren&rsquo;t using the <code>capture</code> phase so the <code>TouchableOpacity</code> will always be pressable.
+However our parent <code>PanResponder</code> will get triggered when we don&rsquo;t press the button.</p>
+
+<h2>Limit it to distance moved</h2>
+
+<p><code>moveX</code> and <code>moveY</code> are the current coordinate positions of the <code>gestureState</code>.
+<code>dx</code> and <code>dy</code> are the distance change from where the initial finger was put down (delta X and delta Y).</p>
+
+<p>`&ldquo;
+const getDirectionAndColor = ({ moveX, moveY, dx, dy}) => {
+  const draggedDown = dy > 30;
+  const draggedUp = dy &lt; -30;
+  const draggedLeft = dx &lt; -30;
+  const draggedRight = dx > 30;
+  const isRed = moveY &lt; 90 &amp;&amp; moveY > 40 &amp;&amp; moveX > 0 &amp;&amp; moveX &lt; width;
+  const isBlue = moveY > (height &ndash; 50) &amp;&amp; moveX > 0 &amp;&amp; moveX &lt; width;
+  let dragDirection = &rdquo;;</p>
+
+<p>  if (draggedDown || draggedUp) {</p>
+
+<pre><code>if (draggedDown) dragDirection += 'dragged down '
+if (draggedUp) dragDirection +=  'dragged up ';
+</code></pre>
+
+<p>  }</p>
+
+<p>  if (draggedLeft || draggedRight) {</p>
+
+<pre><code>if (draggedLeft) dragDirection += 'dragged left '
+if (draggedRight) dragDirection +=  'dragged right ';
+</code></pre>
+
+<p>  }</p>
+
+<p>  if (isRed) return <code>red ${dragDirection}</code>
+  if (isBlue) return <code>blue ${dragDirection}</code>
+  if (dragDirection) return dragDirection;
+}
+```</p>
+
+<p>We define that if a user moves their finger in a direction further than 30 pixels than we&rsquo;ll trigger a direction.
+Also if they are within the absolutley positioned zones we&rsquo;ll tag them with <code>red</code> or <code>blue</code>.</p>
+
+<p>This function will return nothing if we haven&rsquo;t dragged a finger greater than 30 pixels, and or we aren&rsquo;t in a particular zone.</p>
+
+<h2>Where does this function go?</h2>
+
+<p>Since our <code>getDirectionAndColor</code> function will return either <code>truthy</code> or <code>falsy</code> values we can pass that right into our <code>onMoveShouldSetPanResponder</code>.
+This means when it returns <code>truthy</code> our <code>onPanResponderMove</code>. We then recall the function and then call <code>setState</code> to update the button text.</p>
+
+<p>```
+  componentWillMount() {</p>
+
+<pre><code>this._panResponder = PanResponder.create({
+  onMoveShouldSetPanResponder:(evt, gestureState) =&gt; !!getDirectionAndColor(gestureState),
+  onPanResponderMove: (evt, gestureState) =&gt; {
+    const drag = getDirectionAndColor(gestureState);
+    this.setState({
+      zone: drag,
+    })
+  },
+});
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>Finally we need to add our <code>PanResponder</code> to the parent <code>View</code> like so</p>
+
+<p>```
+  render() {</p>
+
+<pre><code>return (
+  &lt;View style={styles.container} {...this._panResponder.panHandlers}&gt;
+    &lt;View style={styles.zone1} /&gt;
+    &lt;View style={styles.center}&gt;
+      &lt;TouchableOpacity onPress={this.onPress}&gt;
+        &lt;Text&gt;{this.state.zone}&lt;/Text&gt;
+      &lt;/TouchableOpacity&gt;
+    &lt;/View&gt;
+    &lt;View style={styles.zone2} /&gt;
+  &lt;/View&gt;
+);
+</code></pre>
+
+<p>  }
+```</p>
+
+<h2>Potential uses</h2>
+
+<p>You can use the <code>onLayout</code> callback from any component to then define your layout constraints for your PanResponder.
+You could position things off screen then drag them on screen by triggering an <code>Animated</code> value while your current view stays touchable.</p>
+
+<p>There are all of the potential use cases, it&rsquo;s all about what you need to accomplish and or what your product manager wants.</p>
+
+<h2>Final code</h2>
+
+<p>That&rsquo;s it. Go forth and gesture.</p>
+
+<p>Once again our full code example is up here
+<a href="https://github.com/browniefed/react-native-parent-panresponder-touch">https://github.com/browniefed/react-native-parent-panresponder-touch</a></p>
+
+<p><img class="<a" src="href="http://i.imgur.com/r1eZgLn.gif">http://i.imgur.com/r1eZgLn.gif</a>" title="Now we both have built the most boring app ever" ></p>
 ]]></content>
   </entry>
   

@@ -77,6 +77,56 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
+		<h1><a href="/blog/socket-dot-io-on-android-plus-phonegap/">Socket.io on Android + Phonegap</a></h1>
+		<time>01 June 2014</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>WebSockets are wonderful, they are one of the cheapest ways to get realtime communications into your web app. They&rsquo;re also a great way to get realtime communications into your mobile application. AJAX is great but wasn&rsquo;t applicable to my needs. Developing PDXLiveBus app required the server to handle all requests to TriMets servers and use AJAX to request the state of particular buses/routes was less realtime than I wanted. I could go more in depth about my usage and experience but the main point of this post is to prevent some table flipping.</p>
+
+<p>I had it all working in browser however it was not working when I did my phonegap serve. It just would not connect, nor even error out ( I don&rsquo;t think I waited long enough). I had been using <a href="https://github.com/mkuklis/phonegap-websocket">https://github.com/mkuklis/phonegap-websocket</a>, which Android WebView (what phonegap utilizes) doesn&rsquo;t support WebSockets until Android KitKat (4.4). I think this is a tremendous oversight, but I digress. I attempted various things to get <code>phonegap-websocket</code> to work but I just couldn&rsquo;t.</p>
+
+<p>The real problem wasn&rsquo;t with <code>phonegap-websocket</code> it was with my own server code. I had allowed CORS for the <code>restify</code> REST API I had setup but had forgotten to allow CORS for Socket.IO. It all came down to this single line of code.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>io.set( 'origins', '*:*' );</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Yeah not the most secure but then again I don&rsquo;t think I have a choice since everything is being served from phones and not a particular domain. Also I&rsquo;m dealing with public transportation vehicle location which doesn&rsquo;t necessarily needing extreme security.</p>
+
+<p>So if you can&rsquo;t get Socket.IO to work on your Android Phonegap app, add <code>phonegap-websocket</code> and make sure you have allowed CORS on your server.</p>
+</div>
+          
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/android/'>android</a>, <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/mobile/'>mobile</a>, <a class='category' href='/blog/categories/phonegap/'>phonegap</a>, <a class='category' href='/blog/categories/socket-dot-io/'>socket.io</a>, <a class='category' href='/blog/categories/websocket/'>websocket</a>, <a class='category' href='/blog/categories/websockets/'>websockets</a>, <a class='category' href='/blog/categories/webview/'>webview</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
 		<h1><a href="/blog/nonrte-part-1/">NonRTE - Part 1</a></h1>
 		<time>01 May 2014</time>
 	</header>
@@ -261,68 +311,6 @@
 		
 
 
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/meteor-and-realtime-transit-mapping-part-1/">Meteor and Realtime Transit Mapping - Part 1</a></h1>
-		<time>16 November 2013</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><h1>Overview</h1>
-
-<p>The point of this series is to help people build out realtime transit maps for other cities.
-This will focus on Portland, OR and their transit system TriMet. They give us access to a wealth of information but all we really need is route numbers that make sense and latitude/longitude to make a map. I have built one for Kansas City, MO but they have their data hidden. Don&rsquo;t be afraid to dig around on your own transit website to find hidden APIs.</p>
-
-<p>Finally we chose MeteorJS because the whole system is built on realtime applications. Code can be run on both the client/server which is AWESOME! It pretends to be lo-latency, meaning it&rsquo;ll save the data in client side minimongo databases and not wait for the server to return &ldquo;yeah we saved&rdquo;. It also somehow magically invalidates the data correctly. It&rsquo;s just a framework that works and I can&rsquo;t wait for the 1.0 release.</p>
-
-<p>As always all code is open sourced. Check out the final project here
-<a href="https://github.com/browniefed/livemet">https://github.com/browniefed/livemet</a></p>
-
-<h1>Setup</h1>
-
-<h2>APIs</h2>
-
-<p>Go to <a href="http://developer.trimet.org/registration/">http://developer.trimet.org/registration/</a> and get an API key.
-The documentation we care about is here <a href="http://developer.trimet.org/ws_docs/">http://developer.trimet.org/ws_docs/</a></p>
-
-<h2>Meteor</h2>
-
-<p>Currently on Mac/Linux are officially supported and Windows has an unofficial installer. But you can&rsquo;t use Meteorite on Windows which you want meteorite!
-To install simple go here and follow the instrutions(2 steps!) <a href="http://docs.meteor.com/">http://docs.meteor.com/</a>
-Step 2 being creating a meteor project</p>
-
-</div>
-          
-          
-            <a rel="full-article" href="/blog/meteor-and-realtime-transit-mapping-part-1/">Read on &rarr;</a>
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/maps/'>maps</a>, <a class='category' href='/blog/categories/meteor/'>meteor</a>, <a class='category' href='/blog/categories/meteor-dot-js/'>meteor.js</a>, <a class='category' href='/blog/categories/relatime/'>relatime</a>, <a class='category' href='/blog/categories/transit/'>transit</a>, <a class='category' href='/blog/categories/trimet/'>trimet</a>, <a class='category' href='/blog/categories/websockets/'>websockets</a>
-	
 
 
     	
