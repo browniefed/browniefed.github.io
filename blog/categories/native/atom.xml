@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Native | JavaScript Without Grammar]]></title>
   <link href="http://browniefed.com/blog/categories/native/atom.xml" rel="self"/>
   <link href="http://browniefed.com/"/>
-  <updated>2016-09-21T21:38:08-07:00</updated>
+  <updated>2016-09-22T17:15:51-07:00</updated>
   <id>http://browniefed.com/</id>
   <author>
     <name><![CDATA[Jason Brown]]></name>
@@ -30,6 +30,9 @@ By that I mean adding a PanResponder in a parent view means it will steal all of
 <p>You may be running into this because you copy and pasted it from here the documentation here <a href="https://facebook.github.io/react-native/docs/panresponder.html">https://facebook.github.io/react-native/docs/panresponder.html</a> and it includes a capture phase returning true.
 (I copy and paste this all the time).
 We&rsquo;ll talk about the capture phase next.</p>
+
+<!-- more -->
+
 
 <p>This is far from the case. As always, React Native internal code is all built on the same components you are using so be sure and always read that code.
 Navigation is one example that uses a top level PanResponder and only deals with touches on the outer edge of the screen.</p>
