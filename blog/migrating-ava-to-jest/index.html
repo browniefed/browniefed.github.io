@@ -1,0 +1,293 @@
+
+<!doctype html>
+<!-- START OF _layouts/default.html -->
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" >
+		<meta content="width=device-width,initial-scale=1" name="viewport">
+		<meta content="A blog of JavaScript techniques and tutorials. Including React, React Native, and anything else I feel like writing about." name="description">
+		<meta content="JavaScript Without Grammar" name="author">
+
+
+    
+        <meta property="fb:app_id" content="1662675577336433" />
+        <meta property="og:title" content="Migrating Ava to Jest" />
+        <meta property="og:site_name" content="JavaScript Without Grammar" />
+        <meta property="og:url" content="http://browniefed.com/blog/migrating-ava-to-jest/" />
+        <meta property="og:description" content="" />
+        
+    
+
+        
+        <meta property="twitter:card" content="summary" />
+        <meta property="twitter:site" content="browniefed" />
+        <meta property="twitter:url" content="http://browniefed.com/blog/migrating-ava-to-jest/" />
+        <meta property="twitter:title" content="Migrating Ava to Jest" />
+        <meta property="twitter:description" content="" />
+        <meta property="twitter:creator" content="browniefed" />
+        
+        
+
+
+		
+        <link rel='alternate' type='application/atom+xml' title='JavaScript Without Grammar' href='http://browniefed.com/atom.xml'>
+
+		<title>Migrating Ava to Jest &mdash; JavaScript Without Grammar</title>
+		
+		<!-- Styles -->
+		<link href="/stylesheets/main.css" rel="stylesheet">
+		
+		<!-- Google webfonts -->
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Tangerine">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Cousine">
+		
+		<!-- jQuery and plugins -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.zclip.min.js"></script>
+
+		<!-- Syntax highlighter -->
+		<link href="/stylesheets/prettify-hemisu.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="/js/prettify.js"></script>
+				
+	</head>
+	<body onload="prettyPrint()">
+	
+		<div class="wrap">
+	
+			<header>
+				<div class="title"><a href="/">JavaScript Without Grammar</a></div>
+								
+								<div class="navi">
+									<ul>
+										<li><a href="/">Blog</a></li>
+										<li><a href="/blog/archives">Archives</a></li>
+										<li><a href="/about">About</a></li>
+										<li><a href="http://github.com/browniefed">Github</a></li>
+										<li><a href="http://twitter.com/browniefed">Twitter</a></li>
+										<li><a href="mailto:browniefed@gmail.com">Email</a></li>
+									<ul>
+								</div> <!-- // .navi -->
+			</header>
+		
+				<!-- START OF _layouts/post.html -->
+
+<!-- START OF _includes/article.html -->
+<article>
+	<header>
+		<h1><a href="/blog/migrating-ava-to-jest/">Migrating Ava to Jest</a></h1>
+		<time>06 October 2016</time>
+	</header>
+	<div class="content">
+		
+            <div class="entry-content"><p>First off. Star the repo here <a href="https://github.com/facebook/jest">https://github.com/facebook/jest</a> so you can show some love for the hardwork that has been put into it.</p>
+
+<h3>Props</h3>
+
+<p>I was an early adopter of Jest back in the early days ( ~v0.4). It was okay but difficult to setup and slow with sometimes weird results and behaviors.</p>
+
+<p>Tireless effort has been done by <a href="https://twitter.com/cpojer">Christoph Pojer</a> to get to the latest Jest (v16.01) so props to him and others working with him.</p>
+
+<p>Check out the fantastic documentation here <a href="https://facebook.github.io/jest/docs/getting-started.html#content">https://facebook.github.io/jest/docs/getting-started.html</a></p>
+
+<h3>Migrating in seconds</h3>
+
+<p>There is almost nothing to write about on this topic because it was almost too easy.
+Mostly because of <a href="https://github.com/skovhus/jest-codemods">jest-codemods</a>. It is a set of codemods crafted to transition your Tape or Ava project to Jest.</p>
+
+<p>It is worth it. Jest has come along way when it comes to speed, functionality, configuration options, and ease of configuration (or lack there of to get started).</p>
+
+<p>There were minor configurations I had to setup, but most were copying and pasting from the documentation.</p>
+
+<p>Lets dive into the process real quick.</p>
+
+<h3>First and last step to transition tests</h3>
+
+<p>First install <code>jest-codemods</code></p>
+
+<p><code>npm install -g jest-codemods</code></p>
+
+<p>Then run <code>jest-codemods</code> in a desired directory.
+It will prompt you with <code>Ava</code>, <code>Tape</code>, or a <code>both</code> option.
+Then you provide a glob. I was running in my root so I provided the glob <code>**/__tests__/**/*.js</code> to convert all of my tests.</p>
+
+<p>That was it.</p>
+
+<!-- more -->
+
+
+<h3>Done</h3>
+
+<p>For basic implementations that is all you need!</p>
+
+<p>Add <code>"test": "jest"</code> to your <code>package.json</code> <code>scripts</code> section and you&rsquo;re good to go!</p>
+
+<h3>Caveats</h3>
+
+<p>There are a few caveats to note.
+In Ava you can pass in custom messages to the assertions. This is missing in the default <code>expect</code> provided by Jest but is by no means a deal breaker.</p>
+
+<p><code>t.plan</code> and <code>t.skip</code> aren&rsquo;t supported by the codemod.</p>
+
+<p><code>t.skip</code> and <code>t.plan</code> go hand-in-hand. I find <code>t.skip</code> to be somewhat unnecessary but <code>t.plan</code> is great for async tests.</p>
+
+<p>This isn&rsquo;t a deal breaker by any means. And Christopher is happy to accept a PR for it too!.</p>
+
+<h3>What is awesome</h3>
+
+<p> Our setup uses Webpack <code>root</code> property to use shared code across 2 directories in a monorepo. Adding that in other testing libraries required webpack and other NPM installed libraries.
+ In Jest it is as simple as adding this to your config.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> "modulePaths": [
+</span><span class='line'>    "/shared"
+</span><span class='line'>  ],</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Are you using CSS Modules and want to actually test out certain classes get applied?
+Well Jest has a nice out of the box solution. It does require an additional NPM install of <code>identity-obj-proxy</code> but it&rsquo;s worth when it&rsquo;s an easy config option.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>"moduleNameMapper": {
+</span><span class='line'>    "^.+\\.(css|less)$": "identity-obj-proxy"
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That&rsquo;s all you need to do to get CSS modules working.</p>
+
+<p>For more awesome-examples and full configuration options checkout the documentation <a href="https://facebook.github.io/jest/docs/getting-started.html">https://facebook.github.io/jest/docs/getting-started.html</a>.
+Many of the normal uses cases have been though of and are documented with copy and paste configuration options!</p>
+
+<h3>Check it out</h3>
+
+<p>I&rsquo;m barely scratching the surface of what is great about Jest.
+There is hopefully more coming but go use Jest, star the repo on git <a href="https://github.com/facebook/jest">https://github.com/facebook/jest</a> and never look back.</p>
+</div>
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/ava/'>ava</a>, <a class='category' href='/blog/categories/jest/'>jest</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/testing/'>testing</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+
+<footer style="margin-top: 10px;">
+    <div id="post-author">
+	<div class="post-author-content" style="width: 70%; display: inline-block;">
+		<p style="font-size: 16px;">
+			If you ever want further explanation, want to see a particular type of tutorial, or to contact me for whatever reason you can drop me a line on twitter <a href="http://twitter.com/browniefed">@browniefed</a> or email me at <a href="mailto:browniefed@gmail.com">browniefed@gmail.com</a>
+		</p>
+	</div>
+</div>
+</footer>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+
+<!-- END OF _/layouts/post.html -->
+
+		
+			<footer>
+				Copyright &copy; 2016
+
+	Jason Brown
+
+
+			</footer>
+			
+		</div> <!-- // .wrap -->
+          
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/migrating-ava-to-jest/';
+        var disqus_url = 'http://browniefed.com/blog/migrating-ava-to-jest/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+	</body>
+	<script>
+		$(document).ready(function() {
+			// Make images center
+			$('p:has(img)').css('text-align', 'center');
+			
+			// Add the image's title attribute as a caption
+			$('p:has(img)').append(function () {
+				return '<div class="caption">' + $('img', this).attr('title') + '</div>';
+			});
+			
+			// Prettify code
+			$('code').addClass('prettyprint');
+			$('pre code').addClass('linenums');
+			
+			// Copy to clipboard with button
+			$('pre:has(code)').prepend(function(){
+				return '<div class="clip-btn">copy to clipboard</div>';
+			});
+			$('.clip-btn').zclip({
+				path:'/js/ZeroClipboard.swf',
+				copy: function() {
+                    return $(this).next('code').text().split("\n").join("\r\n")
+                },
+				afterCopy: function(){
+					$(this).replaceWith('<div class="clip-btn">copied!');
+				}
+			});
+		});
+	</script>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'browniefedblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://browniefed.com/blog/migrating-ava-to-jest/';
+        var disqus_url = 'http://browniefed.com/blog/migrating-ava-to-jest/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</html>
+<!-- END OF _layouts/default.html -->

@@ -77,6 +77,56 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
+		<h1><a href="/blog/phonegap-3-dot-4-geolocation/">Phonegap 3.4 GeoLocation</a></h1>
+		<time>07 June 2014</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>It doesn&rsquo;t appear to be just me but PhoneGap can be incredibly difficult to use. Simply because any information pertaining to the most current version of phonegap is so fragmented. A google search will reveal virtually nothing about the error messages you&rsquo;re receiving and how to remedy them for current versions.</p>
+
+<p>For example, I was attempting to use the GeoLocation API. Could care less about the extreme accuracy. After attempting to use it I was getting an Error Code 2 , failed to start geolocation service. Well maybe that was my fault for enabling <code>enableHighAccuracy</code> but wait you have to enableHighAccuracy for older versions of android otherwise it won&rsquo;t work. Or was that only for older versions of the geolocation plugin which then got deprecated in some versions of android in favor of the native browser geolocation API because it provides better and faster GPS locations. In the end the fault was all mine, I had simply forgotten to include the plugin in my <code>config.xml</code></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;gap:plugin name="org.apache.cordova.geolocation" version="0.3.8" /&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Version <code>0.3.8</code> was the current version at the time of this article. Actually released on June 5th, 2014 just before the article written on June 6th, 2014.</p>
+
+<p>I&rsquo;ve sort of determined that the only real reliable way to determine anything is just to look at the release notes on <a href="https://github.com/apache/cordova-plugin-geolocation/blob/master/RELEASENOTES.md">github</a> for the best most up to date information.</p>
+
+<p>To end I should say I really love PhoneGap and all of the time and effort people are putting into developing it. The documentation and information about current versions is fragmented, and rather than ranting I should be helping out and contributing to documentation and solving the problems. That should always be the goal if you find a problem in the open source world. Don&rsquo;t rant, help out, and that is what I will do.</p>
+</div>
+          
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/3-dot-4/'>3.4</a>, <a class='category' href='/blog/categories/documentation/'>documentation</a>, <a class='category' href='/blog/categories/geolocation/'>geolocation</a>, <a class='category' href='/blog/categories/gps/'>gps</a>, <a class='category' href='/blog/categories/phonegap/'>phonegap</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
 		<h1><a href="/blog/socket-dot-io-on-android-plus-phonegap/">Socket.io on Android + Phonegap</a></h1>
 		<time>01 June 2014</time>
 	</header>
@@ -268,37 +318,6 @@
 <p>That&rsquo;s a tall order for 2014 as it&rsquo;s almost half way over but I&rsquo;ll be turning 24. My 15 year old self said I&rsquo;d be rich and retired at 21 so I&rsquo;m already behind.</p>
 
 <p>That&rsquo;s it from me</p>
-</div>
-          
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/ractive-dot-js-next-generation-dom-manipulation/">Ractive.JS - Next Generation DOM Manipulation</a></h1>
-		<time>17 February 2014</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><p>Next generation DOM manipulation is right mainly because you don&rsquo;t have to do any. Ractive uses declarative binding(like Knockout and Angular) but also uses reactive programming methods (like React). The different is that it does do DOM diffing like React or dirty checking like Angular but utilizes dependancy tracking. Meaning it tracks the changes you make and will update the DOM accordingly. Now there are inherint issues in that ou can take performance hits if you have a large data set and call &ldquo;set&rdquo; within a loop. This will hit the DOM very hard since the nature of dependancy tracking says that &ldquo;when X changes update Y&rdquo;.</p>
 </div>
           
           

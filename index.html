@@ -77,6 +77,78 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
+		<h1><a href="/blog/migrating-ava-to-jest/">Migrating Ava to Jest</a></h1>
+		<time>06 October 2016</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>First off. Star the repo here <a href="https://github.com/facebook/jest">https://github.com/facebook/jest</a> so you can show some love for the hardwork that has been put into it.</p>
+
+<h3>Props</h3>
+
+<p>I was an early adopter of Jest back in the early days ( ~v0.4). It was okay but difficult to setup and slow with sometimes weird results and behaviors.</p>
+
+<p>Tireless effort has been done by <a href="https://twitter.com/cpojer">Christoph Pojer</a> to get to the latest Jest (v16.01) so props to him and others working with him.</p>
+
+<p>Check out the fantastic documentation here <a href="https://facebook.github.io/jest/docs/getting-started.html#content">https://facebook.github.io/jest/docs/getting-started.html</a></p>
+
+<h3>Migrating in seconds</h3>
+
+<p>There is almost nothing to write about on this topic because it was almost too easy.
+Mostly because of <a href="https://github.com/skovhus/jest-codemods">jest-codemods</a>. It is a set of codemods crafted to transition your Tape or Ava project to Jest.</p>
+
+<p>It is worth it. Jest has come along way when it comes to speed, functionality, configuration options, and ease of configuration (or lack there of to get started).</p>
+
+<p>There were minor configurations I had to setup, but most were copying and pasting from the documentation.</p>
+
+<p>Lets dive into the process real quick.</p>
+
+<h3>First and last step to transition tests</h3>
+
+<p>First install <code>jest-codemods</code></p>
+
+<p><code>npm install -g jest-codemods</code></p>
+
+<p>Then run <code>jest-codemods</code> in a desired directory.
+It will prompt you with <code>Ava</code>, <code>Tape</code>, or a <code>both</code> option.
+Then you provide a glob. I was running in my root so I provided the glob <code>**/__tests__/**/*.js</code> to convert all of my tests.</p>
+
+<p>That was it.</p>
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/migrating-ava-to-jest/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/ava/'>ava</a>, <a class='category' href='/blog/categories/jest/'>jest</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/testing/'>testing</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
 		<h1><a href="/blog/react-native-maintain-touchable-items-with-a-parent-panresponder/">React Native - Maintain Touchable Items with a Parent PanResponder</a></h1>
 		<time>21 September 2016</time>
 	</header>
@@ -285,55 +357,6 @@ We fire up our test, create it, babel compiles, but oh no, <code>MyCss</code> is
 			Tagged under
 		
     <a class='category' href='/blog/categories/animated/'>animated</a>, <a class='category' href='/blog/categories/animation/'>animation</a>, <a class='category' href='/blog/categories/book/'>book</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/react-native-how-to-bridge-a-swift-view/">React Native - How to bridge a Swift View</a></h1>
-		<time>28 November 2015</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><p>So in my previous article we bridged an Objective-C View component, I learned a lot, and also learned that I did a few unnecessary things. No worry though, we&rsquo;ll learn from that and make improvements in our Swift bridging.</p>
-
-<p>First off want to give a thanks to <a href="https://twitter.com/tony_xiao">Tony Xiao</a>. He&rsquo;s been a great help in sharing code and giving explanations to a Swift and native development novice like myself. Also <a href="https://twitter.com/realasa">Asa Miller</a> for writing some of the original code and always collaborating on whatever we&rsquo;re both working on.</p>
-
-<h2>What</h2>
-
-<p><img src="http://i.imgur.com/TsOMRom.png" title="Gradients, are those still a thing?" ></p>
-
-<p>We&rsquo;re going to bridge <a href="https://github.com/soffes/GradientView">https://github.com/soffes/GradientView</a>. Looks pretty nifty. Now we could also just use ReactART for this but we won&rsquo;t.</p>
-
-</div>
-          
-          
-            <a rel="full-article" href="/blog/react-native-how-to-bridge-a-swift-view/">Read on &rarr;</a>
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/bridge/'>bridge</a>, <a class='category' href='/blog/categories/gradient/'>gradient</a>, <a class='category' href='/blog/categories/react-native/'>react-native</a>, <a class='category' href='/blog/categories/swift/'>swift</a>, <a class='category' href='/blog/categories/swift-view-component/'>swift-view-component</a>
 	
 
 

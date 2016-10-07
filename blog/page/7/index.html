@@ -77,6 +77,64 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
+		<h1><a href="/blog/react-native-and-socket-dot-io/">React Native and Socket.io</a></h1>
+		<time>16 May 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>React Native finally supports Websockets. Which is awesome, however there is one gotcha with socket.io.</p>
+
+<p>1) <code>npm install socket.io-client</code>. This will just pull down the socket.io javascript client</p>
+
+<p>2) Everything works great but there is one issue that <code>window.navigator.userAgent</code> doesn&rsquo;t exist. Socket.IO checks to deal with some browser incosistencies but we don&rsquo;t care. So all we have to do is create it. However make sure you require <code>react-native</code> first!</p>
+
+<p>Just like so</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var React = require('react-native');
+</span><span class='line'>
+</span><span class='line'>window.navigator.userAgent = "react-native";
+</span><span class='line'>
+</span><span class='line'>var io = require('socket.io-client/socket.io');</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now you can do as you please with your new glorious websockets.</p>
+</div>
+          
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/native/'>native</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/socket-dot-io/'>socket.io</a>, <a class='category' href='/blog/categories/websocket/'>websocket</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
 		<h1><a href="/blog/getting-react-art-running-on-react-native/">Getting react-art running on react-native</a></h1>
 		<time>03 May 2015</time>
 	</header>
@@ -340,56 +398,6 @@ If that isn&rsquo;t the case we&rsquo;ll need <code>webpack</code>, <code>raw-lo
 			Tagged under
 		
     <a class='category' href='/blog/categories/css/'>css</a>, <a class='category' href='/blog/categories/file/'>file</a>, <a class='category' href='/blog/categories/html/'>html</a>, <a class='category' href='/blog/categories/img/'>img</a>, <a class='category' href='/blog/categories/js/'>js</a>, <a class='category' href='/blog/categories/phantomjs/'>phantomjs</a>, <a class='category' href='/blog/categories/server/'>server</a>, <a class='category' href='/blog/categories/server/'>server</a>, <a class='category' href='/blog/categories/static/'>static</a>, <a class='category' href='/blog/categories/testing/'>testing</a>, <a class='category' href='/blog/categories/unit/'>unit</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/phonegap-3-dot-4-geolocation/">Phonegap 3.4 GeoLocation</a></h1>
-		<time>07 June 2014</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><p>It doesn&rsquo;t appear to be just me but PhoneGap can be incredibly difficult to use. Simply because any information pertaining to the most current version of phonegap is so fragmented. A google search will reveal virtually nothing about the error messages you&rsquo;re receiving and how to remedy them for current versions.</p>
-
-<p>For example, I was attempting to use the GeoLocation API. Could care less about the extreme accuracy. After attempting to use it I was getting an Error Code 2 , failed to start geolocation service. Well maybe that was my fault for enabling <code>enableHighAccuracy</code> but wait you have to enableHighAccuracy for older versions of android otherwise it won&rsquo;t work. Or was that only for older versions of the geolocation plugin which then got deprecated in some versions of android in favor of the native browser geolocation API because it provides better and faster GPS locations. In the end the fault was all mine, I had simply forgotten to include the plugin in my <code>config.xml</code></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;gap:plugin name="org.apache.cordova.geolocation" version="0.3.8" /&gt;</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Version <code>0.3.8</code> was the current version at the time of this article. Actually released on June 5th, 2014 just before the article written on June 6th, 2014.</p>
-
-<p>I&rsquo;ve sort of determined that the only real reliable way to determine anything is just to look at the release notes on <a href="https://github.com/apache/cordova-plugin-geolocation/blob/master/RELEASENOTES.md">github</a> for the best most up to date information.</p>
-
-<p>To end I should say I really love PhoneGap and all of the time and effort people are putting into developing it. The documentation and information about current versions is fragmented, and rather than ranting I should be helping out and contributing to documentation and solving the problems. That should always be the goal if you find a problem in the open source world. Don&rsquo;t rant, help out, and that is what I will do.</p>
-</div>
-          
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/3-dot-4/'>3.4</a>, <a class='category' href='/blog/categories/documentation/'>documentation</a>, <a class='category' href='/blog/categories/geolocation/'>geolocation</a>, <a class='category' href='/blog/categories/gps/'>gps</a>, <a class='category' href='/blog/categories/phonegap/'>phonegap</a>
 	
 
 
