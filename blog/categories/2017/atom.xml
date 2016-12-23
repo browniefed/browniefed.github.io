@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 2017 | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/2017/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2016-12-23T14:30:19-08:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[A Year in Review and What is Next]]></title>
+    <link href="http://browniefed.com/blog/a-year-in-review-and-what-is-next/"/>
+    <updated>2016-12-23T13:41:00-08:00</updated>
+    <id>http://browniefed.com/blog/a-year-in-review-and-what-is-next</id>
+    <content type="html"><![CDATA[<h2>Absence</h2>
+
+<p>I made a decision to not post as much on this blog over the past year. Despite reaching upwards of 300,000 views in the past 1.5 years, I wasn&rsquo;t seeing the positive feedback I was hoping for. Not compliments, but increase knowledge around animations, and just a general positive impact on the community.</p>
+
+<p>I now realize I was wrong. Over the course of the year many people have been posting new animated blog tutorials.
+I won&rsquo;t go through my entire twitter timeline but one recently was from someone who posted an animation tutorial.</p>
+
+<blockquote class="twitter-tweet" data-conversation="none" data-lang="en"><p lang="en" dir="ltr"><a href="https://twitter.com/browniefed">@browniefed</a> Thanks for you feedback. I appreciate it. Big fan of your blog btw. I&#39;ve learned a lot reading your posts!</p>&mdash; Rational App Dev (@rationalappdev) <a href="https://twitter.com/rationalappdev/status/812361076113219584">December 23, 2016</a></blockquote>
+
+
+<script async src="http://browniefed.com//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>Lurking in chat channels, many have been helping others with animations and referencing my blog as where they learned.
+It&rsquo;s a good feeling. This year I will return to the blog.</p>
+
+<!-- more -->
+
+
+<h2>Making Money</h2>
+
+<p>This blog has made me $0 directly (except a $20 bitcoin gift, thanks Daniel). Indirectly it has been invaluable for being a resource where people learn my name, and attach it to things they'ved learned. Things that have helped them wow their coworkers, make an interaction a touch better, or just learn something that helps them ship that next feature.</p>
+
+<p>I don&rsquo;t believe donations are sustainable.
+Every resource that is valuable and sustainable are all charging money like <a href="https://reacttraining.com/">React Training</a>, or anything from <a href="https://reactforbeginners.com/">Wes Bos</a>, and anyone else that is selling courses like <a href="https://www.educative.io/">educative.io</a>.</p>
+
+<p>I enjoy helping people but 75% of what I build/write/etc from now on will cost money ( or earn me money in some way).</p>
+
+<h2>What Have I Been Doing</h2>
+
+<p>Living my life I suppose. One thing I&rsquo;ve been doing is consuming way too much.
+Consuming others knowledge is fun and valuable but I personally have not be investing.</p>
+
+<p>I&rsquo;m trying to fix this. I&rsquo;m trying to consume less but that&rsquo;s a work in progress.</p>
+
+<p>Since I&rsquo;ve been trying to focus on creationg I&rsquo;ve done some Egghead work. It&rsquo;s been great and Egghead is fantastic!</p>
+
+<p><a href="https://egghead.io/courses/animate-react-native-ui-elements"><img src="https://d2eip9sf3oo6c2.cloudfront.net/series/covers/000/000/085/full/EGH_ImageGallery_Final-cover.png?1478539191" title="Egghead is poppin" ></a></p>
+
+<p>You can check out my first course <a href="https://egghead.io/courses/animate-react-native-ui-elements">Animate React Native UI Elements</a>  <br/>
+You can check out all my lessons here <a href="https://egghead.io/instructors/jason-brown-20a6bf03-254a-428c-9984-dca76cc84f32">Instructor &ndash; Jason Brown</a></p>
+
+<p>More courses and lessons are on the way. 1 course is completed, and the other is in production.</p>
+
+<h2>A Year to Reboot</h2>
+
+<p>It&rsquo;ll be a good year to reboot, and I&rsquo;m definitely not waiting till the new year starts to take action.</p>
+
+<p>My plans will include.</p>
+
+<ul>
+<li><p><strong>Heavier time investment in open source</strong>  <br/>
+&mdash; I contribute where I want but I&rsquo;d like a few open source projects to maintain.</p></li>
+<li><p><strong>Dumping knowledge into more outlets</strong>   <br/>
+&mdash; Including more egghead, blog posts, my own knowledge base sites, interactive tutorials</p></li>
+<li><p><strong>Consume less, Create more</strong>   <br/>
+&mdash; Catching up on the latest things at night, not the instant it happens</p></li>
+<li><p><strong>Better time management</strong>    <br/>
+&mdash; Not much needs to be said here, but maintaining a healthy life style along w/ accomplishing all of this will be difficult</p></li>
+<li><p><strong>Say No more often</strong>   <br/>
+&mdash; This plays into time management, but saying no to things I know I don&rsquo;t really want to do will be crucial</p></li>
+<li><p><strong>New Technologies</strong>  <br/>
+&mdash; I&rsquo;ve been very focused on JS land. It&rsquo;s fun but I need to expand my breadth of knowledge. Basically be a better T-Shaped person.</p></li>
+</ul>
+
+
+<h2>Anyway</h2>
+
+<p>It&rsquo;s been a good year for me personally. Excited for 2017. Looking forward to whatever the hell happens.</p>
+]]></content>
+  </entry>
+  
+</feed>
