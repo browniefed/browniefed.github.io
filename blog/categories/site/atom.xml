@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: site | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/site/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2017-06-02T15:53:09-07:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[New Tutorials on Code Daily]]></title>
+    <link href="http://browniefed.com/blog/new-tutorials-on-code-daily/"/>
+    <updated>2017-06-02T15:45:00-07:00</updated>
+    <id>http://browniefed.com/blog/new-tutorials-on-code-daily</id>
+    <content type="html"><![CDATA[<p>I&rsquo;ve officially launched my new site <a href="codedaily.io">Code Daily</a>. This site will now house all of my tutorials, screencasts, and courses.</p>
+
+<p>The goal is to post some bit of content on a daily basis. Anything from a tutorial, to a screencast, or even full courses could be published daily!</p>
+
+<p>These will primarily be focused on React, React Native, and general web development practices. However as I slowly grow and see where the web/mobile is headed I will devote more time towards that content.</p>
+
+<p>I will do my best to provide value and making the &ldquo;bleeding edge&rdquo; of web/mobile technologies less intimidating.</p>
+
+<p>I will still update some content on this site, but at some point redirects will be setup to my new site.</p>
+
+<p>So if you still want to get content visit <a href="codedaily.io">Code Daily</a>, and follow me on twitter at <a href="https://twitter.com/codedailyio">https://twitter.com/codedailyio</a>.</p>
+
+<h3><a href="codedaily.io">Check it out here => Code Daily</a></h3>
+]]></content>
+  </entry>
+  
+</feed>

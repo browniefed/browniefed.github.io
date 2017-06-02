@@ -77,6 +77,58 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
+		<h1><a href="/blog/animating-with-react-art-and-shifty-dot-js/">Animating with React Art and Shifty.js</a></h1>
+		<time>26 May 2015</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>Having little experience with D3 animations I&rsquo;m not sure if it is easy to do animations with D3.
+However the great thing about <code>react</code> and <code>react-art</code> is that in order to animate you follow the same pattern you do for any other rendering, just <code>setState</code>.</p>
+
+<p>Animations in CSS3 are different in that a particular element has a defined location and you tell the browser the new location. The inbetween animation state from point a => b over a period of time is automatically handled for you.</p>
+
+<p>In our canvas/svg world we need to <code>tween</code> between states. That just means based on a defined time frame (500ms? 1s? 2s?) we need to move an item form <code>x/y</code> to a new <code>x/y</code>.</p>
+
+<p><a href="https://github.com/jeremyckahn/shifty">Shifty.js</a> helps do that in an efficient manner on the web. The reason <code>shifty.js</code> works well with React is that it doesn&rsquo;t mutate DOM but just provides you the ability to modify numbers across a space of time. Additionally it provides out of the box easing effects like <code>elastic</code>, <code>bounce</code>, <code>linear</code>, <code>cubic</code> and other movements.</p>
+
+<p>This article is less about <code>react-art</code> and more about just how to use <code>shifty.js</code> since <code>react-art</code> is just an extension of <code>react</code>, and if you know the fundamental concepts of <code>react</code> then you can do just about anything.</p>
+
+<p>Example of a basic tween movement</p>
+
+</div>
+          
+          
+            <a rel="full-article" href="/blog/animating-with-react-art-and-shifty-dot-js/">Read on &rarr;</a>
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/animating/'>animating</a>, <a class='category' href='/blog/categories/react/'>react</a>, <a class='category' href='/blog/categories/react-art/'>react-art</a>, <a class='category' href='/blog/categories/shifty/'>shifty</a>, <a class='category' href='/blog/categories/tween/'>tween</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
 		<h1><a href="/blog/react-art-zooming-and-dragging/">React Art Zooming and Dragging</a></h1>
 		<time>20 May 2015</time>
 	</header>
@@ -355,79 +407,6 @@ It&rsquo;s a function that takes a React component of your choosing and then ret
 <!-- END OF _includes/article.html -->
 
 	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/webpack-and-compass/">Webpack and Compass</a></h1>
-		<time>24 December 2014</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><p>Webpack is the greatest and latest in build systems. Every time I encounter an issue or wish Webpack did something a little googling solves the problem.</p>
-
-<p>One problem that I couldn&rsquo;t google and figure out was getting compass to work with <code>sass-loader</code>. Not just making it work but still allowing regular compass to compile on the command line.</p>
-
-<p>Thankfully there is a mostly simple solution. The only thing (to my knowledge) that this won&rsquo;t work with is sprite generation. Sounds like we need another loader.</p>
-
-<p>Lets get to it.</p>
-
-<p>This is all assuming you have webpack installed with a basic config.
-If that isn&rsquo;t the case we&rsquo;ll need <code>webpack</code>, <code>raw-loader</code>, <code>style-loader</code>, and <code>sass-loader</code> npm installed.</p>
-
-<p>Your webpack config may look something along the lines of</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>    module: {
-</span><span class='line'>        loaders: [
-</span><span class='line'>            { 
-</span><span class='line'>                test: /\.scss$/, 
-</span><span class='line'>                loader: "style-loader!raw-loader!sass-loader"
-</span><span class='line'>            }
-</span><span class='line'>        ]
-</span><span class='line'>    }
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-</div>
-          
-          
-            <a rel="full-article" href="/blog/webpack-and-compass/">Read on &rarr;</a>
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-  
-		
-			Tagged under
-		
-    <a class='category' href='/blog/categories/compass/'>compass</a>, <a class='category' href='/blog/categories/sass/'>sass</a>, <a class='category' href='/blog/categories/scss/'>scss</a>, <a class='category' href='/blog/categories/webpack/'>webpack</a>
-	
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
 	
 <div class="pagination">
 	
@@ -444,7 +423,7 @@ If that isn&rsquo;t the case we&rsquo;ll need <code>webpack</code>, <code>raw-lo
 
 		
 			<footer>
-				Copyright &copy; 2016
+				Copyright &copy; 2017
 
 	Jason Brown
 
