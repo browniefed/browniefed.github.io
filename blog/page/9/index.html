@@ -77,6 +77,52 @@
 		<!-- START OF _includes/article.html -->
 <article>
 	<header>
+		<h1><a href="/blog/nonrte-part-1/">NonRTE - Part 1</a></h1>
+		<time>01 May 2014</time>
+	</header>
+	<div class="content">
+		
+          <div class="entry-content"><p>Once again stealing from antimatter I think writing about what you&rsquo;re currently building or have built is a good way to gain some clarity and also provide some value in explaining the topic. I&rsquo;ll be talking about NonRTE a non-contenteditable rich text editor for developers. One similar and the only one I know of is google docs. There are others that aren&rsquo;t rich text editors and are IDEs like codemirror and a few others that do not use contenteditbale. I personally don&rsquo;t know of any RTEs that are open source that developers can use and build with but I could be wrong so do ping me if that isn&rsquo;t the case.</p>
+
+<p>Something that has always boggled my mind was how heavily people have relied on contenteditable. Managing the different ways that contenteditbale is implemented on every browser and versions of those browsers is a nightmare. There is a portion of code in most RTE libraries that change how everything works just for one particular browser. This is insane to me due to the world we live in now with NPM, github, and the open source world at our finger tips. We have amazing templating libraries, HTML parsers, two-way data bindings, word to HTML libraries, excel expression parsers and executors, and everything compiles to JavaScript despite this insane amount of open source code we still use contenteditable.</p>
+
+<p>These aren&rsquo;t all the components that necessarily build an RTE you have to think about the cursor and positioning it correctly, selection and how to implement that, styling the complexities of every possible selection, resizing the container and line widths no longer being the same (this is the toughest one I think), copy and pasting, selection then clicking and dragging, and many many more components. These all sound hard but once again, if you look around you&rsquo;ll find varying levels of complete, incomplete, good, bad, popular, and unpopular repos that accomplish much of this. It sounds like I&rsquo;m saying rip them off, I&rsquo;m definitely not condoning that so be sure and give credit where credit is due.</p>
+
+<p>I&rsquo;m sure others have embarked on this particular quest only to fail or give up but I&rsquo;ll do my best not to. I see a lot of potential in this idea, many of the concepts are also very similar to Ractive. In fact I could implement this even faster in Ractive but have decided to embark on this from scratch just to learn things. It&rsquo;ll be a fun ride.</p>
+
+<p>At this point I have very basic typing working, the cursor is working and positioned (mostly) correctly, clicking somewhere will move the cursor, arrow keys will move from line to line and character to character correctly and enter to create new lines and split content is also working. Overall it&rsquo;s a little bit of work but nothing quite substantial yet. The repo lives here <a href="https://github.com/browniefed/Nonrte">https://github.com/browniefed/Nonrte</a> so feel free to contribute. I haven&rsquo;t hit many challenges yet but I will and when I do I&rsquo;ll be sure and document them and document the solutions.</p>
+</div>
+          
+          
+        
+	</div>
+	<div>
+    	
+
+
+		
+
+
+
+  
+		
+			Tagged under
+		
+    <a class='category' href='/blog/categories/contenteditable/'>contenteditable</a>, <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/nonrte/'>nonrte</a>
+	
+
+
+    	
+	</div>
+	
+</article>
+<!-- END OF _includes/article.html -->
+
+	
+		
+		<!-- START OF _includes/article.html -->
+<article>
+	<header>
 		<h1><a href="/blog/ractive-dot-js-components-for-speed-and-flexibility/">Ractive.JS Components for Speed and Flexibility</a></h1>
 		<time>27 April 2014</time>
 	</header>
@@ -286,47 +332,13 @@ Step 2 being creating a meteor project</p>
 <!-- END OF _includes/article.html -->
 
 	
-		
-		<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="/blog/hey-its-a-post/">hey it&#8217;s a post</a></h1>
-		<time>12 November 2013</time>
-	</header>
-	<div class="content">
-		
-          <div class="entry-content"><p>Hey it&rsquo;s a post on my github.io account</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">heyoooo</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-</div>
-          
-          
-        
-	</div>
-	<div>
-    	
-
-
-		
-
-
-
-
-    	
-	</div>
-	
-</article>
-<!-- END OF _includes/article.html -->
-
-	
 	
 <div class="pagination">
 	
+		<a class="older" href="/blog/page/10/">Older</a>
 	
-	<span class="total">9 of 9</span>
+	
+	<span class="total">9 of 10</span>
 	
 	
 		<a class="newer" href="/blog/page/8/">Newer</a>

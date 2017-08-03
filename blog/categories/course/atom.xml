@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: course, | JavaScript Without Grammar]]></title>
+  <link href="http://browniefed.com/blog/categories/course/atom.xml" rel="self"/>
+  <link href="http://browniefed.com/"/>
+  <updated>2017-08-03T14:15:27-07:00</updated>
+  <id>http://browniefed.com/</id>
+  <author>
+    <name><![CDATA[Jason Brown]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Complete React Native Animations Course]]></title>
+    <link href="http://browniefed.com/blog/complete-react-native-animations-course/"/>
+    <updated>2017-08-03T13:56:00-07:00</updated>
+    <id>http://browniefed.com/blog/complete-react-native-animations-course</id>
+    <content type="html"><![CDATA[<p>React Native has increased in popularity over the past year. It&rsquo;s growth will only sky rocket as more companies like AirBnB, Uber, Facebook, and even smaller agencies learn to leverage it.</p>
+
+<p>One missing piece that I&rsquo;ve attempted to document for the past 2 years is animations. I started when I didn&rsquo;t know animations at all, and have grown to be able to breakdown and reconstruct them using the powers of Animated and React.</p>
+
+<p>In my course we will walk through basic animations, understanding interpolation, and move onto real world examples like shared element photo grid transitions. I&rsquo;ve condensed all the knowledge I have about animations down into this course. Including animation breakdowns and explaining my mental model for how I build out UI before animating.</p>
+
+<p>If you have learned anything from the free content I&rsquo;ve put out and want to support me, or are just getting started then come master React Native animations with my course.</p>
+
+<p>You can purchase it at <a href="https://reactnativeanimations.com/">https://reactnativeanimations.com/</a>.</p>
+
+<p><img class="<a" src="href="https://codedaily.now.sh/courses/react_native_animations.png">https://codedaily.now.sh/courses/react_native_animations.png</a>" title="React Native Animations Course" ></p>
+]]></content>
+  </entry>
+  
+</feed>
